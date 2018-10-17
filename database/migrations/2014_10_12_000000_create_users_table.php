@@ -17,10 +17,19 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('tmp _lahir');
+            $table->string('avatar');
+            $table->date('tgl_lahir');
+            $table->string('nip');
+            $table->string('last_log');
+            $table->boolean('status_log');
+            $table->enum('role',['Administrator','Admin']);
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
+            $table->primary('nip');
         });
     }
 
