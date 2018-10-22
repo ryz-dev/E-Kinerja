@@ -30,7 +30,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->primary('nip');
+//            $table->primary('nip');
         });
     }
 

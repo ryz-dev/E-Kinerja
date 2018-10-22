@@ -36,7 +36,8 @@ class CreateHariKerjaFk extends Migration
     public function down()
     {
         Schema::table('hari_kerja', function (Blueprint $table) {
-
+            $table->dropForeign('hari_kerja_hari_foreign');
+            $table->dropForeign('hari_kerja_id_status_hari_foreign');
         });
     }
 }
