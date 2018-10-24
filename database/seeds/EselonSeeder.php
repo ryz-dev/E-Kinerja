@@ -11,6 +11,13 @@ class EselonSeeder extends Seeder
      */
     public function run()
     {
+        /*berdasarkan :
+            PERATURAN PRESIDEN REPUBLIK INDONESIA
+            NOMOR 26 TAHUN 2007
+            TENTANG
+            TUNJANGAN JABATAN STRUKTURAL
+            DENGAN RAHMAT TUHAN YANG MAHA ESA
+        */
         $eselon_seed = [
             [
                 'id' => 1,
@@ -50,12 +57,12 @@ class EselonSeeder extends Seeder
             ],[
                 'id' => 8,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => 'IVA',
+                'eselon' => 'IVB',
                 'tunjangan' => 490000
             ],[
                 'id' => 9,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => 'IVA',
+                'eselon' => 'VA',
                 'tunjangan' => 360000
             ],
         ];
