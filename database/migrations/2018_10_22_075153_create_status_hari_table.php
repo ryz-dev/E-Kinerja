@@ -15,6 +15,7 @@ class CreateStatusHariTable extends Migration
     {
         Schema::create('status_hari', function (Blueprint $table) {
             $table->increments('id');
+            $table->uuid('uuid');
             $table->string('status_hari');
             $table->timestamps();
         });

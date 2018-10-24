@@ -15,5 +15,9 @@ class DatabaseSeeder extends Seeder
         $this->call(HariSeeder::class);
         $this->call(StatusHariSeeder::class);
         $this->call(BulanSeeder::class);
+        $this->call(AgamaSeeder::class);
+        $this->call(EselonSeeder::class);
+        $this->call(JabatanSeeder::class);
+//        $this->call(PegawaiSeeder::class);
     }
 }

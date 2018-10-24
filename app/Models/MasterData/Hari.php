@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -8,7 +8,7 @@ class Hari extends Model
 {
     protected $table = 'hari';
     protected $fillable = [
-        'nama_hari'
+        'nama_hari','uuid'
     ];
 
     public function hariKerja(){

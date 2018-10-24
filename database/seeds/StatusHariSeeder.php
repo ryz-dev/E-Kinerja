@@ -11,18 +11,21 @@ class StatusHariSeeder extends Seeder
      */
     public function run()
     {
-        $status_hari_seeder = [
+        $status_hari_seed = [
             [
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'id' => 1,
                 'status_hari' => 'kerja'
             ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+
                 'id' => 2,
                 'status_hari' => 'libur'
             ],
         ];
 
         try {
-            DB::table('status_hari')->insert($status_hari_seeder);
+            DB::table('status_hari')->insert($status_hari_seed);
         } catch (\Exception $exception){
         }
     }

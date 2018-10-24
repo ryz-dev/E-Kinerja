@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -8,7 +8,7 @@ class HariKerja extends Model
 {
     protected $table = 'hari_kerja';
     protected $fillable = [
-        'tanggal','bulan','tahun','hari','id_status_hari'
+        'tanggal','bulan','tahun','hari','id_status_hari','uuid'
     ];
 
     public function statusHari(){

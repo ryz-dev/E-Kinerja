@@ -15,6 +15,7 @@ class CreateHariKerjaTable extends Migration
     {
         Schema::create('hari_kerja', function (Blueprint $table) {
             $table->increments('id');
+            $table->uuid('uuid');
             $table->date('tanggal')->unique();
             $table->integer('tahun');
             $table->integer('bulan')->unsigned()->index();

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBulanTable extends Migration
+class CreateEselonTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,20 @@ class CreateBulanTable extends Migration
      */
     public function up()
     {
-        Schema::create('bulan', function (Blueprint $table) {
+        Schema::create('eselon', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('uuid');
-            $table->string('kode');
-            $table->string('nama_bulan');
+            $table->string('eselon');
+            $table->integer('tunjangan');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
-        Schema::table('hari_kerja',function (Blueprint $table){
-            $table->foreign('bulan')
+        Schema::table('jabatan',function (Blueprint $table){
+            $table->foreign('id_eselon')
                 ->references('id')
-                ->on('bulan')
+                ->on('jabatan')
                 ->onUpdate('cascade')
-                ->onDelete('restrict');
+                ->onDelete('cascade');
         });
     }
 
@@ -36,9 +37,9 @@ class CreateBulanTable extends Migration
      */
     public function down()
     {
-        Schema::table('hari_kerja',function (Blueprint $table){
-            $table->dropForeign('hari_kerja_bulan_foreign');
+        Schema::table('jabatan',function (Blueprint $table){
+            $table->dropForeign('jabatan_id_eselon_foreign');
         });
-        Schema::dropIfExists('bulan');
+        Schema::dropIfExists('eselon');
     }
 }

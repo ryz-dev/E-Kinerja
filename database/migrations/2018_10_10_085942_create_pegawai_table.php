@@ -14,16 +14,18 @@ class CreatePegawaiTable extends Migration
     public function up()
     {
         Schema::create('pegawai',function(Blueprint $table){
+            $table->uuid('uuid');
             $table->string('nip');
-            $table->integer('id_fp')->unsigned()->index();
+//            $table->integer('id_fp')->nullable()->unsigned()->index();
+            $table->string('foto')->nullable();
             $table->string('nama');
             $table->date('tanggal_lahir');
-            $table->string('unit_kerja')->index();
-            $table->boolean('status_upload');
-            $table->integer('agama')->unsigned()->index();
-            $table->string('kode_jabatan')->index();
-            $table->enum('jns_kel',['Laki - Laki','Perempuan']);
-            $table->string('templat_lahir');
+//            $table->string('unit_kerja')->nullable()->index();
+//            $table->boolean('status_upload')->default(false);
+            $table->integer('id_agama')->unsigned()->index();
+            $table->integer('id_jabatan')->nullable()->unsigned()->index();
+            $table->enum('jns_kel',['laki-laki','perempuan']);
+            $table->string('tempat_lahir');
             $table->softDeletes();
             $table->timestamps();
 
