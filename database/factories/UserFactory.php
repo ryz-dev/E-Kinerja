@@ -29,6 +29,7 @@ $factory->define(App\Models\MasterData\Pegawai::class,function (Faker $faker){
         'nama' => $faker->firstName.' '.$faker->lastName,
         'tanggal_lahir' => $faker->date('Y-m-d','-20 years'),
         'id_agama' => 1,
+        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
         'jns_kel' => array_random(['laki-laki','perempuan']),
         'tempat_lahir' => $faker->city
     ];

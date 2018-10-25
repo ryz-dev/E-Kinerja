@@ -24,7 +24,15 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        $this->registerMasterDataPolicies();
 
         //
+    }
+
+    public function registerMasterDataPolicies(){
+        
+        Gate::define('master-data', function($user){
+            return $user->hasAccess(['master-data']);
+        });
     }
 }

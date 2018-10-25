@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'pegawai',
     ],
 
     /*
@@ -38,7 +38,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'pegawai',
         ],
 
         'api' => [
@@ -65,9 +65,9 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'pegawai' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\MasterData\Pegawai::class,
         ],
 
         // 'users' => [
@@ -93,7 +93,7 @@ return [
 
     'passwords' => [
         'users' => [
-            'provider' => 'users',
+            'provider' => 'pegawai',
             'table' => 'password_resets',
             'expire' => 60,
         ],
