@@ -14,9 +14,7 @@ class EselonSeeder extends Seeder
         /*berdasarkan :
             PERATURAN PRESIDEN REPUBLIK INDONESIA
             NOMOR 26 TAHUN 2007
-            TENTANG
-            TUNJANGAN JABATAN STRUKTURAL
-            DENGAN RAHMAT TUHAN YANG MAHA ESA
+            TENTANG TUNJANGAN JABATAN STRUKTURAL
         */
         $eselon_seed = [
             [
