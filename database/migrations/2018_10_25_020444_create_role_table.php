@@ -17,7 +17,11 @@ class CreateRoleTable extends Migration
             $table->increments('id');
             $table->uuid('uuid');
             $table->string('nama_role');
-            $table->json('permissions')->nullable();
+            if ((DB::connection()->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql') && version_compare(DB::connection()->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), '5.7.8', 'ge')) {
+              $table->json('permissions')->nullable();
+            } else {
+              $table->text('permissions')->nullable();
+            }
             $table->timestamps();
         });
     }
