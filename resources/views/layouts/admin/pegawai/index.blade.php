@@ -24,53 +24,52 @@
               <tbody class="list_pegawai">
               </tbody>
           </table>
-            <div class="row text-center">
-                <ul class="pagination" id="pagination"></ul>
-            </div>
+          <div class="box-pagination">
+            <ul class="pagination" id="pagination"></ul>
+          </div>
         </div>
     </div>
   </div>
     @push('script')
-            <script>
-                $(document).ready(function(){
-                    getPage();
-                    getData(1);
-                });
-                var getPage = function () {
-                    $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('page_pegawai')}}')
-                        .then(function (res) {
-                            $('#pagination').twbsPagination({
-                                totalPages: res.halaman,
-                                visiblePages: 5,
-                                onPageClick: function (event, page) {
-                                    getData(page);
-                                }
-                            });
-                        })
-                };
-                var getData = function (page) {
-                    var listArr = [];
-                    var row = '';
-                    var selector = $('.list_pegawai');
-                    $.ajax({
-                        url: "{{ route('list_pegawai') }}?page="+page,
-                        data: '',
-                        success: function(res){
-                            for(i = 0; i < res.response.data.length; i++) {
-                                row += "<tr>";
-                                row += "<td><div class='img-user' id='user1' style='background-image: url({{ asset('assets/images/img-user.png') }});'></div></td>";
-                                row += "<td>"+res.response.data[i].nip+"</td>";
-                                row += "<td>"+res.response.data[i].nama+"</td>";
-                                row += "<td>"+res.response.data[i].jabatan.jabatan+"</td>";
-                                row += "<td>"+res.response.data[i].jns_kel+"</td>";
-                                row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><button type='button' class='btn btn-success'><i class='fas fa-edit'></i></button><button type='button' class='btn btn-danger'><i class='fas fa-trash'></i></button></div></td>";
-                                row += "</tr>";
-                            }
-                            selector.html(row);
+      <script>
+        $(document).ready(function(){
+            getPage();
+            getData(1);
+        });
+        var getPage = function () {
+            $('#pagination').twbsPagination('destroy');
+            $.get('{{route('page_pegawai')}}')
+                .then(function (res) {
+                    $('#pagination').twbsPagination({
+                        totalPages: res.halaman,
+                        visiblePages: 5,
+                        onPageClick: function (event, page) {
+                            getData(page);
                         }
                     });
-                }
-            </script>
+                })
+        };
+        var getData = function (page) {
+          var row = '';
+          var selector = $('.list_pegawai');
+          $.ajax({
+              url: "{{ route('list_pegawai') }}?page="+page,
+              data: '',
+              success: function(res){
+                  for(i = 0; i < res.response.data.length; i++) {
+                      row += "<tr>";
+                      row += "<td><div class='img-user' id='user1' style='background-image: url({{ asset('assets/images/img-user.png') }});'></div></td>";
+                      row += "<td>"+res.response.data[i].nip+"</td>";
+                      row += "<td>"+res.response.data[i].nama+"</td>";
+                      row += "<td>"+res.response.data[i].jabatan.jabatan+"</td>";
+                      row += "<td>"+res.response.data[i].jns_kel+"</td>";
+                      row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><button type='button' class='btn btn-success'><i class='fas fa-edit'></i></button><button type='button' class='btn btn-danger'><i class='fas fa-trash'></i></button></div></td>";
+                      row += "</tr>";
+                  }
+                  selector.html(row);
+              }
+          });
+        }
+      </script>
     @endpush
 @endsection
