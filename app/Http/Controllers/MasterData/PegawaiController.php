@@ -11,14 +11,8 @@ use Illuminate\Support\Str;
 class PegawaiController extends MasterDataController
 {
     public function index(){
-        try {
-            $pegawai = Pegawai::with('jabatan.pegawai_bawahan.jabatan')->where('id_jabatan', '1')->firstOrFail();
-            return response()->json($pegawai->toArray());
-        } catch (\Exception $exception){
-            return response()->json([
-                'message' => $exception->getMessage()
-            ],404);
-        }
+        $data['pegawai']  = Pegawai::with('jabatan.pegawai_bawahan.jabatan')->get();
+        return view('layouts/pegawai/index',$data);
     }
 
     public function show($id){
@@ -84,4 +78,5 @@ class PegawaiController extends MasterDataController
     private function uploadFoto(Request $request){
         /*todo : handle untuk upload foto*/
     }
+
 }

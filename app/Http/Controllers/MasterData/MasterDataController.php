@@ -9,7 +9,7 @@ class MasterDataController extends Controller
 {
     protected $show_limit = 10;
     protected $query = null;
-    public function __construct()
-    {
+    public function __construct() {
+
     }
 }
