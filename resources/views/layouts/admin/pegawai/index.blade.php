@@ -1,4 +1,4 @@
-@extends('layouts.partial.main')
+@extends('layouts.admin.partial.main')
 @section('content')
   <div class="main">
       <div class="nav-top-container">
@@ -6,7 +6,7 @@
               <span><i class="fas fa-search"></i></span>
               <input type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
           </div>
-          @include('layouts.partial.part.logout')
+          @include('layouts.admin.partial.part.logout')
       </div>
     <div class="main-content">
         <div class="container-fluid">
