@@ -36,20 +36,6 @@
                                   </tr>
                               </thead>
                               <tbody class="list_pegawai">
-                                  {{-- @forelse ($pegawai as $key => $pgw)
-                                    <tr>
-                                        <td>
-                                            <div class="img-user" id="user1" style="background-image: url('{{ asset('assets/images/img-user.png') }}');">
-                                            </div>
-                                        </td>
-                                        <td>{{ $pgw->nip }}</td>
-                                        <td>{{ $pgw->nama }}</td>
-                                        <td>{{ $pgw->jabatan->jabatan }}</td>
-                                        <td>{{ $pgw->jns_kel }}</td>
-                                    </tr>
-                                  @empty
-
-                                  @endforelse --}}
                               </tbody>
                           </table>
                       </div>
