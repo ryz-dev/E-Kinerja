@@ -12,7 +12,7 @@ class PegawaiController extends MasterDataController
 {
     public function index(){
         // $data['pegawai']  = Pegawai::with('jabatan.pegawai_bawahan.jabatan')->get();
-        return view('layouts/pegawai/index');
+        return view('layouts/admin/pegawai/index');
     }
 
     public function show($id){
