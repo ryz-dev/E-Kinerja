@@ -37,30 +37,4 @@
                     <span class="slider round"></span>
                 </label>
             </div>
-        </div>
-        <div class="main">
-            <div class="nav-top-container">
-                <div class="group-search">
-                    <span><i class="fas fa-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
-                </div>
-                <div class="nav-top">
-                    <div class="img-profile" id="user-profile" style="background-image: url('assets/images/img-user.png');">
-                    </div>
-                    <div class="profile">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="profile-img">
-                                    <div class="img-profile" style="background-image: url('assets/images/img-user.png');">
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="profile-name">
-                                    <label>Administrator</label>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="login.html" class="btn btn-block" id="btn-logout">Logout</a>
-                    </div>
-                </div>
-            </div>
+        </div>        
