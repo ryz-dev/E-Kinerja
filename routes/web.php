@@ -18,7 +18,8 @@ Route::get('/', function () {
     return view('layouts/home/index');
 });
 
-Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
+//Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
+Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function (){
     Route::group(['prefix' => 'pegawai'],function (){
         Route::get('','PegawaiController@index');
         Route::get('{id}','PegawaiController@show');

@@ -11,8 +11,14 @@ use Illuminate\Support\Str;
 class PegawaiController extends MasterDataController
 {
     public function index(){
-        $pegawai = Pegawai::with('jabatan.pegawai_bawahan.jabatan')->where('id_jabatan','1')->first();
-        return response()->json($pegawai->toArray());
+        try {
+            $pegawai = Pegawai::with('jabatan.pegawai_bawahan.jabatan')->where('id_jabatan', '1')->firstOrFail();
+            return response()->json($pegawai->toArray());
+        } catch (\Exception $exception){
+            return response()->json([
+                'message' => $exception->getMessage()
+            ],404);
+        }
     }
 
     public function show($id){
