@@ -71,5 +71,4 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
 });
 
 Auth::routes();
-
 Route::get('/home', 'HomeController@index')->name('home');
