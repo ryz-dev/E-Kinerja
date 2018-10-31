@@ -21,6 +21,7 @@ use Illuminate\Http\Request;
 Route::group(['prefix' => '/v1','namespace' => 'API'],function (){
   Route::group(['prefix' => 'pegawai'],function (){
     Route::get('','PegawaiController@listPegawai')->name('list_pegawai');
+    Route::get('get-pagination','PegawaiController@getpage')->name('page_pegawai');
     // Route::get('{id}','PegawaiController@show');
     // Route::post('','PegawaiController@store');
     // Route::post('{id}','PegawaiController@update');

@@ -16,7 +16,7 @@ class PegawaiController extends MasterDataController
       try {
         $pegawai = Pegawai::with('jabatan.pegawai_bawahan.jabatan')
                             ->orderBy('created_at','DESC')
-                            ->paginate(20);
+                            ->paginate($this->show_limit);
         /* Paginate  */
         $paginate = $this->paging($pegawai);
         $data = [
@@ -47,4 +47,12 @@ class PegawaiController extends MasterDataController
           'pagination' => $object
       ];
   }
+
+    public function getPage(){
+        $data = Pegawai::count();
+        $data = ceil($data/$this->show_limit);
+        return response()->json([
+            'halaman' => $data
+        ]);
+    }
 }
