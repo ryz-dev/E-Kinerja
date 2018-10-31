@@ -15,8 +15,9 @@ Route::get('/test', function(){
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layouts/home/index');
 });
+
 Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
     Route::group(['prefix' => 'pegawai'],function (){
         Route::get('','PegawaiController@index');
