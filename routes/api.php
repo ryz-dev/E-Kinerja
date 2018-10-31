@@ -13,6 +13,17 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:api')->get('/v1', function (Request $request) {
+//     return $request->user();
+// });
+
+
+Route::group(['prefix' => '/v1','namespace' => 'API'],function (){
+  Route::group(['prefix' => 'pegawai'],function (){
+    Route::get('','PegawaiController@listPegawai')->name('list_pegawai');
+    // Route::get('{id}','PegawaiController@show');
+    // Route::post('','PegawaiController@store');
+    // Route::post('{id}','PegawaiController@update');
+    // Route::post('delete/{id}','PegawaiController@delete');
+  });
 });
