@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddPasswordToPegawaiTable extends Migration
+class CreateCheckexactTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AddPasswordToPegawaiTable extends Migration
      */
     public function up()
     {
-        Schema::table('pegawai', function (Blueprint $table) {
-            $table->string('password')->nullable()->after('nip');
-            $table->rememberToken();
+        Schema::create('checkexact', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
         });
     }
 
@@ -26,8 +26,6 @@ class AddPasswordToPegawaiTable extends Migration
      */
     public function down()
     {
-        Schema::table('pegawai', function (Blueprint $table) {
-            $table->dropColumn('password');
-        });
+        Schema::dropIfExists('checkexact');
     }
 }

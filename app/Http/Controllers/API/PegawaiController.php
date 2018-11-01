@@ -19,6 +19,7 @@ class PegawaiController extends MasterDataController
                             ->paginate($this->show_limit);
         /* Paginate  */
         $paginate = $this->paging($pegawai);
+
         $data = [
           'response'=>$pegawai,
           'diagnostic'=> [

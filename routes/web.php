@@ -22,10 +22,12 @@ Route::get('/', function () {
 Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function (){
     Route::group(['prefix' => 'pegawai'],function (){
         Route::get('','PegawaiController@index');
-        Route::get('{id}','PegawaiController@show');
-        Route::post('','PegawaiController@store');
-        Route::post('{id}','PegawaiController@update');
-        Route::post('delete/{id}','PegawaiController@delete');
+        Route::get('add','PegawaiController@add')->name('pegawai.add');
+        Route::get('{id}','PegawaiController@show')->name('pegawai.detail');
+        Route::get('edit/{id}','PegawaiController@edit')->name('pegawai.edit');
+        Route::post('','PegawaiController@store')->name('pegawai.store');
+        Route::post('{id}','PegawaiController@update')->name('pegawai.update');
+        Route::post('delete/{id}','PegawaiController@delete')->name('pegawai.delete');
     });
     Route::group(['prefix' => 'eselon'],function (){
         Route::get('','EselonController@index');
@@ -69,6 +71,11 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('{id}','StaticDataController@updateHari');
         Route::post('delete/{id}','StaticDataController@deleteHari');
     });
+});
+
+// absen routing
+Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
+        Route::resource('checkinout','CheckinoutController');
 });
 
 Auth::routes();
