@@ -14,7 +14,7 @@ class AddPasswordToPegawaiTable extends Migration
     public function up()
     {
         Schema::table('pegawai', function (Blueprint $table) {
-            $table->string('password')->after('nip');
+            $table->string('password')->nullable()->after('nip');
             $table->rememberToken();
         });
     }
