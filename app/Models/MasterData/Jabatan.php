@@ -10,6 +10,7 @@ class Jabatan extends Model
     protected $fillable = [
         'jabatan','id_eselon','id_atasan','keterangan','uuid'
     ];
+    protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri'];
 
     public function eselon(){
         return $this->belongsTo(Eselon::class,'id_eselon');
@@ -29,5 +30,21 @@ class Jabatan extends Model
 
     public function pegawai_bawahan(){
         return $this->hasManyThrough(Pegawai::class,Jabatan::class,'id_atasan','id_jabatan');
+    }
+
+    public function getDetailUriAttribute(){
+        return route('jabatan.detail',['id' => $this->id]);
+    }
+
+    public function getDeleteUriAttribute(){
+        return route('jabatan.delete',['id' => $this->uuid]);
+    }
+
+    public function getEditUriAttribute(){
+        return route('jabatan.edit',['id' => $this->id]);
+    }
+
+    public function getUpdateuriAttribute(){
+        return route('jabatan.update',['id' => $this->uuid]);
     }
 }

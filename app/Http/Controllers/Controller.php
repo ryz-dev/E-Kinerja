@@ -10,4 +10,42 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    protected $show_limit = 10;
+    protected $query = null;
+
+    public function ApiSpecResponses($response){
+        $paging = $this->paging($response);
+        $data = [
+            'response' => method_exists($response,'total') ? ($response->toArray())['data'] : $response->toArray(),
+            'diagnostic' => [
+                'code' => 200,
+                'status' => 'HTTP_OK'
+            ]
+        ];
+        if (isset($paging->total)){
+            $data = array_merge($data,[
+                'pagination' => $paging
+            ]);
+        }
+        return response()->json($data,200);
+    }
+
+    public function paging($raw)
+    {
+        $object = new \stdClass;
+        if (method_exists($raw,'total'))
+            $object->total = $raw->total();
+        if (method_exists($raw,'perPage'))
+            $object->per_page = $raw->perPage();
+        if (method_exists($raw,'currentPage'))
+            $object->current_page = $raw->currentPage();
+        if (method_exists($raw,'lastPage'))
+            $object->last_page = $raw->lastPage();
+        if (method_exists($raw,'firstItem'))
+            $object->from = $raw->firstItem();
+        if (method_exists($raw,'lastItem'))
+            $object->to = $raw->lastItem();
+        return $object;
+    }
 }

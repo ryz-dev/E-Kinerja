@@ -4,25 +4,25 @@
       <div class="nav-top-container">
           <div class="group-search">
               <span><i class="fas fa-search"></i></span>
-              <input type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
+              <input type="text" class="form-control" placeholder="Cari Jabatan">
           </div>
           @include('layouts.admin.partial.part.logout')
       </div>
     <div class="main-content">
         <div class="container-fluid">
-            <a href="{{route('pegawai.add')}}" class="btn btn-success">Tambah Pegawai</a>
-            <table class="table table-responsive table-pegawai">
+            <a href="{{route('jabatan.add')}}" class="btn btn-success">Tambah Jabatan</a>
+            <hr>
+          <table class="table table-responsive table-jabatan">
               <thead>
                 <tr>
                   <th scope="col"></th>
-                  <th scope="col">NIP Pegawai</th>
-                  <th scope="col">Nama Pegawai</th>
                   <th scope="col">Jabatan</th>
-                  <th scope="col">Jenis Kelamin</th>
+                  <th scope="col">Eselon</th>
+                  <th scope="col">Atasan</th>
                   <th scope="col">Aksi</th>
                 </tr>
               </thead>
-              <tbody class="list_pegawai">
+              <tbody class="list_jabatan">
               </tbody>
           </table>
           <div class="box-pagination">
@@ -38,7 +38,7 @@
                 });
                 var getPage = function () {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('page_pegawai')}}')
+                    $.get('{{route('page_jabatan')}}')
                         .then(function (res) {
                             $('#pagination').twbsPagination({
                                 totalPages: res.halaman,
@@ -52,20 +52,18 @@
                 var getData = function (page) {
                     var listArr = [];
                     var row = '';
-                    var selector = $('.list_pegawai');
+                    var selector = $('.list_jabatan');
                     $.ajax({
-                        url: "{{ route('list_pegawai') }}?page="+page,
+                        url: "{{ route('list_jabatan') }}?page="+page,
                         data: '',
                         success: function(res) {
                             var data = res.response.map(function (val) {
                                 var row = '';
-                                var foto = val.foto ? "{{url('')}}/storage/"+val.foto : "{{url('assets/images/img-user.png')}}"
                                 row += "<tr>";
-                                row += "<td><div class='img-user' id='user1' style='background-image: url("+foto+");'></div></td>";
-                                row += "<td><a href='"+val.detail_uri+"'>"+val.nip+"</a></td>";
-                                row += "<td>"+val.nama+"</td>";
-                                row += "<td>"+val.jabatan.jabatan+"</td>";
-                                row += "<td>"+val.jns_kel+"</td>";
+                                row += "<td></td>";
+                                row += "<td>"+val.jabatan+"</td>";
+                                row += "<td>"+val.eselon.eselon+"</td>";
+                                row += "<td>"+(val.atasan ? val.atasan.jabatan : '')+"</td>";
                                 row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='"+val.edit_uri+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='"+val.delete_uri+"' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
                                 row += "</tr>";
                                 return row;
@@ -78,13 +76,13 @@
                     e.preventDefault();
                     var delete_uri = $(this).attr('delete-uri');
                     swal({
-                        title: 'Yakin Ingin Menghapus Pegawai?',
+                        title: 'Yakin Ingin Menghapus Jabatan?',
                         text: "Proses tidak dapat di kembalikan",
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Iya, Hapus Pegawai!',
+                        confirmButtonText: 'Iya, Hapus Jabatan!',
                         cancelButtonText: 'Tidak'
                     }).then((result) => {
                         if (result.value) {
@@ -93,7 +91,7 @@
                                 getPage();
                                 swal(
                                     'Terhapus!',
-                                    'Data Pegawai Berhasil Dihapus.',
+                                    'Data Jabatan Berhasil Dihapus.',
                                     'success'
                                 )
                             },function () {

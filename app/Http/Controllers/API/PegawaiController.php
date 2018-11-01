@@ -10,48 +10,47 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 
-class PegawaiController extends MasterDataController
+class PegawaiController extends ApiController
 {
-  public function listPegawai() {
-      try {
-        $pegawai = Pegawai::with('jabatan.pegawai_bawahan.jabatan')
-                            ->orderBy('created_at','DESC')
-                            ->paginate($this->show_limit);
-        /* Paginate  */
-        $paginate = $this->paging($pegawai);
+    public function listPegawai(Request $request)
+    {
+        $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
+        try {
+            $pegawai = Pegawai::with('jabatan','agama')->orderBy('created_at', 'DESC');
+            if ($request->has('q')) {
+                $pegawai = $pegawai->where('nip','like','%'.$request->input('q').'%')
+                    ->orWhere('nama','like','$'.$request->input('q').'%');
+            }
+            $pegawai = $pegawai->paginate($this->show_limit);
+            return $this->ApiSpecResponses($pegawai);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'NOT_FOUND'
+            ], 404);
+        }
+    }
 
-        $data = [
-          'response'=>$pegawai,
-          'diagnostic'=> [
-            'code'=>200,
-            'status'=>'HTTP_OK'
-          ]
-        ];
-        return response()->json($data,200);
-      } catch (Exception $e) {
-        return response()->json([
-          'message'=> 'NOT_FOUND'
-        ],404);
-      }
-  }
+    public function detailPegawai($id){
+        try {
+            $pegawai = Pegawai::with('jabatan','agama')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
+            return $this->ApiSpecResponses($pegawai);
+        } catch (\Exception $exception){
+            return response()->json([
+                'message' => 'NOT_FOUND'
+            ], 404);
+        }
+    }
 
-  public function paging($raw)
-  {
-      $object = new \stdClass;
-      $object->total = $raw->total();
-      $object->per_page = $raw->perPage();
-      $object->current_page = $raw->currentPage();
-      $object->last_page = $raw->lastPage();
-      $object->from = $raw->firstItem();
-      $object->to = $raw->lastItem();
-      return [
-          'pagination' => $object
-      ];
-  }
+    public function addPegawai(Request $request){
+        $pegawai = new \App\Http\Controllers\MasterData\PegawaiController();
+        $data = $pegawai->store($request);
+        return $this->ApiSpecResponses($data);
+    }
 
-    public function getPage(){
+    public function getPage()
+    {
         $data = Pegawai::count();
-        $data = ceil($data/$this->show_limit);
+        $data = ceil($data / $this->show_limit);
         return response()->json([
             'halaman' => $data
         ]);

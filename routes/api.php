@@ -27,4 +27,8 @@ Route::group(['prefix' => '/v1','namespace' => 'API'],function (){
     // Route::post('{id}','PegawaiController@update');
     // Route::post('delete/{id}','PegawaiController@delete');
   });
+  Route::group(['prefix' => 'jabatan'],function (){
+      Route::get('','JabatanController@listJabatan')->name('list_jabatan');
+      Route::get('get-pagination','JabatanController@getpage')->name('page_jabatan');
+  });
 });

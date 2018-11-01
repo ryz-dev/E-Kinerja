@@ -21,7 +21,7 @@ Route::get('/', function () {
 //Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
 Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function (){
     Route::group(['prefix' => 'pegawai'],function (){
-        Route::get('','PegawaiController@index');
+        Route::get('','PegawaiController@index')->name('pegawai.index');
         Route::get('add','PegawaiController@add')->name('pegawai.add');
         Route::get('{id}','PegawaiController@show')->name('pegawai.detail');
         Route::get('edit/{id}','PegawaiController@edit')->name('pegawai.edit');
@@ -44,11 +44,13 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('delete/{id}','HariKerjaController@delete');
     });
     Route::group(['prefix' => 'jabatan'],function (){
-        Route::get('','JabatanController@index');
-        Route::get('{id}','JabatanController@show');
-        Route::post('','JabatanController@store');
-        Route::post('{id}','JabatanController@update');
-        Route::post('delete/{id}','JabatanController@delete');
+        Route::get('','JabatanController@index')->name('jabatan.index');
+        Route::get('add','JabatanController@add')->name('jabatan.add');
+        Route::get('{id}','JabatanController@show')->name('jabatan.detail');
+        Route::get('edit/{id}','JabatanController@edit')->name('jabatan.edit');
+        Route::post('','JabatanController@store')->name('jabatan.store');
+        Route::post('{id}','JabatanController@update')->name('jabatan.update');
+        Route::post('delete/{id}','JabatanController@delete')->name('jabatan.delete');
     });
     Route::group(['prefix' => 'agama'],function (){
         Route::get('','StaticDataController@getAgama');
