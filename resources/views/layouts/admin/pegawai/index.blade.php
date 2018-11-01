@@ -25,9 +25,9 @@
               <tbody class="list_pegawai">
               </tbody>
           </table>
-            <div class="row text-center">
-                <ul class="pagination" id="pagination"></ul>
-            </div>
+          <div class="box-pagination">
+            <ul class="pagination" id="pagination"></ul>
+          </div>
         </div>
     </div>
   </div>

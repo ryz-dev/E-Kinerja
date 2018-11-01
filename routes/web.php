@@ -15,7 +15,7 @@ Route::get('/test', function(){
 });
 
 Route::get('/', function () {
-    return view('layouts/home/index');
+    return view('welcome');
 });
 
 //Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
