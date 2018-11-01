@@ -37,11 +37,12 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('delete/{id}','EselonController@delete');
     });
     Route::group(['prefix' => 'hari-kerja'],function (){
-        Route::get('','HariKerjaController@index');
-        Route::get('{id}','HariKerjaController@show');
-        Route::post('','HariKerjaController@store');
-        Route::post('{id}','HariKerjaController@update');
-        Route::post('delete/{id}','HariKerjaController@delete');
+        Route::get('','HariKerjaController@index')->name('hari_kerja');
+        Route::get('add','HariKerjaController@add')->name('hari_kerja_add');
+        Route::post('','HariKerjaController@store')->name('hari_kerja_store');
+        Route::get('edit/{id}','HariKerjaController@edit')->name('hari_kerja_edit');
+        Route::post('{id}','HariKerjaController@update')->name('hari_kerja_update');
+        /* Route::get('{id}','HariKerjaController@show'); */
     });
     Route::group(['prefix' => 'jabatan'],function (){
         Route::get('','JabatanController@index')->name('jabatan.index');
@@ -73,6 +74,11 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('{id}','StaticDataController@updateHari');
         Route::post('delete/{id}','StaticDataController@deleteHari');
     });
+});
+
+// absen routing
+Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
+        Route::resource('checkinout','CheckinoutController');
 });
 
 Auth::routes();
