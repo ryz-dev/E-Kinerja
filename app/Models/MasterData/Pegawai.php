@@ -18,6 +18,7 @@ class Pegawai extends Authenticatable
     protected $fillable = [
         'nip','nama','tanggal_lahir','id_agama','id_jabatan','jns_kel','tempat_lahir','foto','uuid'
     ];
+    protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri'];
     protected $hidden = ['password'];
 
     public function agama(){
@@ -38,6 +39,22 @@ class Pegawai extends Authenticatable
                 return true;
             }
         }
+    }
+
+    public function getDetailUriAttribute(){
+        return route('pegawai.detail',['id' => $this->nip]);
+    }
+
+    public function getDeleteUriAttribute(){
+        return route('pegawai.delete',['id' => $this->uuid]);
+    }
+
+    public function getEditUriAttribute(){
+        return route('pegawai.edit',['id' => $this->nip]);
+    }
+
+    public function getUpdateuriAttribute(){
+        return route('pegawai.update',['id' => $this->uuid]);
     }
 
 }

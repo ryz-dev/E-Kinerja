@@ -16,8 +16,23 @@ class PegawaiController extends MasterDataController
     }
 
     public function show($id){
-        $pegawai = Pegawai::where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
-        return response()->json($pegawai->toArray());
+        $pegawai = Pegawai::with('jabatan','agama')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
+        return view('layouts.admin.pegawai.detail',compact('pegawai'));
+    }
+
+    public function edit($id){
+        $pegawai = Pegawai::with('jabatan','agama')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
+        $data_option = new \stdClass();
+        $data_option->agama = Agama::get();
+        $data_option->jabatan = Jabatan::get();
+        return view('layouts.admin.pegawai.edit',compact('pegawai','data_option'));
+    }
+
+    public function add(){
+        $data_option = new \stdClass();
+        $data_option->agama = Agama::get();
+        $data_option->jabatan = Jabatan::get();
+        return view('layouts.admin.pegawai.add',compact('data_option'));
     }
 
     public function store(Request $request){
@@ -33,7 +48,9 @@ class PegawaiController extends MasterDataController
         ]);
         $input = $request->input();
         /*upload file foto*/
-        $input['foto'] = $this->uploadFoto($request);
+        if ($request->hasFile('foto')) {
+            $input['foto'] = $this->uploadFoto($request);
+        }
         /*================*/
         $input['uuid'] = (string)Str::uuid();
         $pegawai = Pegawai::create($input);
@@ -51,7 +68,9 @@ class PegawaiController extends MasterDataController
         ]);
         $input = $request->input();
         /*upload file foto*/
-        $input['foto'] = $this->uploadFoto($request);
+        if ($request->hasFile('foto')) {
+            $input['foto'] = $this->uploadFoto($request);
+        }
         /*================*/
         $pegawai->update($input);
         return response()->json($pegawai);
@@ -77,6 +96,9 @@ class PegawaiController extends MasterDataController
 
     private function uploadFoto(Request $request){
         /*todo : handle untuk upload foto*/
+        if ($request->hasFile('foto')) {
+            return str_replace('public/','',$request->file('foto')->store('public/upload/'.$request->input('nip')));
+        }
     }
 
 }
