@@ -33,6 +33,6 @@ Route::group(['prefix' => '/v1','namespace' => 'API'],function (){
       // Route::get('{id}','HariKerjaController@show');
       // Route::post('','HariKerjaController@store');
       // Route::post('{id}','HariKerjaController@update');
-      // Route::post('delete/{id}','HariKerjaController@delete');
+      Route::post('delete','HariKerjaController@delete')->name('delete_hari_kerja');
   });
 });
