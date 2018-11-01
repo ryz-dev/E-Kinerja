@@ -4,8 +4,6 @@
     </div>
     <ul>
         <li><a href="{{route('pegawai.index')}}" class="{{url()->current() == route('pegawai.index') ? 'active' : ''}}">Pegawai</a></li>
-        <li><a href="rekap-bulanan.html">Hari Kerja</a></li>
-        <li><a href="{{ route('pegawai') }}" class="active">Pegawai</a></li>
         <li><a href="{{ route('hari_kerja') }}">Hari Kerja</a></li>
         <li><a href="input-kinerja.html">Eselon</a></li>
         <li><a href="{{route('jabatan.index')}}" class="{{url()->current() == route('jabatan.index') ? 'active' : ''}}">Jabatan</a></li>

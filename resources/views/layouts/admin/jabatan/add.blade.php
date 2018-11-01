@@ -58,32 +58,34 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Iya, simpan data!',
                     cancelButtonText: 'Batalakan'
-                }).then(() => {
-                    $.ajax({
-                        url: action,
-                        type: "POST",
-                        data: formData,
-                        success: function (res) {
-                            swal(
-                                'Berhasil Menyimpan Data!',
-                                '',
-                                'success'
-                            )
-                            setTimeout(function () {
-                                location.href = res.detail_uri
-                            },3000);
-                        },
-                        error: function(){
-                            swal(
-                                'Gagal Menyimpan Data!',
-                                '',
-                                'error'
-                            )
-                        },
-                        cache: false,
-                        contentType: false,
-                        processData: false
-                    });
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            data: formData,
+                            success: function (res) {
+                                swal(
+                                    'Berhasil Menyimpan Data!',
+                                    '',
+                                    'success'
+                                )
+                                setTimeout(function () {
+                                    location.href = res.detail_uri
+                                }, 3000);
+                            },
+                            error: function () {
+                                swal(
+                                    'Gagal Menyimpan Data!',
+                                    '',
+                                    'error'
+                                )
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false
+                        });
+                    }
                 })
             })
         </script>

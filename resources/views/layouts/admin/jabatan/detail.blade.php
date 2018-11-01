@@ -16,7 +16,7 @@
                         </div>
                         <div class="form-group">
                             <label for="atasan">Atasan</label>
-                            <input id="atasan" type="text" class="form-control" name="atasan" placeholder="Atasan" value="{{$jabatan->atasan->jabatan}}" readonly="">
+                            <input id="atasan" type="text" class="form-control" name="atasan" placeholder="Atasan" value="{{$jabatan->atasan ? $jabatan->atasan->jabatan : ''}}" readonly="">
                         </div>
                         <div class="form-group">
                             <label for="keterangan">Keterangan Jabatan</label>
