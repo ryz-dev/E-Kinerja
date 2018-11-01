@@ -60,7 +60,7 @@ class PegawaiController extends MasterDataController
     public function update(Request $request,$id){
         $pegawai = Pegawai::where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
         $this->validate($request,[
-            'nip' => 'unique:pegawai,nip,'.$id.',nip',
+            'nip' => 'unique:pegawai,nip,'.$request->input('nip').',nip',
             'foto' => 'image',
             'id_agama' => 'in:'.$this->getListAgama(),
             'id_jabatan' => 'in:'.$this->getListJabatan(),
@@ -97,7 +97,7 @@ class PegawaiController extends MasterDataController
     private function uploadFoto(Request $request){
         /*todo : handle untuk upload foto*/
         if ($request->hasFile('foto')) {
-            return str_replace('public/','',$request->file('foto')->store('public/upload/'.$request->input('nip')));
+            return str_replace('public/','',$request->file('foto')->store('public/upload'));
         }
     }
 

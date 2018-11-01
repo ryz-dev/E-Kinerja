@@ -35,7 +35,6 @@
             <script>
                 $(document).ready(function(){
                     getPage();
-                    getData(1);
                 });
                 var getPage = function () {
                     $('#pagination').twbsPagination('destroy');
@@ -59,8 +58,9 @@
                         data: '',
                         success: function(res){
                             for(i = 0; i < res.response.data.length; i++) {
+                                var foto = res.response.data[i].foto ? "{{url('')}}/storage/"+res.response.data[i].foto : "{{url('assets/images/img-user.png')}}"
                                 row += "<tr>";
-                                row += "<td><div class='img-user' id='user1' style='background-image: url({{ asset('assets/images/img-user.png') }});'></div></td>";
+                                row += "<td><div class='img-user' id='user1' style='background-image: url("+foto+");'></div></td>";
                                 row += "<td><a href='"+res.response.data[i].detail_uri+"'>"+res.response.data[i].nip+"</a></td>";
                                 row += "<td>"+res.response.data[i].nama+"</td>";
                                 row += "<td>"+res.response.data[i].jabatan.jabatan+"</td>";
@@ -89,7 +89,6 @@
                         $.post(delete_uri)
                             .then(function () {
                                 getPage();
-                                getData(1);
                                 swal(
                                     'Terhapus!',
                                     'Data Pegawai Berhasil Dihapus.',
