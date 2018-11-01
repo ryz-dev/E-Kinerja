@@ -11,18 +11,18 @@ use Illuminate\Support\Str;
 class HariKerjaController extends MasterDataController
 {
     public function index(Request $request){
-        $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        $this->query = $request->has('q') ? $request->input('q') : $this->query;
-        $hari_kerja = new HariKerja();
-        if ($this->query){
-            $hari_kerja = $hari_kerja->where('tanggal','like','%'.$this->query.'%')
-                ->orWhere('bulan','like','%'.$this->query.'%')
-                ->orWhere('hari','like','%'.$this->query.'%')
-                ->orWhere('id_status_hari','like','%'.$this->query.'%')
-                ->orWhere('tahun','like','%'.$this->query.'%');
-        }
-        $hari_kerja = $hari_kerja->paginate($this->show_limit);
-        return response()->json($hari_kerja->toArray());
+        // $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
+        // $this->query = $request->has('q') ? $request->input('q') : $this->query;
+        // $hari_kerja = new HariKerja();
+        // if ($this->query){
+        //     $hari_kerja = $hari_kerja->where('tanggal','like','%'.$this->query.'%')
+        //         ->orWhere('bulan','like','%'.$this->query.'%')
+        //         ->orWhere('hari','like','%'.$this->query.'%')
+        //         ->orWhere('id_status_hari','like','%'.$this->query.'%')
+        //         ->orWhere('tahun','like','%'.$this->query.'%');
+        // }
+        // $hari_kerja = $hari_kerja->paginate($this->show_limit);
+        return view('layouts/admin/harikerja/index');
     }
 
     public function show($id){

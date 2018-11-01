@@ -27,4 +27,12 @@ Route::group(['prefix' => '/v1','namespace' => 'API'],function (){
     // Route::post('{id}','PegawaiController@update');
     // Route::post('delete/{id}','PegawaiController@delete');
   });
+  Route::group(['prefix' => 'hari-kerja'],function (){
+      Route::get('','HariKerjaController@index')->name('list_hari_kerja');
+      Route::get('get-pagination','HariKerjaController@getpage')->name('page_hari_kerja');
+      // Route::get('{id}','HariKerjaController@show');
+      // Route::post('','HariKerjaController@store');
+      // Route::post('{id}','HariKerjaController@update');
+      // Route::post('delete/{id}','HariKerjaController@delete');
+  });
 });

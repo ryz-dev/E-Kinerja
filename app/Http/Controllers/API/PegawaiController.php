@@ -48,11 +48,11 @@ class PegawaiController extends MasterDataController
       ];
   }
 
-    public function getPage(){
-        $data = Pegawai::count();
-        $data = ceil($data/$this->show_limit);
-        return response()->json([
-            'halaman' => $data
-        ]);
-    }
+  public function getPage(){
+      $data = Pegawai::count();
+      $data = ceil($data/$this->show_limit);
+      return response()->json([
+          'halaman' => $data
+      ]);
+  }
 }

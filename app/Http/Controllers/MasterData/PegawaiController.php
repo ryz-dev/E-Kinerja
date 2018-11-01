@@ -11,7 +11,6 @@ use Illuminate\Support\Str;
 class PegawaiController extends MasterDataController
 {
     public function index(){
-//        $data['pegawai']  = Pegawai::with('jabatan.pegawai_bawahan.jabatan')->get();
         return view('layouts/admin/pegawai/index');
     }
 
