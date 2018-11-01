@@ -71,5 +71,10 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
     });
 });
 
+// absen routing
+Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
+        Route::resource('checkinout','CheckinoutController');
+});
+
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
