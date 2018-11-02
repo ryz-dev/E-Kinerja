@@ -53,7 +53,6 @@
                         })
                 };
                 var getData = function (page,search) {
-                    var row = '';
                     var selector = $('.list_pegawai');
                     $.ajax({
                         url: "{{ route('api.web.pegawai') }}?page="+page+'&q='+search,

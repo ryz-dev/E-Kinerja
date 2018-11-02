@@ -4,7 +4,7 @@
       <div class="nav-top-container">
           <div class="group-search">
               <span><i class="fas fa-search"></i></span>
-              <input type="text" class="form-control" placeholder="Cari Jabatan">
+              <input id="search" type="text" class="form-control" placeholder="Cari Jabatan">
           </div>
           @include('layouts.admin.partial.part.logout')
       </div>
@@ -19,6 +19,7 @@
                   <th scope="col">Jabatan</th>
                   <th scope="col">Eselon</th>
                   <th scope="col">Atasan</th>
+                  <th scope="col">Keterangan</th>
                   <th scope="col">Aksi</th>
                 </tr>
               </thead>
@@ -34,27 +35,25 @@
     @push('script')
             <script>
                 $(document).ready(function(){
-                    getPage();
+                    getPage('');
                 });
-                var getPage = function () {
+                var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('page_jabatan')}}')
+                    $.get('{{route('page_jabatan')}}?q='+search)
                         .then(function (res) {
                             $('#pagination').twbsPagination({
                                 totalPages: res.halaman,
                                 visiblePages: 5,
                                 onPageClick: function (event, page) {
-                                    getData(page);
+                                    getData(page,search);
                                 }
                             });
                         })
                 };
-                var getData = function (page) {
-                    var listArr = [];
-                    var row = '';
+                var getData = function (page,search) {
                     var selector = $('.list_jabatan');
                     $.ajax({
-                        url: "{{ route('list_jabatan') }}?page="+page,
+                        url: "{{ route('list_jabatan') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
                             var data = res.response.map(function (val) {
@@ -64,6 +63,7 @@
                                 row += "<td>"+val.jabatan+"</td>";
                                 row += "<td>"+val.eselon.eselon+"</td>";
                                 row += "<td>"+(val.atasan ? val.atasan.jabatan : '')+"</td>";
+                                row += "<td>"+(val.keterangan ? val.keterangan : '')+"</td>";
                                 row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='"+val.edit_uri+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='"+val.delete_uri+"' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
                                 row += "</tr>";
                                 return row;
@@ -103,6 +103,11 @@
                             })
                         }
                     })
+                })
+                $('#search').on('keyup',function (e) {
+                    e.preventDefault();
+                    var search = $(this).val();
+                    getPage(search);
                 })
             </script>
     @endpush

@@ -14,8 +14,8 @@ class EselonController extends ApiController
         try {
             $eselon = Eselon::orderBy('created_at', 'DESC');
             if ($request->has('q')) {
-                $eselon = $eselon->where('eselon','like','%'.$request->input('q').'%')
-                    ->orWhere('tunjangan','like','$'.$request->input('q').'%');
+                $eselon = $eselon->where('eselon', 'like', '%' . $request->input('q') . '%')
+                    ->orWhere('tunjangan', 'like', '$' . $request->input('q') . '%');
             }
             $eselon = $eselon->paginate($this->show_limit);
             return $this->ApiSpecResponses($eselon);
@@ -26,26 +26,33 @@ class EselonController extends ApiController
         }
     }
 
-    public function detailEselon($id){
+    public function detailEselon($id)
+    {
         try {
-            $eselon = Eselon::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+            $eselon = Eselon::where('id', $id)->orWhere('uuid', $id)->firstOrFail();
             return $this->ApiSpecResponses($eselon);
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json([
                 'message' => 'NOT_FOUND'
             ], 404);
         }
     }
 
-    public function addEselon(Request $request){
+    public function addEselon(Request $request)
+    {
         $eselon = new \App\Http\Controllers\MasterData\EselonController();
         $data = $eselon->store($request);
         return $this->ApiSpecResponses($data);
     }
 
-    public function getPage()
+    public function getPage(Request $request)
     {
-        $data = Eselon::count();
+        if ($request->has('q')) {
+            $data = Eselon::where('eselon', 'like', '%' . $request->input('q') . '%')
+                ->orWhere('tunjangan', 'like', '$' . $request->input('q') . '%')->count();
+        } else {
+            $data = Eselon::count();
+        }
         $data = ceil($data / $this->show_limit);
         return response()->json([
             'halaman' => $data

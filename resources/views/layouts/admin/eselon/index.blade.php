@@ -4,7 +4,7 @@
       <div class="nav-top-container">
           <div class="group-search">
               <span><i class="fas fa-search"></i></span>
-              <input type="text" class="form-control" placeholder="Cari Eselon">
+              <input id="search" type="text" class="form-control" placeholder="Cari Eselon">
           </div>
           @include('layouts.admin.partial.part.logout')
       </div>
@@ -34,27 +34,25 @@
     @push('script')
             <script>
                 $(document).ready(function(){
-                    getPage();
+                    getPage('');
                 });
-                var getPage = function () {
+                var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('page_eselon')}}')
+                    $.get('{{route('page_eselon')}}?q='+search)
                         .then(function (res) {
                             $('#pagination').twbsPagination({
                                 totalPages: res.halaman,
                                 visiblePages: 5,
                                 onPageClick: function (event, page) {
-                                    getData(page);
+                                    getData(page,search);
                                 }
                             });
                         })
                 };
-                var getData = function (page) {
-                    var listArr = [];
-                    var row = '';
+                var getData = function (page,search) {
                     var selector = $('.list_eselon');
                     $.ajax({
-                        url: "{{ route('list_eselon') }}?page="+page,
+                        url: "{{ route('list_eselon') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
                             var data = res.response.map(function (val) {
@@ -103,6 +101,11 @@
                             })
                         }
                     })
+                })
+                $('#search').on('keyup',function (e) {
+                    e.preventDefault();
+                    var search = $(this).val();
+                    getPage(search);
                 })
             </script>
     @endpush
