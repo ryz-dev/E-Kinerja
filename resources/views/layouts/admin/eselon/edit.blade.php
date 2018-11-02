@@ -56,7 +56,7 @@
                                     'success'
                                 )
                                 setTimeout(function () {
-                                    location.href = res.detail_uri
+                                    location.href = res.response.detail_uri
                                 }, 3000);
                             },
                             error: function () {

@@ -81,6 +81,28 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     Route::group(['prefix' => 'pegawai'],function (){
         Route::get('','PegawaiController@listPegawai')->name('api.web.pegawai');
         Route::get('get-pagination','PegawaiController@getpage')->name('api.web.pegawai.page');
+        Route::post('store','PegawaiController@storePegawai')->name('api.web.pegawai.store');
+        Route::post('{id}','PegawaiController@updatePegawai')->name('api.web.pegawai.update');
+        Route::post('delete/{id}','PegawaiController@deletePegawai')->name('api.web.pegawai.delete');
+    });
+    Route::group(['prefix' => 'hari-kerja'],function (){
+//        Route::get('','HariKerjaController@index')->name('list_hari_kerja');
+//        Route::get('get-pagination','HariKerjaController@getpage')->name('page_hari_kerja');
+//        Route::post('delete','HariKerjaController@delete')->name('delete_hari_kerja');
+    });
+    Route::group(['prefix' => 'jabatan'],function (){
+        Route::get('','JabatanController@listJabatan')->name('api.web.jabatan');
+        Route::get('get-pagination','JabatanController@getpage')->name('api.web.jabatan.page');
+        Route::post('store','JabatanController@storeJabatan')->name('api.web.jabatan.store');
+        Route::post('{id}','JabatanController@updateJabatan')->name('api.web.jabatan.update');
+        Route::post('delete/{id}','JabatanController@deleteJabatan')->name('api.web.jabatan.delete');
+    });
+    Route::group(['prefix' => 'eselon'],function (){
+        Route::get('','EselonController@listEselon')->name('api.web.eselon');
+        Route::get('get-pagination','EselonController@getpage')->name('api.web.eselon.page');
+        Route::post('store','EselonController@storeEselon')->name('api.web.eselon.store');
+        Route::post('{id}','EselonController@updateEselon')->name('api.web.eselon.update');
+        Route::post('delete/{id}','EselonController@deleteEselon')->name('api.web.eselon.delete');
     });
 });
 

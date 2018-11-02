@@ -43,7 +43,7 @@
                 });
                 var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('page_eselon')}}?q='+search)
+                    $.get('{{route('api.web.eselon.page')}}?q='+search)
                         .then(function (res) {
                             $('#pagination').twbsPagination({
                                 totalPages: res.halaman,
@@ -58,7 +58,7 @@
                     var selector = $('.list_eselon');
                     $('.loading').show();
                     $.ajax({
-                        url: "{{ route('list_eselon') }}?page="+page+'&q='+search,
+                        url: "{{ route('api.web.eselon') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
                             var data = res.response.map(function (val) {
@@ -82,6 +82,7 @@
                 $(document).on('click','.btn-delete',function (e) {
                     e.preventDefault();
                     var delete_uri = $(this).attr('delete-uri');
+                    var search = $('#search').val();
                     swal({
                         title: 'Yakin Ingin Menghapus Eselon?',
                         text: "Proses tidak dapat di kembalikan",
@@ -94,7 +95,7 @@
                         if (result.value) {
                         $.post(delete_uri)
                             .then(function () {
-                                getPage();
+                                getPage(search);
                                 swal(
                                     'Terhapus!',
                                     'Data Eselon Berhasil Dihapus.',

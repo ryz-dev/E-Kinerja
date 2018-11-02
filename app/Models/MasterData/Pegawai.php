@@ -46,7 +46,7 @@ class Pegawai extends Authenticatable
     }
 
     public function getDeleteUriAttribute(){
-        return route('pegawai.delete',['id' => $this->uuid]);
+        return route('api.web.pegawai.delete',['id' => $this->uuid]);
     }
 
     public function getEditUriAttribute(){
@@ -54,7 +54,7 @@ class Pegawai extends Authenticatable
     }
 
     public function getUpdateuriAttribute(){
-        return route('pegawai.update',['id' => $this->uuid]);
+        return route('api.web.pegawai.update',['id' => $this->uuid]);
     }
 
 }
