@@ -39,4 +39,8 @@ Route::group(['prefix' => '/v1','namespace' => 'API'],function (){
       Route::get('','JabatanController@listJabatan')->name('list_jabatan');
       Route::get('get-pagination','JabatanController@getpage')->name('page_jabatan');
   });
+  Route::group(['prefix' => 'eselon'],function (){
+      Route::get('','EselonController@listEselon')->name('list_eselon');
+      Route::get('get-pagination','EselonController@getpage')->name('page_eselon');
+  });
 });

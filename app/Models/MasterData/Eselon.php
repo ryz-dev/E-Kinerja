@@ -10,8 +10,29 @@ class Eselon extends Model
     protected $fillable = [
         'eselon','tunjangan','keterangan','uuid'
     ];
+    protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri','tunjangan_rp'];
 
     public function jabatan(){
         return $this->hasMany(Jabatan::class,'id_eselon');
+    }
+
+    public function getDetailUriAttribute(){
+        return route('eselon.detail',['id' => $this->id]);
+    }
+
+    public function getDeleteUriAttribute(){
+        return route('eselon.delete',['id' => $this->uuid]);
+    }
+
+    public function getEditUriAttribute(){
+        return route('eselon.edit',['id' => $this->id]);
+    }
+
+    public function getUpdateuriAttribute(){
+        return route('eselon.update',['id' => $this->uuid]);
+    }
+
+    public function getTunjanganRpAttribute(){
+        return number_format($this->tunjangan,'0',',','.');
     }
 }

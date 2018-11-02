@@ -4,8 +4,8 @@
     </div>
     <ul>
         <li><a href="{{route('pegawai.index')}}" class="{{url()->current() == route('pegawai.index') ? 'active' : ''}}">Pegawai</a></li>
-        <li><a href="{{ route('hari_kerja') }}">Hari Kerja</a></li>
-        <li><a href="input-kinerja.html">Eselon</a></li>
+        <li><a href="{{route('hari_kerja')}}" class="{{url()->current() == route('hari_kerja') ? 'active' : ''}}">Hari Kerja</a></li>
+        <li><a href="{{route('eselon.index')}}" class="{{url()->current() == route('eselon.index') ? 'active' : ''}}">Eselon</a></li>
         <li><a href="{{route('jabatan.index')}}" class="{{url()->current() == route('jabatan.index') ? 'active' : ''}}">Jabatan</a></li>
         {{--<li><a href="penilaian-etika.html">Penilaian Etika</a></li>--}}
         {{--<li><a href="tunjangan-kinerja.html">Tunjangan Kinerja</a></li>--}}

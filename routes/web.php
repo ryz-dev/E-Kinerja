@@ -30,11 +30,13 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('delete/{id}','PegawaiController@delete')->name('pegawai.delete');
     });
     Route::group(['prefix' => 'eselon'],function (){
-        Route::get('','EselonController@index');
-        Route::get('{id}','EselonController@show');
-        Route::post('','EselonController@store');
-        Route::post('{id}','EselonController@update');
-        Route::post('delete/{id}','EselonController@delete');
+        Route::get('','EselonController@index')->name('eselon.index');
+        Route::get('add','EselonController@add')->name('eselon.add');
+        Route::get('{id}','EselonController@show')->name('eselon.detail');
+        Route::get('edit/{id}','EselonController@edit')->name('eselon.edit');
+        Route::post('','EselonController@store')->name('eselon.store');
+        Route::post('{id}','EselonController@update')->name('eselon.update');
+        Route::post('delete/{id}','EselonController@delete')->name('eselon.delete');
     });
     Route::group(['prefix' => 'hari-kerja'],function (){
         Route::get('','HariKerjaController@index')->name('hari_kerja');
