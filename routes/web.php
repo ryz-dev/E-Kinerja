@@ -20,6 +20,9 @@ Route::get('/', function () {
 
 //Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
 Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function (){
+    Route::get('',function() {
+      return view('layouts/admin/home/index');
+    });
     Route::group(['prefix' => 'pegawai'],function (){
         Route::get('','PegawaiController@index')->name('pegawai.index');
         Route::get('add','PegawaiController@add')->name('pegawai.add');
@@ -108,7 +111,7 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
 
 // absen routing
 Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
-        Route::resource('checkinout','CheckinoutController');
+  Route::resource('checkinout','CheckinoutController');
 });
 
 Auth::routes();

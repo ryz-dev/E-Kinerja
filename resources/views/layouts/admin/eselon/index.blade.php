@@ -13,26 +13,26 @@
             <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
         </div>
         <div class="container-fluid">
-            <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Eselon</a>
-            <hr>
-            <div class="table-responsive">
-                <table class="table table-eselon">
-                    <thead>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Eselon</th>
-                        <th scope="col">Tunjangan</th>
-                        <th scope="col">Keterangan</th>
-                        <th scope="col">Aksi</th>
-                    </tr>
-                    </thead>
-                    <tbody class="list_eselon">
-                    </tbody>
-                </table>
-                <div class="box-pagination">
-                    <ul class="pagination" id="pagination"></ul>
-                </div>
-            </div>
+          <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Eselon</a>
+          <hr>
+          <div class="table-responsive">
+            <table class="table table-eselon">
+              <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Eselon</th>
+                  <th scope="col">Tunjangan</th>
+                  <th scope="col">Keterangan</th>
+                  <th scope="col">Aksi</th>
+                </tr>
+              </thead>
+              <tbody class="list_eselon">
+              </tbody>
+            </table>
+          </div>
+          <div class="box-pagination">
+            <ul class="pagination" id="pagination"></ul>
+          </div>
         </div>
     </div>
   </div>

@@ -1,6 +1,8 @@
 <div class="sidebar1">
     <div class="brand">
-        <img src="{{ asset('assets/images/logo.svg') }}" width="120">
+        <a href="{{ url('/master-data') }}">
+          <img src="{{ asset('assets/images/logo.svg') }}" width="120">
+        </a>
     </div>
     <ul>
         <li><a href="{{route('pegawai.index')}}" class="{{str_contains(url()->current(),route('pegawai.index')) ? 'active' : ''}}">Pegawai</a></li>
