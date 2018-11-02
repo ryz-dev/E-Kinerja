@@ -12,19 +12,21 @@
         <div class="container-fluid">
             <a href="{{route('jabatan.add')}}" class="btn btn-success">Tambah Jabatan</a>
             <hr>
-          <table class="table table-responsive table-jabatan">
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">Jabatan</th>
-                  <th scope="col">Eselon</th>
-                  <th scope="col">Atasan</th>
-                  <th scope="col">Aksi</th>
-                </tr>
-              </thead>
-              <tbody class="list_jabatan">
-              </tbody>
-          </table>
+            <div class="table-responsive">
+              <table class="table table-jabatan">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Jabatan</th>
+                    <th scope="col">Eselon</th>
+                    <th scope="col">Atasan</th>
+                    <th scope="col">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="list_jabatan">
+                </tbody>
+              </table>              
+            </div>
           <div class="box-pagination">
             <ul class="pagination" id="pagination"></ul>
           </div>

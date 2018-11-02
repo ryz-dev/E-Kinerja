@@ -10,9 +10,10 @@
       </div>
     <div class="main-content">
         <div class="container-fluid">
-            <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Eselon</a>
-            <hr>
-          <table class="table table-responsive table-eselon">
+          <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Eselon</a>
+          <hr>
+          <div class="table-responsive">
+            <table class="table table-eselon">
               <thead>
                 <tr>
                   <th scope="col"></th>
@@ -24,7 +25,8 @@
               </thead>
               <tbody class="list_eselon">
               </tbody>
-          </table>
+            </table>
+          </div>
           <div class="box-pagination">
             <ul class="pagination" id="pagination"></ul>
           </div>
