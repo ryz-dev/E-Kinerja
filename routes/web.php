@@ -79,6 +79,9 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('{id}','StaticDataController@updateHari');
         Route::post('delete/{id}','StaticDataController@deleteHari');
     });
+    Route::group(['prefix' => 'role-pegawai'], function(){
+        Route::get('','RolePegawaiController@index');
+    });
 });
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     Route::group(['prefix' => 'pegawai'],function (){
@@ -107,6 +110,11 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::post('{id}','EselonController@updateEselon')->name('api.web.eselon.update');
         Route::post('delete/{id}','EselonController@deleteEselon')->name('api.web.eselon.delete');
     });
+    Route::group(['prefix'=> 'role-pegawai'], function(){
+        Route::get('', 'RolePegawaiController@listRole')->name('api.web.list.role');
+        Route::get('get-paginate', 'RolePegawaiController@getPage')->name('api.web.page.role.pegawai');
+      });
+    
 });
 
 // absen routing
