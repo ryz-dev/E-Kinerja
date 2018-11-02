@@ -19,10 +19,10 @@
               <table class="table table-jabatan">
                 <thead>
                   <tr>
-                    <th scope="col"></th>
                     <th scope="col">Jabatan</th>
                     <th scope="col">Eselon</th>
                     <th scope="col">Atasan</th>
+                    <th scope="col">Keterangan</th>
                     <th scope="col">Aksi</th>
                   </tr>
                 </thead>
@@ -64,7 +64,6 @@
                             var data = res.response.map(function (val) {
                                 var row = '';
                                 row += "<tr>";
-                                row += "<td></td>";
                                 row += "<td>"+val.jabatan+"</td>";
                                 row += "<td>"+val.eselon.eselon+"</td>";
                                 row += "<td>"+(val.atasan ? val.atasan.jabatan : '')+"</td>";

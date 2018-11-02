@@ -10,13 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/test', function(){
-    dd(\App\Models\MasterData\Role::find(1)->permissions);
-});
 
-Route::get('/', function () {
-    return view('welcome');
-});
+/*
+  Route Admin
+*/
 
 //Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
 Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function (){
@@ -87,10 +84,24 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     });
 });
 
-// absen routing
+/*
+  Route User
+*/
+
+
+/* Absen Routing */
 Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
   Route::resource('checkinout','CheckinoutController');
 });
 
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
+
+
+// Route::get('/test', function(){
+//     dd(\App\Models\MasterData\Role::find(1)->permissions);
+// });
+//
+// Route::get('/', function () {
+//     return view('welcome');
+// });
