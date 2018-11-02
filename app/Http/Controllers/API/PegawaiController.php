@@ -41,9 +41,21 @@ class PegawaiController extends ApiController
         }
     }
 
-    public function addPegawai(Request $request){
+    public function storePegawai(Request $request){
         $pegawai = new \App\Http\Controllers\MasterData\PegawaiController();
-        $data = $pegawai->store($request);
+        $data = $pegawai->store($request,false);
+        return $this->ApiSpecResponses($data);
+    }
+
+    public function updatePegawai(Request $request,$id){
+        $pegawai = new \App\Http\Controllers\MasterData\PegawaiController();
+        $data = $pegawai->update($request,$id,false);
+        return $this->ApiSpecResponses($data);
+    }
+
+    public function deletePegawai($id){
+        $pegawai = new \App\Http\Controllers\MasterData\PegawaiController();
+        $data = $pegawai->delete($id,false);
         return $this->ApiSpecResponses($data);
     }
 

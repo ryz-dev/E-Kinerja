@@ -36,9 +36,21 @@ class JabatanController extends ApiController
         }
     }
 
-    public function addJabatan(Request $request){
+    public function storeJabatan(Request $request){
         $jabatan = new \App\Http\Controllers\MasterData\JabatanController();
-        $data = $jabatan->store($request);
+        $data = $jabatan->store($request,false);
+        return $this->ApiSpecResponses($data);
+    }
+
+    public function updateJabatan(Request $request,$id){
+        $jabatan = new \App\Http\Controllers\MasterData\JabatanController();
+        $data = $jabatan->update($request,$id,false);
+        return $this->ApiSpecResponses($data);
+    }
+
+    public function deleteJabatan($id){
+        $jabatan = new \App\Http\Controllers\MasterData\JabatanController();
+        $data = $jabatan->delete($id,false);
         return $this->ApiSpecResponses($data);
     }
 

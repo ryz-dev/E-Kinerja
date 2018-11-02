@@ -17,7 +17,7 @@ class Controller extends BaseController
     public function ApiSpecResponses($response){
         $paging = $this->paging($response);
         $data = [
-            'response' => method_exists($response,'total') ? ($response->toArray())['data'] : $response->toArray(),
+            'response' => method_exists($response,'total') ? ($response->toArray())['data'] : $response,
             'diagnostic' => [
                 'code' => 200,
                 'status' => 'HTTP_OK'

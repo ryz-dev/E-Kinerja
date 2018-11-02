@@ -31,7 +31,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="keterangan">Keterangan Jabatan</label>
-                                <textarea name="keterangan" id="keterangan" rows="3" class="form-control"></textarea>
+                                <textarea name="keterangan" id="keterangan" rows="3" class="form-control">{{$jabatan->keterangan}}</textarea>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -70,7 +70,7 @@
                                     'success'
                                 )
                                 setTimeout(function () {
-                                    location.href = res.detail_uri
+                                    location.href = res.response.detail_uri
                                 }, 3000);
                             },
                             error: function () {

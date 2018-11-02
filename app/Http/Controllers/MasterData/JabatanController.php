@@ -43,7 +43,7 @@ class JabatanController extends MasterDataController
         return view('layouts.admin.jabatan.edit',compact('jabatan','data_option'));
     }
 
-    public function store(Request $request){
+    public function store(Request $request,$json = true){
         $this->validate($request,[
             'jabatan' => 'required',
             'id_eselon' => 'required|in:'.$this->getListEselon(),
@@ -53,10 +53,12 @@ class JabatanController extends MasterDataController
         $input['uuid'] = (string)Str::uuid();
 
         $agama = Jabatan::create($input);
+        if ($json)
         return response()->json($agama->toArray());
+        return $agama;
     }
 
-    public function update(Request $request,$id){
+    public function update(Request $request,$id,$json = true){
         $jabatan = Jabatan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
         $this->validate($request,[
             'jabatan' => 'required',
@@ -65,17 +67,23 @@ class JabatanController extends MasterDataController
         ]);
         $input = $request->input();
         $jabatan->update($input);
+        if ($json)
         return response()->json($jabatan->toArray());
+        return $jabatan;
     }
 
-    public function delete($id){
+    public function delete($id,$json=true){
         $jabatan = Jabatan::whereId($id)->orWhere('uuid',$id)->firstOrFail();
         try {
             $jabatan->delete();
         } catch (\Exception $exception){}
+        if ($json)
         return response()->json([
             'message' => 'berhasil menghapus data'
         ]);
+        return [
+            'message' => 'berhasil menghapus data'
+        ];
     }
 
     private function getListEselon(){

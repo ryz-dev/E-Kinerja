@@ -3,7 +3,7 @@
     <div class="main">
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-jabatan" action="{{route('jabatan.store')}}" class="form">
+                <form id="form-store-jabatan" action="{{route('api.web.jabatan.store')}}" class="form">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">Tambah Jabatan</h2>
@@ -70,7 +70,7 @@
                                     'success'
                                 )
                                 setTimeout(function () {
-                                    location.href = res.detail_uri
+                                    location.href = res.response.detail_uri
                                 }, 3000);
                             },
                             error: function () {

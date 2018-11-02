@@ -34,7 +34,7 @@ class PegawaiController extends MasterDataController
         return view('layouts.admin.pegawai.add',compact('data_option'));
     }
 
-    public function store(Request $request){
+    public function store(Request $request,$json = true){
         $this->validate($request,[
             'nip' => 'required|unique:pegawai,nip',
             'foto' => 'image',
@@ -53,10 +53,13 @@ class PegawaiController extends MasterDataController
         /*================*/
         $input['uuid'] = (string)Str::uuid();
         $pegawai = Pegawai::create($input);
-        return response()->json($pegawai);
+        if ($json) {
+            return response()->json($pegawai);
+        }
+        return $pegawai;
     }
 
-    public function update(Request $request,$id){
+    public function update(Request $request,$id,$json = true){
         $pegawai = Pegawai::where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
         $this->validate($request,[
             'nip' => 'unique:pegawai,nip,'.$request->input('nip').',nip',
@@ -72,17 +75,25 @@ class PegawaiController extends MasterDataController
         }
         /*================*/
         $pegawai->update($input);
+        if ($json)
         return response()->json($pegawai);
+
+        return $pegawai;
     }
 
-    public function delete($id){
+    public function delete($id,$json = true){
         $pegawai = Pegawai::where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
         try {
             $pegawai->delete();
         } catch (\Exception $exception){}
+        if ($json)
         return response()->json([
             'message' => 'data berhasil dihapus'
         ]);
+
+        return [
+            'message' => 'data berhasil dihapus'
+        ];
     }
 
     private function getListAgama(){
