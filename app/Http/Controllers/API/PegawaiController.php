@@ -19,7 +19,7 @@ class PegawaiController extends ApiController
             $pegawai = Pegawai::with('jabatan','agama')->orderBy('created_at', 'DESC');
             if ($request->has('q')) {
                 $pegawai = $pegawai->where('nip','like','%'.$request->input('q').'%')
-                    ->orWhere('nama','like','$'.$request->input('q').'%');
+                    ->orWhere('nama','like','%'.$request->input('q').'%');
             }
             $pegawai = $pegawai->paginate($this->show_limit);
             return $this->ApiSpecResponses($pegawai);
@@ -47,9 +47,15 @@ class PegawaiController extends ApiController
         return $this->ApiSpecResponses($data);
     }
 
-    public function getPage()
+    public function getPage(Request $request)
     {
-        $data = Pegawai::count();
+        if ($request->has('q')) {
+            $data = Pegawai::where('nip','like','%'.$request->input('q').'%')
+                ->orWhere('nama','like','%'.$request->input('q').'%')
+                ->count();
+        } else {
+            $data = Pegawai::count();
+        }
         $data = ceil($data / $this->show_limit);
         return response()->json([
             'halaman' => $data

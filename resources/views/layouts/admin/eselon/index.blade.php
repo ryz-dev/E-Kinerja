@@ -4,11 +4,14 @@
       <div class="nav-top-container">
           <div class="group-search">
               <span><i class="fas fa-search"></i></span>
-              <input type="text" class="form-control" placeholder="Cari Eselon">
+              <input id="search" type="text" class="form-control" placeholder="Cari Eselon">
           </div>
           @include('layouts.admin.partial.part.logout')
       </div>
     <div class="main-content">
+        <div class="loading">
+            <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+        </div>
         <div class="container-fluid">
           <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Eselon</a>
           <hr>
@@ -36,27 +39,26 @@
     @push('script')
             <script>
                 $(document).ready(function(){
-                    getPage();
+                    getPage('');
                 });
-                var getPage = function () {
+                var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('page_eselon')}}')
+                    $.get('{{route('page_eselon')}}?q='+search)
                         .then(function (res) {
                             $('#pagination').twbsPagination({
                                 totalPages: res.halaman,
                                 visiblePages: 5,
                                 onPageClick: function (event, page) {
-                                    getData(page);
+                                    getData(page,search);
                                 }
                             });
                         })
                 };
-                var getData = function (page) {
-                    var listArr = [];
-                    var row = '';
+                var getData = function (page,search) {
                     var selector = $('.list_eselon');
+                    $('.loading').show();
                     $.ajax({
-                        url: "{{ route('list_eselon') }}?page="+page,
+                        url: "{{ route('list_eselon') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
                             var data = res.response.map(function (val) {
@@ -64,13 +66,16 @@
                                 row += "<tr>";
                                 row += "<td></td>";
                                 row += "<td>"+val.eselon+"</td>";
-                                row += "<td>"+val.tunjangan_rp+"</td>";
+                                row += "<td>Rp."+val.tunjangan_rp+"</td>";
                                 row += "<td>"+(val.keterangan ? val.keterangan : '')+"</td>";
                                 row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='"+val.edit_uri+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='"+val.delete_uri+"' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
                                 row += "</tr>";
                                 return row;
                             })
                             selector.html(data.join(''));
+                        },
+                        complete : function () {
+                            $('.loading').hide();
                         }
                     });
                 }
@@ -82,8 +87,7 @@
                         text: "Proses tidak dapat di kembalikan",
                         type: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#d33',
                         confirmButtonText: 'Iya, Hapus Eselon!',
                         cancelButtonText: 'Tidak'
                     }).then((result) => {
@@ -100,11 +104,16 @@
                                 swal(
                                     'Gagal Menghapus Data',
                                     '',
-                                    'warning'
+                                    'error'
                                 )
                             })
                         }
                     })
+                })
+                $('#search').on('keyup',function (e) {
+                    e.preventDefault();
+                    var search = $(this).val();
+                    getPage(search);
                 })
             </script>
     @endpush

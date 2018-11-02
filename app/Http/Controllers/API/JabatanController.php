@@ -42,9 +42,13 @@ class JabatanController extends ApiController
         return $this->ApiSpecResponses($data);
     }
 
-    public function getPage()
+    public function getPage(Request $request)
     {
-        $data = Jabatan::count();
+        if ($request->has('q')) {
+            $data = Jabatan::where('jabatan','like','%'.$request->input('q').'%')->count();
+        } else {
+            $data = Jabatan::count();
+        }
         $data = ceil($data / $this->show_limit);
         return response()->json([
             'halaman' => $data

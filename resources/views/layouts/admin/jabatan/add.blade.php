@@ -55,7 +55,6 @@
                     text: "",
                     type: 'warning',
                     showCancelButton: true,
-                    cancelButtonColor: '#d33',
                     confirmButtonText: 'Iya, simpan data!',
                     cancelButtonText: 'Batalakan'
                 }).then((result) => {

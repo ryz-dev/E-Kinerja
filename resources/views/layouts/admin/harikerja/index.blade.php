@@ -42,13 +42,13 @@
     <script>
       $(document).ready(function(){
         getPage('');
-        getData('',1);
+        // getData('',1);
         var getKey = '';
       });
 
       $("#search").on("change",function(e) {
         var getkey = this.value.replace(/(\d\d)\/(\d\d)\/(\d{4})/, "$3-$1-$2");
-        getData(getkey,1);
+        // getData(getkey,1);
         getPage(getkey);
       });
 
@@ -110,8 +110,7 @@
             text: "Proses tidak dapat di kembalikan",
             type: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#d33',
             confirmButtonText: 'Hapus'
           }).then((result) => {
             if (result.value) {
