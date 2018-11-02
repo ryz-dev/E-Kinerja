@@ -77,6 +77,12 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('delete/{id}','StaticDataController@deleteHari');
     });
 });
+Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
+    Route::group(['prefix' => 'pegawai'],function (){
+        Route::get('','PegawaiController@listPegawai')->name('api.web.pegawai');
+        Route::get('get-pagination','PegawaiController@getpage')->name('api.web.pegawai.page');
+    });
+});
 
 // absen routing
 Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
