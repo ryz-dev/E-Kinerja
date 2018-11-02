@@ -9,25 +9,30 @@
         @include('layouts.admin.partial.part.logout')
     </div>
     <div class="main-content">
+        <div class="loading">
+            <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+        </div>
         <div class="container-fluid">
           <a href="{{route('pegawai.add')}}" class="btn btn-success">Tambah Pegawai</a>
-          <table class="table table-responsive table-pegawai">
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">NIP Pegawai</th>
-                  <th scope="col">Nama Pegawai</th>
-                  <th scope="col">Jabatan</th>
-                  <th scope="col">Jenis Kelamin</th>
-                  <th scope="col">Aksi</th>
-                </tr>
-              </thead>
-              <tbody class="list_pegawai">
-              </tbody>
-          </table>
-          <div class="box-pagination">
-            <ul class="pagination" id="pagination"></ul>
-          </div>
+            <div class="table-responsive">
+                <table class="table table-pegawai">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">NIP Pegawai</th>
+                        <th scope="col">Nama Pegawai</th>
+                        <th scope="col">Jabatan</th>
+                        <th scope="col">Jenis Kelamin</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                    </thead>
+                    <tbody class="list_pegawai">
+                    </tbody>
+                </table>
+                <div class="box-pagination">
+                    <ul class="pagination" id="pagination"></ul>
+                </div>
+            </div>
         </div>
     </div>
   </div>
@@ -54,6 +59,7 @@
                 };
                 var getData = function (page,search) {
                     var selector = $('.list_pegawai');
+                    $('.loading').show();
                     $.ajax({
                         url: "{{ route('api.web.pegawai') }}?page="+page+'&q='+search,
                         data: '',
@@ -76,6 +82,9 @@
                             } else {
                                 selector.html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>'+search+'</i>" Tidak Ditemukan</td></tr>')
                             }
+                        },
+                        complete: function () {
+                            $('.loading').hide();
                         }
                     });
                 }
@@ -88,8 +97,7 @@
                         text: "Proses tidak dapat di kembalikan",
                         type: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#d33',
                         confirmButtonText: 'Iya, Hapus Pegawai!',
                         cancelButtonText: 'Tidak'
                     }).then((result) => {
@@ -106,7 +114,7 @@
                                 swal(
                                     'Gagal Menghapus Data',
                                     '',
-                                    'warning'
+                                    'error'
                                 )
                             })
                         }

@@ -9,26 +9,31 @@
           @include('layouts.admin.partial.part.logout')
       </div>
     <div class="main-content">
+        <div class="loading">
+            <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+        </div>
         <div class="container-fluid">
             <a href="{{route('jabatan.add')}}" class="btn btn-success">Tambah Jabatan</a>
             <hr>
-          <table class="table table-responsive table-jabatan">
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">Jabatan</th>
-                  <th scope="col">Eselon</th>
-                  <th scope="col">Atasan</th>
-                  <th scope="col">Keterangan</th>
-                  <th scope="col">Aksi</th>
-                </tr>
-              </thead>
-              <tbody class="list_jabatan">
-              </tbody>
-          </table>
-          <div class="box-pagination">
-            <ul class="pagination" id="pagination"></ul>
-          </div>
+            <div class="table-responsive">
+                <table class="table table-jabatan">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Jabatan</th>
+                        <th scope="col">Eselon</th>
+                        <th scope="col">Atasan</th>
+                        <th scope="col">Keterangan</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                    </thead>
+                    <tbody class="list_jabatan">
+                    </tbody>
+                </table>
+                <div class="box-pagination">
+                    <ul class="pagination" id="pagination"></ul>
+                </div>
+            </div>
         </div>
     </div>
   </div>
@@ -52,6 +57,7 @@
                 };
                 var getData = function (page,search) {
                     var selector = $('.list_jabatan');
+                    $('.loading').show();
                     $.ajax({
                         url: "{{ route('list_jabatan') }}?page="+page+'&q='+search,
                         data: '',
@@ -69,6 +75,9 @@
                                 return row;
                             })
                             selector.html(data.join(''));
+                        },
+                        complete : function () {
+                            $('.loading').hide();
                         }
                     });
                 }
@@ -80,8 +89,7 @@
                         text: "Proses tidak dapat di kembalikan",
                         type: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#d33',
                         confirmButtonText: 'Iya, Hapus Jabatan!',
                         cancelButtonText: 'Tidak'
                     }).then((result) => {
@@ -98,7 +106,7 @@
                                 swal(
                                     'Gagal Menghapus Data',
                                     '',
-                                    'warning'
+                                    'error'
                                 )
                             })
                         }

@@ -18,13 +18,13 @@ class HariKerjaController extends MasterDataController
       $this->query = $request->has('q') ? $request->input('q') : $this->query;
 
       /* Proses query */
-      $hariKerja = HariKerja::with('StatusHari')
+      $hariKerja = HariKerja::with('StatusHari','Bulan','Hari')
       ->where('tanggal','like','%'.$this->query.'%')
       ->orWhere('bulan','like','%'.$this->query.'%')
       ->orWhere('hari','like','%'.$this->query.'%')
       ->orWhere('id_status_hari','like','%'.$this->query.'%')
       ->orWhere('tahun','like','%'.$this->query.'%')
-      ->paginate(20);
+      ->paginate($this->show_limit);
 
       if (!$hariKerja->isEmpty()) {
         /* Paginate  */
@@ -37,8 +37,8 @@ class HariKerjaController extends MasterDataController
             'url_edit'=>route('hari_kerja_edit',['id'=>$value->id]),
             'status_hari'=>json_decode($value)->status_hari->status_hari,
             'tanggal'=>$value->tanggal,
-            'hari'=>$value->hari,
-            'bulan'=>$value->bulan,
+            'hari'=>ucfirst($value->Hari->nama_hari),
+            'bulan'=>ucfirst($value->Bulan->nama_bulan),
             'tahun'=>$value->tahun
           ];
         }
@@ -78,16 +78,15 @@ class HariKerjaController extends MasterDataController
       $this->query = $request->has('q') ? $request->input('q') : $this->query;
 
       /* Proses query */
-      $data = HariKerja::with('StatusHari')
-      ->where('tanggal','like','%'.$this->query.'%')
+      $data = HariKerja::where('tanggal','like','%'.$this->query.'%')
       ->orWhere('bulan','like','%'.$this->query.'%')
       ->orWhere('hari','like','%'.$this->query.'%')
       ->orWhere('id_status_hari','like','%'.$this->query.'%')
       ->orWhere('tahun','like','%'.$this->query.'%')
       ->count();
-      $data = ceil($data/20);
+      $data = ceil($data/$this->show_limit);
       return response()->json([
-        'halaman' => $data==1?0:$data
+        'halaman' => $data
       ]);
     }
 

@@ -9,25 +9,30 @@
           @include('layouts.admin.partial.part.logout')
       </div>
     <div class="main-content">
+        <div class="loading">
+            <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+        </div>
         <div class="container-fluid">
             <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Eselon</a>
             <hr>
-          <table class="table table-responsive table-eselon">
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">Eselon</th>
-                  <th scope="col">Tunjangan</th>
-                  <th scope="col">Keterangan</th>
-                  <th scope="col">Aksi</th>
-                </tr>
-              </thead>
-              <tbody class="list_eselon">
-              </tbody>
-          </table>
-          <div class="box-pagination">
-            <ul class="pagination" id="pagination"></ul>
-          </div>
+            <div class="table-responsive">
+                <table class="table table-eselon">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Eselon</th>
+                        <th scope="col">Tunjangan</th>
+                        <th scope="col">Keterangan</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                    </thead>
+                    <tbody class="list_eselon">
+                    </tbody>
+                </table>
+                <div class="box-pagination">
+                    <ul class="pagination" id="pagination"></ul>
+                </div>
+            </div>
         </div>
     </div>
   </div>
@@ -51,6 +56,7 @@
                 };
                 var getData = function (page,search) {
                     var selector = $('.list_eselon');
+                    $('.loading').show();
                     $.ajax({
                         url: "{{ route('list_eselon') }}?page="+page+'&q='+search,
                         data: '',
@@ -60,13 +66,16 @@
                                 row += "<tr>";
                                 row += "<td></td>";
                                 row += "<td>"+val.eselon+"</td>";
-                                row += "<td>"+val.tunjangan_rp+"</td>";
+                                row += "<td>Rp."+val.tunjangan_rp+"</td>";
                                 row += "<td>"+(val.keterangan ? val.keterangan : '')+"</td>";
                                 row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='"+val.edit_uri+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='"+val.delete_uri+"' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
                                 row += "</tr>";
                                 return row;
                             })
                             selector.html(data.join(''));
+                        },
+                        complete : function () {
+                            $('.loading').hide();
                         }
                     });
                 }
@@ -78,8 +87,7 @@
                         text: "Proses tidak dapat di kembalikan",
                         type: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#d33',
                         confirmButtonText: 'Iya, Hapus Eselon!',
                         cancelButtonText: 'Tidak'
                     }).then((result) => {
@@ -96,7 +104,7 @@
                                 swal(
                                     'Gagal Menghapus Data',
                                     '',
-                                    'warning'
+                                    'error'
                                 )
                             })
                         }
