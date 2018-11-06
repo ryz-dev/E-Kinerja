@@ -10,7 +10,8 @@ use Illuminate\Support\Str;
 class CheckinoutController extends Controller
 {
     public function index(Request $request){
-       return view('layouts.admin.checkinout.index');
+        $all = Checkinout::paginate(10);
+        return view('layouts.admin.checkinout.index', compact('all'));
     }
 
     public function show($id){

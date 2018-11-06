@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Checkinout extends Model
 {
-    protected $table = 'cehckinout';
+    protected $table = 'checkinout';
 
     protected $fillable = [
         'userid','checktime', 'checktype', 'verifycode', 'sensorid', 'workcode', 'sn', 'userextmft'
