@@ -66,8 +66,10 @@
                                 <span id="detail-nip"></span>
                             </div>
                             <div class="btn-control float-right">
-                                <button id="pegawai-sebelumnya" inc-index="-1" class="btn btn-rounded prev"><i class="fas fa-angle-left"></i></button>
-                                <button id="pegawai-selanjutnya" inc-index="1" class="btn btn-rounded next active"><i class="fas fa-angle-right"></i></button>
+                                <button id="pegawai-sebelumnya" inc-index="-1" class="btn btn-rounded prev"><i
+                                        class="fas fa-angle-left"></i></button>
+                                <button id="pegawai-selanjutnya" inc-index="1" class="btn btn-rounded next active"><i
+                                        class="fas fa-angle-right"></i></button>
                             </div>
                             <div class="clearfix"></div>
                         </div>
@@ -78,8 +80,10 @@
                             </div>
 
                             <div class="float-right">
-                                <button id="bulan-sebelumnya" data-value="-1" class="btn"><i class="fas fa-angle-left"></i></button>
-                                <button id="bulan-selanjutnya" data-value="1" class="btn"><i class="fas fa-angle-right"></i></button>
+                                <button id="bulan-sebelumnya" data-value="-1" class="btn"><i
+                                        class="fas fa-angle-left"></i></button>
+                                <button id="bulan-selanjutnya" data-value="1" class="btn"><i
+                                        class="fas fa-angle-right"></i></button>
                             </div>
 
                             <div class="clearfix"></div>
@@ -105,7 +109,7 @@
         </div>
 
         <!-- MODAL DETAIL -->
-        <div class="modal-detail">
+        <div class="modal-detail" id="modal-detail">
             <div class="modal-overlay">
                 <!-- button close -->
                 <div class="close">
@@ -230,7 +234,7 @@
                                     '                    </li>'
                             })
                             $('[data=data-bawahan]').html(data.join(''));
-                            $('[name=total-index]').val(data.length-1);
+                            $('[name=total-index]').val(data.length - 1);
                             setTimeout(function () {
                                 $('[data-index=0]').click();
                             }, 1000)
@@ -300,7 +304,7 @@
                             break;
                     }
                     var nip = $('#detail-nip').html();
-                    getRekap(nip,bulan,tahun)
+                    getRekap(nip, bulan, tahun)
                 }
             })
             $(document).on('click', '.list-bawahan[data-index]', function (e) {
@@ -317,33 +321,43 @@
                 $('#detail-nama').html(nama);
                 $('#detail-nip').html(nip);
                 $('#detail-img').css({'background-image': 'url(' + foto + ')'})
-                if (index == 0){
+                if (index == 0) {
                     $('#pegawai-sebelumnya').removeClass('active')
                 } else {
                     $('#pegawai-sebelumnya').addClass('active')
                 }
-                if (index == $('[name=total-index]').val()){
+                if (index == $('[name=total-index]').val()) {
                     $('#pegawai-selanjutnya').removeClass('active')
                 } else {
                     $('#pegawai-selanjutnya').addClass('active')
                 }
-                getRekap(nip,null,null);
+                getRekap(nip, null, null);
             })
-            var getRekap = function(nip,bulan,tahun){
+            var getRekap = function (nip, bulan, tahun) {
                 $('.loading').show();
-                $.get('{{route('api.web.rekap-bulanan',['nip' => ''])}}/' + nip+(bulan?'/'+bulan : '')+(tahun?'/'+tahun : ''))
+                $.get('{{route('api.web.rekap-bulanan',['nip' => ''])}}/' + nip + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
                     .then(function (res) {
                         if (res.response.rekap_bulanan.length > 0) {
                             var rekap = res.response.rekap_bulanan.map(function (val) {
-                                var status_hadir = val.checkinout.length == 2 ? 'Hadir' : '';
+                                var color = approve = ''
+                                if (val.approve == 1) {
+                                    approve = 'fa-check';
+                                    color = 'check-list'
+                                } else if (val.approve === 0) {
+                                    approve = 'fa-times'
+                                    color = 'not-list'
+                                } else if (val.approve == '') {
+                                    color = ''
+                                    approve = ''
+                                }
                                 return '<tr>\n' +
                                     '                                    <td>' + val.hari + ', ' + val.tanggal + '</td>\n' +
-                                    '                                    <td>' + status_hadir + '</td>\n' +
+                                    '                                    <td>' + val.status + '</td>\n' +
                                     '                                    <td>\n' +
-                                    '                                        <span class="check-list"><i class="fas fa-lg fa-check"></i></span>\n' +
+                                    '                                        <span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
                                     '                                    </td>\n' +
                                     '                                    <td>\n' +
-                                    '                                        <div class="badge badge-blue text-white mr-2">100 %</div>\n' +
+                                    '                                        <div class="badge badge-blue text-white mr-2">' + val.persentase + ' %</div>\n' +
                                     '                                    </td>\n' +
                                     '                                    <td>\n' +
                                     '                                        <button class="btn rounded btn-detail" title="Detail">\n' +
@@ -361,22 +375,26 @@
                     }, function () {
                     })
             }
-            $('#bulan-sebelumnya,#bulan-selanjutnya').on('click',function (e) {
+            $(document).on('click', '.btn-detail', function (e) {
+                e.preventDefault();
+                $('.modal-overlay').addClass('show');
+            })
+            $('#bulan-sebelumnya,#bulan-selanjutnya').on('click', function (e) {
                 e.preventDefault();
                 d = $("#date-rekap").datepicker("getDate");
-                if (d == 'Invalid Date'){
+                if (d == 'Invalid Date') {
                     d = new Date();
                 }
-                $("#date-rekap").datepicker("setDate", new Date(d.getFullYear(),d.getMonth()+parseInt($(this).attr('data-value')),d.getDate()));
+                $("#date-rekap").datepicker("setDate", new Date(d.getFullYear(), d.getMonth() + parseInt($(this).attr('data-value')), d.getDate()));
             })
-            $('#pegawai-sebelumnya,#pegawai-selanjutnya').on('click',function (e) {
+            $('#pegawai-sebelumnya,#pegawai-selanjutnya').on('click', function (e) {
                 e.preventDefault();
                 var index = $('[name=index]').val();
                 var i = $(this).attr('inc-index');
                 var new_index = parseInt(index) + parseInt(i);
                 var total_index = $('[name=total-index]').val();
-                if ( new_index => 0 && new_index <= total_index) {
-                    $('[data-index="'+new_index+'"]').click()
+                if (new_index => 0 && new_index <= total_index) {
+                    $('[data-index="' + new_index + '"]').click()
                 }
             })
             $(document).ready(function () {

@@ -61,10 +61,27 @@ class GenerateAbsenPegawai extends Command
                         'checktime' => $chekout,
                         'checktype' => 'o'
                     ];
+                    $kinerja = [
+                        'userid' => $p->userid,
+                        'tgl_mulai' => $now_date,
+                        'tgl_selesai' => $now_date,
+                        'jenis_kinerja' => 'hadir',
+                        'rincian_kinerja' => str_random(100),
+                        'approve' => random_int(0,1),
+                        'keterangan_approve' => str_random(100)
+                    ];
+                    $etika = [
+                        'userid' => $p->userid,
+                        'tanggal' => $now_date,
+                        'persentase' => random_int(0,100),
+                        'keterangan' => str_random(100)
+                    ];
                     try {
                         DB::table('checkinout')->insert([
                             $in, $out
                         ]);
+                        DB::table('kinerja')->insert($kinerja);
+                        DB::table('etika')->insert($etika);
                     } catch (\Exception $exception){}
                 }
             }

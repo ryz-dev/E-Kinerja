@@ -24,10 +24,15 @@ class RekapBulananController extends ApiController
         $pegawai = Pegawai::whereNip($nip)->first();
         $data_inout = [];
         foreach ($hari_kerja AS $hk){
+            $kinerja = $pegawai->kinerja()->where('tgl_mulai','>=',$hk->tanggal)->where('tgl_selesai','<=',$hk->tanggal)->first();
+            $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
             $data_inout[] = [
                 'tanggal' => $this->formatDate($hk->tanggal),
                 'hari' => ucfirst($hk->Hari->nama_hari),
-                'checkinout' => $pegawai->checkinout()->where('checktime','like','%'.$hk->tanggal.'%')->get()->toArray()
+                'checkinout' => $pegawai->checkinout()->where('checktime','like','%'.$hk->tanggal.'%')->get()->toArray(),
+                'status' => ucfirst(str_replace('_',' ',isset($kinerja->jenis_kinerja)?$kinerja->jenis_kinerja:'')),
+                'persentase' => isset($etika->persentase)?$etika->persentase : 0,
+                'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
             ];
         }
         return $this->ApiSpecResponses([
