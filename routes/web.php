@@ -124,6 +124,8 @@ Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
   Route::resource('checkinout','CheckinoutController');
 });
 
+Route::get('monitoring-absen', 'MonitoringAbsenController@index')->name('monitoring.absen.index');
+
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
