@@ -13,6 +13,6 @@ class Checkinout extends Model
     ];
 
     public function pegawai(){
-        return $this->belongsTo(Pegawai::class,'userid');
+        return $this->belongsTo('App\Models\MasterData\Pegawai','userid','userid');
     }
 }

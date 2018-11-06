@@ -3,7 +3,7 @@
     <div class="main">
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-pegawai" action="{{route('pegawai.store')}}" class="form" enctype="multipart/form-data">
+                <form id="form-store-pegawai" action="{{route('api.web.pegawai.store')}}" class="form" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">Tambah Pegawai</h2>
@@ -74,35 +74,36 @@
                     text: "",
                     type: 'warning',
                     showCancelButton: true,
-                    cancelButtonColor: '#d33',
                     confirmButtonText: 'Iya, simpan data!',
                     cancelButtonText: 'Batalakan'
-                }).then(() => {
-                    $.ajax({
-                        url: action,
-                        type: "POST",
-                        data: formData,
-                        success: function (res) {
-                            swal(
-                                'Berhasil Menyimpan Data!',
-                                '',
-                                'success'
-                            )
-                            setTimeout(function () {
-                                location.href = res.detail_uri
-                            },3000);
-                        },
-                        error: function(){
-                            swal(
-                                'Gagal Menyimpan Data!',
-                                '',
-                                'error'
-                            )
-                        },
-                        cache: false,
-                        contentType: false,
-                        processData: false
-                    });
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            data: formData,
+                            success: function (res) {
+                                swal(
+                                    'Berhasil Menyimpan Data!',
+                                    '',
+                                    'success'
+                                )
+                                setTimeout(function () {
+                                    // location.href = res.response.detail_uri
+                                }, 3000);
+                            },
+                            error: function () {
+                                swal(
+                                    'Gagal Menyimpan Data!',
+                                    '',
+                                    'error'
+                                )
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false
+                        });
+                    }
                 })
             })
         </script>

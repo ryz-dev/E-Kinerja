@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class JabatanController extends MasterDataController
 {
     public function index(Request $request){
-        $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
+        /*$this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         $this->query = $request->has('q') ? $request->input('q') : $this->query;
         $jabatan = new Jabatan();
         if ($this->query){
@@ -19,49 +19,71 @@ class JabatanController extends MasterDataController
                 ->orWhere('id_eselon','like','%'.$this->query.'%')
                 ->orWhere('id_atasan','like','%'.$this->query.'%');
         }
-        $jabatan = $jabatan->paginate($this->show_limit);
-        return response()->json($jabatan->toArray());
+        $jabatan = $jabatan->paginate($this->show_limit);*/
+        return view('layouts.admin.jabatan.index');
     }
 
     public function show($id){
-        $jabatan = Jabatan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
-        return response()->json($jabatan->toArray());
+        $jabatan = Jabatan::with('atasan','eselon')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        return view('layouts.admin.jabatan.detail',compact('jabatan'));
     }
 
+    public function add(){
+        $data_option = new \stdClass();
+        $data_option->eselon = Eselon::get();
+        $data_option->jabatan = Jabatan::get();
+        return view('layouts.admin.jabatan.add',compact('data_option'));
+    }
 
-    public function store(Request $request){
+    public function edit($id){
+        $jabatan = Jabatan::with('atasan','eselon')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $data_option = new \stdClass();
+        $data_option->eselon = Eselon::get();
+        $data_option->jabatan = Jabatan::get();
+        return view('layouts.admin.jabatan.edit',compact('jabatan','data_option'));
+    }
+
+    public function store(Request $request,$json = true){
         $this->validate($request,[
             'jabatan' => 'required',
             'id_eselon' => 'required|in:'.$this->getListEselon(),
-            'id_atasan' => 'required|in:'.$this->getListJabatan(),
+//            'id_atasan' => 'in:'.$this->getListJabatan(),
         ]);
         $input = $request->input();
         $input['uuid'] = (string)Str::uuid();
 
         $agama = Jabatan::create($input);
+        if ($json)
         return response()->json($agama->toArray());
+        return $agama;
     }
 
-    public function update(Request $request,$id){
+    public function update(Request $request,$id,$json = true){
         $jabatan = Jabatan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
         $this->validate($request,[
             'jabatan' => 'required',
             'id_eselon' => 'required|in:'.$this->getListEselon(),
-            'id_atasan' => 'required|in:'.$this->getListJabatan().'|not_in:'.$jabatan->id,
+//            'id_atasan' => 'in:'.$this->getListJabatan().'|not_in:'.$jabatan->id,
         ]);
         $input = $request->input();
         $jabatan->update($input);
+        if ($json)
         return response()->json($jabatan->toArray());
+        return $jabatan;
     }
 
-    public function delete($id){
+    public function delete($id,$json=true){
         $jabatan = Jabatan::whereId($id)->orWhere('uuid',$id)->firstOrFail();
         try {
             $jabatan->delete();
         } catch (\Exception $exception){}
+        if ($json)
         return response()->json([
             'message' => 'berhasil menghapus data'
         ]);
+        return [
+            'message' => 'berhasil menghapus data'
+        ];
     }
 
     private function getListEselon(){

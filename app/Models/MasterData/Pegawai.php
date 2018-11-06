@@ -30,7 +30,11 @@ class Pegawai extends Authenticatable
     }
 
     public function role(){
-        return$this->belongsToMany(Role::class,'role_pegawai','nip_pegawai','id_role');
+        return $this->belongsToMany(Role::class,'role_pegawai','nip_pegawai','id_role');
+    }
+
+    public function checkinout(){
+        return $this->hasMany('App\Models\Absen\Checkinout','userid','userid');
     }
 
     public function hasAccess(array $permissions){
@@ -46,7 +50,7 @@ class Pegawai extends Authenticatable
     }
 
     public function getDeleteUriAttribute(){
-        return route('pegawai.delete',['id' => $this->uuid]);
+        return route('api.web.pegawai.delete',['id' => $this->uuid]);
     }
 
     public function getEditUriAttribute(){
@@ -54,7 +58,9 @@ class Pegawai extends Authenticatable
     }
 
     public function getUpdateuriAttribute(){
-        return route('pegawai.update',['id' => $this->uuid]);
+        return route('api.web.pegawai.update',['id' => $this->uuid]);
     }
+
+    
 
 }
