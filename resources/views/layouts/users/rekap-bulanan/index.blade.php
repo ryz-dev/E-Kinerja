@@ -230,7 +230,7 @@
                                     '                    </li>'
                             })
                             $('[data=data-bawahan]').html(data.join(''));
-                            $('[name=total-index]').val(data.length);
+                            $('[name=total-index]').val(data.length-1);
                             setTimeout(function () {
                                 $('[data-index=0]').click();
                             }, 1000)
