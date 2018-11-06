@@ -21,7 +21,7 @@ class Eselon extends Model
     }
 
     public function getDeleteUriAttribute(){
-        return route('api.web.eselon.delete',['id' => $this->uuid]);
+        return route('api.web.master-data.eselon.delete',['id' => $this->uuid]);
     }
 
     public function getEditUriAttribute(){
@@ -29,7 +29,7 @@ class Eselon extends Model
     }
 
     public function getUpdateuriAttribute(){
-        return route('api.web.eselon.update',['id' => $this->uuid]);
+        return route('api.web.master-data.eselon.update',['id' => $this->uuid]);
     }
 
     public function getTunjanganRpAttribute(){

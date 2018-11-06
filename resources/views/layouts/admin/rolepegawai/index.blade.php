@@ -44,7 +44,7 @@
     });
     var getPage = function () {
         $('#pagination').twbsPagination('destroy');
-        $.get('{{route('api.web.page.role.pegawai')}}')
+        $.get('{{route('api.web.master-data.page.role.pegawai')}}')
             .then(function (res) {
                 $('#pagination').twbsPagination({
                     totalPages: res.page,
@@ -59,7 +59,7 @@
         var row = '';
         var selector = $('.list_role');
         $.ajax({
-            url: "{{ route('api.web.list.role') }}?page="+page,
+            url: "{{ route('api.web.master-data.list.role') }}?page="+page,
             data: '',
             success: function(res) {
                 var data = res.response.map(function (val) {

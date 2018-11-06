@@ -5,7 +5,8 @@
             <div class="nav-top">
                 <div class="title-nav">
                     <h4 class="mr-4">Rekap Bulanan</h4>
-                    <span class="badge text-white">23 September 2018</span>
+                    <span
+                        class="badge text-white">{{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
                 </div>
                 <div class="img-profile" id="user-profile" style="background-image: url('images/img-user.png');">
                 </div>
@@ -33,59 +34,15 @@
 
             <div class="group-search">
                 <span><i class="fas fa-search"></i></span>
-                <input type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
+                <input id="search" type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
             </div>
-
 
 
             <div class="menu">
                 <!-- <div> -->
-                <ul class="nav nav-pills" id="myTab" role="tablist">
-                    <li><a class="listSelect active" data-toggle="tab" href="#user1" role="tab" aria-selected="true"><span
-                                class="img-user" id="img-user1" style="background-image: url('images/img-user.png');">
-                                </span>
-                            <span>
-                                    <label>Alfian Labeda <br><small>1929298282929000</small></label>
-                                </span>
-                            <div class="float-right badge badge-green text-white mr-2">75 %</div>
-                        </a>
-                    </li>
-                    <li><a class="listSelect" data-toggle="tab" href="#user2" role="tab" aria-selected="false">
-                                <span class="img-user" id="img-user2" style="background-image: url('images/bill.jpg');">
-                                </span>
-                            <span>
-                                    <label>Bill <br><small>1929298282929000</small></label>
-                                </span>
-                            <div class="float-right badge badge-blue text-white mr-2">100 %</div>
-                        </a>
-                    </li>
+                <input type="hidden" name="total-index">
+                <ul class="nav nav-pills" id="myTab" role="tablist" data="data-bawahan">
 
-                    <li><a class="listSelect" data-toggle="tab" href="#user3" role="tab" aria-selected="false"><span
-                                class="img-user" id="img-user3" style="background-image: url('images/img-user.png');">
-                                </span>
-                            <span>
-                                    <label>Alfian Labeda <br><small>1929298282929000</small></label>
-                                </span>
-                            <div class="float-right badge badge-red text-white mr-2">15 %</div>
-                        </a>
-                    </li>
-                    <li><a class="listSelect" data-toggle="tab" href="#user4" role="tab" aria-selected="false">
-                                <span class="img-user" id="img-user4" style="background-image: url('images/bill.jpg');">
-                                </span>
-                            <span>
-                                    <label>Bill <br><small>1929298282929000</small></label>
-                                </span>
-                            <div class="float-right badge badge-orange text-white mr-2">45 %</div>
-                        </a>
-                    </li>
-
-                    <li><a class="listSelect" data-toggle="tab" href="#user5" role="tab" aria-selected="false">
-                                <span class="img-user" id="img-user5" style="background-image: url('images/steve.jpg');">
-                                </span>
-                            <span>
-                                    <label>Jobs <br><small>1929298282929000</small></label>
-                                </span>
-                        </a></li>
                 </ul>
                 <!-- </div> -->
             </div>
@@ -95,30 +52,34 @@
             <!-- start tab pane -->
             <div class="tab-pane active" id="user1" role="tabpanel">
                 <div class="container">
-
+                    <input type="hidden" name="index" value="0">
+                    <div class="loading">
+                        <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="img-user" id="img-user1" style="background-image: url('images/img-user.png');">
+
+                            <div class="img-user" id="detail-img" style="background-image: url('images/img-user.png');">
                             </div>
                             <div class="nama-id">
-                                <h6>Alfian Labeda</h6>
-                                <span>1929298282929000</span>
+                                <h6 id="detail-nama"></h6>
+                                <span id="detail-nip"></span>
                             </div>
                             <div class="btn-control float-right">
-                                <button class="btn btn-rounded prev"><i class="fas fa-angle-left"></i></button>
-                                <button class="btn btn-rounded next active"><i class="fas fa-angle-right"></i></button>
+                                <button id="pegawai-sebelumnya" inc-index="-1" class="btn btn-rounded prev"><i class="fas fa-angle-left"></i></button>
+                                <button id="pegawai-selanjutnya" inc-index="1" class="btn btn-rounded next active"><i class="fas fa-angle-right"></i></button>
                             </div>
                             <div class="clearfix"></div>
                         </div>
                         <div class="col-md-12 mt-3 control-date-btn">
                             <div class="date-group float-left">
                                 <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
-                                <input id="date-rekap" class="datepicker" placeholder="Pilih Bulan" />
+                                <input id="date-rekap" class="datepicker" placeholder="Pilih Bulan"/>
                             </div>
 
                             <div class="float-right">
-                                <button class="btn"><i class="fas fa-angle-left"></i></button>
-                                <button class="btn"><i class="fas fa-angle-right"></i></button>
+                                <button id="bulan-sebelumnya" data-value="-1" class="btn"><i class="fas fa-angle-left"></i></button>
+                                <button id="bulan-selanjutnya" data-value="1" class="btn"><i class="fas fa-angle-right"></i></button>
                             </div>
 
                             <div class="clearfix"></div>
@@ -134,181 +95,12 @@
                                     <th scope="col">Detail</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <td>Senin, 23/09/2018</td>
-                                    <td>Hadir</td>
-                                    <td>
-                                        <span class="check-list"><i class="fas fa-lg fa-check"></i></span>
-                                    </td>
-                                    <td>
-                                        <div class="badge badge-blue text-white mr-2">100 %</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn rounded btn-detail" title="Detail">
-                                            <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>Selasa, 24/09/2018</td>
-                                    <td>Sakit</td>
-                                    <td>
-                                        <span class="not-list"><i class="fas fa-lg fa-times"></i></span>
-                                    </td>
-                                    <td>
-                                        <div class="badge badge-green text-white mr-2">75 %</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn rounded btn-detail" title="Detail">
-                                            <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>Rabu, 25/09/2018</td>
-                                    <td>Hadir</td>
-                                    <td>
-                                        <span class="check-list"><i class="fas fa-lg fa-check"></i></span>
-                                    </td>
-                                    <td>
-                                        <div class="badge badge-blue text-white mr-2">100 %</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn rounded btn-detail" title="Detail">
-                                            <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>Kamis, 26/09/2018</td>
-                                    <td>Perjalanan Dinas</td>
-                                    <td>
-                                        <span class="check-list"><i class="fas fa-lg fa-check"></i></span>
-                                    </td>
-                                    <td>
-                                        <div class="badge badge-blue text-white mr-2">100 %</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn rounded btn-detail" title="Detail">
-                                            <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
+                                <tbody id="detail-rekap-bulanan">
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- end tab pane -->
-
-            <!-- start pane -->
-            <div class="tab-pane" id="user2" role="tabpanel">
-                <div class="container">
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="img-user" id="img-user2" style="background-image: url('images/bill.jpg');">
-                            </div>
-                            <div class="nama-id">
-                                <h6>Bill Gates</h6>
-                                <span>1929298282929000</span>
-                            </div>
-                            <div class="btn-control float-right">
-                                <button class="btn btn-rounded"><i class="fas fa-angle-left"></i></button>
-                                <button class="btn btn-rounded active"><i class="fas fa-angle-right"></i></button>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-
-                        <div class="col-md-12">
-                            <table class="table table-responsive table-pegawai">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Hari, Tanggal</th>
-                                    <th scope="col">Absen</th>
-                                    <th scope="col">Kinerja</th>
-                                    <th scope="col">Etika</th>
-                                    <th scope="col">Detail</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>Senin, 23/09/2018</td>
-                                    <td>Hadir</td>
-                                    <td>
-                                        <span class="check-list"><i class="fas fa-lg fa-check"></i></span>
-                                    </td>
-                                    <td>
-                                        <div class="badge badge-blue text-white mr-2">100 %</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn rounded btn-detail" title="Detail">
-                                            <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>Selasa, 24/09/2018</td>
-                                    <td>Sakit</td>
-                                    <td>
-                                        <span class="not-list"><i class="fas fa-lg fa-times"></i></span>
-                                    </td>
-                                    <td>
-                                        <div class="badge badge-green text-white mr-2">75 %</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn rounded btn-detail" title="Detail">
-                                            <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>Rabu, 25/09/2018</td>
-                                    <td>Hadir</td>
-                                    <td>
-                                        <span class="check-list"><i class="fas fa-lg fa-check"></i></span>
-                                    </td>
-                                    <td>
-                                        <div class="badge badge-blue text-white mr-2">100 %</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn rounded btn-detail" title="Detail">
-                                            <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>Kamis, 26/09/2018</td>
-                                    <td>Perjalanan Dinas</td>
-                                    <td>
-                                        <span class="check-list"><i class="fas fa-lg fa-check"></i></span>
-                                    </td>
-                                    <td>
-                                        <div class="badge badge-blue text-white mr-2">100 %</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn rounded btn-detail" title="Detail">
-                                            <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <!-- end tab pane -->
             </div>
         </div>
 
@@ -331,7 +123,8 @@
                         <div class="col-md-12">
                             <div class="modal-konten mySlides">
                                 <div class="title-name">
-                                    <div class="img-user" id="user-modal" style="background-image: url('images/img-user.png');">
+                                    <div class="img-user" id="user-modal"
+                                         style="background-image: url('images/img-user.png');">
                                     </div>
                                     <h6>Alfian Labeda</h6>
                                     <span>1929298282929000</span>
@@ -371,7 +164,8 @@
                             <!--  -->
                             <div class="modal-konten mySlides">
                                 <div class="title-name">
-                                    <div class="img-user" id="user-modal" style="background-image: url('images/bill.jpg');">
+                                    <div class="img-user" id="user-modal"
+                                         style="background-image: url('images/bill.jpg');">
                                     </div>
                                     <h6>Bill Gates</h6>
                                     <span>1929298282929000</span>
@@ -417,4 +211,177 @@
 
         <!-- end Modal Detail -->
     </div>
+    @push('script')
+        <script>
+            var getBawahan = function () {
+                $.get('{{route('api.web.rekap-bulanan.get-bawahan')}}')
+                    .then(function (res) {
+                        if (res.response.length > 0) {
+                            var data = res.response.map(function (val, i) {
+                                var foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
+                                return '<li class="list-bawahan" data-foto="' + foto + '" data-index="' + i + '" data-nip="' + val.nip + '" data-nama="' + val.nama + '"><a class="listSelect ' + (i == 0 ? 'active' : '') + '" data-toggle="tab" href="#' + val.nip + '" role="tab" aria-selected="true"><span\n' +
+                                    '                                class="img-user" id="img-user1" style="background-image: url(' + foto + ');">\n' +
+                                    '                                </span>\n' +
+                                    '                            <span>\n' +
+                                    '                                    <label>' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
+                                    '                                </span>\n' +
+                                    '                            <div class="float-right badge badge-green text-white mr-2"></div>\n' +
+                                    '                        </a>\n' +
+                                    '                    </li>'
+                            })
+                            $('[data=data-bawahan]').html(data.join(''));
+                            $('[name=total-index]').val(data.length);
+                            setTimeout(function () {
+                                $('[data-index=0]').click();
+                            }, 1000)
+                        } else {
+                            $('[data=data-bawahan]').html("<label>Data Tidak Ditemukan</label>");
+                        }
+                    })
+            };
+            $('#search').on('keyup', function (e) {
+                e.preventDefault();
+                key = $(this).val()
+                $('.list-bawahan').hide();
+                if (key) {
+                    find = $('[data-nip*="' + key + '"],[data-nama*="' + key + '"]');
+                    find.attr('search', true);
+                    find.show()
+                } else {
+                    $('.list-bawahan').show();
+                    $('.list-bawahan').removeAttr('search');
+                }
+            })
+            window['trigger'] = 0;
+            $('#date-rekap').on('changeDate', function (e) {
+                e.preventDefault();
+                if (window['trigger'] == 0) {
+                    window['trigger'] = 1;
+                    var value = $(this).val();
+                    var date = value.split(' ');
+                    var tahun = date[1];
+                    var bulan;
+                    switch (date[0]) {
+                        case 'January' :
+                            bulan = 1;
+                            break;
+                        case 'February' :
+                            bulan = 2;
+                            break;
+                        case 'March' :
+                            bulan = 3;
+                            break;
+                        case 'April' :
+                            bulan = 4;
+                            break;
+                        case 'May' :
+                            bulan = 5;
+                            break;
+                        case 'June' :
+                            bulan = 6;
+                            break;
+                        case 'July' :
+                            bulan = 7;
+                            break;
+                        case 'August' :
+                            bulan = 8;
+                            break;
+                        case 'September' :
+                            bulan = 9;
+                            break;
+                        case 'October' :
+                            bulan = 10;
+                            break;
+                        case 'November' :
+                            bulan = 11;
+                            break;
+                        case 'December' :
+                            bulan = 12;
+                            break;
+                    }
+                    var nip = $('#detail-nip').html();
+                    getRekap(nip,bulan,tahun)
+                }
+            })
+            $(document).on('click', '.list-bawahan[data-index]', function (e) {
+                e.preventDefault();
+                $('.list-bawahan').find('.listSelect').removeClass('active')
+                $(this).addClass('active').siblings().removeClass('active');
+                $(this).find('.listSelect').addClass('active')
+                var nama = $(this).attr('data-nama');
+                var nip = $(this).attr('data-nip');
+                var foto = $(this).attr('data-foto');
+                var index = $(this).attr('data-index');
+                $('#date-rekap').val('');
+                $('[name=index]').val(index);
+                $('#detail-nama').html(nama);
+                $('#detail-nip').html(nip);
+                $('#detail-img').css({'background-image': 'url(' + foto + ')'})
+                if (index == 0){
+                    $('#pegawai-sebelumnya').removeClass('active')
+                } else {
+                    $('#pegawai-sebelumnya').addClass('active')
+                }
+                if (index == $('[name=total-index]').val()){
+                    $('#pegawai-selanjutnya').removeClass('active')
+                } else {
+                    $('#pegawai-selanjutnya').addClass('active')
+                }
+                getRekap(nip,null,null);
+            })
+            var getRekap = function(nip,bulan,tahun){
+                $('.loading').show();
+                $.get('{{route('api.web.rekap-bulanan',['nip' => ''])}}/' + nip+(bulan?'/'+bulan : '')+(tahun?'/'+tahun : ''))
+                    .then(function (res) {
+                        if (res.response.rekap_bulanan.length > 0) {
+                            var rekap = res.response.rekap_bulanan.map(function (val) {
+                                var status_hadir = val.checkinout.length == 2 ? 'Hadir' : '';
+                                return '<tr>\n' +
+                                    '                                    <td>' + val.hari + ', ' + val.tanggal + '</td>\n' +
+                                    '                                    <td>' + status_hadir + '</td>\n' +
+                                    '                                    <td>\n' +
+                                    '                                        <span class="check-list"><i class="fas fa-lg fa-check"></i></span>\n' +
+                                    '                                    </td>\n' +
+                                    '                                    <td>\n' +
+                                    '                                        <div class="badge badge-blue text-white mr-2">100 %</div>\n' +
+                                    '                                    </td>\n' +
+                                    '                                    <td>\n' +
+                                    '                                        <button class="btn rounded btn-detail" title="Detail">\n' +
+                                    '                                            <i class="fas fa-search-plus"></i>\n' +
+                                    '                                        </button>\n' +
+                                    '                                    </td>\n' +
+                                    '                                </tr>'
+                            });
+                            $('#detail-rekap-bulanan').html(rekap.join(''));
+                        } else {
+                            $('#detail-rekap-bulanan').html('<tr><td class="text-center" colspan="100">Data Tidak ditemukan</td></tr>');
+                        }
+                        $('.loading').hide();
+                        window['trigger'] = 0;
+                    }, function () {
+                    })
+            }
+            $('#bulan-sebelumnya,#bulan-selanjutnya').on('click',function (e) {
+                e.preventDefault();
+                d = $("#date-rekap").datepicker("getDate");
+                if (d == 'Invalid Date'){
+                    d = new Date();
+                }
+                $("#date-rekap").datepicker("setDate", new Date(d.getFullYear(),d.getMonth()+parseInt($(this).attr('data-value')),d.getDate()));
+            })
+            $('#pegawai-sebelumnya,#pegawai-selanjutnya').on('click',function (e) {
+                e.preventDefault();
+                var index = $('[name=index]').val();
+                var i = $(this).attr('inc-index');
+                var new_index = parseInt(index) + parseInt(i);
+                var total_index = $('[name=total-index]').val();
+                if ( new_index => 0 && new_index <= total_index) {
+                    $('[data-index="'+new_index+'"]').click()
+                }
+            })
+            $(document).ready(function () {
+                getBawahan()
+            })
+        </script>
+    @endpush
 @endsection

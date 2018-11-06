@@ -81,37 +81,42 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
     });
 });
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
-    Route::group(['prefix' => 'pegawai'],function (){
-        Route::get('','PegawaiController@listPegawai')->name('api.web.pegawai');
-        Route::get('get-pagination','PegawaiController@getpage')->name('api.web.pegawai.page');
-        Route::post('store','PegawaiController@storePegawai')->name('api.web.pegawai.store');
-        Route::post('{id}','PegawaiController@updatePegawai')->name('api.web.pegawai.update');
-        Route::post('delete/{id}','PegawaiController@deletePegawai')->name('api.web.pegawai.delete');
-    });
-    Route::group(['prefix' => 'hari-kerja'],function (){
+    Route::group(['prefix' => 'master-data'],function (){
+        Route::group(['prefix' => 'pegawai'],function (){
+            Route::get('','PegawaiController@listPegawai')->name('api.web.master-data.pegawai');
+            Route::get('get-pagination','PegawaiController@getpage')->name('api.web.master-data.pegawai.page');
+            Route::post('store','PegawaiController@storePegawai')->name('api.web.master-data.pegawai.store');
+            Route::post('{id}','PegawaiController@updatePegawai')->name('api.web.master-data.pegawai.update');
+            Route::post('delete/{id}','PegawaiController@deletePegawai')->name('api.web.master-data.pegawai.delete');
+        });
+        Route::group(['prefix' => 'hari-kerja'],function (){
 //        Route::get('','HariKerjaController@index')->name('list_hari_kerja');
 //        Route::get('get-pagination','HariKerjaController@getpage')->name('page_hari_kerja');
 //        Route::post('delete','HariKerjaController@delete')->name('delete_hari_kerja');
+        });
+        Route::group(['prefix' => 'jabatan'],function (){
+            Route::get('','JabatanController@listJabatan')->name('api.web.master-data.jabatan');
+            Route::get('get-pagination','JabatanController@getpage')->name('api.web.master-data.jabatan.page');
+            Route::post('store','JabatanController@storeJabatan')->name('api.web.master-data.jabatan.store');
+            Route::post('{id}','JabatanController@updateJabatan')->name('api.web.master-data.jabatan.update');
+            Route::post('delete/{id}','JabatanController@deleteJabatan')->name('api.web.master-data.jabatan.delete');
+        });
+        Route::group(['prefix' => 'eselon'],function (){
+            Route::get('','EselonController@listEselon')->name('api.web.master-data.eselon');
+            Route::get('get-pagination','EselonController@getpage')->name('api.web.master-data.eselon.page');
+            Route::post('store','EselonController@storeEselon')->name('api.web.master-data.eselon.store');
+            Route::post('{id}','EselonController@updateEselon')->name('api.web.master-data.eselon.update');
+            Route::post('delete/{id}','EselonController@deleteEselon')->name('api.web.master-data.eselon.delete');
+        });
+        Route::group(['prefix'=> 'role-pegawai'], function(){
+            Route::get('', 'RolePegawaiController@listRole')->name('api.web.master-data.list.role');
+            Route::get('get-paginate', 'RolePegawaiController@getPage')->name('api.web.master-data.page.role.pegawai');
+        });
     });
-    Route::group(['prefix' => 'jabatan'],function (){
-        Route::get('','JabatanController@listJabatan')->name('api.web.jabatan');
-        Route::get('get-pagination','JabatanController@getpage')->name('api.web.jabatan.page');
-        Route::post('store','JabatanController@storeJabatan')->name('api.web.jabatan.store');
-        Route::post('{id}','JabatanController@updateJabatan')->name('api.web.jabatan.update');
-        Route::post('delete/{id}','JabatanController@deleteJabatan')->name('api.web.jabatan.delete');
+    Route::group(['prefix' => 'rekap-bulanan'],function (){
+        Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('api.web.rekap-bulanan.get-bawahan');
+        Route::get('/{nip}/{bulan?}/{tahun?}','RekapBulananController@getRekap')->name('api.web.rekap-bulanan');
     });
-    Route::group(['prefix' => 'eselon'],function (){
-        Route::get('','EselonController@listEselon')->name('api.web.eselon');
-        Route::get('get-pagination','EselonController@getpage')->name('api.web.eselon.page');
-        Route::post('store','EselonController@storeEselon')->name('api.web.eselon.store');
-        Route::post('{id}','EselonController@updateEselon')->name('api.web.eselon.update');
-        Route::post('delete/{id}','EselonController@deleteEselon')->name('api.web.eselon.delete');
-    });
-    Route::group(['prefix'=> 'role-pegawai'], function(){
-        Route::get('', 'RolePegawaiController@listRole')->name('api.web.list.role');
-        Route::get('get-paginate', 'RolePegawaiController@getPage')->name('api.web.page.role.pegawai');
-      });
-    
 });
 
 /*

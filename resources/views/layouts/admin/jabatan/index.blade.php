@@ -43,7 +43,7 @@
                 });
                 var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('api.web.jabatan.page')}}?q='+search)
+                    $.get('{{route('api.web.master-data.jabatan.page')}}?q='+search)
                         .then(function (res) {
                             $('#pagination').twbsPagination({
                                 totalPages: res.halaman,
@@ -58,7 +58,7 @@
                     var selector = $('.list_jabatan');
                     $('.loading').show();
                     $.ajax({
-                        url: "{{ route('api.web.jabatan') }}?page="+page+'&q='+search,
+                        url: "{{ route('api.web.master-data.jabatan') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
                             var data = res.response.map(function (val) {
@@ -73,6 +73,7 @@
                                 return row;
                             })
                             selector.html(data.join(''));
+                            $('.loading').hide();
                         },
                         complete : function () {
                             $('.loading').hide();

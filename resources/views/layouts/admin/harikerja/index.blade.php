@@ -94,6 +94,7 @@
               row += "</tr>";
             }
             selector.html(row);
+              $('.loading').hide();
           },
           error: function(xhr) {
             console.log(xhr.statusText + xhr.responseText);

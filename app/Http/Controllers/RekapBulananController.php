@@ -9,4 +9,6 @@ class RekapBulananController extends Controller
     public function rekapBulanan(){
         return view('layouts.users.rekap-bulanan.index');
     }
+
+
 }

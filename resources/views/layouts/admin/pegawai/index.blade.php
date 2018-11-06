@@ -43,7 +43,7 @@
                 });
                 var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('api.web.pegawai.page')}}?q='+search)
+                    $.get('{{route('api.web.master-data.pegawai.page')}}?q='+search)
                         .then(function (res) {
                             if (res.halaman == 0){
                                 $('.list_pegawai').html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>'+search+'</i>" Tidak Ditemukan</td></tr>')
@@ -61,7 +61,7 @@
                     var selector = $('.list_pegawai');
                     $('.loading').show();
                     $.ajax({
-                        url: "{{ route('api.web.pegawai') }}?page="+page+'&q='+search,
+                        url: "{{ route('api.web.master-data.pegawai') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
                             if (res.response.length > 0) {
@@ -82,6 +82,7 @@
                             } else {
                                 selector.html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>'+search+'</i>" Tidak Ditemukan</td></tr>')
                             }
+                            $('.loading').hide();
                         },
                         complete: function () {
                             $('.loading').hide();

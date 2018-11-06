@@ -3,7 +3,7 @@
     <div class="main">
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-eselon" action="{{route('api.web.eselon.store')}}" class="form">
+                <form id="form-store-eselon" action="{{route('api.web.master-data.eselon.store')}}" class="form">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">Tambah Eselon</h2>

@@ -37,7 +37,7 @@ class Jabatan extends Model
     }
 
     public function getDeleteUriAttribute(){
-        return route('api.web.jabatan.delete',['id' => $this->uuid]);
+        return route('api.web.master-data.jabatan.delete',['id' => $this->uuid]);
     }
 
     public function getEditUriAttribute(){
@@ -45,6 +45,6 @@ class Jabatan extends Model
     }
 
     public function getUpdateuriAttribute(){
-        return route('api.web.jabatan.update',['id' => $this->uuid]);
+        return route('api.web.master-data.jabatan.update',['id' => $this->uuid]);
     }
 }
