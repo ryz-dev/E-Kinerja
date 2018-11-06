@@ -339,7 +339,7 @@
                     .then(function (res) {
                         if (res.response.rekap_bulanan.length > 0) {
                             var rekap = res.response.rekap_bulanan.map(function (val) {
-                                var color = approve = ''
+                                var color = approve = color_persentase = ''
                                 if (val.approve == 1) {
                                     approve = 'fa-check';
                                     color = 'check-list'
@@ -350,6 +350,19 @@
                                     color = ''
                                     approve = ''
                                 }
+                                if (val.persentase == 100){
+                                    color_persentase = 'badge badge-blue'
+                                } else if (val.persentase >= 75){
+                                    color_persentase = 'badge badge-green'
+                                } else if (val.persentase >= 45){
+                                    color_persentase = 'badge badge-orange'
+                                } else if (val.persentase > 0){
+                                    color_persentase = 'badge badge-red'
+                                } else if (val.persentase === 0){
+                                    color_persentase = 'badge badge-red'
+                                } else if (val.persentase == ''){
+                                    color_persentase = ''
+                                }
                                 return '<tr>\n' +
                                     '                                    <td>' + val.hari + ', ' + val.tanggal + '</td>\n' +
                                     '                                    <td>' + val.status + '</td>\n' +
@@ -357,7 +370,7 @@
                                     '                                        <span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
                                     '                                    </td>\n' +
                                     '                                    <td>\n' +
-                                    '                                        <div class="badge badge-blue text-white mr-2">' + val.persentase + ' %</div>\n' +
+                                    '                                        <div class="'+color_persentase+' text-white mr-2">' + (val.persentase) + ' '+(typeof val.persentase == 'number' ? '%' : '')+'</div>\n' +
                                     '                                    </td>\n' +
                                     '                                    <td>\n' +
                                     '                                        <button class="btn rounded btn-detail" title="Detail">\n' +
