@@ -25,6 +25,7 @@ $factory->define(App\User::class, function (Faker $faker) {
 $factory->define(App\Models\MasterData\Pegawai::class,function (Faker $faker){
     return [
         'uuid' => (string)\Illuminate\Support\Str::uuid(),
+        'userid' => $faker->unique()->creditCardNumber,
         'nip' => $faker->unique()->bankAccountNumber,
         'nama' => $faker->firstName.' '.$faker->lastName,
         'tanggal_lahir' => $faker->date('Y-m-d','-20 years'),

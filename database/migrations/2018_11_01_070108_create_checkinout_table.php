@@ -18,11 +18,11 @@ class CreateCheckinoutTable extends Migration
             $table->string('userid');
             $table->timestamp('checktime');
             $table->string('checktype');
-            $table->string('verifycode');
-            $table->string('sensorid');
-            $table->string('workcode');
-            $table->string('sn');
-            $table->string('userextmft');
+            $table->string('verifycode')->nullable();
+            $table->string('sensorid')->nullable();
+            $table->string('workcode')->nullable();
+            $table->string('sn')->nullable();
+            $table->string('userextmft')->nullable();
             $table->timestamps();
         });
     }
