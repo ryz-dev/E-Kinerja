@@ -217,6 +217,7 @@
     </div>
     @push('script')
         <script>
+
             var getBawahan = function () {
                 $.get('{{route('api.web.rekap-bulanan.get-bawahan')}}')
                     .then(function (res) {
@@ -360,7 +361,7 @@
                                     '                                        <div class="badge badge-blue text-white mr-2">' + val.persentase + ' %</div>\n' +
                                     '                                    </td>\n' +
                                     '                                    <td>\n' +
-                                    '                                        <button class="btn rounded btn-detail" title="Detail">\n' +
+                                    '                                        <button class="btn rounded btn-detail" id="detailRekap" title="Detail">\n' +
                                     '                                            <i class="fas fa-search-plus"></i>\n' +
                                     '                                        </button>\n' +
                                     '                                    </td>\n' +
@@ -400,6 +401,16 @@
             $(document).ready(function () {
                 getBawahan()
             })
+            $(document).on('click','#detailRekap',function(){
+              var nip = $('#detail-nip').html();
+              var date = $(this).data('date');
+              console.log(date);
+              $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + tanggal)
+              .then((res)=>{
+                console.log(res)
+              });
+            });
+
         </script>
     @endpush
 @endsection

@@ -40,4 +40,8 @@ class RekapBulananController extends ApiController
             'rekap_bulanan' => $data_inout
         ]);
     }
+
+    public function getDetailRekap(Request $r) {
+        dd($r->all());
+    }
 }

@@ -116,6 +116,7 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     Route::group(['prefix' => 'rekap-bulanan'],function (){
         Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('api.web.rekap-bulanan.get-bawahan');
         Route::get('/{nip}/{bulan?}/{tahun?}','RekapBulananController@getRekap')->name('api.web.rekap-bulanan');
+        Route::get('/{nip}/{tanggal}','RekapBulananController@getDetailRekap')->name('api.web.rekap-detail');
     });
 });
 
