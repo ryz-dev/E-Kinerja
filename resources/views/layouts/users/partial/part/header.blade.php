@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/datepicker3.css') }}">
 </head>
 <body>
-    <section class="monitoring-absen">
+    <section id="main-section" class="rekap-bulanan">
         <div class="burgerBtn">
             <div class="bar1"></div>
             <div class="bar2"></div>

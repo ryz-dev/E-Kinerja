@@ -126,6 +126,7 @@ Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
 
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index');
 
 
 // Route::get('/test', function(){
