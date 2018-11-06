@@ -61,9 +61,11 @@ class GenerateAbsenPegawai extends Command
                         'checktime' => $chekout,
                         'checktype' => 'o'
                     ];
-                    DB::table('checkinout')->insert([
-                        $in,$out
-                    ]);
+                    try {
+                        DB::table('checkinout')->insert([
+                            $in, $out
+                        ]);
+                    } catch (\Exception $exception){}
                 }
             }
         }

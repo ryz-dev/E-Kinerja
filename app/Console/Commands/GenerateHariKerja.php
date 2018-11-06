@@ -54,7 +54,9 @@ class GenerateHariKerja extends Command
             } else {
                 $input['id_status_hari'] = 1;
             }
-            DB::table('hari_kerja')->insert($input);
+            try {
+                DB::table('hari_kerja')->insert($input);
+            } catch (\Exception $exception){}
         }
     }
 }
