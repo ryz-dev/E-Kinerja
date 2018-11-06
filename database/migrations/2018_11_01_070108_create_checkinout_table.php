@@ -17,7 +17,7 @@ class CreateCheckinoutTable extends Migration
             $table->increments('id');
             $table->string('userid');
             $table->timestamp('checktime');
-            $table->string('checktype');
+            $table->string('checktype')->nullable();
             $table->string('verifycode')->nullable();
             $table->string('sensorid')->nullable();
             $table->string('workcode')->nullable();

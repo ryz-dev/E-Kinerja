@@ -28,6 +28,7 @@ $factory->define(App\Models\MasterData\Pegawai::class,function (Faker $faker){
         'userid' => $faker->unique()->creditCardNumber,
         'nip' => $faker->unique()->bankAccountNumber,
         'nama' => $faker->firstName.' '.$faker->lastName,
+        'userid' => $faker->unique()->creditCardNumber,
         'tanggal_lahir' => $faker->date('Y-m-d','-20 years'),
         'id_agama' => 1,
         'password' => bcrypt('secret'), // secret
