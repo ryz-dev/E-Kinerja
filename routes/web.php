@@ -81,6 +81,10 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
     });
 });
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
+    Route::group(['prefix'=> 'monitoring-absen'], function(){
+        Route::get('','MonitoringAbsenController@dataAbsensi')->name('api.web.monitoring.absen');
+        Route::get('getpage','MonitoringAbsenController@getPage')->name('api.web.monitoring.absen.page');
+    });
     Route::group(['prefix' => 'master-data'],function (){
         Route::group(['prefix' => 'pegawai'],function (){
             Route::get('','PegawaiController@listPegawai')->name('api.web.master-data.pegawai');
