@@ -8,7 +8,7 @@
                     <div class="col-md-6">
                         <div class="group-search">
                             <span><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
+                            <input type="text" id="search" class="form-control" placeholder="Cari Nama / NIP Pegawai">
                         </div>
                     </div>
 
@@ -149,20 +149,35 @@
         $(document).on('click','.date-nav', function(){
             var date = $(this).attr('data-date');
             var skpd = $('#skpd').val();
-            getPage(date,skpd);
+            var search = $("#search").val();
+            getPage(date,skpd,search);
         });
 
         $(document).on('click','#skpd', function(){
             var date = $('.datepicker').val();
             var skpd = $(this).val();
-            getPage(date,skpd);
+            var search = $("#search").val();
+            getPage(date,skpd,search);
         });
 
-        $(document).on('change','#tanggal-absen', function(){
+        $(document).on('changeDate','#tanggal-absen', function(){
             var date = $(this).val();
             var skpd = $('#skpd').val();
-            getPage(date,skpd);
+            var search = $("#search").val();
+            getPage(date,skpd,search);
         });
+
+        $('#search').on('keyup', function () {
+            var date = $('#tanggal-absen').val();
+            var skpd = $('#skpd').val();
+            key = $(this).val();
+            if (key.length > 3) {
+                getPage(date,skpd,key);
+            }
+            else if (key.length == 0){
+                getPage(date,skpd);
+            }
+        })
 
 
         var parseAbsen = function(data){
@@ -170,7 +185,6 @@
                 var absenin;
                 var absenout;
                 var res = data.map(function (val){
-                    
                     if (val.checktype == 'i') {
                         absenin = val.absen_time?val.absen_time:'data tidak ada';
                     }else if(val.checktype == 'o'){
@@ -184,27 +198,27 @@
             }
         }
 
-        var getPage = function (date, skpd) {
+        var getPage = function (date, skpd, search) {
             $('#pagination').twbsPagination('destroy');
-            $.get('{{route('api.web.monitoring.absen.page')}}?d='+date+'&skpd='+skpd)
+            $.get('{{route('api.web.monitoring.absen.page')}}?d='+date+'&skpd='+skpd+(search?('&search='+search):''))
                 .then(function (res) {
                     if (res.page == 0){
-                        $('.list_pegawai').html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>'+date+'</i>" Tidak Ditemukan</td></tr>')
+                        $('.list_pegawai').html('<tr style="text-align: center"><td colspan="100">Data Tidak Ditemukan</td></tr>')
                     }
                     $('#pagination').twbsPagination({
                         totalPages: res.page,
                         visiblePages: 5,
                         onPageClick: function (event, page) {
-                            getData(page,date,skpd);
+                            getData(page,date,skpd, search);
                         }
                     });
                 })
         };
-        var getData = function (page, date, skpd) {
+        var getData = function (page, date, skpd, search) {
             var selector = $('.list_pegawai');
             $('.loading').show();
             $.ajax({
-                url: "{{ route('api.web.monitoring.absen') }}?page="+page+'&d='+date+'&skpd='+skpd,
+                url: "{{ route('api.web.monitoring.absen') }}?page="+page+'&d='+date+'&skpd='+skpd+(search?('&search='+search):''),
                 data: '',
                 success: function(res) {
                     $('.datepicker').val(res.response.today);
@@ -215,7 +229,7 @@
                         var data = res.response.pegawai.data.map(function (val) { 
                             var row = '';
                             var foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
-                            row += "<tr>";
+                            row += "<tr data-nip='"+val.nip+"' >";
                             row += "<td><div class='img-user' id='user1' style='background-image: url(" + foto + ");'></div></td>";
                             row += "<td><a href=''>" + val.nip + "</a></td>";
                             row += "<td>" + val.nama + "</td>";
@@ -225,7 +239,7 @@
                         })
                         selector.html(data.join(''));
                     } else {
-                        selector.html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>'+date+'</i>" Tidak Ditemukan</td></tr>')
+                        selector.html('<tr style="text-align: center"><td colspan="100">Data Tidak Ditemukan</td></tr>')
                     }
                 },
                 complete: function () {
