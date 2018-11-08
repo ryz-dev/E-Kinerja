@@ -25,15 +25,29 @@ class CheckinoutController extends Controller
 
     public function store(CheckinoutRequests $request){
         // dd($request->all());
-        $insert = Checkinout::create($request->all());
-        dd($insert);
+        $req = $request->all();
+        $req['checktime'] = $request->checktime.":00";
+        // dd($req);
+        Checkinout::create($req);
+        return view('layouts.admin.checkinout.index')->with('success', 'Sukses membuat data baru');
     }
 
-    public function update(Request $request,$id){
-       dd('work update');
+    public function edit($id){
+        $checkinout = Checkinout::find($id);
+        return view('layouts.admin.checkinout.edit', compact('checkinout'));
     }
 
-    public function delete($id){
-        dd('work delete');
+    public function update(CheckinoutRequests $request,$id){
+       $checkinout = Checkinout::findOrFail($id);
+       $req = $request->all();
+       $req['checktime'] = strlen($request->checktime) === 19 ? $request->checktime : $request->checktime.":00";
+       $checkinout->update($req);
+       return view('layouts.admin.checkinout.index')->with('success', 'Data Berhasil di Perbarui');
+    }
+
+    public function destroy($id){
+        $checkinout = Checkinout::findOrFail($id);
+        $checkinout->delete();
+        return view('layouts.admin.checkinout.index')->with('success', 'Data Berhasil di Di hapus');
     }
 }

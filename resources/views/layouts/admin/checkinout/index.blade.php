@@ -13,7 +13,7 @@
             <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
         </div> --}}
         <div class="container-fluid">
-          <a href="{{route('pegawai.add')}}" class="btn btn-success">Tambah Pegawai</a>
+          <a href="{{route('checkinout.create')}}" class="btn btn-success">Tambah Absen</a>
             <div class="table-responsive">
                 <table class="table table-pegawai">
                     <thead>
@@ -60,7 +60,7 @@
 		                row += "<td>"+res.data[i].sensorid+"</td>";
 		                row += "<td>"+res.data[i].workcode+"</td>";
 		                row += "<td>"+res.data[i].sn+"</td>";
-		                row += "<td><div class='btn-group mr-2' role='group' aria-label='Button Action'><a href='"+res.data[i].id+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' data-id='"+res.data[i].id+"' class='deleteData btn btn-danger'><i class='fas fa-trash'></i></button></div></td>";
+		                row += "<td><div class='btn-group mr-2' role='group' aria-label='Button Action'><a href='{{ route('checkinout.index') }}/"+res.data[i].id+"/edit' class='btn btn-success'><i class='fas fa-edit'></i></a><form method='post' action='{{ route('checkinout.index') }}/"+res.data[i].id+"'><input type='hidden' name='_method' value='DELETE'><button type='submit' data-id='"+res.data[i].id+"' class='btn btn-danger' ><i class='fas fa-trash'></i></button></form></div></td>";
                 		row += "</tr>";
 	        		}
 	        	}else{
@@ -69,7 +69,7 @@
 		            row += "</tr>";
 	        	}
 	        	$("#data_checkinout").html(row);
-	        })
+	        });
   		});
   	</script>
   @endpush

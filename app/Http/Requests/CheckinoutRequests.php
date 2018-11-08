@@ -24,11 +24,11 @@ class CheckinoutRequests extends FormRequest
     public function rules()
     {
         $rules = [
-            'userid' => 'required|integer',
+            'userid'    => 'required|integer',
             'checktime' => 'required',
             'checktype' => 'required|integer',
             'verifycode'=> 'required|integer',
-            'sensorid'  => 'required|integer',
+            'sensorid'  => 'required',
             'workcode'  => 'required|integer',
             'sn'        => 'required'
         ];
