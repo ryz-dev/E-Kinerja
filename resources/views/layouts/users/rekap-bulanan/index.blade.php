@@ -366,6 +366,15 @@
             $(document).on('click','#detailRekap',function(){
               var nip = $('#detail-nip').html();
               var data = $(this).data();
+
+              $('#checkin').html('--:--');
+              $('#checkout').html('--:--');
+              $('#kinerja_rinci').html('Belum ada data yang tersedia');
+              $('#kinerja_ket').html('Belum ada data yang tersedia');
+              $('#etika_val').html('0%');
+              $('#etika_ket').html('Belum ada data yang tersedia');
+              $('#kinerja_status').removeClass('fa-check');
+
               detailRekap(nip,data.start); //memanggil detailRekap
             });
 
@@ -397,20 +406,27 @@
                 var etika = res.response.etika;
                 var kinerja = res.response.kinerja;
                 var chekinout = res.response.checkinout;
-                // Tampilkan ke view
+
                 $('#mdlNama').html($('#detail-nama').html());
                 $('#mdlNip').html($('#detail-nip').html());
                 $('#user-modal').attr('style',$('#detail-img').attr('style'));
                 $('#detailDate').html(date);
+
+                // Checkinout
                 $('#checkin').html(chekinout[0].absen_time);
                 $('#checkout').html(chekinout[1].absen_time);
+
+                // Kinerja
                 $('#kinerja_rinci').html(kinerja.rincian_kinerja);
                 $('#kinerja_ket').html(kinerja.keterangan_approve);
-                $('#etika_val').html(etika.persentase+'%');
-                $('#etika_ket').html(etika.keterangan);
                 if (kinerja.approve == 1) {
                   $('#kinerja_status').addClass('fa-check');
                 }
+
+                // Etika
+                $('#etika_val').html(etika.persentase+'%');
+                $('#etika_ket').html(etika.keterangan);
+
               }).catch((err)=>{
                 console.log(err)
               });
