@@ -46,9 +46,26 @@ class RekapBulananController extends ApiController
     }
 
     public function getDetailRekap($nip,$tgl) {
-        $userid = Pegawai::where('nip',$nip)->first()->userid;
-        $detailKinerja = Kinerja::where('userid',$userid)->whereDate('tgl_mulai',$tgl)->first();
-        $etika = $detailKinerja->etika($userid,$tgl);
-        return $this->ApiSpecResponses($etika);
+        $date = new HariKerja;
+
+        /* Tarik tanggal sebelumnya */
+        $date_prev = $date->whereDate('tanggal','<',$tgl)
+        ->whereIdStatusHari(1)
+        ->orderBy('tanggal','desc')
+        ->first();
+
+        /* Tarik tanggal setelahnya */
+        $date_next = $date->whereDate('tanggal','>',$tgl)
+        ->whereIdStatusHari(1)
+        ->orderBy('tanggal','asc')
+        ->first();
+
+        $pegawai = Pegawai::where('nip',$nip);
+        $detailKinerja = Kinerja::where('userid',$pegawai->first()->userid)->whereDate('tgl_mulai',$tgl)->first();
+        $etika = $detailKinerja->etika($pegawai->first()->userid,$tgl); //Melakukan join, sample hardcode ada di Kinerja
+        return $this->ApiSpecResponses(array_merge($etika,[
+          'prev'=>isset($date_prev->tanggal)==false?'':$date_prev->tanggal,
+          'next'=>isset($date_next->tanggal)==false?'':$date_next->tanggal
+        ]));
     }
 }

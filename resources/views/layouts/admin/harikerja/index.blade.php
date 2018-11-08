@@ -10,9 +10,6 @@
     </div>
     <div class="main-content" id="wrapBox">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <div class="loading">
-          <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
-        </div>
         <div class="container-fluid">
           <a href="{{route('hari_kerja_add')}}" class="btn btn-success">Tambah Hari Kerja</a>
           <br><br>
