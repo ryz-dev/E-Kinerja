@@ -16,7 +16,7 @@ class PegawaiController extends ApiController
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         try {
-            $pegawai = Pegawai::with('jabatan','agama')->orderBy('created_at', 'DESC');
+            $pegawai = Pegawai::with('jabatan','agama','skpd')->orderBy('created_at', 'DESC');
             if ($request->has('q')) {
                 $pegawai = $pegawai->where('nip','like','%'.$request->input('q').'%')
                     ->orWhere('nama','like','%'.$request->input('q').'%');
@@ -32,7 +32,7 @@ class PegawaiController extends ApiController
 
     public function detailPegawai($id){
         try {
-            $pegawai = Pegawai::with('jabatan','agama')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
+            $pegawai = Pegawai::with('jabatan','agama','skpd')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
             return $this->ApiSpecResponses($pegawai);
         } catch (\Exception $exception){
             return response()->json([
