@@ -55,6 +55,10 @@ class Pegawai extends Authenticatable
         }
     }
 
+    public function skpd(){
+        return $this->hasOne('App\Models\MasterData\Skpd','id_skpd','id');
+    }
+
     public function getDetailUriAttribute(){
         return route('pegawai.detail',['id' => $this->nip]);
     }
