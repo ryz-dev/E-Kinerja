@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Absen;
 
 use App\Models\Absen\Checkinout;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CheckinoutRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -18,9 +19,14 @@ class CheckinoutController extends Controller
         dd('work show');
     }
 
+    public function create(){
+        return view('layouts.admin.checkinout.create');
+    }
 
-    public function store(Request $request){
-        dd('work store');
+    public function store(CheckinoutRequests $request){
+        // dd($request->all());
+        $insert = Checkinout::create($request->all());
+        dd($insert);
     }
 
     public function update(Request $request,$id){
