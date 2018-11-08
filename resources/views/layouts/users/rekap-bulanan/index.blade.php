@@ -374,7 +374,7 @@
                                     '                                        <div class="'+color_persentase+' text-white mr-2">' + (val.persentase) + ' '+(typeof val.persentase == 'number' ? '%' : '')+'</div>\n' +
                                     '                                    </td>\n' +
                                     '                                    <td>\n' +
-                                    '                                        <button class="btn rounded btn-detail" title="Detail">\n' +
+                                    '                                        <button class="btn rounded btn-detail" '+(val.status == "" ? "style='display : none'" : "")+' title="Detail">\n' +
                                     '                                            <i class="fas fa-search-plus"></i>\n' +
                                     '                                        </button>\n' +
                                     '                                    </td>\n' +

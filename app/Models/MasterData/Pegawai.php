@@ -18,7 +18,7 @@ class Pegawai extends Authenticatable
     protected $primaryKey = 'nip';
     public $incrementing = false;
     protected $fillable = [
-        'nip','nama','tanggal_lahir','id_agama','id_jabatan','jns_kel','tempat_lahir','foto','uuid'
+        'nip','nama','tanggal_lahir','id_agama','id_jabatan','jns_kel','tempat_lahir','foto','uuid','id_skpd'
     ];
     protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri'];
     protected $hidden = ['password'];
@@ -56,7 +56,7 @@ class Pegawai extends Authenticatable
     }
 
     public function skpd(){
-        return $this->hasOne('App\Models\MasterData\Skpd','id_skpd','id');
+        return $this->belongsTo('App\Models\MasterData\Skpd','id_skpd','id');
     }
 
     public function getDetailUriAttribute(){

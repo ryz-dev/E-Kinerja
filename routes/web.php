@@ -79,6 +79,15 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
     Route::group(['prefix' => 'role-pegawai'], function(){
         Route::get('','RolePegawaiController@index');
     });
+    Route::group(['prefix' => 'skpd'],function (){
+        Route::get('','SkpdController@index')->name('skpd.index');
+        Route::get('add','SkpdController@add')->name('skpd.add');
+        Route::get('{id}','SkpdController@show')->name('skpd.detail');
+        Route::get('edit/{id}','SkpdController@edit')->name('skpd.edit');
+        Route::post('','SkpdController@store')->name('skpd.store');
+        Route::post('{id}','SkpdController@update')->name('skpd.update');
+        Route::post('delete/{id}','SkpdController@delete')->name('skpd.delete');
+    });
 });
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     Route::group(['prefix'=> 'monitoring-absen'], function(){
@@ -111,6 +120,13 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
             Route::post('store','EselonController@storeEselon')->name('api.web.master-data.eselon.store');
             Route::post('{id}','EselonController@updateEselon')->name('api.web.master-data.eselon.update');
             Route::post('delete/{id}','EselonController@deleteEselon')->name('api.web.master-data.eselon.delete');
+        });
+        Route::group(['prefix' => 'skpd'],function (){
+            Route::get('','SkpdController@listSkpd')->name('api.web.master-data.skpd');
+            Route::get('get-pagination','SkpdController@getpage')->name('api.web.master-data.skpd.page');
+            Route::post('store','SkpdController@storeSkpd')->name('api.web.master-data.skpd.store');
+            Route::post('{id}','SkpdController@updateSkpd')->name('api.web.master-data.skpd.update');
+            Route::post('delete/{id}','SkpdController@deleteSkpd')->name('api.web.master-data.skpd.delete');
         });
         Route::group(['prefix'=> 'role-pegawai'], function(){
             Route::get('', 'RolePegawaiController@listRole')->name('api.web.master-data.list.role');
