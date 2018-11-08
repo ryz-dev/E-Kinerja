@@ -21,6 +21,10 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         $this->call(SkpdSeeder::class);
 //        $this->call(CheckinoutSeeder::class);
+        /*
+            generate dengan "php artisan generate:hari-kerja" dan
+            generate dengan "php artisan genereate:absen"
+        */
 //        $this->call(PegawaiSeeder::class);
     }
 }

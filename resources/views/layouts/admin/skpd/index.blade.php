@@ -1,38 +1,35 @@
 @extends('layouts.admin.partial.main')
 @section('content')
   <div class="main">
-      <div class="nav-top-container">
-          <div class="group-search">
-              <span><i class="fas fa-search"></i></span>
-              <input id="search" type="text" class="form-control" placeholder="Cari Jabatan">
-          </div>
-          @include('layouts.admin.partial.part.logout')
-      </div>
+    <div class="nav-top-container">
+        <div class="group-search">
+            <span><i class="fas fa-search"></i></span>
+            <input id="search" type="text" class="form-control" placeholder="Cari Nama SKPD">
+        </div>
+        @include('layouts.admin.partial.part.logout')
+    </div>
     <div class="main-content">
         <div class="loading">
             <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
         </div>
         <div class="container-fluid">
-            <a href="{{route('jabatan.add')}}" class="btn btn-success">Tambah Jabatan</a>
-            <hr>
+          <a href="{{route('skpd.add')}}" class="btn btn-success">Tambah SKPD</a>
             <div class="table-responsive">
-              <table class="table table-jabatan">
-                <thead>
-                  <tr>
-                    <th scope="col">Jabatan</th>
-                    <th scope="col">Eselon</th>
-                    <th scope="col">Atasan</th>
-                    <th scope="col">Keterangan</th>
-                    <th scope="col">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody class="list_jabatan">
-                </tbody>
-              </table>
+                <table class="table table-skpd">
+                    <thead>
+                    <tr>
+                        <th scope="col">Nama SKPD</th>
+                        <th scope="col">Keterangan</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                    </thead>
+                    <tbody class="list_skpd">
+                    </tbody>
+                </table>
+                <div class="box-pagination">
+                    <ul class="pagination" id="pagination"></ul>
+                </div>
             </div>
-          <div class="box-pagination">
-            <ul class="pagination" id="pagination"></ul>
-          </div>
         </div>
     </div>
   </div>
@@ -43,9 +40,14 @@
                 });
                 var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('api.web.master-data.jabatan.page')}}?q='+search)
+                    $.get('{{route('api.web.master-data.skpd.page')}}?q='+search)
                         .then(function (res) {
                             if (res.halaman == 0){
+                                if (search != '') {
+                                    $('.list_skpd').html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>' + search + '</i>" Tidak Ditemukan</td></tr>')
+                                } else {
+                                    $('.list_skpd').html('<tr style="text-align: center"><td colspan="100">Data Tidak Ditemukan</td></tr>')
+                                }
                                 $('.loading').hide();
                             }
                             if (res.halaman == 1){
@@ -63,27 +65,29 @@
                         })
                 };
                 var getData = function (page,search) {
-                    var selector = $('.list_jabatan');
+                    var selector = $('.list_skpd');
                     $('.loading').show();
                     $.ajax({
-                        url: "{{ route('api.web.master-data.jabatan') }}?page="+page+'&q='+search,
+                        url: "{{ route('api.web.master-data.skpd') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
-                            var data = res.response.map(function (val) {
-                                var row = '';
-                                row += "<tr>";
-                                row += "<td>"+val.jabatan+"</td>";
-                                row += "<td>"+val.eselon.eselon+"</td>";
-                                row += "<td>"+(val.atasan ? val.atasan.jabatan : '')+"</td>";
-                                row += "<td>"+(val.keterangan ? val.keterangan : '')+"</td>";
-                                row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='"+val.edit_uri+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='"+val.delete_uri+"' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
-                                row += "</tr>";
-                                return row;
-                            })
-                            selector.html(data.join(''));
+                            if (res.response.length > 0) {
+                                var data = res.response.map(function (val) {
+                                    var row = '';
+                                    row += "<tr>";
+                                    row += "<td>" + val.nama_skpd + "</td>";
+                                    row += "<td>" + val.keterangan + "</td>";
+                                    row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='" + val.edit_uri + "' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='" + val.delete_uri + "' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
+                                    row += "</tr>";
+                                    return row;
+                                })
+                                selector.html(data.join(''));
+                            } else {
+                                selector.html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>'+search+'</i>" Tidak Ditemukan</td></tr>')
+                            }
                             $('.loading').hide();
                         },
-                        complete : function () {
+                        complete: function () {
                             $('.loading').hide();
                         }
                     });
@@ -93,12 +97,12 @@
                     var delete_uri = $(this).attr('delete-uri');
                     var search = $('#search').val();
                     swal({
-                        title: 'Yakin Ingin Menghapus Jabatan?',
+                        title: 'Yakin Ingin Menghapus SKPD?',
                         text: "Proses tidak dapat di kembalikan",
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
-                        confirmButtonText: 'Iya, Hapus Jabatan!',
+                        confirmButtonText: 'Iya, Hapus SKPD!',
                         cancelButtonText: 'Tidak'
                     }).then((result) => {
                         if (result.value) {
@@ -107,7 +111,7 @@
                                 getPage(search);
                                 swal(
                                     'Terhapus!',
-                                    'Data Jabatan Berhasil Dihapus.',
+                                    'Data SKPD Berhasil Dihapus.',
                                     'success'
                                 )
                             },function () {
@@ -122,8 +126,7 @@
                 })
                 $('#search').on('keyup',function (e) {
                     e.preventDefault();
-                    var search = $(this).val();
-                    getPage(search);
+                    getPage($(this).val())
                 })
             </script>
     @endpush

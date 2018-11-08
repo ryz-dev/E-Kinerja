@@ -29,6 +29,9 @@
     </style>
 </head>
 <body>
+    <div class="loading">
+        <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+    </div>
     <section id="main-section" class="rekap-bulanan">
         <div class="burgerBtn">
             <div class="bar1"></div>
@@ -57,4 +60,4 @@
                     <span class="slider round"></span>
                 </label>
             </div>
-        </div>        
+        </div>

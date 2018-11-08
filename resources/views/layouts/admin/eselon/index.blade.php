@@ -45,6 +45,14 @@
                     $('#pagination').twbsPagination('destroy');
                     $.get('{{route('api.web.master-data.eselon.page')}}?q='+search)
                         .then(function (res) {
+                            if (res.halaman == 0){
+                                $('.loading').hide()
+                            }
+                            if (res.halaman == 1){
+                                $('#pagination').hide();
+                            } else {
+                                $('#pagination').show();
+                            }
                             $('#pagination').twbsPagination({
                                 totalPages: res.halaman,
                                 visiblePages: 5,

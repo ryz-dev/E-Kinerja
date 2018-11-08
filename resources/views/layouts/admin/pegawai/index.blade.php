@@ -46,7 +46,15 @@
                     $.get('{{route('api.web.master-data.pegawai.page')}}?q='+search)
                         .then(function (res) {
                             if (res.halaman == 0){
-                                $('.list_pegawai').html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>'+search+'</i>" Tidak Ditemukan</td></tr>')
+                                if (search != '') {
+                                    $('.list_pegawai').html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>' + search + '</i>" Tidak Ditemukan</td></tr>')
+                                }
+                                $('.loading').hide();
+                            }
+                            if (res.halaman == 1){
+                                $('#pagination').hide();
+                            } else {
+                                $('#pagination').show();
                             }
                             $('#pagination').twbsPagination({
                                 totalPages: res.halaman,

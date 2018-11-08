@@ -10,9 +10,6 @@
     </div>
     <div class="main-content" id="wrapBox">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <div class="loading">
-          <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
-        </div>
         <div class="container-fluid">
           <a href="{{route('hari_kerja_add')}}" class="btn btn-success">Tambah Hari Kerja</a>
           <br><br>
@@ -56,7 +53,15 @@
         $('#pagination').twbsPagination('destroy');
         $.get('{{route('page_hari_kerja')}}?q='+getKey)
         .then(function (res) {
-          $('#pagination').twbsPagination({
+            if (res.halaman == 0){
+                $('.loading').hide();
+            }
+            if (res.halaman == 1){
+                $('#pagination').hide();
+            } else {
+                $('#pagination').show();
+            }
+            $('#pagination').twbsPagination({
             totalPages: res.halaman,
             visiblePages: 5,
             onPageClick: function (event, page) {

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\API;
 
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
+use App\Models\Absen\Kinerja;
+use App\Models\Absen\Etika;
+use App\Models\Absen\Checkinout;
 
 class RekapBulananController extends ApiController
 {
@@ -42,5 +45,50 @@ class RekapBulananController extends ApiController
             'tanggal_sekarang' => $this->formatDate(date('Y-m-d')),
             'rekap_bulanan' => $data_inout
         ]);
+    }
+
+    public function getDetailRekap($nip,$tgl) {
+        $date = new HariKerja;
+
+        /* Tarik tanggal sebelumnya */
+        $date_prev = $date->whereDate('tanggal','<',$tgl)
+        ->whereIdStatusHari(1)
+        ->orderBy('tanggal','desc')
+        ->first();
+
+        /* Tarik tanggal setelahnya */
+        $date_next = $date->whereDate('tanggal','>',$tgl)
+        ->whereIdStatusHari(1)
+        ->orderBy('tanggal','asc')
+        ->first();
+
+        /* Data kinerja */
+        $pegawai = Pegawai::where('nip',$nip)->first();
+        $kinerja = Kinerja::where('userid',$pegawai->userid)
+        ->whereDate('tgl_mulai',$tgl)
+        ->first();
+
+        /* Data etika */
+        $etika = Etika::where("userid",$pegawai->userid)
+        ->where("tanggal",$tgl)
+        ->first();
+
+        /* Data checkinout */
+        $checkinout = Checkinout::where("userid",$pegawai->userid)
+        ->whereDate("checktime",$tgl)
+        ->get();
+
+
+        /* Data array */
+        $result = [
+          "kinerja"=>$kinerja,
+          "etika"=>$etika,
+          "checkinout"=>$checkinout
+        ];
+
+        return $this->ApiSpecResponses(array_merge($result,[
+          'prev'=>isset($date_prev->tanggal)==false?'':$date_prev->tanggal,
+          'next'=>isset($date_next->tanggal)==false?'':$date_next->tanggal
+        ]));
     }
 }

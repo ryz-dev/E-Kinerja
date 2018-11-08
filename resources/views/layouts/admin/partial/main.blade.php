@@ -37,5 +37,8 @@
     @yield('content')
 </section>
 </body>
+<div class="loading">
+  <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+</div>
 @include('layouts.admin.partial.part.footer')
 </html>
