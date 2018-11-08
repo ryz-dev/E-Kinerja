@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MasterData;
 use App\Models\MasterData\Agama;
 use App\Models\MasterData\Jabatan;
 use App\Models\MasterData\Pegawai;
+use App\Models\MasterData\Skpd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -15,15 +16,16 @@ class PegawaiController extends MasterDataController
     }
 
     public function show($id){
-        $pegawai = Pegawai::with('jabatan','agama')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
+        $pegawai = Pegawai::with('jabatan','agama','skpd')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
         return view('layouts.admin.pegawai.detail',compact('pegawai'));
     }
 
     public function edit($id){
-        $pegawai = Pegawai::with('jabatan','agama')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
+        $pegawai = Pegawai::with('jabatan','agama','skpd')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
         $data_option = new \stdClass();
         $data_option->agama = Agama::get();
         $data_option->jabatan = Jabatan::get();
+        $data_option->skpd = Skpd::get();
         return view('layouts.admin.pegawai.edit',compact('pegawai','data_option'));
     }
 
@@ -31,6 +33,7 @@ class PegawaiController extends MasterDataController
         $data_option = new \stdClass();
         $data_option->agama = Agama::get();
         $data_option->jabatan = Jabatan::get();
+        $data_option->skpd = Skpd::get();
         return view('layouts.admin.pegawai.add',compact('data_option'));
     }
 
@@ -43,7 +46,8 @@ class PegawaiController extends MasterDataController
             'id_agama' => 'required|in:'.$this->getListAgama(),
             'id_jabatan' => 'in:'.$this->getListJabatan(),
             'jns_kel' => 'required|in:laki-laki,perempuan',
-            'tempat_lahir' => 'required'
+            'tempat_lahir' => 'required',
+            'id_skpd' => 'required'
         ]);
         $input = $request->input();
         /*upload file foto*/
@@ -67,6 +71,7 @@ class PegawaiController extends MasterDataController
             'id_agama' => 'in:'.$this->getListAgama(),
             'id_jabatan' => 'in:'.$this->getListJabatan(),
             'jns_kel' => 'in:laki-laki,perempuan',
+            'id_skpd' => 'required'
         ]);
         $input = $request->input();
         /*upload file foto*/

@@ -19,6 +19,10 @@
                                 <input id="jabatan" type="text" class="form-control" placeholder="Jabatan" readonly="" value="{{$pegawai->jabatan->jabatan}}">
                             </div>
                             <div class="form-group">
+                                <label for="skpd">SKPD</label>
+                                <input id="skpd" type="text" class="form-control" placeholder="SKPD" readonly="" value="{{$pegawai->skpd->nama_skpd}}">
+                            </div>
+                            <div class="form-group">
                                 <label for="agama">Agama</label>
                                 <input id="agama" type="text" class="form-control" placeholder="Agama" readonly="" value="{{$pegawai->agama->agama}}">
                             </div>

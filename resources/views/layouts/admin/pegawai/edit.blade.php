@@ -25,6 +25,15 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label for="skpd">SKPD</label>
+                                <select class="form-control" name="id_skpd" id="skpd" required>
+                                    <option value="">Pilih SKPD</option>
+                                    @foreach($data_option->skpd AS $skpd)
+                                        <option value="{{$skpd->id}}" {{$skpd->id == $pegawai->id_skpd ? 'selected' : ''}}>{{$skpd->nama_skpd}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="agama">Agama</label>
                                 <select class="form-control" name="id_agama" id="agama" required>
                                     <option value="">Pilih Agama</option>
