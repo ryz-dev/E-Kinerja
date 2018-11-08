@@ -7,9 +7,29 @@
     <title>E-Kinerja Kabupaten Kolaka</title>
     <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datepicker3.css') }}">
+    <style media="screen">
+        .loading {
+            margin: auto;
+            z-index: 9999;
+            width: 100%;
+            height: 100%;
+            background-color:#212d3ad6;
+            position: absolute;
+        }
+        .loading img {
+            width: 50px;
+            height: 50px;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            position: absolute;
+            margin: auto;
+        }
+    </style>
 </head>
 <body>
-    <section class="monitoring-absen">
+    <section id="main-section" class="rekap-bulanan">
         <div class="burgerBtn">
             <div class="bar1"></div>
             <div class="bar2"></div>

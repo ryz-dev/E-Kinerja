@@ -3,6 +3,8 @@
 namespace App\Models\MasterData;
 
 
+use App\Models\Absen\Etika;
+use App\Models\Absen\Kinerja;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -37,6 +39,14 @@ class Pegawai extends Authenticatable
         return $this->hasMany('App\Models\Absen\Checkinout','userid','userid');
     }
 
+    public function etika(){
+        return $this->hasMany(Etika::class,'userid','userid');
+    }
+
+    public function kinerja(){
+        return $this->hasMany(Kinerja::class,'userid','userid');
+    }
+
     public function hasAccess(array $permissions){
         foreach ($this->role as $role) {
             if ($role->hasAccess($permissions)) {
@@ -45,12 +55,16 @@ class Pegawai extends Authenticatable
         }
     }
 
+    public function skpd(){
+        return $this->hasOne('App\Models\MasterData\Skpd','id_skpd','id');
+    }
+
     public function getDetailUriAttribute(){
         return route('pegawai.detail',['id' => $this->nip]);
     }
 
     public function getDeleteUriAttribute(){
-        return route('api.web.pegawai.delete',['id' => $this->uuid]);
+        return route('api.web.master-data.pegawai.delete',['id' => $this->uuid]);
     }
 
     public function getEditUriAttribute(){
@@ -58,7 +72,7 @@ class Pegawai extends Authenticatable
     }
 
     public function getUpdateuriAttribute(){
-        return route('api.web.pegawai.update',['id' => $this->uuid]);
+        return route('api.web.master-data.pegawai.update',['id' => $this->uuid]);
     }
 
     

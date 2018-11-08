@@ -3,7 +3,7 @@
     <div class="main">
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-pegawai" action="{{route('api.web.pegawai.store')}}" class="form" enctype="multipart/form-data">
+                <form id="form-store-pegawai" action="{{route('api.web.master-data.pegawai.store')}}" class="form" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">Tambah Pegawai</h2>

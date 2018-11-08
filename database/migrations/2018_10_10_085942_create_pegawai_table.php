@@ -16,6 +16,7 @@ class CreatePegawaiTable extends Migration
         Schema::create('pegawai',function(Blueprint $table){
             $table->uuid('uuid');
             $table->string('nip');
+            $table->integer('id_skpd')->unsigned()->nullable();
             $table->string('userid')->index()->nullable();
 //            $table->integer('id_fp')->nullable()->unsigned()->index();
             $table->string('foto')->nullable();
@@ -31,7 +32,7 @@ class CreatePegawaiTable extends Migration
             $table->timestamps();
 
             $table->primary('nip');
-
+            $table->index('id_skpd');
         });
     }
 
