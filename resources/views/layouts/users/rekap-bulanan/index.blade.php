@@ -53,7 +53,6 @@
             <div class="tab-pane active" id="user1" role="tabpanel">
                 <div class="container">
                     <input type="hidden" name="index" value="0">
-
                     <div class="row">
                         <div class="col-md-12">
 
@@ -87,9 +86,6 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="col-md-12">
-                            <div class="loading">
-                                <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
-                            </div>
                             <table class="table table-responsive table-pegawai">
                                 <thead>
                                 <tr>
@@ -117,10 +113,10 @@
                     <i class="fas fa-times"></i>
                 </div>
                 <!-- button control -->
-                <a class="control-left" onclick="plusSlides(-1)">
+                <a class="controlLeft control-left" onclick="plusSlides(-1)">
                     <i class="fas fa-angle-left"></i>
                 </a>
-                <a class="control-right" onclick="plusSlides(1)">
+                <a class="controlRight control-right" onclick="plusSlides(1)">
                     <i class="fas fa-angle-right"></i>
                 </a>
                 <div class="container">
@@ -128,85 +124,32 @@
                         <div class="col-md-12">
                             <div class="modal-konten mySlides">
                                 <div class="title-name">
-                                    <div class="img-user" id="user-modal"
-                                         style="background-image: url('images/img-user.png');">
-                                    </div>
-                                    <h6>Alfian Labeda</h6>
-                                    <span>1929298282929000</span>
-                                    <span class="badge text-white float-right">23 September 2018</span>
+                                    <div class="img-user" id="user-modal"></div>
+                                    <h6><span id='mdlNama'></span></h6>
+                                    <span><p id='mdlNip'></p></span>
+                                    <span class="badge text-white float-right"><p id='detailDate'></p></span>
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="desc-detail">
                                     <h4>Hadir</h4>
                                     <small>Jam Masuk - Jam Pulang</small>
                                     <br>
-                                    <label>07:15 - 16:00</label>
+                                    <label><span id='checkin'></span> - <span id='checkout'></span></label>
                                     <hr>
                                     <h4>Penilaian Kinerja</h4>
-                                    <span class="check-list float-right"><i class="fas fa-lg fa-check"></i></span>
+                                    <span class="check-list float-right"><i id="kinerja_status" class="fas fa-lg"></i></span>
                                     <h6>Rincian Kinerja</h6>
-                                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus nostrum
-                                        possimus asperiores aliquid eaque iusto aut aspernatur earum nihil magnam
-                                        saepe odit officiis, ipspsa delectus tempora? Magni, atque totam dicta
-                                        accusantium, velit itaque dolores magnam nihil repellendus!</p>
+                                    <p id='kinerja_rinci'></p>
                                     <h6>Keterangan Penilaian</h6>
-                                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus nostrum
-                                        possimus asperiores aliquid eaque iusto aut aspernatur earum nihil magnam
-                                        saepe odit officiis, ipsam excepturi maiores? Possimus odit alias fugiat
-                                        excepturi dolorem doloripsa delectus tempora? Magni, atque totam dicta
-                                        accusantium, velit itaque dolores magnam nihil repellendus!</p>
+                                    <p id='kinerja_ket'></p>
                                     <hr>
                                     <h4>Penilaian Etika</h4>
-                                    <span class="float-right value-etika">100%</span>
+                                    <span class="float-right value-etika"><p id='etika_val'></p></span>
                                     <h6>Keterangan Penilaian</h6>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit, fugiat
-                                        doloremque error aliquid consequuntur, nostrum deleniti incidunt
-                                        perferendis quasi explicabo dolorum repellat, esse minus ipsam alias
-                                        impedit sapiente culpa aspernatur?</p>
+                                    <p id='etika_ket'></p>
                                 </div>
                             </div>
 
-                            <!--  -->
-                            <div class="modal-konten mySlides">
-                                <div class="title-name">
-                                    <div class="img-user" id="user-modal"
-                                         style="background-image: url('images/bill.jpg');">
-                                    </div>
-                                    <h6>Bill Gates</h6>
-                                    <span>1929298282929000</span>
-                                    <span class="badge text-white float-right">23 September 2018</span>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="desc-detail">
-                                    <h4>Hadir</h4>
-                                    <small>Jam Masuk - Jam Pulang</small>
-                                    <br>
-                                    <label>07:15 - 16:00</label>
-                                    <hr>
-                                    <h4>Penilaian Kinerja</h4>
-                                    <span class="check-list float-right"><i class="fas fa-lg fa-check"></i></span>
-                                    <h6>Rincian Kinerja</h6>
-                                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus nostrum
-                                        possimus asperiores aliquid eaque iusto aut aspernatur earum nihil magnam
-                                        saepe odit officiis, ipspsa delectus tempora? Magni, atque totam dicta
-                                        accusantium, velit itaque dolores magnam nihil repellendus!</p>
-                                    <h6>Keterangan Penilaian</h6>
-                                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus nostrum
-                                        possimus asperiores aliquid eaque iusto aut aspernatur earum nihil magnam
-                                        saepe odit officiis, ipsam excepturi maiores? Possimus odit alias fugiat
-                                        excepturi dolorem doloripsa delectus tempora? Magni, atque totam dicta
-                                        accusantium, velit itaque dolores magnam nihil repellendus!</p>
-                                    <hr>
-                                    <h4>Penilaian Etika</h4>
-                                    <span class="float-right value-etika">100%</span>
-                                    <h6>Keterangan Penilaian</h6>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit, fugiat
-                                        doloremque error aliquid consequuntur, nostrum deleniti incidunt
-                                        perferendis quasi explicabo dolorum repellat, esse minus ipsam alias
-                                        impedit sapiente culpa aspernatur?</p>
-                                </div>
-                            </div>
-                            <!--  -->
                         </div>
                     </div>
 
@@ -218,6 +161,7 @@
     </div>
     @push('script')
         <script>
+
             var getBawahan = function () {
                 $.get('{{route('api.web.rekap-bulanan.get-bawahan')}}')
                     .then(function (res) {
@@ -365,20 +309,20 @@
                                     color_persentase = ''
                                 }
                                 return '<tr>\n' +
-                                    '                                    <td>' + val.hari + ', ' + val.tanggal + '</td>\n' +
-                                    '                                    <td>' + val.status + '</td>\n' +
-                                    '                                    <td>\n' +
-                                    '                                        <span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
-                                    '                                    </td>\n' +
-                                    '                                    <td>\n' +
-                                    '                                        <div class="'+color_persentase+' text-white mr-2">' + (val.persentase) + ' '+(typeof val.persentase == 'number' ? '%' : '')+'</div>\n' +
-                                    '                                    </td>\n' +
-                                    '                                    <td>\n' +
-                                    '                                        <button class="btn rounded btn-detail" '+(val.status == "" ? "style='display : none'" : "")+' title="Detail">\n' +
-                                    '                                            <i class="fas fa-search-plus"></i>\n' +
-                                    '                                        </button>\n' +
-                                    '                                    </td>\n' +
-                                    '                                </tr>'
+                                    '<td>' + val.hari + ', ' + val.tanggal + '</td>\n' +
+                                    '<td>' + val.status + '</td>\n' +
+                                    '<td>\n' +
+                                    '<span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
+                                    '</td>\n' +
+                                    '<td>\n' +
+                                    '<div class="'+color_persentase+' text-white mr-2">' + (val.persentase) + ' '+(typeof val.persentase == 'number' ? '%' : '')+'</div>\n' +
+                                    '</td>\n' +
+                                    '<td>\n' +
+                                    '<button class="btn rounded btn-detail controlRight controlLeft" id="detailRekap" data-prev="'+val.tgl_prev+'" data-start="'+val.tgl+'" data-next="'+val.tgl_next+'" title="Detail">\n' +
+                                    '<i class="fas fa-search-plus"></i>\n' +
+                                    '</button>\n' +
+                                    '</td>\n' +
+                                    '</tr>'
                             });
                             $('#detail-rekap-bulanan').html(rekap.join(''));
                         } else {
@@ -414,6 +358,65 @@
             $(document).ready(function () {
                 getBawahan()
             })
+
+            // Deklarasi variable
+            let rekapDetail;
+
+            // Fungsi pertama dijalankan saat modal terbuka
+            $(document).on('click','#detailRekap',function(){
+              var nip = $('#detail-nip').html();
+              var data = $(this).data();
+              detailRekap(nip,data.start); //memanggil detailRekap
+            });
+
+            // Fungsi prev
+            $(document).on('click','.controlLeft',function(){
+              var nip = $('#detail-nip').html();
+              var rk = rekapDetail;
+              if (rk.prev != '') {
+                detailRekap(nip,rk.prev); //memanggil detailRekap
+              }
+            });
+
+            // Fungsi next
+            $(document).on('click','.controlRight',function(){
+              var nip = $('#detail-nip').html();
+              var rk = rekapDetail;
+              if (rk.next != '') {
+                detailRekap(nip,rk.next); //memanggil detailRekap
+              }
+            });
+
+            // Fungsi yang bertugas melakukan hit
+            var detailRekap = function(nip,date){
+              $('.loading').show();
+              $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + date)
+              .then((res)=>{
+                $('.loading').hide();
+                rekapDetail = res.response; //return ke rekapDetail
+                var etika = res.response.etika;
+                var kinerja = res.response.kinerja;
+                var chekinout = res.response.checkinout;
+                // Tampilkan ke view
+                $('#mdlNama').html($('#detail-nama').html());
+                $('#mdlNip').html($('#detail-nip').html());
+                $('#user-modal').attr('style',$('#detail-img').attr('style'));
+                $('#detailDate').html(date);
+                $('#checkin').html(chekinout[0].absen_time);
+                $('#checkout').html(chekinout[1].absen_time);
+                $('#kinerja_rinci').html(kinerja.rincian_kinerja);
+                $('#kinerja_ket').html(kinerja.keterangan_approve);
+                $('#etika_val').html(etika.persentase+'%');
+                $('#etika_ket').html(etika.keterangan);
+                if (kinerja.approve == 1) {
+                  $('#kinerja_status').addClass('fa-check');
+                }
+              }).catch((err)=>{
+                console.log(err)
+              });
+
+            }
+
         </script>
     @endpush
 @endsection

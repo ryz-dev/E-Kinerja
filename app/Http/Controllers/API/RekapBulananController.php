@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 
 use App\Models\MasterData\HariKerja;
+use App\Models\Absen\Kinerja;
 use App\Models\MasterData\Pegawai;
 
 class RekapBulananController extends ApiController
@@ -42,5 +43,29 @@ class RekapBulananController extends ApiController
             'tanggal_sekarang' => $this->formatDate(date('Y-m-d')),
             'rekap_bulanan' => $data_inout
         ]);
+    }
+
+    public function getDetailRekap($nip,$tgl) {
+        $date = new HariKerja;
+
+        /* Tarik tanggal sebelumnya */
+        $date_prev = $date->whereDate('tanggal','<',$tgl)
+        ->whereIdStatusHari(1)
+        ->orderBy('tanggal','desc')
+        ->first();
+
+        /* Tarik tanggal setelahnya */
+        $date_next = $date->whereDate('tanggal','>',$tgl)
+        ->whereIdStatusHari(1)
+        ->orderBy('tanggal','asc')
+        ->first();
+
+        $pegawai = Pegawai::where('nip',$nip);
+        $detailKinerja = Kinerja::where('userid',$pegawai->first()->userid)->whereDate('tgl_mulai',$tgl)->first();
+        $etika = $detailKinerja->etika($pegawai->first()->userid,$tgl); //Melakukan join, sample hardcode ada di Kinerja
+        return $this->ApiSpecResponses(array_merge($etika,[
+          'prev'=>isset($date_prev->tanggal)==false?'':$date_prev->tanggal,
+          'next'=>isset($date_next->tanggal)==false?'':$date_next->tanggal
+        ]));
     }
 }
