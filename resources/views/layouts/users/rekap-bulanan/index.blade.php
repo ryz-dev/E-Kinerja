@@ -108,6 +108,7 @@
         <!-- MODAL DETAIL -->
         <div class="modal-detail" id="modal-detail">
             <div class="modal-overlay">
+                <input type="hidden" name="modal_data_index">
                 <!-- button close -->
                 <div class="close">
                     <i class="fas fa-times"></i>
@@ -137,7 +138,8 @@
                                     <label><span id='checkin'></span> - <span id='checkout'></span></label>
                                     <hr>
                                     <h4>Penilaian Kinerja</h4>
-                                    <span class="check-list float-right"><i id="kinerja_status" class="fas fa-lg"></i></span>
+                                    <span class="check-list float-right"><i id="kinerja_status"
+                                                                            class="fas fa-lg"></i></span>
                                     <h6>Rincian Kinerja</h6>
                                     <p id='kinerja_rinci'></p>
                                     <h6>Keterangan Penilaian</h6>
@@ -283,7 +285,7 @@
                 $.get('{{route('api.web.rekap-bulanan',['nip' => ''])}}/' + nip + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
                     .then(function (res) {
                         if (res.response.rekap_bulanan.length > 0) {
-                            var rekap = res.response.rekap_bulanan.map(function (val) {
+                            var rekap = res.response.rekap_bulanan.map(function (val, i) {
                                 var color = approve = color_persentase = ''
                                 if (val.approve == 1) {
                                     approve = 'fa-check';
@@ -295,30 +297,30 @@
                                     color = ''
                                     approve = ''
                                 }
-                                if (val.persentase == 100){
+                                if (val.persentase == 100) {
                                     color_persentase = 'badge badge-blue'
-                                } else if (val.persentase >= 75){
+                                } else if (val.persentase >= 75) {
                                     color_persentase = 'badge badge-green'
-                                } else if (val.persentase >= 45){
+                                } else if (val.persentase >= 45) {
                                     color_persentase = 'badge badge-orange'
-                                } else if (val.persentase > 0){
+                                } else if (val.persentase > 0) {
                                     color_persentase = 'badge badge-red'
-                                } else if (val.persentase === 0){
+                                } else if (val.persentase === 0) {
                                     color_persentase = 'badge badge-red'
-                                } else if (val.persentase == ''){
+                                } else if (val.persentase == '') {
                                     color_persentase = ''
                                 }
-                                return '<tr>\n' +
+                                return '<tr rekap-index="' + i + '" rekap-status="' + val.status + '">\n' +
                                     '<td>' + val.hari + ', ' + val.tanggal + '</td>\n' +
                                     '<td>' + val.status + '</td>\n' +
                                     '<td>\n' +
                                     '<span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
                                     '</td>\n' +
                                     '<td>\n' +
-                                    '<div class="'+color_persentase+' text-white mr-2">' + (val.persentase) + ' '+(typeof val.persentase == 'number' ? '%' : '')+'</div>\n' +
+                                    '<div class="' + color_persentase + ' text-white mr-2">' + (val.persentase) + ' ' + (typeof val.persentase == 'number' ? '%' : '') + '</div>\n' +
                                     '</td>\n' +
                                     '<td>\n' +
-                                    '<button class="btn rounded btn-detail controlRight controlLeft" id="detailRekap" data-prev="'+val.tgl_prev+'" data-start="'+val.tgl+'" data-next="'+val.tgl_next+'" title="Detail">\n' +
+                                    '<button class="btn rounded btn-detail detailRekap" ' + (val.status == "" ? "style='display : none'" : "") + ' id="detailRekap" list-index="' + i + '" data-prev="' + val.tgl_prev + '" data-start="' + val.tgl + '" data-next="' + val.tgl_next + '" title="Detail">\n' +
                                     '<i class="fas fa-search-plus"></i>\n' +
                                     '</button>\n' +
                                     '</td>\n' +
@@ -363,57 +365,73 @@
             let rekapDetail;
 
             // Fungsi pertama dijalankan saat modal terbuka
-            $(document).on('click','#detailRekap',function(){
-              var nip = $('#detail-nip').html();
-              var data = $(this).data();
-              detailRekap(nip,data.start); //memanggil detailRekap
+            $(document).on('click', '.detailRekap', function () {
+                var nip = $('#detail-nip').html();
+                var data = $(this).data();
+                $('[name=modal_data_index]').val($(this).attr('list-index'));
+                detailRekap(nip, data.start); //memanggil detailRekap
             });
 
             // Fungsi prev
-            $(document).on('click','.controlLeft',function(){
-              var nip = $('#detail-nip').html();
-              var rk = rekapDetail;
-              if (rk.prev != '') {
-                detailRekap(nip,rk.prev); //memanggil detailRekap
-              }
+            $(document).on('click', '.controlLeft', function () {
+                var nip = $('#detail-nip').html();
+                var rk = rekapDetail;
+                $('[name=modal_data_index]').val(parseInt($('[name=modal_data_index]').val()) -1);
+                if (rk.prev != '') {
+                    detailRekap(nip, rk.prev); //memanggil detailRekap
+                }
             });
 
             // Fungsi next
-            $(document).on('click','.controlRight',function(){
-              var nip = $('#detail-nip').html();
-              var rk = rekapDetail;
-              if (rk.next != '') {
-                detailRekap(nip,rk.next); //memanggil detailRekap
-              }
+            $(document).on('click', '.controlRight', function () {
+                var nip = $('#detail-nip').html();
+                var rk = rekapDetail;
+                $('[name=modal_data_index]').val(parseInt($('[name=modal_data_index]').val()) +1);
+                if (rk.next != '') {
+                    detailRekap(nip, rk.next); //memanggil detailRekap
+                }
             });
 
             // Fungsi yang bertugas melakukan hit
-            var detailRekap = function(nip,date){
-              $('.loading').show();
-              $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + date)
-              .then((res)=>{
-                $('.loading').hide();
-                rekapDetail = res.response; //return ke rekapDetail
-                var etika = res.response.etika;
-                var kinerja = res.response.kinerja;
-                var chekinout = res.response.checkinout;
-                // Tampilkan ke view
-                $('#mdlNama').html($('#detail-nama').html());
-                $('#mdlNip').html($('#detail-nip').html());
-                $('#user-modal').attr('style',$('#detail-img').attr('style'));
-                $('#detailDate').html(date);
-                $('#checkin').html(chekinout[0].absen_time);
-                $('#checkout').html(chekinout[1].absen_time);
-                $('#kinerja_rinci').html(kinerja.rincian_kinerja);
-                $('#kinerja_ket').html(kinerja.keterangan_approve);
-                $('#etika_val').html(etika.persentase+'%');
-                $('#etika_ket').html(etika.keterangan);
-                if (kinerja.approve == 1) {
-                  $('#kinerja_status').addClass('fa-check');
-                }
-              }).catch((err)=>{
-                console.log(err)
-              });
+            var detailRekap = function (nip, date) {
+                $('.loading').show();
+                $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + date)
+                    .then((res) => {
+                        $('.loading').hide();
+                        index = parseInt($('[name=modal_data_index]').val());
+                        next = $('[rekap-index="' + (index + 1) + '"][rekap-status!=""]');
+                        prev = $('[rekap-index="' + (index - 1) + '"][rekap-status!=""]');
+                        if (next.length) {
+                            $('.control-right').show();
+                        } else {
+                            $('.control-right').hide();
+                        }
+                        if (prev.length) {
+                            $('.control-left').show();
+                        } else {
+                            $('.control-left').hide();
+                        }
+                        rekapDetail = res.response; //return ke rekapDetail
+                        var etika = res.response.etika;
+                        var kinerja = res.response.kinerja;
+                        var chekinout = res.response.checkinout;
+                        // Tampilkan ke view
+                        $('#mdlNama').html($('#detail-nama').html());
+                        $('#mdlNip').html($('#detail-nip').html());
+                        $('#user-modal').attr('style', $('#detail-img').attr('style'));
+                        $('#detailDate').html(date);
+                        $('#checkin').html(chekinout[0].absen_time);
+                        $('#checkout').html(chekinout[1].absen_time);
+                        $('#kinerja_rinci').html(kinerja.rincian_kinerja);
+                        $('#kinerja_ket').html(kinerja.keterangan_approve);
+                        $('#etika_val').html(etika.persentase + '%');
+                        $('#etika_ket').html(etika.keterangan);
+                        if (kinerja.approve == 1) {
+                            $('#kinerja_status').addClass('fa-check');
+                        }
+                    }).catch((err) => {
+                    console.log(err)
+                });
 
             }
 
