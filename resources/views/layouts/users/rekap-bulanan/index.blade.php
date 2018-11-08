@@ -53,9 +53,7 @@
             <div class="tab-pane active" id="user1" role="tabpanel">
                 <div class="container">
                     <input type="hidden" name="index" value="0">
-                    <div class="loading">
-                        <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
-                    </div>
+
                     <div class="row">
                         <div class="col-md-12">
 
@@ -89,6 +87,9 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="col-md-12">
+                            <div class="loading">
+                                <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+                            </div>
                             <table class="table table-responsive table-pegawai">
                                 <thead>
                                 <tr>
