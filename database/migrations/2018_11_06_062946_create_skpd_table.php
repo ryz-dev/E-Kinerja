@@ -15,6 +15,7 @@ class CreateSkpdTable extends Migration
     {
         Schema::create('skpd', function (Blueprint $table) {
             $table->increments('id');
+            $table->uuid('uuid');
             $table->string('nama_skpd');
             $table->text('keterangan');
             $table->timestamps();

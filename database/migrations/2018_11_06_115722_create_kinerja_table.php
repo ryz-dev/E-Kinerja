@@ -20,7 +20,7 @@ class CreateKinerjaTable extends Migration
             $table->date('tgl_selesai');
             $table->enum('jenis_kinerja',['hadir','perjalanan_dinas','cuti','izin','sakit']);
             $table->text('rincian_kinerja');
-            $table->boolean('approve');
+            $table->boolean('approve')->nullable();
             $table->text('keterangan_approve');
             $table->timestamps();
         });

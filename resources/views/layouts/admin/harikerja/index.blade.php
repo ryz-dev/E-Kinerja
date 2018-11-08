@@ -53,7 +53,15 @@
         $('#pagination').twbsPagination('destroy');
         $.get('{{route('page_hari_kerja')}}?q='+getKey)
         .then(function (res) {
-          $('#pagination').twbsPagination({
+            if (res.halaman == 0){
+                $('.loading').hide();
+            }
+            if (res.halaman == 1){
+                $('#pagination').hide();
+            } else {
+                $('#pagination').show();
+            }
+            $('#pagination').twbsPagination({
             totalPages: res.halaman,
             visiblePages: 5,
             onPageClick: function (event, page) {

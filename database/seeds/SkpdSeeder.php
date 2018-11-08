@@ -49,13 +49,15 @@ class SkpdSeeder extends Seeder
                 'keterangan' => 'Keterangan Contoh Dinas 9'
             ],
         ];
-
-        DB::table('skpd')->insert($skpd);
-            $skpd_id = DB::table('skpd')->pluck('id')->toArray();
-            $pegawai = \App\Models\MasterData\Pegawai::all();
-            foreach ($pegawai as $item) {
-                $item->id_skpd = array_random($skpd_id);
-                $item->save();
-            }
+        foreach ($skpd AS $s) {
+            $s['uuid'] = (string)\Illuminate\Support\Str::uuid();
+            \Illuminate\Support\Facades\DB::table('skpd')->insert($s);
+        }
+        $skpd_id = \Illuminate\Support\Facades\DB::table('skpd')->pluck('id')->toArray();
+        $pegawai = \App\Models\MasterData\Pegawai::all();
+        foreach ($pegawai as $item) {
+            $item->id_skpd = array_random($skpd_id);
+            $item->save();
+        }
     }
 }
