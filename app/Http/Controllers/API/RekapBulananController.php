@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 
 use App\Models\MasterData\HariKerja;
+use App\Models\Absen\Kinerja;
 use App\Models\MasterData\Pegawai;
 
 class RekapBulananController extends ApiController
@@ -44,7 +45,10 @@ class RekapBulananController extends ApiController
         ]);
     }
 
-    public function getDetailRekap(Request $r) {
-        dd($r->all());
+    public function getDetailRekap($nip,$tgl) {
+        $userid = Pegawai::where('nip',$nip)->first()->userid;
+        $detailKinerja = Kinerja::where('userid',$userid)->whereDate('tgl_mulai',$tgl)->first();
+        $etika = $detailKinerja->etika($userid,$tgl);
+        return $this->ApiSpecResponses($etika);
     }
 }

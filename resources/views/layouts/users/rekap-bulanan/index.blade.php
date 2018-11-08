@@ -374,7 +374,7 @@
                                     '                                        <div class="'+color_persentase+' text-white mr-2">' + (val.persentase) + ' '+(typeof val.persentase == 'number' ? '%' : '')+'</div>\n' +
                                     '                                    </td>\n' +
                                     '                                    <td>\n' +
-                                    '                                        <button class="btn rounded btn-detail" id="detailRekap" title="Detail">\n' +
+                                    '                                        <button class="btn rounded btn-detail" id="detailRekap" data-prev="'+val.tgl_prev+'" data-start="'+val.tgl+'" data-next="'+val.tgl_next+'" title="Detail">\n' +
                                     '                                            <i class="fas fa-search-plus"></i>\n' +
                                     '                                        </button>\n' +
                                     '                                    </td>\n' +
@@ -416,9 +416,8 @@
             })
             $(document).on('click','#detailRekap',function(){
               var nip = $('#detail-nip').html();
-              var date = $(this).data('date');
-              console.log(date);
-              $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + tanggal)
+              var data = $(this).data();
+              $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + data.start)
               .then((res)=>{
                 console.log(res)
               });
