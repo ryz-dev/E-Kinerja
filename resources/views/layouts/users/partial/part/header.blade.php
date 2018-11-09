@@ -29,10 +29,17 @@
     </style>
 </head>
 <body>
-    <div class="loading">
-        <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+    <div id="preload">
+        <img src="{{ asset('assets/images/loading_ekinerja.svg')}}" width="150">
+        @push('script')
+        <script>
+            $("#preload")
+                .delay(500)
+                .fadeOut("slow");
+        </script>
+        @endpush
     </div>
-    <section id="main-section" class="rekap-bulanan">
+    <section id="main-section" class="monitoring-absen">
         <div class="burgerBtn">
             <div class="bar1"></div>
             <div class="bar2"></div>
