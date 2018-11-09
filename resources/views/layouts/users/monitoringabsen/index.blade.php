@@ -1,6 +1,6 @@
 @extends('layouts.users.partial.main')
+@section('class','monitoring-absen')
 @section('content')
-
 <div class="main">
         <div class="nav-top-container">
             <div class="container">
@@ -20,7 +20,7 @@
                             <select id="skpd" class="custom-select select-custome">
                                 <option value="0">- ALL -</option>
                                 @foreach ($skpd as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama_skpd }}</option>    
+                                <option value="{{ $item->id }}">{{ $item->nama_skpd }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -32,7 +32,7 @@
 
     </div>
     <div class="main-content">
-        
+
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-9">
@@ -143,7 +143,7 @@
         $(document).ready(function(){
             getPage('{{date('Y-m-d')}}',0);
         });
-        
+
         $(document).on('click','.date-nav', function(){
             var date = $(this).attr('data-date');
             var skpd = $('#skpd').val();
@@ -187,9 +187,9 @@
                     }else if(val.checktype == 'o'){
                         absenout =val.absen_time?val.absen_time:'data tidak ada';
                     }
-                }); 
+                });
                 return absenin+' - '+absenout;
-                
+
             } else {
                 return 'data tidak ada';
             }
@@ -235,14 +235,14 @@
         };
         var getData = function (page, date, skpd, search) {
             var selector = $('.list_pegawai');
-            $('.loading').show();
+            $('#preload').show();
             $.ajax({
                 url: "{{ route('api.web.monitoring.absen') }}?page="+page+'&d='+date+'&skpd='+skpd+(search?('&search='+search):''),
                 data: '',
                 success: function(res) {
                     $('.datepicker').val(res.response.today);
-                    $('#prevdate').attr('data-date',res.response.dayBefore); 
-                    $('#nextdate').attr('data-date',res.response.dayAfter); 
+                    $('#prevdate').attr('data-date',res.response.dayBefore);
+                    $('#nextdate').attr('data-date',res.response.dayAfter);
                     $('#text-date').text(res.response.dateString);
                     $('.count-hadir').text(res.response.summary.hadir);
                     $('.count-perjalanan-dinas').text(res.response.summary.perjalanan_dinas);
@@ -251,7 +251,7 @@
                     $('.count-sakit').text(res.response.summary.sakit);
                     $('.count-alpha').text(res.response.summary.alpha);
                     if (res.response.pegawai.data.length > 0) {
-                        var data = res.response.pegawai.data.map(function (val) { 
+                        var data = res.response.pegawai.data.map(function (val) {
                             var row = '';
                             var foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
                             row += "<tr data-nip='"+val.nip+"' >";
@@ -268,7 +268,7 @@
                     }
                 },
                 complete: function () {
-                    $('.loading').hide();
+                    $('#preload').hide();
                 }
             });
         }

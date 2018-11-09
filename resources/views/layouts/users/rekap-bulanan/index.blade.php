@@ -1,4 +1,5 @@
 @extends('layouts.users.partial.main')
+@section('class','rekap-bulanan')
 @section('content')
     <div class="main">
         <div class="nav-top-container">
@@ -281,7 +282,7 @@
                 getRekap(nip, null, null);
             })
             var getRekap = function (nip, bulan, tahun) {
-                $('.loading').show();
+                $('#preload').show();
                 $.get('{{route('api.web.rekap-bulanan',['nip' => ''])}}/' + nip + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
                     .then(function (res) {
                         if (res.response.rekap_bulanan.length > 0) {
@@ -330,7 +331,7 @@
                         } else {
                             $('#detail-rekap-bulanan').html('<tr><td class="text-center" colspan="100">Data Tidak ditemukan</td></tr>');
                         }
-                        $('.loading').hide();
+                        $('#preload').hide();
                         window['trigger'] = 0;
                     }, function () {
                     })
@@ -394,10 +395,10 @@
 
             // Fungsi yang bertugas melakukan hit
             var detailRekap = function (nip, date) {
-                $('.loading').show();
+                $('#preload').show();
                 $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + date)
                     .then((res) => {
-                        $('.loading').hide();
+                        $('#preload').hide();
                         index = parseInt($('[name=modal_data_index]').val());
                         next = $('[rekap-index="' + (index + 1) + '"][rekap-status!=""]');
                         prev = $('[rekap-index="' + (index - 1) + '"][rekap-status!=""]');

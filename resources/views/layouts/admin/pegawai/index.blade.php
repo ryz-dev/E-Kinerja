@@ -9,13 +9,11 @@
         @include('layouts.admin.partial.part.logout')
     </div>
     <div class="main-content">
-        <div class="loading">
-            <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
-        </div>
         <div class="container-fluid">
           <a href="{{route('pegawai.add')}}" class="btn btn-success">Tambah Pegawai</a>
+          <br><br>
             <div class="table-responsive">
-                <table class="table table-pegawai">
+                <table class="table">
                     <thead>
                     <tr>
                         <th scope="col"></th>
@@ -50,7 +48,7 @@
                                 if (search != '') {
                                     $('.list_pegawai').html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>' + search + '</i>" Tidak Ditemukan</td></tr>')
                                 }
-                                $('.loading').hide();
+                                $('#preload').hide();
                             }
                             if (res.halaman == 1){
                                 $('#pagination').hide();
@@ -68,7 +66,7 @@
                 };
                 var getData = function (page,search) {
                     var selector = $('.list_pegawai');
-                    $('.loading').show();
+                    $('#preload').show();
                     $.ajax({
                         url: "{{ route('api.web.master-data.pegawai') }}?page="+page+'&q='+search,
                         data: '',
@@ -92,10 +90,10 @@
                             } else {
                                 selector.html('<tr style="text-align: center"><td colspan="100">Kata Kunci "<i>'+search+'</i>" Tidak Ditemukan</td></tr>')
                             }
-                            $('.loading').hide();
+                            $('#preload').hide();
                         },
                         complete: function () {
-                            $('.loading').hide();
+                            $('#preload').hide();
                         }
                     });
                 }

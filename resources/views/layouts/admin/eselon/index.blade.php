@@ -9,14 +9,11 @@
           @include('layouts.admin.partial.part.logout')
       </div>
     <div class="main-content">
-        <div class="loading">
-            <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
-        </div>
         <div class="container-fluid">
           <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Eselon</a>
-          <hr>
+          <br><br>
           <div class="table-responsive">
-            <table class="table table-eselon">
+            <table class="table">
               <thead>
                 <tr>
                   <th scope="col"></th>
@@ -46,7 +43,7 @@
                     $.get('{{route('api.web.master-data.eselon.page')}}?q='+search)
                         .then(function (res) {
                             if (res.halaman == 0){
-                                $('.loading').hide()
+                                $('#preload').hide()
                             }
                             if (res.halaman == 1){
                                 $('#pagination').hide();
@@ -64,7 +61,7 @@
                 };
                 var getData = function (page,search) {
                     var selector = $('.list_eselon');
-                    $('.loading').show();
+                    $('#preload').show();
                     $.ajax({
                         url: "{{ route('api.web.master-data.eselon') }}?page="+page+'&q='+search,
                         data: '',
@@ -81,10 +78,10 @@
                                 return row;
                             })
                             selector.html(data.join(''));
-                            $('.loading').hide();
+                            $('#preload').hide();
                         },
                         complete : function () {
-                            $('.loading').hide();
+                            $('#preload').hide();
                         }
                     });
                 }

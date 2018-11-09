@@ -7,39 +7,12 @@
     <title>E-Kinerja Kabupaten Kolaka</title>
     <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datepicker3.css') }}">
-    <style media="screen">
-        .loading {
-            margin: auto;
-            z-index: 9999;
-            width: 100%;
-            height: 100%;
-            background-color:#212d3ad6;
-            position: absolute;
-        }
-        .loading img {
-            width: 50px;
-            height: 50px;
-            top: 0px;
-            bottom: 0px;
-            left: 0px;
-            right: 0px;
-            position: absolute;
-            margin: auto;
-        }
-    </style>
 </head>
 <body>
     <div id="preload">
-        <img src="{{ asset('assets/images/loading_ekinerja.svg')}}" width="150">
-        @push('script')
-        <script>
-            $("#preload")
-                .delay(500)
-                .fadeOut("slow");
-        </script>
-        @endpush
+      <img src="{{ asset('assets/images/loading_ekinerja.svg')}}" width="150">
     </div>
-    <section id="main-section" class="monitoring-absen">
+    <section class="@yield('class')">
         <div class="burgerBtn">
             <div class="bar1"></div>
             <div class="bar2"></div>
@@ -53,8 +26,8 @@
                 <img src="{{ asset('assets/images/logo.svg') }}" width="120">
             </div>
             <ul>
-                <li><a href="index.html" class="active">Monitoring Absen</a></li>
-                <li><a href="rekap-bulanan.html">Rekap Bulanan</a></li>
+                <li><a href="{{route('monitoring.absen.index')}}" class="{{str_contains(url()->current(),route('monitoring.absen.index')) ? 'active' : ''}}">Monitoring Absen</a></li>
+                <li><a href="{{route('rekap-bulanan.index')}}" class="{{str_contains(url()->current(),route('rekap-bulanan.index')) ? 'active' : ''}}">Rekap Bulanan</a></li>
                 <li><a href="input-kinerja.html">Input Kinerja</a></li>
                 <li><a href="penilaian-kinerja.html">Penilaian Kinerja</a></li>
                 <li><a href="penilaian-etika.html">Penilaian Etika</a></li>
