@@ -57,8 +57,6 @@ class MonitoringAbsenController extends Controller
                 });
             }
             
-            
-            
             $total = (int) $pegawai->count();
             $pegawai = $pegawai->paginate($this->show_limit);
             $res = $summary->get();
@@ -90,7 +88,6 @@ class MonitoringAbsenController extends Controller
             // });    
         }else{
             $data = Pegawai::where('id_skpd',$skpd);
-            echo "1";
         }
 
         if ($search) {
