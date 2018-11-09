@@ -140,10 +140,10 @@
 </div>
 @push('script')
     <script>
-        $(document).ready(function(){
-            getPage('{{date('Y-m-d')}}',0);
-        });
-
+        // $(document).ready(function(){
+        //     getPage('{{date('Y-m-d')}}',0);
+        // });
+        
         $(document).on('click','.date-nav', function(){
             var date = $(this).attr('data-date');
             var skpd = $('#skpd').val();
@@ -151,7 +151,7 @@
             getPage(date,skpd,search);
         });
 
-        $(document).on('click','#skpd', function(){
+        $(document).on('change','#skpd', function(){
             var date = $('.datepicker').val();
             var skpd = $(this).val();
             var search = $("#search").val();
@@ -228,7 +228,7 @@
                         totalPages: res.page,
                         visiblePages: 5,
                         onPageClick: function (event, page) {
-                            getData(page,date,skpd, search);
+                            getData(page,date,skpd,search);
                         }
                     });
                 })

@@ -17,7 +17,7 @@ class MonitoringAbsenController extends Controller
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
 
-        // wherehas('jabatan', function($query){ 
+        // wherehas('jabatan', function($query){
         //     $query->where('id_atasan','=',2 /** TODO : Ganti dengan user yang login */ ); })
         // ->
 
@@ -56,9 +56,7 @@ class MonitoringAbsenController extends Controller
                     $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
                 });
             }
-            
-            
-            
+
             $total = (int) $pegawai->count();
             $pegawai = $pegawai->paginate($this->show_limit);
             $res = $summary->get();
@@ -87,17 +85,16 @@ class MonitoringAbsenController extends Controller
             $data = Pegawai::where('nip','<>','');// wherehas('jabatan', function($query){
             //     $query->where('id_atasan','=',2 /** TODO : Ganti dengan user yang login */);
             // dd($data);
-            // });    
+            // });
         }else{
             $data = Pegawai::where('id_skpd',$skpd);
-            echo "1";
         }
 
         if ($search) {
             $data->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
         }
 
-        
+
         $data = ceil($data->count() / $this->show_limit);
 
         return response()->json([ 'page'=> $data ]);
