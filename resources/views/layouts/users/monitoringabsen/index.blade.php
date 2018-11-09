@@ -32,9 +32,7 @@
 
     </div>
     <div class="main-content">
-        <div class="loading">
-            <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
-        </div>
+        
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-9">
@@ -89,42 +87,42 @@
                                     <img src="assets/images/icons/hadir.svg">
                                 </span>
                                 <label>Hadir</label>
-                                <label class="float-right count">21</label>
+                                <label class="float-right count count-hadir">21</label>
                             </li>
                             <li>
                                 <span class="dinas">
                                     <img src="assets/images/icons/perjalanan_dinas.svg">
                                 </span>
                                 <label>Perj. Dinas</label>
-                                <label class="float-right count">21</label>
+                                <label class="float-right count count-perjalanan-dinas">21</label>
                             </li>
                             <li>
                                 <span class="cuti">
                                     <img src="assets/images/icons/cuti.svg">
                                 </span>
                                 <label>Cuti</label>
-                                <label class="float-right count">3</label>
+                                <label class="float-right count count-cuti">3</label>
                             </li>
                             <li>
                                 <span class="izin">
                                     <img src="assets/images/icons/izin.svg">
                                 </span>
                                 <label>Izin</label>
-                                <label class="float-right count">4</label>
+                                <label class="float-right count count-izin">4</label>
                             </li>
                             <li>
                                 <span class="sakit">
                                     <img src="assets/images/icons/sakit.svg">
                                 </span>
                                 <label>Sakit</label>
-                                <label class="float-right count">2</label>
+                                <label class="float-right count count-sakit">2</label>
                             </li>
                             <li>
                                 <span class="alpha">
                                     <img src="assets/images/icons/alpha.svg">
                                 </span>
                                 <label>Alpha</label>
-                                <label class="float-right count">0</label>
+                                <label class="float-right count count-alpha">0</label>
                             </li>
                         </ul>
                     </div>
@@ -179,7 +177,6 @@
             }
         })
 
-
         var parseAbsen = function(data){
             if (data.length > 0) {
                 var absenin;
@@ -197,6 +194,28 @@
                 return 'data tidak ada';
             }
         }
+
+        var parseKinerja = function(data){
+
+            if (data.kinerja.length > 0) {
+                switch (data.kinerja[0].jenis_kinerja) {
+                    case 'hadir':
+                        return parseAbsen(data.checkinout)
+                        break;
+                    case 'sakit':
+                        return '<span class="badge badge-table badge-red">Sakit</span>'
+                        break;
+                    case 'perjalanan_dinas':
+                        return  '<span class="badge badge-table badge-green">Perjalanan Dinas</span>'
+                        break;
+                    case 'cuti':
+                        return  '<span class="badge badge-table badge-purple">Cuti</span>'
+                        break;
+                }
+            }
+            return  '<span class="badge badge-table badge-gray">Alpha</span>';
+        }
+
 
         var getPage = function (date, skpd, search) {
             $('#pagination').twbsPagination('destroy');
@@ -224,7 +243,13 @@
                     $('.datepicker').val(res.response.today);
                     $('#prevdate').attr('data-date',res.response.dayBefore); 
                     $('#nextdate').attr('data-date',res.response.dayAfter); 
-                    $('#text-date').text(res.response.dateString); 
+                    $('#text-date').text(res.response.dateString);
+                    $('.count-hadir').text(res.response.summary.hadir);
+                    $('.count-perjalanan-dinas').text(res.response.summary.perjalanan_dinas);
+                    $('.count-cuti').text(res.response.summary.cuti);
+                    $('.count-izin').text(res.response.summary.izin);
+                    $('.count-sakit').text(res.response.summary.sakit);
+                    $('.count-alpha').text(res.response.summary.alpha);
                     if (res.response.pegawai.data.length > 0) {
                         var data = res.response.pegawai.data.map(function (val) { 
                             var row = '';
@@ -233,7 +258,7 @@
                             row += "<td><div class='img-user' id='user1' style='background-image: url(" + foto + ");'></div></td>";
                             row += "<td><a href=''>" + val.nip + "</a></td>";
                             row += "<td>" + val.nama + "</td>";
-                            row += "<td>"+parseAbsen(val.checkinout)+"</td>";
+                            row += "<td>"+parseKinerja(val)+"</td>";
                             row += "</tr>";
                             return row;
                         })
