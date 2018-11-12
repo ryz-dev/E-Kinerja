@@ -138,6 +138,11 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::get('/{nip}/{tanggal}','RekapBulananController@getDetailRekap')->name('api.web.rekap-detail');
         Route::get('/{nip}/{bulan?}/{tahun?}','RekapBulananController@getRekap')->name('api.web.rekap-bulanan');
     });
+    Route::group(['prefix' => 'penilaian-kinerja'],function (){
+        Route::get('/get-bawahan','PenilaianKinerjaController@getBawahan')->name('api.web.penilaian-kinerja.get-bawahan');
+        Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('api.web.get-penilaian-kinerja');
+        Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('api.web.reply-penilaian-kinerja');
+    });
 });
 
 /*
@@ -155,6 +160,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/monitoring-absen', 'MonitoringAbsenController@index')->name('monitoring.absen.index');
 Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index');
+Route::get('/penilaian-kinerja','PenilainKinerjaController@penilaianKinerja')->name('penilaian-bulanan.index');
 
 
 // Route::get('/test', function(){
