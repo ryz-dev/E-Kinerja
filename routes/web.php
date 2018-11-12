@@ -132,6 +132,9 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
             Route::get('', 'RolePegawaiController@listRole')->name('api.web.master-data.list.role');
             Route::get('get-paginate', 'RolePegawaiController@getPage')->name('api.web.master-data.page.role.pegawai');
         });
+        Route::group(['prefix' => 'kinerja'],function (){
+            Route::post('','KinerjaController@inputKinerja')->name('api.web.input-kinerja.post');
+        });
     });
     Route::group(['prefix' => 'rekap-bulanan'],function (){
         Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('api.web.rekap-bulanan.get-bawahan');
@@ -155,6 +158,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/monitoring-absen', 'MonitoringAbsenController@index')->name('monitoring.absen.index');
 Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index');
+Route::get('/input-kinerja','InputKinerjaController@inputKinerja')->name('input-kinerja.index');
 
 
 // Route::get('/test', function(){
