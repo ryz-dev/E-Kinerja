@@ -33,7 +33,7 @@
           </div>
           <div class="group-search">
               <span><i class="fas fa-search"></i></span>
-              <input type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
+              <input id="search" type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
           </div>
           <div class="menu">
             <input type="hidden" name="total-index">
@@ -67,6 +67,7 @@
                           </div>
                       </div>
                   </div>
+                  <div id="boxReply"></div>
                   <div class="row" id='wrapReply'>
                       <div class="col-md-12">
                           <h6 class="mb-2 mt-4">Keterangan Penilaian Kinerja</h6>
@@ -88,46 +89,65 @@
   </div>
   @push('script')
       <script>
+          var cacheDOM = $("#wrapReply");
+          var storePegawai;
+
+          var loadData = function(result) {
+            if (result.length > 0) {
+                var data = result.map(function (val, i) {
+                    var foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
+                    var status = '';
+                    if (val.kinerja.length != 0) {
+                      if (val.kinerja[0].approve == 0) {
+                        var attrClass = 'not-list';
+                        var status = 'fa-times';
+                      } else if(val.kinerja[0].approve == 1) {
+                        var attrClass = 'check-list';
+                        var status = 'fa-check'
+                      }
+                    }
+                    return '<li class="list-bawahan" data-foto="' + foto + '" data-index="' + i + '" data-nip="' + val.nip + '" data-nama="' + val.nama + '"><a class="listSelect ' + (i == 0 ? 'active' : '') + '" data-toggle="tab" href="#' + val.nip + '" role="tab" aria-selected="true"><span\n' +
+                        'class="img-user" id="img-user1" style="background-image: url(' + foto + ');">\n' +
+                        '</span>\n' +
+                        '<span>\n' +
+                        '<label>' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
+                        '</span>\n' +
+                        '<div class="'+attrClass+' float-right mr-3"><i class="fas fa-lg '+status+'"></i></div>\n' +
+                        '</a>\n' +
+                        '</li>'
+                })
+                $('[data=data-bawahan]').html(data.join(''));
+                $('[name=total-index]').val(data.length - 1);
+                setTimeout(function () {
+                  $('[data-index=0]').click();
+                }, 1000)
+              } else {
+                $('[data=data-bawahan]').html("<label>Data Tidak Ditemukan</label>");
+              }
+          }
+
           var getBawahan = function () {
-            $.get('{{route('api.web.rekap-bulanan.get-bawahan')}}')
+            $.get('{{route('api.web.get-bawahan-kinerja')}}')
               .then(function (res) {
-                  if (res.response.length > 0) {
-                      var data = res.response.map(function (val, i) {
-                          var foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
-                          return '<li class="list-bawahan" data-foto="' + foto + '" data-index="' + i + '" data-nip="' + val.nip + '" data-nama="' + val.nama + '"><a class="listSelect ' + (i == 0 ? 'active' : '') + '" data-toggle="tab" href="#' + val.nip + '" role="tab" aria-selected="true"><span\n' +
-                              'class="img-user" id="img-user1" style="background-image: url(' + foto + ');">\n' +
-                              '</span>\n' +
-                              '<span>\n' +
-                              '<label>' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
-                              '</span>\n' +
-                              '<div class="not-list float-right mr-3"><i class="fas fa-lg fa-times"></i></div>\n' +
-                              '</a>\n' +
-                              '</li>'
-                      })
-                      $('[data=data-bawahan]').html(data.join(''));
-                      $('[name=total-index]').val(data.length - 1);
-                      setTimeout(function () {
-                        $('[data-index=0]').click();
-                      }, 1000)
-                  } else {
-                      $('[data=data-bawahan]').html("<label>Data Tidak Ditemukan</label>");
-                  }
+                  storePegawai = res;
+                  loadData(res.response);
               })
           };
 
-          // $('#search').on('keyup', function (e) {
-          //     e.preventDefault();
-          //     key = $(this).val()
-          //     $('.list-bawahan').hide();
-          //     if (key) {
-          //         find = $('[data-nip*="' + key + '"],[data-nama*="' + key + '"]');
-          //         find.attr('search', true);
-          //         find.show()
-          //     } else {
-          //         $('.list-bawahan').show();
-          //         $('.list-bawahan').removeAttr('search');
-          //     }
-          // })
+
+          $('#search').on('keyup', function (e) {
+              e.preventDefault();
+              key = $(this).val()
+              $('.list-bawahan').hide();
+              if (key) {
+                let result = storePegawai.response.filter((res)=>{
+                  return (res.nip.toLowerCase().indexOf(key.toLowerCase()) > -1);
+                });
+                loadData(result);
+              } else {
+                loadData(storePegawai.response);
+              }
+          })
 
           window['trigger'] = 0;
 
@@ -145,6 +165,7 @@
               $('#detail-nama').html(nama);
               $('#detail-nip').html(nip);
               $('#detail-img').css({'background-image': 'url(' + foto + ')'})
+              $("#boxReply").append(cacheDOM);
               if (index == 0) {
                 $('#pegawai-sebelumnya').removeClass('active')
               } else {
@@ -166,9 +187,11 @@
                       $('#id').val(res.response.id);
                       $('#userid').val(res.response.userid);
                       $('#ket_kinerja').html(res.response.rincian_kinerja);
+                      $('textarea').val(res.response.keterangan_approve);
+
                     } else {
                       $('#ket_kinerja').html('Belum ada rincian kinerja hari ini.');
-                      $('#wrapReply').remove();
+                      $(cacheDOM).remove();
                     }
                     $('#preload').hide();
                     window['trigger'] = 0;
@@ -191,19 +214,36 @@
 
           $(document).ready(function () {
             getBawahan();
-            $('.btn-approve').click(function(){
-              $("#formReply").serialize();
-              $.ajax({
-                 type: "POST",
-                 url: "{{route('api.web.reply-penilaian-kinerja')}}",
-                 data: 'type='+$(this).data('action')+'&'+$("#formReply").serialize(),
-                 success: function(data) {
-                   console.log(data);
-                 }
-               });
-            });
           });
 
+          $(document).on('click','.btn-approve',function(){
+            $("#formReply").serialize();
+            $.ajax({
+               type: "POST",
+               url: "{{route('api.web.reply-penilaian-kinerja')}}",
+               data: 'type='+$(this).data('action')+'&'+$("#formReply").serialize(),
+               success: function(data,xhr) {
+                 if (xhr == 'success') {
+                   $('#formReply').each(function(){
+                     this.reset();
+                     getBawahan();
+                   });
+                   swal({
+                      type: 'success',
+                      title: 'Berhasil',
+                      text: 'Penilaian Kinerja berhasil ditambahkan!'
+                    })
+                 }
+               },
+               error: function(xhr) {
+                 swal({
+                    type: 'error',
+                    title: 'Terjadi kesalahan',
+                    text: 'Silahkan periksa formulir kembali!'
+                  })
+               }
+             });
+          });
       </script>
   @endpush
 @endsection

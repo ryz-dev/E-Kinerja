@@ -7,26 +7,27 @@ use App\Models\MasterData\Pegawai;
 use App\Models\Absen\Kinerja;
 use App\Models\Absen\Etika;
 use App\Models\Absen\Checkinout;
+use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 
 class PenilaianKinerjaController extends ApiController
 {
     public function getBawahan(){
-        $user = Pegawai::whereIdJabatan(2)->first();
-        $user->load('jabatan.pegawai_bawahan');
-        $bawahan = $user->jabatan->pegawai_bawahan;
-        return $this->ApiSpecResponses($bawahan);
+      $pegawai = Pegawai::wherehas('jabatan', function($query){
+        $query->where('id_atasan','=',2); /** TODO : Ganti dengan user yang login */
+      })->with(['kinerja' => function($query){
+        $query->whereDate('tgl_mulai','=',date('Y-m-d'));
+      }])->get();
+
+      return $this->ApiSpecResponses($pegawai);
     }
 
     public function getKinerja($nip){
-        /* Data kinerja */
         $pegawai = Pegawai::where('nip',$nip)->first();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
-        ->whereDate('tgl_mulai','2018-10-20')
+        ->whereDate('tgl_mulai',date('Y-m-d'))
         ->first();
-        // date('Y-m-d')
        return $this->ApiSpecResponses($kinerja);
     }
 
@@ -36,15 +37,14 @@ class PenilaianKinerjaController extends ApiController
         'type' => ['numeric','required',Rule::in([1,0])],
         'keterangan_approve' => ['required']
       ]);
-      return $this->ApiSpecResponses($r);
       try {
         $kinerja = Kinerja::find($r->id);
         $kinerja->keterangan_approve = $r->keterangan_approve;
-        $kinerja->approve = $r->approve;
+        $kinerja->approve = $r->type;
         $kinerja->save();
-        return $this->ApiSpecResponses(['status'=>'ok']);
-      } catch (\Exception $e) {
-        return $this->ApiSpecResponses(['status'=>'fail']);
+        return $this->ApiSpecResponses(['status'=>'HTTP_OK']);
+      } catch (Exception $e) {
+        return $this->ApiSpecResponses($e);
       }
     }
 }

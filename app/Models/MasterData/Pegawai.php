@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Pegawai extends Authenticatable
-{   
+{
     use SoftDeletes;
     use Notifiable;
 
@@ -75,6 +75,6 @@ class Pegawai extends Authenticatable
         return route('api.web.master-data.pegawai.update',['id' => $this->uuid]);
     }
 
-    
+
 
 }
