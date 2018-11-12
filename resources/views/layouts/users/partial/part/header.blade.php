@@ -7,6 +7,8 @@
     <title>E-Kinerja Kabupaten Kolaka</title>
     <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datepicker3.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/sweetalert/sweetalert2.min.css') }}">
+
 </head>
 <body>
     <div id="preload">
@@ -28,8 +30,8 @@
             <ul>
                 <li><a href="{{route('monitoring.absen.index')}}" class="{{str_contains(url()->current(),route('monitoring.absen.index')) ? 'active' : ''}}">Monitoring Absen</a></li>
                 <li><a href="{{route('rekap-bulanan.index')}}" class="{{str_contains(url()->current(),route('rekap-bulanan.index')) ? 'active' : ''}}">Rekap Bulanan</a></li>
-                <li><a href="input-kinerja.html">Input Kinerja</a></li>
-                <li><a href="{{route('penilaian-bulanan.index')}}" class="{{str_contains(url()->current(),route('penilaian-bulanan.index')) ? 'active' : ''}}">Penilaian Kinerja</a></li>
+                <li><a href="{{route('input-kinerja.index')}}" class="{{str_contains(url()->current(),route('input-kinerja.index')) ? 'active' : ''}}">Input Kinerja</a></li>
+                <li><a href="{{route('penilaian-kinerja.index')}}" class="{{str_contains(url()->current(),route('penilaian-kinerja.index')) ? 'active' : ''}}">Penilaian Kinerja</a></li>
                 <li><a href="penilaian-etika.html">Penilaian Etika</a></li>
                 <li><a href="tunjangan-kinerja.html">Tunjangan Kinerja</a></li>
             </ul>
