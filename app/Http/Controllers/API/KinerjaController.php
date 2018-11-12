@@ -7,6 +7,7 @@ use App\Models\Absen\Kinerja;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
 use Carbon\Carbon;
+use http\Env\Response;
 use Illuminate\Http\Request;
 
 class KinerjaController extends ApiController
@@ -24,6 +25,14 @@ class KinerjaController extends ApiController
 
             $input['tgl_mulai'] = $tgl_mulai[2].'-'.$tgl_mulai[0].'-'.$tgl_mulai[1];
             $input['tgl_selesai'] = $tgl_selesai[2].'-'.$tgl_selesai[0].'-'.$tgl_selesai[1];
+            if (strtotime($input['tgl_mulai']) > strtotime($input['tgl_selesai'])){
+                return response()->json([
+                    'diagnostic' => [
+                        'code' => '403',
+                        'message' => 'gagal menambah kinerja, tanggal berakhir lebih kecil dari tanggal mulai'
+                    ]
+                ]);
+            }
         }
         $cek_kinerja = Kinerja::where('userid',$input['userid'])->whereDate('tgl_mulai',$input['tgl_mulai'])->first();
         if (!$cek_kinerja){
