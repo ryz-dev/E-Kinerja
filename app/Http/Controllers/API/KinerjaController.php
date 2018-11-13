@@ -34,7 +34,7 @@ class KinerjaController extends ApiController
                 ]);
             }
         }
-        $cek_kinerja = Kinerja::where('userid',$input['userid'])->whereDate('tgl_mulai',$input['tgl_mulai'])->first();
+        $cek_kinerja = Kinerja::where('userid',$input['userid'])->whereDate('tgl_mulai','>=',$input['tgl_mulai'])->whereDate('tgl_selesai','<=',$input['tgl_selesai'])->first();
         if (!$cek_kinerja){
             if ($input['jenis_kinerja'] == 'hadir'){
                 $cek_hari_kerja = HariKerja::whereDate('tanggal',date('Y-m-d'))->first();
