@@ -1,6 +1,7 @@
 @extends('layouts.users.partial.main')
 @section('class','monitoring-absen')
 @section('content')
+
 <div class="main">
         <div class="nav-top-container">
             <div class="container">
@@ -20,7 +21,7 @@
                             <select id="skpd" class="custom-select select-custome">
                                 <option value="0">- ALL -</option>
                                 @foreach ($skpd as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama_skpd }}</option>
+                                <option value="{{ $item->id }}">{{ $item->nama_skpd }}</option>    
                                 @endforeach
                             </select>
                         </div>
@@ -32,7 +33,7 @@
 
     </div>
     <div class="main-content">
-
+        
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-9">
@@ -49,7 +50,7 @@
                                 </div>
 
                                 <div class="float-right">
-                                    <button data-date ='' id="prevdate" class="btn btn-rounded date-nav"><i class="fas fa-angle-left "></i></button>
+                                    <button data-date ='' id="prevdate" class="btn btn-rounded date-nav active"><i class="fas fa-angle-left "></i></button>
                                     <button data-date ='' id="nextdate" class="btn btn-rounded  date-nav active"><i class="fas fa-angle-right"></i></button>
                                 </div>
 
@@ -59,7 +60,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table table-responsive table-pegawai">
+                            <table class="table table-responsive table-pegawai table-hover">
                                 <thead>
                                     <tr>
                                         <th scope="col"></th>
@@ -71,7 +72,7 @@
                                 <tbody class="list_pegawai">
                                 </tbody>
                             </table>
-                            <nav aria-label="...">
+                            <nav style="margin-bottom:1em" aria-label="...">
                                 <ul class="pagination pagination-custome" id="pagination"></ul>
                             </nav>
                         </div>
@@ -162,7 +163,7 @@
             var date = $(this).val();
             var skpd = $('#skpd').val();
             var search = $("#search").val();
-            getPage(date,skpd,search);
+            getPage(date,skpd,search);    
         });
 
         $('#search').on('keyup', function () {
@@ -187,9 +188,9 @@
                     }else if(val.checktype == 'o'){
                         absenout =val.absen_time?val.absen_time:'data tidak ada';
                     }
-                });
+                }); 
                 return absenin+' - '+absenout;
-
+                
             } else {
                 return 'data tidak ada';
             }
@@ -204,6 +205,9 @@
                         break;
                     case 'sakit':
                         return '<span class="badge badge-table badge-red">Sakit</span>'
+                        break;
+                    case 'izin':
+                        return '<span class="badge badge-table badge-orange">izin</span>'
                         break;
                     case 'perjalanan_dinas':
                         return  '<span class="badge badge-table badge-green">Perjalanan Dinas</span>'
@@ -224,6 +228,9 @@
                     if (res.page == 0){
                         $('.list_pegawai').html('<tr style="text-align: center"><td colspan="100">Data Tidak Ditemukan</td></tr>')
                     }
+                    if(res.page == 1){
+                        $('#pagination').hide();
+                    }
                     $('#pagination').twbsPagination({
                         totalPages: res.page,
                         visiblePages: 5,
@@ -235,14 +242,14 @@
         };
         var getData = function (page, date, skpd, search) {
             var selector = $('.list_pegawai');
-            $('#preload').show();
+            $('#preloading').show();
             $.ajax({
                 url: "{{ route('api.web.monitoring.absen') }}?page="+page+'&d='+date+'&skpd='+skpd+(search?('&search='+search):''),
                 data: '',
                 success: function(res) {
                     $('.datepicker').val(res.response.today);
-                    $('#prevdate').attr('data-date',res.response.dayBefore);
-                    $('#nextdate').attr('data-date',res.response.dayAfter);
+                    $('#prevdate').attr('data-date',res.response.dayBefore); 
+                    $('#nextdate').attr('data-date',res.response.dayAfter); 
                     $('#text-date').text(res.response.dateString);
                     $('.count-hadir').text(res.response.summary.hadir);
                     $('.count-perjalanan-dinas').text(res.response.summary.perjalanan_dinas);
@@ -251,7 +258,7 @@
                     $('.count-sakit').text(res.response.summary.sakit);
                     $('.count-alpha').text(res.response.summary.alpha);
                     if (res.response.pegawai.data.length > 0) {
-                        var data = res.response.pegawai.data.map(function (val) {
+                        var data = res.response.pegawai.data.map(function (val) { 
                             var row = '';
                             var foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
                             row += "<tr data-nip='"+val.nip+"' >";
@@ -268,7 +275,7 @@
                     }
                 },
                 complete: function () {
-                    $('#preload').hide();
+                    $('#preloading').hide();
                 }
             });
         }

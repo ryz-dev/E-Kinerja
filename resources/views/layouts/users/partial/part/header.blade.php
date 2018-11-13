@@ -32,7 +32,7 @@
                 <li><a href="{{route('rekap-bulanan.index')}}" class="{{str_contains(url()->current(),route('rekap-bulanan.index')) ? 'active' : ''}}">Rekap Bulanan</a></li>
                 <li><a href="{{route('input-kinerja.index')}}" class="{{str_contains(url()->current(),route('input-kinerja.index')) ? 'active' : ''}}">Input Kinerja</a></li>
                 <li><a href="{{route('penilaian-kinerja.index')}}" class="{{str_contains(url()->current(),route('penilaian-kinerja.index')) ? 'active' : ''}}">Penilaian Kinerja</a></li>
-                <li><a href="penilaian-etika.html">Penilaian Etika</a></li>
+                <li><a href="{{route('penilaian-etika.index')}}" class="{{str_contains(url()->current(),route('penilaian-etika.index')) ? 'active' : ''}}">Penilaian Etika</a></li>
                 <li><a href="tunjangan-kinerja.html">Tunjangan Kinerja</a></li>
             </ul>
             <div class="toggleSwitch">
