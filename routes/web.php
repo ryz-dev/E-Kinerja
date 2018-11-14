@@ -16,7 +16,7 @@
 */
 
 //Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
-Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function (){
+Route::group(['prefix' => 'master-data','namespace' => 'MasterData' ],function (){
     Route::get('',function() {
       return view('layouts/admin/home/index');
     });
@@ -168,11 +168,11 @@ Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
 
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/monitoring-absen', 'MonitoringAbsenController@index')->name('monitoring.absen.index');
-Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index');
+Route::get('/monitoring-absen', 'MonitoringAbsenController@index')->name('monitoring.absen.index')->middleware('can:monitoring-absen');
+Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index')->middleware('can:rekap-bulanan');
 Route::get('/input-kinerja','InputKinerjaController@inputKinerja')->name('input-kinerja.index');
-Route::get('/penilaian-kinerja','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index');
-Route::get('/penilaian-etika', 'PenilaianEtikaController@index')->name('penilaian-etika.index');
+Route::get('/penilaian-kinerja','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index')->middleware('can:penilaian-kinerja');
+Route::get('/penilaian-etika', 'PenilaianEtikaController@index')->name('penilaian-etika.index')->middleware('can:penilaian-etika');
 
 // Route::get('/test', function(){
 //     dd(\App\Models\MasterData\Role::find(1)->permissions);

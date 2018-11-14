@@ -24,15 +24,34 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-        $this->registerMasterDataPolicies();
+        $this->registerEkinerjaPolicies();
 
         //
     }
 
-    public function registerMasterDataPolicies(){
+    public function registerEkinerjaPolicies(){
         
         Gate::define('master-data', function($user){
             return $user->hasAccess(['master-data']);
         });
+        Gate::define('monitoring-absen', function($user){
+            return $user->hasAccess(['monitoring-absen']);
+        });
+        Gate::define('rekap-bulanan', function($user){
+            return $user->hasAccess(['rekap-bulanan']);
+        });
+        Gate::define('input-kinerja', function($user){
+            return $user->hasAccess(['input-kinerja']);
+        });
+        Gate::define('penilaian-kinerja', function($user){
+            return $user->hasAccess(['penilaian-kinerja']);
+        });
+        Gate::define('penilaian-etika', function($user){
+            return $user->hasAccess(['penilaian-etika']);
+        });
+        Gate::define('tunjangan-kinerja', function($user){
+            return $user->hasAccess(['tunjangan-kinerja']);
+        });
+
     }
 }
