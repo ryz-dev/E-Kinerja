@@ -32,7 +32,7 @@
             </table>
         </div>
         <div class="box-pagination">
-            <ul class="pagination" id="pagination"></ul>
+            <ul class="pagination pagination-custome" id="pagination"></ul>
         </div>
         </div>
     </div>
