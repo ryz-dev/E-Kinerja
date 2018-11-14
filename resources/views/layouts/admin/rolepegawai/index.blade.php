@@ -5,7 +5,7 @@
     <div class="nav-top-container">
         <div class="group-search">
         <span><i class="fas fa-search"></i></span>
-        <input type="text" id='search' class="datepicker form-control" placeholder="Cari Pegawai">
+        <input type="text" id='search' class="form-control" placeholder="Cari Pegawai">
         </div>
         @include('layouts.admin.partial.part.logout')
     </div>
@@ -16,7 +16,7 @@
         </div> --}}
         <div class="container-fluid">
         <div class="table-responsive">
-            <table class="table table-hari-kerja">
+            <table class="table table-responsive table-pegawai">
             <thead>
                 <tr>
                     <th></th>
@@ -31,54 +31,48 @@
             </tbody>
             </table>
         </div>
-        <div class="box-pagination">
+        <nav style="margin-bottom:1em" aria-label="...">
             <ul class="pagination pagination-custome" id="pagination"></ul>
-        </div>
+        </nav>
         </div>
     </div>
 </div>
 @push('script')
 <script>
+    window.roles = [];
     $(document).ready(function(){
         getPage();
+        getRoles();
     });
-    var getPage = function () {
+    var getPage = function (search) {
         $('#pagination').twbsPagination('destroy');
-        $.get('{{route('api.web.master-data.page.role.pegawai')}}')
+        $.get('{{route('api.web.master-data.page.role.pegawai')}}?q='+search)
             .then(function (res) {
                 $('#pagination').twbsPagination({
                     totalPages: res.page,
                     visiblePages: 5,
                     onPageClick: function (event, page) {
-                        getData(page);
+                        getData(page,search);
                     }
                 });
             })
     };
-    var getData = function (page) {
+    var getData = function (page, search) {
         var row = '';
         var selector = $('.list_role');
         $.ajax({
-            url: "{{ route('api.web.master-data.list.role') }}?page="+page,
+            url: "{{ route('api.web.master-data.list.role') }}?page="+page+(search?'&q='+search:''),
             data: '',
             success: function(res) {
                 var data = res.response.map(function (val) {
-                    console.log(val.role);
                     var row = '';
                     var foto = val.foto ? "{{url('')}}/storage/"+val.foto : "{{url('assets/images/img-user.png')}}";
                     var role = val.role.length>0?"<span class='badge badge-table badge-red'>"+val.role[0].nama_role+"</span>":"<span class='badge badge-table badge-green'>User</span>";
                     var action = function(role){
-                        if (role.role.length > 0){
-                            switch(role.role[0].id){
-                                case 2 :
-                                    return "<button type='button' delete-uri='' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button>";
-                                    break;
-                                default:
-                                    return "";
-                                    break;
-                            }
+                        if (role.role.length > 0){    
+                            return "<button type='button' data-nip="+val.nip+" data-role-id="+role.role[0].id+" class='btn remove-role-pegawai btn-danger btn-delete'><i class='fas fa-trash'></i></button>";
                         }else{
-                            return "<a class='btn btn-info'><i class='fas fa-plus'></i></a>";
+                            return "<button data-nip="+val.nip+" class='btn btn-info add-role-pegawai'><i class='fas fa-plus'></i></button>";
                         }
                     }
                     row += "<tr>";
@@ -95,6 +89,99 @@
             }
         });
     }
+    var getRoles = function(){
+        $.get('{{route('api.web.master-data.role.get')}}')
+            .then(function(res){
+                if (res.response) {
+                    window.roles = res.response;
+                }
+            });
+    }
+
+    $(document).on('click', '.add-role-pegawai', function(){
+        var nip = $(this).attr('data-nip');
+
+        swal({
+            title: 'Silahkan pilih role',
+            input: 'select',
+            inputOptions: window.roles,
+            inputPlaceholder:'Pilih Role',
+            showCancelButton: true
+        }).then(function(result){
+            if (result.value) {
+                var formData = new FormData();
+                formData.append('nip',nip);
+                formData.append('role',result.value);
+                $.ajax({
+                    url:"{{ route('api.web.master-data.role.store') }}",
+                    type:'POST',
+                    data: formData,
+                    success: function(res){
+                        if (res.diagnostic.code ==200) {
+                            swal('Berhasil Menyimpan Data!','','success')
+                            setTimeout(function(){
+                                location.href = "{{ route('role-pegawai.index') }}"
+                            },2000);
+                        }
+                        else{
+                            swal('Gagal Menyimpan Data!',res.diagnostic.message,'error')
+                        }
+                    },
+                    error: function () {
+                        swal('Gagal Menyimpan Data!','','error')
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+        })
+
+    });
+    $("#search").on('keyup',function(){
+        // console.log('halo');
+        getPage($(this).val());
+    });
+    $(document).on('click', '.remove-role-pegawai', function(){
+        var role_id = $(this).attr('data-role-id');
+        var nip = $(this).attr('data-nip');
+        var formData = new FormData();
+        formData.append('role_id', role_id);
+        formData.append('nip', nip);
+            swal({
+                title: 'Yakin menghapus data?',
+                type:'warning',
+                showCancelButton: true,
+                cancelButtonText: 'Batalkan',
+                confirmButtonText: 'Ya, hapus data'
+            }).then(function(result){
+                if (result.value) {
+                    $.ajax({
+                        url:"{{ route('api.web.master-data.role.delete') }}",
+                        type:'POST',
+                        data: formData,
+                        success: function(res){
+                            if (res.diagnostic.code ==200) {
+                                swal('Berhasil Menghapus Data!','','success');
+                                setTimeout(function(){
+                                    location.href = "{{ route('role-pegawai.index') }}"
+                                },2000);
+                            }
+                            else{
+                                swal('Gagal Menghapus Data!',res.diagnostic.message,'error')
+                            }
+                        },
+                        error: function () {
+                            swal('Gagal menghapus Data!','','error')
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                }
+            });
+        });
+
 </script>
 @endpush
 @endsection

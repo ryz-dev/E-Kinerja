@@ -77,7 +77,7 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('delete/{id}','StaticDataController@deleteHari');
     });
     Route::group(['prefix' => 'role-pegawai'], function(){
-        Route::get('','RolePegawaiController@index');
+        Route::get('','RolePegawaiController@index')->name('role-pegawai.index');
     });
     Route::group(['prefix' => 'skpd'],function (){
         Route::get('','SkpdController@index')->name('skpd.index');
@@ -131,6 +131,9 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::group(['prefix'=> 'role-pegawai'], function(){
             Route::get('', 'RolePegawaiController@listRole')->name('api.web.master-data.list.role');
             Route::get('get-paginate', 'RolePegawaiController@getPage')->name('api.web.master-data.page.role.pegawai');
+            Route::get('get-roles', 'RolePegawaiController@getRoles')->name('api.web.master-data.role.get');
+            Route::post('store', 'RolePegawaiController@store')->name('api.web.master-data.role.store');
+            Route::post('delete', 'RolePegawaiController@delete')->name('api.web.master-data.role.delete');
         });
         Route::group(['prefix' => 'kinerja'],function (){
             Route::post('','KinerjaController@inputKinerja')->name('api.web.input-kinerja.post');

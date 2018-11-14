@@ -13,31 +13,42 @@ class RoleSeeder extends Seeder
     {
         $role_seed = [
             [
-                'nama_role' => 'Bos',
+                'nama_role' => 'Super Admin',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
-                    'master-data'=> true,
-                    'kinerja'=> true,
-                    'etika'=> true,
-                    'penilaiaan-kinerja'=> true,
-                    'monitoring-absen'=> true
+                    'master-data'=> true
                 ])
             ],
             [
-                'nama_role' => 'Wakil Bos',
-                'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'permissions' => json_encode([
-                    'master-data'=> true,
-                    'kinerja'=> true,
-                    'etika'=> true,
-                    'monitoring-absen'=> true
-                ])
-            ],
-            [
-                'nama_role' => 'Staff Wakil Bos',
+                'nama_role' => 'Top Level Government',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'monitoring-absen'=> true,
+                    'rekap-bulanan'=> true,
+                    'input-kinerja' => true,
+                    'penilaian-kinerja' => true,
+                    'penilaian-etika' => true,
+                    'tunjangan-kinerja' => true
+                ])
+            ],
+            [
+                'nama_role' => 'Middle Level Government',
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'permissions' => json_encode([
+                    'monitoring-absen'=> true,
+                    'rekap-bulanan'=> true,
+                    'input-kinerja' => true,
+                    'penilaian-kinerja' => true,
+                    'penilaian-etika' => true,
+                    'tunjangan-kinerja' => true
+                ])
+            ],
+            [
+                'nama_role' => 'Low Level Government',
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'permissions' => json_encode([
+                    'input-kinerja' => true,
+                    'tunjangan-kinerja' => true
                 ])
             ]            
         ];
