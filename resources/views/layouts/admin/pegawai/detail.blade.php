@@ -40,8 +40,8 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <img src="{{$pegawai->foto ? url('storage/'.$pegawai->foto) : url('assets/images/img-user.png')}}" class="img-profile" alt="User Image">
+                            <div class="form-group p-3">
+                                <img src="{{$pegawai->foto ? url('storage/'.$pegawai->foto) : url('assets/images/img-user.png')}}" class="img-fluid" alt="User Image">
                             </div>
                         </div>
                     </div>

@@ -175,7 +175,7 @@
                                     '                                class="img-user" id="img-user1" style="background-image: url(' + foto + ');">\n' +
                                     '                                </span>\n' +
                                     '                            <span>\n' +
-                                    '                                    <label>' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
+                                    '                                    <label style="width: max-content">' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
                                     '                                </span>\n' +
                                     '                            <div class="float-right badge badge-green text-white mr-2"></div>\n' +
                                     '                        </a>\n' +

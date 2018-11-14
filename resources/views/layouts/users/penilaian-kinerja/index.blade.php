@@ -110,7 +110,7 @@
                         'class="img-user" id="img-user1" style="background-image: url(' + foto + ');">\n' +
                         '</span>\n' +
                         '<span>\n' +
-                        '<label>' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
+                        '<label style="width: max-content">' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
                         '</span>\n' +
                         '<div class="'+attrClass+' float-right mr-3"><i class="fas fa-lg '+status+'"></i></div>\n' +
                         '</a>\n' +
