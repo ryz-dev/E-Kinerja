@@ -146,6 +146,10 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('api.web.get-penilaian-kinerja');
         Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('api.web.reply-penilaian-kinerja');
     });
+    Route::group(['prefix' => 'penilaian-etika'], function(){
+        Route::get('/get-pegawai', 'PenilaianEtikaController@getPegawai')->name('api.web.penilaian-etika.get-pegawai');
+        Route::post('', 'PenilaianEtikaController@storePenilaian')->name('api.web.penilaian-etika.store.penilaian');
+    });
 });
 
 /*
@@ -165,7 +169,7 @@ Route::get('/monitoring-absen', 'MonitoringAbsenController@index')->name('monito
 Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index');
 Route::get('/input-kinerja','InputKinerjaController@inputKinerja')->name('input-kinerja.index');
 Route::get('/penilaian-kinerja','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index');
-
+Route::get('/penilaian-etika', 'PenilaianEtikaController@index')->name('penilaian-etika.index');
 
 // Route::get('/test', function(){
 //     dd(\App\Models\MasterData\Role::find(1)->permissions);
