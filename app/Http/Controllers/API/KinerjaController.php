@@ -14,8 +14,7 @@ class KinerjaController extends ApiController
 {
     public function inputKinerja(Request $request){
         $input = $request->input();
-        /*todo : ubah jadi dynamic user id menurut user yg login*/
-        $input['userid'] = Pegawai::first()->userid;
+        $input['userid'] = auth('web')->user()->userid;
         if (in_array($input['jenis_kinerja'],['hadir','sakit'])){
             $input['tgl_mulai'] = Carbon::now();
             $input['tgl_selesai'] = Carbon::now();
