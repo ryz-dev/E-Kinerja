@@ -15,6 +15,10 @@
   Route Admin
 */
 
+Route::get('/', function(){
+    return redirect('/login');
+});
+
 //Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
 Route::group(['prefix' => 'master-data','namespace' => 'MasterData' ],function (){
     Route::get('',function() {
