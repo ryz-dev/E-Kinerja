@@ -9,20 +9,7 @@
                   <span class="badge text-white">{{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
               </div>
               <div class="img-profile" id="user-profile" style="background-image: url('assets/images/img-user.png');"></div>
-              <div class="profile">
-                  <div class="row">
-                      <div class="col-md-12">
-                          <div class="profile-img">
-                              <div class="img-profile" style="background-image: url('assets/images/img-user.png');"></div>
-                          </div>
-                          <br>
-                          <div class="profile-name">
-                              <label>Administrator</label>
-                          </div>
-                      </div>
-                  </div>
-                  <a href="login.html" class="btn btn-block" id="btn-logout">Logout</a>
-              </div>
+              @include('layouts.users.partial.part.logout')
           </div>
       </div>
       <div class="sidebar2">

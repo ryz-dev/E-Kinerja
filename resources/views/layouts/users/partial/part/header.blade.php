@@ -42,7 +42,7 @@
                 <li><a href="{{route('penilaian-etika.index')}}" class="{{str_contains(url()->current(),route('penilaian-etika.index')) ? 'active' : ''}}"><i class="far fa-thumbs-up"></i> Penilaian Etika</a></li>
                 @endcan
                 @can('tunjangan-kinerja')
-                <li><a href="tunjangan-kinerja.html"><i class="fas fa-chart-pie"></i>Tunjangan Kinerja</a></li>
+                <li><a href="{{route('tunjangan-kinerja.index')}}"><i class="fas fa-chart-pie"></i>Tunjangan Kinerja</a></li>
                 @endcan
             </ul>
             <div class="toggleSwitch">
