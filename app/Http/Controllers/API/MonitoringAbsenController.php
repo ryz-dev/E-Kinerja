@@ -25,7 +25,7 @@ class MonitoringAbsenController extends Controller
                             ->whereHas('jabatan', function($query) use($user){
                                 $query->where('id_atasan','>',$user->id_jabatan);
                             });
-                            
+
         $pegawai = Pegawai::whereHas('jabatan', function($query) use ($user){
                                 $query->where('id_atasan','>',$user->id_jabatan);
                             })->with(['checkinout' => function($query) use ($date){
@@ -82,7 +82,7 @@ class MonitoringAbsenController extends Controller
         $skpd = $request->input('skpd');
         $user = auth('web')->user();
         $search = $request->has('search')?$request->input('search'):'';
-        
+
         $data = Pegawai::whereHas('jabatan', function($query) use($user){
             $query->where('id_atasan','>',$user->id_jabatan);
         });
@@ -95,7 +95,7 @@ class MonitoringAbsenController extends Controller
             $data->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
         }
 
-        
+
         $data = ceil($data->count() / $this->show_limit);
 
         return response()->json([ 'page'=> $data ]);

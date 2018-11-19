@@ -141,7 +141,11 @@
               $('.list-bawahan').hide();
               if (key) {
                 let result = storePegawai.response.filter((res)=>{
-                  return (res.nip.toLowerCase().indexOf(key.toLowerCase()) > -1);
+                  if (res.nip.toLowerCase().indexOf(key.toLowerCase()) > -1 == true) {
+                    return (res.nip.toLowerCase().indexOf(key.toLowerCase()) > -1);
+                  } else {
+                    return (res.nama.toLowerCase().indexOf(key.toLowerCase()) > -1);
+                  }
                 });
                 loadData(result);
               } else {

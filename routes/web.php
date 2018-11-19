@@ -122,7 +122,7 @@ Route::group(['prefix' => 'api-mobile','namespace' => 'APIMobile'],function (){
             Route::post('{id}','SkpdController@updateSkpd')->name('api.mobile.master-data.skpd.update');
             Route::post('delete/{id}','SkpdController@deleteSkpd')->name('api.mobile.master-data.skpd.delete');
         });
-    });   
+    });
 });
 
 //API-WEB
