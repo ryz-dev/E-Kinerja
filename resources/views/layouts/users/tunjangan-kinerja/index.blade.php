@@ -180,7 +180,7 @@
             var ctx4 = document.getElementById("chart-tunjangan").getContext("2d");
             var data_response;
             var max_index = 0;
-
+            var chart = chart2 = chart3 = chart4 = null;
             var loadData = function (bulan, tahun) {
                 $('#preload').show();
                 $.get('{{route('api.web.tunjangan-kinerja.get')}}' + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
@@ -201,7 +201,7 @@
                         $('#total-tunjangan').html(res.response.total_tunjangan_diterima)
                         data_response = res.response
                         var dataAbsen = {
-                            labels: ["Absen"],
+                            labels: ["Absen",""],
                             datasets: [
                                 {
                                     label: "My First dataset",
@@ -213,7 +213,7 @@
                         };
 
                         var dataKinerja = {
-                            labels: ["Kinerja"],
+                            labels: ["Kinerja",""],
                             datasets: [
                                 {
                                     label: "My First dataset",
@@ -225,7 +225,7 @@
                         };
 
                         var dataEtika = {
-                            labels: ["Etika"],
+                            labels: ["Etika",""],
                             datasets: [
                                 {
                                     label: "My First dataset",
@@ -237,7 +237,7 @@
                         };
 
                         var dataTunjangan = {
-                            labels: ["Tunjangan"],
+                            labels: ["Tunjangan",""],
                             datasets: [
                                 {
                                     label: "My First dataset",
@@ -249,7 +249,16 @@
                         };
 
                         // --------
-                        var chart = new Chart(ctx1, {
+                        if (chart)
+                            chart.destroy();
+                        if (chart2)
+                            chart2.destroy();
+                        if (chart3)
+                            chart3.destroy();
+                        if (chart4)
+                            chart4.destroy();
+
+                        chart = new Chart(ctx1, {
                             type: "pie",
                             data: dataAbsen,
                             options: {
@@ -258,7 +267,7 @@
                             }
                         });
 
-                        var chart2 = new Chart(ctx2, {
+                        chart2 = new Chart(ctx2, {
                             type: "pie",
                             data: dataKinerja,
                             options: {
@@ -267,7 +276,7 @@
                             }
                         });
 
-                        var chart3 = new Chart(ctx3, {
+                        chart3 = new Chart(ctx3, {
                             type: "pie",
                             data: dataEtika,
                             options: {
@@ -276,7 +285,7 @@
                             }
                         });
 
-                        var chart4 = new Chart(ctx4, {
+                        chart4 = new Chart(ctx4, {
                             type: "pie",
                             data: dataTunjangan,
                             options: {
