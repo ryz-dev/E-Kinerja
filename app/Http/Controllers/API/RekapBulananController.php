@@ -12,7 +12,7 @@ use App\Models\Absen\Checkinout;
 class RekapBulananController extends ApiController
 {
     public function getBawahan(){
-        $user = Pegawai::whereIdJabatan(2)->first();
+        $user = auth('web')->user();
         $user->load('jabatan.pegawai_bawahan');
         $bawahan = $user->jabatan->pegawai_bawahan;
         return $this->ApiSpecResponses($bawahan);
@@ -24,7 +24,13 @@ class RekapBulananController extends ApiController
         $hari_kerja = HariKerja::where('bulan',$bulan)->where('tahun',$tahun)->whereHas('statusHari',function ($query){
             $query->where('status_hari','kerja');
         })->get();
-        $pegawai = Pegawai::whereNip($nip)->first();
+        try {
+            $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
+                $query->where('nip', auth('web')->user()->nip);
+            })->firstOrFail();
+        } catch (\Exception $exception){
+            abort('404');
+        }
         $data_inout = [];
         foreach ($hari_kerja AS $key => $hk){
             $kinerja = $pegawai->kinerja()->where('tgl_mulai','>=',$hk->tanggal)->where('tgl_selesai','<=',$hk->tanggal)->first();
