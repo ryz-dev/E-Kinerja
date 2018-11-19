@@ -78,7 +78,7 @@
                           </form>
                           <div class="mt-2 float-right">
                             <button type="button" data-action='0' class="btn-approve btn btn-custom-2">Tolak</button>
-                            <button type="button" data-action='1' class="btn-approve btn btn-custom">Simpan</button>
+                            <button type="button" data-action='1' class="btn-approve btn btn-custom">Terima</button>
                           </div>
                       </div>
                   </div>

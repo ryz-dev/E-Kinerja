@@ -16,7 +16,7 @@ class PenilaianKinerjaController extends ApiController
     public function getBawahan(){
       $user = auth('web')->user();
       $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){
-        $query->where('id_atasan','=',$user->id_jabatan);
+        $query->where('id_atasan','=',$user->id_jabatan)
       })->with(['kinerja' => function($query){
         $query->whereDate('tgl_mulai','=',date('Y-m-d'));
       }])->get();
