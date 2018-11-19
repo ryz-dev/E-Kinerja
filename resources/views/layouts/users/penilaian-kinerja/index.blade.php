@@ -65,7 +65,7 @@
                           </form>
                           <div class="mt-2 float-right">
                             <button type="button" data-action='0' class="btn-approve btn btn-custom-2">Tolak</button>
-                            <button type="button" data-action='1' class="btn-approve btn btn-custom">Simpan</button>
+                            <button type="button" data-action='1' class="btn-approve btn btn-custom">Terima</button>
                           </div>
                       </div>
                   </div>
@@ -128,7 +128,11 @@
               $('.list-bawahan').hide();
               if (key) {
                 let result = storePegawai.response.filter((res)=>{
-                  return (res.nip.toLowerCase().indexOf(key.toLowerCase()) > -1);
+                  if (res.nip.toLowerCase().indexOf(key.toLowerCase()) > -1 == true) {
+                    return (res.nip.toLowerCase().indexOf(key.toLowerCase()) > -1);
+                  } else {
+                    return (res.nama.toLowerCase().indexOf(key.toLowerCase()) > -1);
+                  }
                 });
                 loadData(result);
               } else {

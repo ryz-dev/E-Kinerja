@@ -15,4 +15,9 @@ class Kinerja extends Model
     public function pegawai(){
         return $this->belongsTo(Pegawai::class,'userid','userid');
     }
+
+    public function jabatan(){
+        return $this->hasManyThrough('App\Models\MasterData\Jabatan','App\Models\MasterData\Pegawai','userid','id','userid','id_jabatan');
+    }
+    
 }

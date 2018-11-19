@@ -1,24 +1,31 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\APIMobile;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\MasterData\Pegawai;
 
-class PenilaianEtikaController extends ApiController
+class PenilaianEtikaController extends Controller
 {
     public function getPegawai(){
-        $user = auth('web')->user();
-        $pegawai = Pegawai::wherehas('jabatan', function($query) use($user){ 
-                                        $query->where('id_atasan','>',$user->id_jabatan ); })
-                                    ->where('id_skpd',$user->id_skpd)
+        $pegawai = Pegawai::wherehas('jabatan', function($query){ 
+                                        $query->where('id_atasan','=',2 /** TODO : Ganti dengan user yang login */ ); })
                                     ->with(['etika' => function($query){
                                         $query->whereDate('tanggal','=',date('Y-m-d'));
-                                    }]);
+                                    }])->get();
         
+        $data = [];
+        foreach($pegawai as $p){
+            $data[] = [
+                'nip' => $p->nip,
+                'foto' => $p->foto,
+                'nama' => $p->nama,
+                'etika' => $p->etika,
+            ];
+        }
         
-        return $this->ApiSpecResponses($pegawai->get());
+        return $this->ApiSpecResponses($data);
     }
 
     public function storePenilaian(Request $request){

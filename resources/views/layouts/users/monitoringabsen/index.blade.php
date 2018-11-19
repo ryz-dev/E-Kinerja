@@ -19,9 +19,8 @@
                                 <label class="input-group-text">SKPD</label>
                             </div>
                             <select id="skpd" class="custom-select select-custome">
-                                <option value="0">- ALL -</option>
-                                @foreach ($skpd as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama_skpd }}</option>    
+                                @foreach ($skpd as $key => $item)
+                                <option value="{{ $key }}">{{ $item }}</option>    
                                 @endforeach
                             </select>
                         </div>
@@ -222,6 +221,7 @@
 
 
         var getPage = function (date, skpd, search) {
+            $('#pagination').hide();
             $('#pagination').twbsPagination('destroy');
             $.get('{{route('api.web.monitoring.absen.page')}}?d='+date+'&skpd='+skpd+(search?('&search='+search):''))
                 .then(function (res) {
@@ -242,7 +242,7 @@
         };
         var getData = function (page, date, skpd, search) {
             var selector = $('.list_pegawai');
-            $('#preloading').show();
+            $('#preload').show();
             $.ajax({
                 url: "{{ route('api.web.monitoring.absen') }}?page="+page+'&d='+date+'&skpd='+skpd+(search?('&search='+search):''),
                 data: '',
@@ -275,7 +275,8 @@
                     }
                 },
                 complete: function () {
-                    $('#preloading').hide();
+                    $('#pagination').show();
+                    $('#preload').hide();
                 }
             });
         }
