@@ -12,6 +12,6 @@ class ApiController extends Controller
     }
 
     public function formatDate($date){
-        return date('d/m/Y',strtotime($date));
+        return date('Y/m/d',strtotime($date));
     }
 }

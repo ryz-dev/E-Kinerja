@@ -15,39 +15,25 @@ class MonitoringAbsenController extends Controller
         $skpd = $request->input('skpd');
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
+        $user = $user = auth('web')->user();
 
         $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))->whereDate('tgl_mulai','<=',$date)->whereDate('tgl_selesai','>=',$date)->where('approve',true);
 
         try {
             if ($skpd == 0) {
-
-              $pegawai = Pegawai::wherehas('jabatan', function($query) use ($request){
-                $query->where('id_atasan','=',$request->jabatan);
-              })->with(['checkinout' => function($query) use ($date){
-                  $query->select('userid','checktime','checktype')
-                  ->whereDate('checktime','=',$date);
-                },'kinerja' => function($query) use ($date){
-                $query->select('userid','jenis_kinerja')
-                ->whereDate('tgl_mulai','<=',$date)
-                ->whereDate('tgl_selesai','>=',$date)
-                ->where('approve',true);
-              }])->orderBy('nama','desc');
-
-              // $pegawai = Pegawai::whereHas('jabatan', function($query) use ($request){
-              //     $query->where('id_atasan','=',$request->jabatan);
-              //     })->with(['checkinout' => function($query) use ($date){
-              //       $query->select('userid','checktime','checktype')
-              //       ->whereDate('checktime','=',$date);
-              //     },'kinerja' => function($query) use ($date){
-              //       $query->select('userid','jenis_kinerja')
-              //       ->where('approve',true)
-              // ->where('tgl_mulai','<=',$date)
-              // ->where('tgl_selesai','>=',$date);
-              //     }
-              // ])->orderBy('nama','DESC');
-
+                $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){
+                    $query->where('id_atasan','=',2);
+                })->with(['checkinout' => function($query) use ($date){
+                    $query->select('userid','checktime','checktype')
+                        ->whereDate('checktime','=',$date);
+                    },'kinerja' => function($query) use ($date){
+                        $query->select('userid','jenis_kinerja', 'tgl_mulai', 'tgl_selesai')
+                            ->whereDate('tgl_mulai','<=',$date)
+                            ->whereDate('tgl_selesai','>=',$date)
+                            ->where('approve',true);
+                }])->orderBy('nama','desc');
             }
-            else{
+            else {
                 $pegawai = Pegawai::where('id_skpd',$skpd)->with(['checkinout' => function($query) use ($date){
                         $query->select('userid','checktime','checktype')
                         ->whereDate('checktime','=',$date);
@@ -90,9 +76,9 @@ class MonitoringAbsenController extends Controller
             return $this->ApiSpecResponses(
                 [
                     'pegawai' => $data,
-                    'dayBefore' => Carbon::parse($date)->addDays(-1)->format('m/d/Y'),
-                    'dayAfter' => Carbon::parse($date)->addDays(1)->format('m/d/Y'),
-                    'today' => Carbon::parse($date)->format('m/d/Y'),
+                    'dayBefore' => Carbon::parse($date)->addDays(-1)->format('Y/m/d'),
+                    'dayAfter' => Carbon::parse($date)->addDays(1)->format('Y/m/d'),
+                    'today' => Carbon::parse($date)->format('Y/m/d'),
                     'dateString' => Carbon::parse($date)->format('d F Y'),
                     'summary' => $this->summary($total,$res)
                 ]
