@@ -13,6 +13,7 @@ use App\Models\Absen\Checkinout;
 class RekapBulananController extends ApiController
 {
     public function getBawahan(){
+        // $user = auth('web')->user();
         $user = Pegawai::whereIdJabatan(2)->first();
         $user->load('jabatan.pegawai_bawahan');
         $bawahan = $user->jabatan->pegawai_bawahan;
