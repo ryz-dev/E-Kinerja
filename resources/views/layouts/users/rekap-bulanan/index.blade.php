@@ -1,4 +1,5 @@
 @extends('layouts.users.partial.main')
+@section('class','rekap-bulanan')
 @section('content')
     <div class="main">
         <div class="nav-top-container">
@@ -11,23 +12,7 @@
                 <div class="img-profile" id="user-profile" style="background-image: url('images/img-user.png');">
                 </div>
 
-                <div class="profile">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="profile-img">
-                                <!-- image profile show -->
-                                <div class="img-profile" style="background-image: url('images/img-user.png');">
-                                </div>
-                                <!-- end -->
-                            </div>
-                            <br>
-                            <div class="profile-name">
-                                <label>Administrator</label>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="login.html" class="btn btn-block" id="btn-logout">Logout</a>
-                </div>
+                @include('layouts.users.partial.part.logout')
             </div>
         </div>
         <div class="sidebar2">
@@ -174,7 +159,7 @@
                                     '                                class="img-user" id="img-user1" style="background-image: url(' + foto + ');">\n' +
                                     '                                </span>\n' +
                                     '                            <span>\n' +
-                                    '                                    <label>' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
+                                    '                                    <label style="width: max-content">' + val.nama + '<br><small>' + val.nip + '</small></label>\n' +
                                     '                                </span>\n' +
                                     '                            <div class="float-right badge badge-green text-white mr-2"></div>\n' +
                                     '                        </a>\n' +
@@ -281,7 +266,7 @@
                 getRekap(nip, null, null);
             })
             var getRekap = function (nip, bulan, tahun) {
-                $('.loading').show();
+                $('#preload').show();
                 $.get('{{route('api.web.rekap-bulanan',['nip' => ''])}}/' + nip + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
                     .then(function (res) {
                         if (res.response.rekap_bulanan.length > 0) {
@@ -330,7 +315,7 @@
                         } else {
                             $('#detail-rekap-bulanan').html('<tr><td class="text-center" colspan="100">Data Tidak ditemukan</td></tr>');
                         }
-                        $('.loading').hide();
+                        $('#preload').hide();
                         window['trigger'] = 0;
                     }, function () {
                     })
@@ -394,10 +379,10 @@
 
             // Fungsi yang bertugas melakukan hit
             var detailRekap = function (nip, date) {
-                $('.loading').show();
+                $('#preload').show();
                 $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + date)
                     .then((res) => {
-                        $('.loading').hide();
+                        $('#preload').hide();
                         index = parseInt($('[name=modal_data_index]').val());
                         next = $('[rekap-index="' + (index + 1) + '"][rekap-status!=""]');
                         prev = $('[rekap-index="' + (index - 1) + '"][rekap-status!=""]');

@@ -28,6 +28,7 @@ class CreatePegawaiTable extends Migration
             $table->integer('id_jabatan')->nullable()->unsigned()->index();
             $table->enum('jns_kel',['laki-laki','perempuan']);
             $table->string('tempat_lahir');
+            $table->string('badgenumber')->nullable();
             $table->softDeletes();
             $table->timestamps();
 

@@ -15,10 +15,14 @@
   Route Admin
 */
 
+Route::get('/', function(){
+    return redirect('/login');
+});
+
 //Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
-Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function (){
+Route::group(['prefix' => 'master-data','namespace' => 'MasterData' ],function (){
     Route::get('',function() {
-      return view('layouts/admin/home/index');
+      return redirect()->route('pegawai.index');
     });
     Route::group(['prefix' => 'pegawai'],function (){
         Route::get('','PegawaiController@index')->name('pegawai.index');
@@ -77,7 +81,7 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('delete/{id}','StaticDataController@deleteHari');
     });
     Route::group(['prefix' => 'role-pegawai'], function(){
-        Route::get('','RolePegawaiController@index');
+        Route::get('','RolePegawaiController@index')->name('role-pegawai.index');
     });
     Route::group(['prefix' => 'skpd'],function (){
         Route::get('','SkpdController@index')->name('skpd.index');
@@ -89,6 +93,39 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData'],function ()
         Route::post('delete/{id}','SkpdController@delete')->name('skpd.delete');
     });
 });
+
+//API-MOBILE
+Route::group(['prefix' => 'api-mobile','namespace' => 'APIMobile'],function (){
+    Route::group(['prefix'=> 'monitoring-absen'], function(){
+        Route::get('','MonitoringAbsenController@dataAbsensi')->name('api.mobile.monitoring.absen');
+        Route::get('getpage','MonitoringAbsenController@getPage')->name('api.mobile.monitoring.absen.page');
+    });
+    Route::group(['prefix' => 'rekap-bulanan'],function (){
+        Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('api.mobile.rekap-bulanan.get-bawahan');
+        Route::get('/{nip}/{tanggal}','RekapBulananController@getDetailRekap')->name('api.mobile.rekap-detail');
+        Route::get('/{nip}/{bulan?}/{tahun?}','RekapBulananController@getRekap')->name('api.mobile.rekap-bulanan');
+    });
+    Route::group(['prefix' => 'penilaian-kinerja'],function (){
+        Route::get('/get-bawahan','PenilaianKinerjaController@getBawahan')->name('api.mobile.get-bawahan-kinerja');
+        Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('api.mobile.get-penilaian-kinerja');
+        Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('api.mobile.reply-penilaian-kinerja');
+    });
+    Route::group(['prefix' => 'penilaian-etika'], function(){
+        Route::get('/get-pegawai', 'PenilaianEtikaController@getPegawai')->name('api.mobile.penilaian-etika.get-pegawai');
+        Route::post('', 'PenilaianEtikaController@storePenilaian')->name('api.mobile.penilaian-etika.store.penilaian');
+    });
+    Route::group(['prefix' => 'master-data'],function (){
+        Route::group(['prefix' => 'skpd'],function (){
+            Route::get('','SkpdController@listSkpd')->name('api.mobile.master-data.skpd');
+            Route::get('get-pagination','SkpdController@getpage')->name('api.mobile.master-data.skpd.page');
+            Route::post('store','SkpdController@storeSkpd')->name('api.mobile.master-data.skpd.store');
+            Route::post('{id}','SkpdController@updateSkpd')->name('api.mobile.master-data.skpd.update');
+            Route::post('delete/{id}','SkpdController@deleteSkpd')->name('api.mobile.master-data.skpd.delete');
+        });
+    });
+});
+
+//API-WEB
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     Route::group(['prefix'=> 'monitoring-absen'], function(){
         Route::get('','MonitoringAbsenController@dataAbsensi')->name('api.web.monitoring.absen');
@@ -131,12 +168,28 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::group(['prefix'=> 'role-pegawai'], function(){
             Route::get('', 'RolePegawaiController@listRole')->name('api.web.master-data.list.role');
             Route::get('get-paginate', 'RolePegawaiController@getPage')->name('api.web.master-data.page.role.pegawai');
+            Route::get('get-roles', 'RolePegawaiController@getRoles')->name('api.web.master-data.role.get');
+            Route::post('store', 'RolePegawaiController@store')->name('api.web.master-data.role.store');
+            Route::post('delete', 'RolePegawaiController@delete')->name('api.web.master-data.role.delete');
         });
     });
     Route::group(['prefix' => 'rekap-bulanan'],function (){
         Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('api.web.rekap-bulanan.get-bawahan');
         Route::get('/{nip}/{tanggal}','RekapBulananController@getDetailRekap')->name('api.web.rekap-detail');
         Route::get('/{nip}/{bulan?}/{tahun?}','RekapBulananController@getRekap')->name('api.web.rekap-bulanan');
+    });
+    Route::group(['prefix' => 'penilaian-kinerja'],function (){
+        Route::get('/get-bawahan','PenilaianKinerjaController@getBawahan')->name('api.web.get-bawahan-kinerja');
+        Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('api.web.get-penilaian-kinerja');
+        Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('api.web.reply-penilaian-kinerja');
+    });
+    Route::group(['prefix' => 'penilaian-etika'], function(){
+        Route::get('/get-pegawai', 'PenilaianEtikaController@getPegawai')->name('api.web.penilaian-etika.get-pegawai');
+        Route::post('', 'PenilaianEtikaController@storePenilaian')->name('api.web.penilaian-etika.store.penilaian');
+    });
+    Route::group(['prefix' => 'kinerja'],function (){
+        Route::post('','KinerjaController@inputKinerja')->name('api.web.input-kinerja.post');
+        Route::get('{bulan?}/{tahun?}','KinerjaController@tunjanganKinerja')->name('api.web.tunjangan-kinerja.get');
     });
 });
 
@@ -150,13 +203,18 @@ Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
   Route::resource('checkinout','CheckinoutController');
 });
 
-Route::get('monitoring-absen', 'MonitoringAbsenController@index')->name('monitoring.absen.index');
 
 Auth::routes();
+Route::get('/',function (){
+    return redirect('login');
+});
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index');
-
-
+Route::get('/monitoring-absen', 'MonitoringAbsenController@index')->name('monitoring.absen.index')->middleware('can:monitoring-absen');
+Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index')->middleware('can:rekap-bulanan');
+Route::get('/input-kinerja','InputKinerjaController@inputKinerja')->name('input-kinerja.index');
+Route::get('/penilaian-kinerja','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index')->middleware('can:penilaian-kinerja');
+Route::get('/penilaian-etika', 'PenilaianEtikaController@index')->name('penilaian-etika.index')->middleware('can:penilaian-etika');
+Route::get('/tunjangan-kinerja','TunjanganKinerjaController@index')->name('tunjangan-kinerja.index')->middleware('can:tunjangan-kinerja');
 // Route::get('/test', function(){
 //     dd(\App\Models\MasterData\Role::find(1)->permissions);
 // });

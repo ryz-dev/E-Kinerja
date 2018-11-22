@@ -7,32 +7,14 @@
     <title>E-Kinerja Kabupaten Kolaka</title>
     <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datepicker3.css') }}">
-    <style media="screen">
-        .loading {
-            margin: auto;
-            z-index: 9999;
-            width: 100%;
-            height: 100%;
-            background-color:#212d3ad6;
-            position: absolute;
-        }
-        .loading img {
-            width: 50px;
-            height: 50px;
-            top: 0px;
-            bottom: 0px;
-            left: 0px;
-            right: 0px;
-            position: absolute;
-            margin: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/vendor/sweetalert/sweetalert2.min.css') }}">
+
 </head>
 <body>
-    <div class="loading">
-        <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
+    <div id="preload">
+      <img src="{{ asset('assets/images/loading_ekinerja.svg')}}" width="150">
     </div>
-    <section id="main-section" class="rekap-bulanan">
+    <section class="@yield('class')">
         <div class="burgerBtn">
             <div class="bar1"></div>
             <div class="bar2"></div>
@@ -46,12 +28,22 @@
                 <img src="{{ asset('assets/images/logo.svg') }}" width="120">
             </div>
             <ul>
-                <li><a href="index.html" class="active">Monitoring Absen</a></li>
-                <li><a href="rekap-bulanan.html">Rekap Bulanan</a></li>
-                <li><a href="input-kinerja.html">Input Kinerja</a></li>
-                <li><a href="penilaian-kinerja.html">Penilaian Kinerja</a></li>
-                <li><a href="penilaian-etika.html">Penilaian Etika</a></li>
-                <li><a href="tunjangan-kinerja.html">Tunjangan Kinerja</a></li>
+                @can('monitoring-absen')
+                <li><a href="{{route('monitoring.absen.index')}}" class="{{str_contains(url()->current(),route('monitoring.absen.index')) ? 'active' : ''}}"><i class="far fa-calendar-alt"></i> Monitoring Absen</a></li>
+                @endcan
+                @can('rekap-bulanan')
+                <li><a href="{{route('rekap-bulanan.index')}}" class="{{str_contains(url()->current(),route('rekap-bulanan.index')) ? 'active' : ''}}"><i class="fas fa-file-signature"></i> Rekap Bulanan</a></li>
+                @endcan
+                <li><a href="{{route('input-kinerja.index')}}" class="{{str_contains(url()->current(),route('input-kinerja.index')) ? 'active' : ''}}"><i class="far fa-file-alt"></i> Input Kinerja</a></li>
+                @can('penilaian-kinerja')
+                <li><a href="{{route('penilaian-kinerja.index')}}" class="{{str_contains(url()->current(),route('penilaian-kinerja.index')) ? 'active' : ''}}"><i class="fas fa-user-check"></i> Penilaian Kinerja</a></li>
+                @endcan
+                @can('penilaian-etika')
+                <li><a href="{{route('penilaian-etika.index')}}" class="{{str_contains(url()->current(),route('penilaian-etika.index')) ? 'active' : ''}}"><i class="far fa-thumbs-up"></i> Penilaian Etika</a></li>
+                @endcan
+                @can('tunjangan-kinerja')
+                <li><a href="{{route('tunjangan-kinerja.index')}}"><i class="fas fa-chart-pie"></i>Tunjangan Kinerja</a></li>
+                @endcan
             </ul>
             <div class="toggleSwitch">
                 <label class="mr-2">Mode Malam</label>

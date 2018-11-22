@@ -9,13 +9,11 @@
         @include('layouts.admin.partial.part.logout')
     </div>
     <div class="main-content">
-        {{-- <div class="loading">
-            <img src="{{ asset('assets/images/loading.gif') }}" alt="loading">
-        </div> --}}
         <div class="container-fluid">
           <a href="{{route('checkinout.create')}}" class="btn btn-success">Tambah Absen</a>
+          <br><br>
             <div class="table-responsive">
-                <table class="table table-pegawai">
+                <table class="table">
                     <thead>
                     <tr>
                         <th scope="col"></th>
@@ -33,18 +31,18 @@
                     </tbody>
                 </table>
                 <div class="box-pagination">
-                    <ul class="pagination" id="pagination"></ul>
+                    <ul class="pagination pagination-custome" id="pagination"></ul>
                 </div>
             </div>
         </div>
     </div>
   </div>
-
   @push('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
   	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/locale/id.js"></script>
   	<script>
   		$(document).ready(function(){
+          $('#preload').show();
 	        $.get('{{route('api_index_checkinout')}}')
 	        .then(function (res) {
 	        	let row;
@@ -63,15 +61,17 @@
 		                row += "<td><div class='btn-group mr-2' role='group' aria-label='Button Action'><a href='{{ route('checkinout.index') }}/"+res.data[i].id+"/edit' class='btn btn-success'><i class='fas fa-edit'></i></a><form method='post' action='{{ route('checkinout.index') }}/"+res.data[i].id+"'><input type='hidden' name='_method' value='DELETE'><button type='submit' data-id='"+res.data[i].id+"' class='btn btn-danger' ><i class='fas fa-trash'></i></button></form></div></td>";
                 		row += "</tr>";
 	        		}
+              $('#preload').hide();
 	        	}else{
 	        		row += "<tr class='text-center'>";
 		            row += "<td colspan='9'>Tidak ada data</td>";
 		            row += "</tr>";
+                $('#preload').hide();
 	        	}
 	        	$("#data_checkinout").html(row);
 	        });
   		});
   	</script>
   @endpush
-   
+
 @endsection

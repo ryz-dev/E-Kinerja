@@ -31,22 +31,22 @@
                             <h3 class="mb-4 text-center">Masuk</h3>
                             <div class="no-induk mb-3">
                                 <span><i class="far fa-user-circle"></i></span>
-                                <input type="text" name="nip" class="form-control is-invalid" placeholder="No. Induk Pegawai" value="{{ old('nip') }}">
-                                @if ($errors->has('nip'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('nip') }}</strong>
-                                    </span>
-                                @endif
+                                <input type="text" name="nip" class="form-control" placeholder="No. Induk Pegawai" value="{{ old('nip') }}">
                             </div>
                             <div class="sandi mb-3">
                                 <span><i class="fas fa-unlock-alt"></i></span>
                                 <input type="password" name="password" class="form-control" placeholder="Kata sandi">
                                 @if ($errors->has('password'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('password') }}</strong>
+                                </span>
                                 @endif
                             </div>
+                            @if ($errors->has('nip'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ $errors->first('nip') }}
+                                </div>
+                            @endif
                             <div class="ask mb-2">
                                 <label class="container-check">Ingat saya
                                     <input type="checkbox" name="remeber" {{ old('remember') ? 'checked' : '' }}>

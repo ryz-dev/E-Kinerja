@@ -8,13 +8,13 @@
         </div>
         @include('layouts.admin.partial.part.logout')
     </div>
-    <div class="main-content" id="wrapBox">
+    <div class="main-content">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <div class="container-fluid">
           <a href="{{route('hari_kerja_add')}}" class="btn btn-success">Tambah Hari Kerja</a>
           <br><br>
           <div class="table-responsive">
-            <table class="table table-hari-kerja">
+            <table class="table">
               <thead>
                 <tr>
                   <th scope="col">Tanggal</th>
@@ -30,7 +30,7 @@
             </table>
           </div>
           <div class="box-pagination">
-            <ul class="pagination" id="pagination"></ul>
+            <ul class="pagination pagination-custome" id="pagination"></ul>
           </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
         $.get('{{route('page_hari_kerja')}}?q='+getKey)
         .then(function (res) {
             if (res.halaman == 0){
-                $('.loading').hide();
+                $('#preload').hide();
             }
             if (res.halaman == 1){
                 $('#pagination').hide();
@@ -79,7 +79,7 @@
           url: base,
           data: '',
           beforeSend: function() {
-            $('.loading').show();
+            $('#preload').show();
           },
           success: function(res) {
             if (res.diagnostic.status == 'HTTP_OK') {
@@ -99,13 +99,13 @@
               row += "</tr>";
             }
             selector.html(row);
-              $('.loading').hide();
+              $('#preload').hide();
           },
           error: function(xhr) {
             console.log(xhr.statusText + xhr.responseText);
           },
           complete: function() {
-            $('.loading').hide();
+            $('#preload').hide();
           }
         });
       }

@@ -21,24 +21,38 @@ class HariKerjaController extends MasterDataController
 
     public function store(Request $request){
       $this->validate($request,[
-        'tanggal' => 'required',
-        'id_status_hari' => 'required|in:'.$this->getStatusHari()
+        'tgl_mulai' => 'required',
+        'tgl_selesai' => 'required',
       ]);
-      try {
-        $input = $request->input();
-        $input['uuid'] = (string)Str::uuid();
-        $input['bulan'] = (int)date('m',strtotime($request->input('tanggal')));
-        $input['tahun'] = date('Y',strtotime($request->input('tanggal')));
-        $input['hari'] = date('N',strtotime($request->input('tanggal')));
-        $hariKerja = HariKerja::create($input);
-        return redirect( route('hari_kerja') );
-      } catch (\Exception $e) {
-
-        /* Jika tanggal yang di set sudah terimpan di database */
-        return redirect()
-          ->back()
-          ->with('message', 'Tanggal sudah ada !');
+      if (strtotime($request->tgl_selesai) >= strtotime($request->tgl_mulai)) {
+          $tgl = $request->tgl_mulai;
+          while(strtotime($tgl) <= strtotime($request->tgl_selesai)) {
+              try {
+                  $input['tanggal'] = $tgl;
+                  $input['uuid'] = (string)Str::uuid();
+                  $input['bulan'] = (int)date('m', strtotime($input['tanggal']));
+                  $input['tahun'] = date('Y', strtotime($input['tanggal']));
+                  $input['hari'] = date('N', strtotime($input['tanggal']));
+                  if ($input['hari'] == 6 || $input['hari'] == 7) {
+                      $input['id_status_hari'] = 2;
+                  } else {
+                      $input['id_status_hari'] = 1;
+                  }
+                  $hariKerja = HariKerja::create($input);
+//                  return redirect(route('hari_kerja'));
+              } catch (\Exception $e) {
+                  /* Jika tanggal yang di set sudah terimpan di database */
+                  /*return redirect()
+                      ->back()
+                      ->with('message', 'Tanggal sudah ada !');*/
+              }
+              $tgl = date('Y-m-d',strtotime($tgl) + 86400);
+          }
+          return redirect(route('hari_kerja'));
       }
+      return redirect()
+          ->back()
+          ->with('message','Tanggal Selesai harus lebih besar atau sama dengan Tanggal Mulai');
     }
 
     public function edit($id){
