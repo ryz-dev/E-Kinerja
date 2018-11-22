@@ -12,17 +12,21 @@
                 </div>
               @endif
               <h2 class="mb-2">Tambah Hari Kerja</h2>
+              {{--<div class="form-group">--}}
+                {{--<label for="id_status_hari">Status Hari</label>--}}
+                {{--<select class="form-control" name="id_status_hari" id="id_status_hari" required>--}}
+                  {{--@foreach ($status as $key => $sts)--}}
+                    {{--<option value="{{ $sts->id }}">{{ $sts->status_hari }}</option>--}}
+                  {{--@endforeach--}}
+                {{--</select>--}}
+              {{--</div>--}}
               <div class="form-group">
-                <label for="id_status_hari">Status Hari</label>
-                <select class="form-control" name="id_status_hari" id="id_status_hari" required>
-                  @foreach ($status as $key => $sts)
-                    <option value="{{ $sts->id }}">{{ $sts->status_hari }}</option>
-                  @endforeach
-                </select>
+                <label for="tanggal">Tanggal Mulai</label>
+                <input id="tanggal" name="tgl_mulai" type="date" class="form-control" placeholder="Tanggal Lahir" value="" required>
               </div>
               <div class="form-group">
-                <label for="tanggal">Tanggal</label>
-                <input id="tanggal" name="tanggal" type="date" class="form-control" placeholder="Tanggal Lahir" value="" required>
+                <label for="tanggal">Tanggal Selesai</label>
+                <input id="tanggal" name="tgl_selesai" type="date" class="form-control" placeholder="Tanggal Lahir" value="" required>
               </div>
               <div class="form-group">
                 <button type="submit" class="btn btn-primary">Simpan</button>
