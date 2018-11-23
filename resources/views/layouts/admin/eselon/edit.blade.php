@@ -6,13 +6,13 @@
                 <form id="form-update-eselon" action="{{$eselon->update_uri}}" class="form">
                     <div class="row">
                         <div class="col-md-6">
-                            <h2 class="mb-2">Edit Eselon</h2>
+                            <h2 class="mb-2">Edit Kelas Jabatan</h2>
                             <div class="form-group">
-                                <label for="eselon">Eselon</label>
-                                <input id="eselon" type="text" class="form-control" name="eselon" placeholder="Eselon" value="{{$eselon->eselon}}" required>
+                                <label for="eselon">Kelas Jabatan</label>
+                                <input id="eselon" type="text" class="form-control" name="eselon" placeholder="Kelas Jabatan" value="{{$eselon->eselon}}" required>
                             </div>
                             <div class="form-group">
-                                <label for="eselon">Tunjangan</label>
+                                <label for="eselon">Harga Jabatan</label>
                                 <input type="number" class="form-control" name="tunjangan" placeholder="tunjangan" value="{{$eselon->tunjangan}}" required>
                             </div>
                             <div class="form-group">

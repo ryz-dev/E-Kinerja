@@ -67,7 +67,7 @@ class GenerateAbsenPegawai extends Command
                         'tgl_selesai' => $now_date,
                         'jenis_kinerja' => 'hadir',
                         'rincian_kinerja' => str_random(100),
-                        'approve' => random_int(0,1),
+                        'approve' => random_int(0,2),
                         'keterangan_approve' => str_random(100)
                     ];
                     $etika = [

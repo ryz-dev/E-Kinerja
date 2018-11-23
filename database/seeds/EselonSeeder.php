@@ -16,7 +16,7 @@ class EselonSeeder extends Seeder
             NOMOR 26 TAHUN 2007
             TENTANG TUNJANGAN JABATAN STRUKTURAL
         */
-        $eselon_seed = [
+        /*$eselon_seed = [
             [
                 'id' => 1,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
@@ -62,6 +62,84 @@ class EselonSeeder extends Seeder
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => 'VA',
                 'tunjangan' => 360000
+            ],
+        ];*/
+        $eselon_seed = [
+            [
+                'id' => 1,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '1',
+                'tunjangan' => 1000
+            ],[
+                'id' => 2,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '2',
+                'tunjangan' => 2000
+            ],[
+                'id' => 3,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '3',
+                'tunjangan' => 3000
+            ],[
+                'id' => 4,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '4',
+                'tunjangan' => 4000
+            ],[
+                'id' => 5,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '5',
+                'tunjangan' => 5000
+            ],[
+                'id' => 6,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '6',
+                'tunjangan' => 6000
+            ],[
+                'id' => 7,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '7',
+                'tunjangan' => 7000
+            ],[
+                'id' => 8,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '8',
+                'tunjangan' => 8000
+            ],[
+                'id' => 9,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9',
+                'tunjangan' => 9000
+            ],[
+                'id' => 10,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '10',
+                'tunjangan' => 10000
+            ],[
+                'id' => 11,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '11',
+                'tunjangan' => 11000
+            ],[
+                'id' => 12,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '12',
+                'tunjangan' => 12000
+            ],[
+                'id' => 13,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '13',
+                'tunjangan' => 13000
+            ],[
+                'id' => 14,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '14',
+                'tunjangan' => 14000
+            ],[
+                'id' => 15,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '15',
+                'tunjangan' => 15000
             ],
         ];
 

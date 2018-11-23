@@ -4,21 +4,21 @@
       <div class="nav-top-container">
           <div class="group-search">
               <span><i class="fas fa-search"></i></span>
-              <input id="search" type="text" class="form-control" placeholder="Cari Eselon">
+              <input id="search" type="text" class="form-control" placeholder="Cari Kelas Jabatan">
           </div>
           @include('layouts.admin.partial.part.logout')
       </div>
     <div class="main-content">
         <div class="container-fluid">
-          <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Eselon</a>
+          <a href="{{route('eselon.add')}}" class="btn btn-success">Tambah Kelas Jabatan</a>
           <br><br>
           <div class="table-responsive">
             <table class="table">
               <thead>
                 <tr>
                   <th scope="col"></th>
-                  <th scope="col">Eselon</th>
-                  <th scope="col">Tunjangan</th>
+                  <th scope="col">Kelas Jabatan</th>
+                  <th scope="col">Harga Jabatan</th>
                   <th scope="col">Keterangan</th>
                   <th scope="col">Aksi</th>
                 </tr>
@@ -90,12 +90,12 @@
                     var delete_uri = $(this).attr('delete-uri');
                     var search = $('#search').val();
                     swal({
-                        title: 'Yakin Ingin Menghapus Eselon?',
+                        title: 'Yakin Ingin Menghapus Kelas Jabatan?',
                         text: "Proses tidak dapat di kembalikan",
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
-                        confirmButtonText: 'Iya, Hapus Eselon!',
+                        confirmButtonText: 'Iya, Hapus Kelas Jabatan!',
                         cancelButtonText: 'Tidak'
                     }).then((result) => {
                         if (result.value) {
@@ -104,7 +104,7 @@
                                 getPage(search);
                                 swal(
                                     'Terhapus!',
-                                    'Data Eselon Berhasil Dihapus.',
+                                    'Data Kelas Jabatan Berhasil Dihapus.',
                                     'success'
                                 )
                             },function () {

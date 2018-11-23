@@ -33,8 +33,8 @@ class MonitoringAbsenController extends Controller
                                 },
                                     'kinerja' => function($query) use ($date){
                                     $query->select('userid','jenis_kinerja')->where('approve',2)
-                                    ->where('tgl_mulai','<=',$date)
-                                    ->where('tgl_selesai','>=',$date);
+                                    ->whereDate('tgl_mulai','<=',$date)
+                                    ->whereDate('tgl_selesai','>=',$date);
                                 }
                             ]);
 

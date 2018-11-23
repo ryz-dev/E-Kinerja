@@ -12,9 +12,9 @@
                                 <input id="jabatan" type="text" class="form-control" name="jabatan" placeholder="Jabatan" value="" required>
                             </div>
                             <div class="form-group">
-                                <label for="eselon">Eselon</label>
+                                <label for="eselon">Kelas Jabatan</label>
                                 <select class="form-control" name="id_eselon" id="eselon" required>
-                                    <option value="">Pilih Eselon</option>
+                                    <option value="">Pilih Kelas Jabatan</option>
                                     @foreach($data_option->eselon AS $ag)
                                         <option value="{{$ag->id}}">{{$ag->eselon}}</option>
                                     @endforeach

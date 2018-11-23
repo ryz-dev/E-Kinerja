@@ -1,5 +1,5 @@
 @extends('layouts.users.partial.main')
-@section('class','rekap-bulanan')
+@section('class','input-kinerja')
 @section('content')
     <div class="main">
         <div class="nav-top-container">

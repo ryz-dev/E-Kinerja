@@ -6,13 +6,13 @@
                 <form id="form-store-eselon" action="{{route('api.web.master-data.eselon.store')}}" class="form">
                     <div class="row">
                         <div class="col-md-6">
-                            <h2 class="mb-2">Tambah Eselon</h2>
+                            <h2 class="mb-2">Tambah Kelas Jabatan</h2>
                             <div class="form-group">
-                                <label for="eselon">Eselon</label>
-                                <input id="eselon" type="text" class="form-control" name="eselon" placeholder="Eselon" value="" required>
+                                <label for="eselon">Kelas Jabatan</label>
+                                <input id="eselon" type="text" class="form-control" name="eselon" placeholder="Kelas Jabatan" value="" required>
                             </div>
                             <div class="form-group">
-                                <label for="eselon">Tunjangan</label>
+                                <label for="eselon">Harga Jabatan</label>
                                 <input type="number" class="form-control" name="tunjangan" placeholder="tunjangan" value="" required>
                             </div>
                             <div class="form-group">

@@ -17,7 +17,7 @@
                 <thead>
                   <tr>
                     <th scope="col">Jabatan</th>
-                    <th scope="col">Eselon</th>
+                    <th scope="col">Kelas Jabatan</th>
                     <th scope="col">Atasan</th>
                     <th scope="col">Keterangan</th>
                     <th scope="col">Aksi</th>
