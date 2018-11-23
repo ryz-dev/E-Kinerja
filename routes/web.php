@@ -19,7 +19,13 @@ Route::get('/', function(){
     return redirect('/login');
 });
 
-//Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware' => 'can:master-data'],function (){
+Route::group(['prefix'=>'admin', 'namespace'=>'Auth'], function(){
+    Route::get('', function(){
+        return redirect()->route('admin-login-index');
+    });
+    Route::get('/login', 'AdminLoginController@showLoginForm')->name('admin-login-index');
+    Route::post('', 'AdminLoginController@login')->name('admin-login');
+});
 Route::group(['prefix' => 'master-data','namespace' => 'MasterData' ],function (){
     Route::get('',function() {
       return redirect()->route('pegawai.index');
