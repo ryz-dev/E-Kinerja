@@ -3,7 +3,13 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -44,8 +50,39 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception)
+    public function render($request, Exception $e)
     {
-        return parent::render($request, $exception);
+        if (str_contains($request->getRequestUri(),'api/v1')){
+            $status = 500;
+            $mesaage = $e->getMessage();
+            if ($e instanceof AuthenticationException){
+                $status = 401;
+            }
+            if ($e instanceof ModelNotFoundException){
+                $status = 404;
+                $mesaage = 'Not Found';
+            }
+            if ($e instanceof NotFoundHttpException){
+                $status = 404;
+                $mesaage = 'Not Found';
+            }
+            if ($e instanceof AccessDeniedHttpException){
+                $status = 403;
+                $mesaage = 'Access Denied';
+            }
+            if ($e instanceof HttpException){
+                $status = $e->getStatusCode();
+            }
+            if ($e instanceof QueryException){
+                $status = 500;
+            }
+            $response['diagnostic'] = [
+                'message' => $mesaage,
+                'status' => $status,
+
+            ];
+            return response()->json($response,$status);
+        }
+        return parent::render($request, $e);
     }
 }

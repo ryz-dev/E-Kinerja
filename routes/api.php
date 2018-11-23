@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::middleware('auth:api')->get('/v1', function (Request $request) {
-//     return $request->user();
-// });
+ Route::middleware('auth:api')->get('/v1', function (Request $request) {
+     return $request->user()->load('role');
+ });
 
 
 Route::group(['prefix' => '/v1','namespace' => 'API'],function (){

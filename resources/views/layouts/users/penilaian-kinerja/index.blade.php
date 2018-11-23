@@ -50,7 +50,7 @@
                       <div class="col-md-12">
                           <h6 class="mb-2 mt-4">Rincian Kinerja Harian</h6>
                           <div class="desc-kinerja">
-                            <p id="ket_kinerja"></p>
+                            <p id="ket_kinerja" style="overflow-wrap: break-word;"></p>
                           </div>
                       </div>
                   </div>
