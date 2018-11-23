@@ -27,9 +27,15 @@ class PenilaianKinerjaController extends Controller
                 'nip' => $p->nip,
                 'foto' => $p->foto,
                 'nama' => $p->nama,
-                'kinerja' => $p->kinerja,
+                'approve' => $p->kinerja[0]->approve,
             ];
         }
+
+        $sort = array();
+        foreach($data as $k=>$v) {
+            $sort['approve'][$k] = $v['approve'];
+        }
+        array_multisort($sort['approve'], SORT_ASC, SORT_STRING, $data);
   
         return $this->ApiSpecResponses($data);
     }

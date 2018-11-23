@@ -25,12 +25,12 @@ class MonitoringAbsenController extends Controller
                     $query->where('id_atasan','=',2);
                 })->with(['checkinout' => function($query) use ($date){
                     $query->select('userid','checktime','checktype')
-                        ->whereDate('checktime','=',$date);
-                    },'kinerja' => function($query) use ($date){
-                        $query->select('userid','jenis_kinerja', 'tgl_mulai', 'tgl_selesai')
-                            ->whereDate('tgl_mulai','<=',$date)
-                            ->whereDate('tgl_selesai','>=',$date)
-                            ->where('approve',true);
+                    ->whereDate('checktime','=',$date);
+                },'kinerja' => function($query) use ($date){
+                    $query->select('userid','jenis_kinerja', 'tgl_mulai', 'tgl_selesai')
+                    ->whereDate('tgl_mulai','<=',$date)
+                    ->whereDate('tgl_selesai','>=',$date)
+                    ->where('approve',true);
                 }])->orderBy('nama','desc');
             }
             else {
@@ -64,7 +64,7 @@ class MonitoringAbsenController extends Controller
             $data = [];
             foreach($pegawai->items() as $p) {
                 $data[] = [
-                    'id_skpd' => $p->id_skpd,
+                    'uuid' => $p->uuid,
                     'nama' => $p->nama,
                     'nip' => $p->nip,
                     'foto' => $p->foto,
