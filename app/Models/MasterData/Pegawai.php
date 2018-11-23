@@ -75,6 +75,8 @@ class Pegawai extends Authenticatable
         return route('api.web.master-data.pegawai.update',['id' => $this->uuid]);
     }
 
-
+    public function findForPassport($username) {
+        return self::where('nip',$username)->first(); // change column name whatever you use in credentials
+    }
 
 }
