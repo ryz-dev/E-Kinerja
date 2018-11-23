@@ -38,7 +38,7 @@ class RekapBulananController extends ApiController
         $pegawai = Pegawai::whereNip($nip)->first();
         $data_inout = [];
         foreach ($hari_kerja AS $key => $hk){
-            $kinerja = $pegawai->kinerja()->where('tgl_mulai','>=',$hk->tanggal)->where('tgl_selesai','<=',$hk->tanggal)->first();
+            $kinerja = $pegawai->kinerja()->where('tgl_mulai','<=',$hk->tanggal)->where('tgl_selesai','>=',$hk->tanggal)->first();
             $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
             $data_inout[] = [
                 'tgl_prev' => isset($hari_kerja[$key-1]->tanggal) ? $hari_kerja[$key-1]->tanggal : '',
