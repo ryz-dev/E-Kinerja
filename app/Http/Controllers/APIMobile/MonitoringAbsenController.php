@@ -64,7 +64,7 @@ class MonitoringAbsenController extends Controller
             $data = [];
             foreach($pegawai->items() as $p) {
                 $data[] = [
-                    'id_skpd' => $p->id_skpd,
+                    'uuid' => $p->uuid,
                     'nama' => $p->nama,
                     'nip' => $p->nip,
                     'foto' => $p->foto,

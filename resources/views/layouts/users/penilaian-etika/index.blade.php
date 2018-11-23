@@ -178,7 +178,7 @@
             var output='';
             output += "<li><a class='listItems "+(key==0?'active':'')+"' data-toggle='tab' data-nip="+data.nip+" href='#"+data.nip+"' role='tab' aria-selected='true'>"
             output += "<span class='img-user' id='img-user1' style='background-image: url(assets/images/img-user.png');'></span>";
-            output += "<span><label>"+data.nama+" <br><small>"+data.nip+"</small></label></span>";
+            output += "<span style='width:max-content'><label>"+data.nama+" <br><small>"+data.nip+"</small></label></span>";
             if(data.etika.length > 0){
                 output += viewBadgeEtika(data.etika[0].persentase);
             }
