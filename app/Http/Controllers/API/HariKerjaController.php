@@ -36,7 +36,7 @@ class HariKerjaController extends ApiController
               'id'=>$value->id,
               'url_edit'=>route('hari_kerja_edit',['id'=>$value->id]),
               'status_hari'=>json_decode($value)->status_hari->status_hari,
-              'tanggal'=>$value->tanggal,
+              'tanggal'=> $this->formatDate($value->tanggal),
               'hari'=>ucfirst($value->Hari->nama_hari),
               'bulan'=>ucfirst($value->Bulan->nama_bulan),
               'tahun'=>$value->tahun
