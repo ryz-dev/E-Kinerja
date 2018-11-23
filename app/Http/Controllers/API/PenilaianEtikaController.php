@@ -11,12 +11,13 @@ class PenilaianEtikaController extends ApiController
     public function getPegawai(){
         $user = auth('web')->user();
         $pegawai = Pegawai::wherehas('jabatan', function($query) use($user){ 
-                                        $query->where('id_atasan','>',$user->id_jabatan ); })
-                                    ->where('id_skpd',$user->id_skpd)
+                                        $query->where('id_atasan','=',$user->id_jabatan ); })
                                     ->with(['etika' => function($query){
                                         $query->whereDate('tanggal','=',date('Y-m-d'));
                                     }]);
-        
+        if ($user->id_jabtan > 1) {
+            $pegawai->where('id_skpd',$user->id_skpd);
+        }
         
         return $this->ApiSpecResponses($pegawai->get());
     }
