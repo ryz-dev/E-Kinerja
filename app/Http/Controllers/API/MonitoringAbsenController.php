@@ -21,7 +21,7 @@ class MonitoringAbsenController extends Controller
         $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))
                             ->whereDate('tgl_mulai','<=',$date)
                             ->whereDate('tgl_selesai','>=',$date)
-                            ->where('approve',true)
+                            ->where('approve',2)
                             ->whereHas('jabatan', function($query) use($user){
                                 $query->where('id_atasan','>',$user->id_jabatan);
                             });
@@ -32,7 +32,7 @@ class MonitoringAbsenController extends Controller
                                     $query->select('userid','checktime','checktype')->whereDate('checktime','=',$date);
                                 },
                                     'kinerja' => function($query) use ($date){
-                                    $query->select('userid','jenis_kinerja')->where('approve',true)
+                                    $query->select('userid','jenis_kinerja')->where('approve',2)
                                     ->where('tgl_mulai','<=',$date)
                                     ->where('tgl_selesai','>=',$date);
                                 }

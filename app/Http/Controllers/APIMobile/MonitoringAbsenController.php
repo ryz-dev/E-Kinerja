@@ -17,7 +17,7 @@ class MonitoringAbsenController extends Controller
         $search = $request->has('search')? $request->input('search'):'';
         $user = $user = auth('web')->user();
 
-        $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))->whereDate('tgl_mulai','<=',$date)->whereDate('tgl_selesai','>=',$date)->where('approve',true);
+        $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))->whereDate('tgl_mulai','<=',$date)->whereDate('tgl_selesai','>=',$date)->where('approve',2);
 
         try {
             if ($skpd == 0) {
@@ -30,7 +30,7 @@ class MonitoringAbsenController extends Controller
                         $query->select('userid','jenis_kinerja', 'tgl_mulai', 'tgl_selesai')
                             ->whereDate('tgl_mulai','<=',$date)
                             ->whereDate('tgl_selesai','>=',$date)
-                            ->where('approve',true);
+                            ->where('approve',2);
                 }])->orderBy('nama','desc');
             }
             else {
@@ -39,7 +39,7 @@ class MonitoringAbsenController extends Controller
                         ->whereDate('checktime','=',$date);
                     },
                     'kinerja' => function($query) use ($date){
-                        $query->select('userid','jenis_kinerja')->where('approve',true)->whereDate('tgl_selesai','=',$date);
+                        $query->select('userid','jenis_kinerja')->where('approve',2)->whereDate('tgl_selesai','=',$date);
                     }
                 ])->orderBy('nama','asc');
                 $summary->whereHas('pegawai', function($query) use ($skpd){

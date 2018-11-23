@@ -9,7 +9,7 @@ class Kinerja extends Model
 {
     protected $table = 'kinerja';
     protected $fillable = [
-        'userid','tgl_mulai','tgl_selesai','jenis_kinerja','rincian_kinerja'
+        'userid','tgl_mulai','tgl_selesai','jenis_kinerja','rincian_kinerja','approve'
     ];
 
     public function pegawai(){

@@ -272,13 +272,13 @@
                         if (res.response.rekap_bulanan.length > 0) {
                             var rekap = res.response.rekap_bulanan.map(function (val, i) {
                                 var color = approve = color_persentase = ''
-                                if (val.approve == 1) {
+                                if (val.approve == 2) {
                                     approve = 'fa-check';
                                     color = 'check-list'
-                                } else if (val.approve === 0) {
+                                } else if (val.approve == 1) {
                                     approve = 'fa-times'
                                     color = 'not-list'
-                                } else if (val.approve == '') {
+                                } else if (val.approve == 0) {
                                     color = ''
                                     approve = ''
                                 }
@@ -411,7 +411,7 @@
                         $('#kinerja_ket').html(kinerja.keterangan_approve);
                         $('#etika_val').html(etika.persentase + '%');
                         $('#etika_ket').html(etika.keterangan);
-                        if (kinerja.approve == 1) {
+                        if (kinerja.approve == 2) {
                             $('#kinerja_status').addClass('fa-check');
                         }
                     }).catch((err) => {

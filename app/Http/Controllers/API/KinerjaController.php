@@ -34,8 +34,9 @@ class KinerjaController extends ApiController
                 ]);
             }
         }
-        $cek_kinerja = Kinerja::where('userid',$input['userid'])->whereDate('tgl_mulai','>=',$input['tgl_mulai'])->whereDate('tgl_selesai','<=',$input['tgl_selesai'])->first();
+        $cek_kinerja = Kinerja::where('userid',$input['userid'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->first();
         if (!$cek_kinerja){
+            $input['approve'] = 0;
             if ($input['jenis_kinerja'] == 'hadir'){
                 $cek_hari_kerja = HariKerja::whereDate('tanggal',date('Y-m-d'))->first();
                 if ($cek_hari_kerja){
@@ -95,7 +96,7 @@ class KinerjaController extends ApiController
         $data_etika_kinerja = [];
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
-                $knj = Kinerja::where('userid', $userid)->where('tgl_mulai', '>=', $hk->tanggal)->where('tgl_selesai', '<=', $hk->tanggal);
+                $knj = Kinerja::where('userid', $userid)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal);
                 $etk = Etika::where('userid', $userid)->where('tanggal', '=', $hk->tanggal)->first();
                 $abs = Checkinout::where('userid', $userid)->whereDate('checktime', $hk->tanggal)->get();
                 if ($abs->count() > 0) {
@@ -126,10 +127,10 @@ class KinerjaController extends ApiController
                 if ($etk) {
                     $jumlah_etika += $etk->persentase;
                 }
-                if ($knj->where('approve', 1)->first()) {
+                if ($knj->where('approve', 2)->first()) {
                     $jumlah_kinerja++;
                 }
-                if ($knj->where('jenis_kinerja', '<>', 'hadir')->where('approve', 1)->first()) {
+                if ($knj->where('jenis_kinerja', '<>', 'hadir')->where('approve', 2)->first()) {
                     $absen++;
                 }
             }

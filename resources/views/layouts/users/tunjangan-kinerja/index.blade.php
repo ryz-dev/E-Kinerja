@@ -316,9 +316,9 @@
                                 }
                                 var row = '<tr class="data-tunjangan" data-index="' + i + '">\n' +
                                     '                                <td>' + val.hari + ', ' + val.tanggal_string + '</td>\n' +
-                                    '                                <td>' + ( val.kinerja ? capitalizeFirstLetter(val.kinerja.jenis_kinerja) : '') + '</td>\n' +
+                                    '                                <td>' + ( val.kinerja ? capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '') + '</td>\n' +
                                     '                                <td>\n' +
-                                    '                                    <span class="' + (val.kinerja ? val.kinerja.approve ? 'check-list' : 'not-list' : '') + '"><i class="fas fa-lg ' + (val.kinerja ? val.kinerja.approve ? 'fa-check' : 'fa-times' : '') + '"></i></span>\n' +
+                                    '                                    <span class="' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '') + '"><i class="fas fa-lg ' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '' ): '') + '"></i></span>\n' +
                                     '                                </td>\n' +
                                     '                                <td>\n' +
                                     '                                    <div class="' + color_persentase + ' text-white mr-2">' + (val.etika ? val.etika.persentase+'%' : '') + ' </div>\n' +
@@ -424,11 +424,11 @@
                 $('#detail-nama').html(data_response.pegawai.nama)
                 $('#detail-nip').html(data_response.pegawai.nip)
                 $('#detail-tgl').html(data.tanggal_string2)
-                $('#detail-jenis-kinerja').html(kinerja ? capitalizeFirstLetter(kinerja.jenis_kinerja) : '')
-                $('#detail-jam-masuk').html(absen ? absen[0].absen_time : '--:--')
-                $('#detail-jam-pulang').html(absen ? absen[1].absen_time : '--:--')
-                $('#detail-approve').addClass((kinerja ? (kinerja.approve ? 'check-list' : 'not-list') : '')).removeClass((kinerja ? (kinerja.approve ? 'not-list' : 'check-list') : ''));
-                $('#detail-approve').find('i').addClass((kinerja ? (kinerja.approve ? 'fa-check' : 'fa-times') : '')).removeClass((kinerja ? (kinerja.approve ? 'fa-times' : 'fa-check') : ''));
+                $('#detail-jenis-kinerja').html(kinerja ? capitalizeFirstLetter(kinerja.jenis_kinerja.replace('_',' ')) : '')
+                $('#detail-jam-masuk').html(absen ? (typeof absen[0] !== 'undefined' ? absen[0].absen_time : '--:--') : '--:--')
+                $('#detail-jam-pulang').html(absen ? (typeof absen[1] !== 'undefined' ? absen[1].absen_time : '--:--') : '--:--')
+                $('#detail-approve').addClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '')).removeClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'not-list' : 'check-list') : '') : ''));
+                $('#detail-approve').find('i').addClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '') : '')).removeClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'fa-times' : 'fa-check') : '') : ''));
                 $('#detail-kinerja').html(kinerja ? kinerja.rincian_kinerja : '');
                 $('#detail-keterangan-approve').html(kinerja ? kinerja.keterangan_approve : '');
                 $('#detail-etika-persentase').html(etika ? etika.persentase+'%' : '');
@@ -456,8 +456,10 @@
                 }
             })
 
-            function capitalizeFirstLetter(string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
+            function capitalizeFirstLetter(str) {
+                return str.replace(/\w\S*/g, function(txt){
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
             }
         </script>
     @endpush
