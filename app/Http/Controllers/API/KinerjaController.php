@@ -149,7 +149,7 @@ class KinerjaController extends ApiController
             foreach ($persentase_total AS $key => $value) {
                 $total_persentase_tunjangan += $value;
             }
-            $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan / 100);
+            $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan) /*/ 100*/;
         }
         $response = [
             'pegawai' => $pegawai,
