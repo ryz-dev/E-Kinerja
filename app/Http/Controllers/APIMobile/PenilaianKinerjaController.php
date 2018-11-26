@@ -62,7 +62,7 @@ class PenilaianKinerjaController extends Controller
             $kinerja->keterangan_approve = $r->keterangan_approve;
             $kinerja->approve = $r->type;
             $kinerja->save();
-            return $this->ApiSpecResponses(['status'=>'HTTP_OK']);
+            return $this->ApiSpecResponses(['status'=>'OK']);
         } catch (Exception $e) {
             return $this->ApiSpecResponses($e);
         }
