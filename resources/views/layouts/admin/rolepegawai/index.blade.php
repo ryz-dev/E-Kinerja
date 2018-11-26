@@ -79,7 +79,7 @@
                     row += "<td><div class='img-user' id='user1' style='background-image: url("+foto+");'></div></td>";
                     row += "<td><a href='"+val.detail_uri+"'>"+val.nip+"</a></td>";
                     row += "<td>"+val.nama+"</td>";
-                    row += "<td>"+val.jabatan.jabatan+"</td>";
+                    row += "<td>"+ ( val.jabatan ? val.jabatan.jabatan : '')+"</td>";
                     row += "<td>"+role+"</td>";
                     row += "<td>"+action(val)+"</td>";
                     row += "</tr>";

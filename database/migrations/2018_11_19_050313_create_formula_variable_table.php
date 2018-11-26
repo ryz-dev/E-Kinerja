@@ -16,7 +16,8 @@ class CreateFormulaVariableTable extends Migration
         Schema::create('formula_variable', function (Blueprint $table) {
             $table->increments('id');
             $table->string('variable');
-            $table->string('keterangan_variable');
+            $table->integer('persentase_nilai');
+            $table->string('keterangan_variable')->nullable();
             $table->timestamps();
         });
     }

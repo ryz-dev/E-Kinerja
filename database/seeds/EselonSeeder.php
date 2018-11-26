@@ -69,77 +69,77 @@ class EselonSeeder extends Seeder
                 'id' => 1,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '1',
-                'tunjangan' => 1000
+                'tunjangan' => 190
             ],[
                 'id' => 2,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '2',
-                'tunjangan' => 2000
+                'tunjangan' => 0
             ],[
                 'id' => 3,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '3',
-                'tunjangan' => 3000
+                'tunjangan' => 340
             ],[
                 'id' => 4,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '4',
-                'tunjangan' => 4000
+                'tunjangan' => 440
             ],[
                 'id' => 5,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '5',
-                'tunjangan' => 5000
+                'tunjangan' => 490
             ],[
                 'id' => 6,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '6',
-                'tunjangan' => 6000
+                'tunjangan' => 690
             ],[
                 'id' => 7,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '7',
-                'tunjangan' => 7000
+                'tunjangan' => 890
             ],[
                 'id' => 8,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '8',
-                'tunjangan' => 8000
+                'tunjangan' => 1280
             ],[
                 'id' => 9,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '9',
-                'tunjangan' => 9000
+                'tunjangan' => 1355
             ],[
                 'id' => 10,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '10',
-                'tunjangan' => 10000
+                'tunjangan' => 1720
             ],[
                 'id' => 11,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '11',
-                'tunjangan' => 11000
+                'tunjangan' => 1930
             ],[
                 'id' => 12,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '12',
-                'tunjangan' => 12000
+                'tunjangan' => 2225
             ],[
                 'id' => 13,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '13',
-                'tunjangan' => 13000
+                'tunjangan' => 2715
             ],[
                 'id' => 14,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '14',
-                'tunjangan' => 14000
+                'tunjangan' => 3030
             ],[
                 'id' => 15,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '15',
-                'tunjangan' => 15000
+                'tunjangan' => 3555
             ],
         ];
 

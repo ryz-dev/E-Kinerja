@@ -24,7 +24,7 @@ class CreateEselonTable extends Migration
         Schema::table('jabatan',function (Blueprint $table){
             $table->foreign('id_eselon')
                 ->references('id')
-                ->on('jabatan')
+                ->on('eselon')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });
