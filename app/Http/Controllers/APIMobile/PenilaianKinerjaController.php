@@ -15,8 +15,9 @@ use Illuminate\Validation\Rule;
 class PenilaianKinerjaController extends Controller
 {
     public function getBawahan(){
-        $pegawai = Pegawai::wherehas('jabatan', function($query){
-            $query->where('id_atasan','=',2); /** TODO : Ganti dengan user yang login */
+        $user = auth('api')->user();
+        $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){
+            $query->where('id_atasan','=', $user->id_jabatan);
             })->with(['kinerja' => function($query){
             $query->whereDate('tgl_mulai','=',date('Y-m-d'));
         }])->get();

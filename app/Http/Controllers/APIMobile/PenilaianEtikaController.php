@@ -9,9 +9,9 @@ use App\Models\MasterData\Pegawai;
 class PenilaianEtikaController extends Controller
 {
     public function getPegawai(){
-        // $user = auth('web')->user();
-        $pegawai = Pegawai::wherehas('jabatan', function($query){ 
-        $query->where('id_atasan','=',2 /** TODO : Ganti dengan user yang login */ ); })
+        $user = auth('api')->user();
+        $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){ 
+        $query->where('id_atasan','=', $user->id_jabatan ); })
             ->with(['etika' => function($query){
                  $query->whereDate('tanggal','=',date('Y-m-d'));
             }])->get();

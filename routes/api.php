@@ -17,9 +17,10 @@ use Illuminate\Http\Request;
      return $request->user()->load('role');
  });*/
 Route::group(['middleware' => 'auth:api','prefix' => 'v1', 'namespace' => 'APIMobile'],function(){
-//    Route::get('test',function(){
-//        return 'test';
-//    })->middleware('can:monitoring-absen');
+    // Route::get('detail',function(Request $request){
+    //     return response()->json($request->user()->role);
+    // });
+
     Route::group(['prefix'=> 'monitoring-absen', 'middleware' => 'can:monitoring-absen'], function(){
         Route::get('','MonitoringAbsenController@dataAbsensi')->name('api.mobile.monitoring.absen');
         Route::get('getpage','MonitoringAbsenController@getPage')->name('api.mobile.monitoring.absen.page');
