@@ -24,6 +24,7 @@ class PenilaianKinerjaController extends Controller
         $data = [];
         foreach($pegawai as $p){
             $data[] = [
+                'uuid' => $p->uuid,
                 'nip' => $p->nip,
                 'foto' => $p->foto,
                 'nama' => $p->nama,
@@ -43,8 +44,10 @@ class PenilaianKinerjaController extends Controller
     public function getKinerja($nip){
         $pegawai = Pegawai::where('nip',$nip)->first();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
+            ->select('userid', 'tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
             ->whereDate('tgl_mulai',date('Y-m-d'))
             ->first();
+
         return $this->ApiSpecResponses($kinerja);
     }
   

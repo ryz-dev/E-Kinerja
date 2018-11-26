@@ -21,6 +21,7 @@ class RekapBulananController extends ApiController
         $data = [];
         foreach($bawahan as $b) {
             $data[] = [
+                'uuid' => $b->uuid,
                 'nama' => $b->nama,
                 'foto' => $b->foto,
                 'nip' => $b->nip,
@@ -41,19 +42,18 @@ class RekapBulananController extends ApiController
             $kinerja = $pegawai->kinerja()->where('tgl_mulai','<=',$hk->tanggal)->where('tgl_selesai','>=',$hk->tanggal)->first();
             $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
             $data_inout[] = [
-                'tgl_prev' => isset($hari_kerja[$key-1]->tanggal) ? $hari_kerja[$key-1]->tanggal : '',
-                'tgl_next' => isset($hari_kerja[$key+1]->tanggal) ? $hari_kerja[$key+1]->tanggal : '',
-                'tgl' => $hk->tanggal,
-                'tanggal' => $this->formatDate($hk->tanggal),
+                'tanggal' => $hk->tanggal,
                 'hari' => ucfirst($hk->Hari->nama_hari),
-                'checkinout' => $pegawai->checkinout()->where('checktime','like','%'.$hk->tanggal.'%')->get()->toArray(),
                 'status' => ucfirst(str_replace('_',' ',isset($kinerja->jenis_kinerja)?$kinerja->jenis_kinerja:'')),
                 'persentase' => isset($etika->persentase)?$etika->persentase : '',
                 'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
             ];
         }
         return $this->ApiSpecResponses([
-            'tanggal_sekarang' => $this->formatDate(date('Y-m-d')),
+            'uuid' => $pegawai->uuid,
+            'nama' => $pegawai->nama,
+            'nip' => $pegawai->nip,
+            'foto' => $pegawai->foto,
             'rekap_bulanan' => $data_inout
         ]);
     }
@@ -76,30 +76,36 @@ class RekapBulananController extends ApiController
         /* Data kinerja */
         $pegawai = Pegawai::where('nip',$nip)->first();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
+        ->select('jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
         ->whereDate('tgl_mulai',$tgl)
         ->first();
 
         /* Data etika */
         $etika = Etika::where("userid",$pegawai->userid)
+        ->select('persentase', 'keterangan')
         ->where("tanggal",$tgl)
         ->first();
 
         /* Data checkinout */
         $checkinout = Checkinout::where("userid",$pegawai->userid)
+        ->select('checktime')
         ->whereDate("checktime",$tgl)
         ->get();
 
-
         /* Data array */
         $result = [
-          "kinerja"=>$kinerja,
-          "etika"=>$etika,
-          "checkinout"=>$checkinout
+            'uuid' => $pegawai->uuid,
+            'nama' => $pegawai->nama,
+            'nip' => $pegawai->nip,
+            'foto' => $pegawai->foto,
+            'kinerja' => $kinerja,
+            'etika' => $etika,
+            'checkinout' => [
+              'in' => $checkinout[0]->checktime,
+              'out' => $checkinout[1]->checktime,
+            ]
         ];
 
-        return $this->ApiSpecResponses(array_merge($result,[
-          'prev'=>isset($date_prev->tanggal)==false?'':$date_prev->tanggal,
-          'next'=>isset($date_next->tanggal)==false?'':$date_next->tanggal
-        ]));
+        return $this->ApiSpecResponses($result);
     }
 }

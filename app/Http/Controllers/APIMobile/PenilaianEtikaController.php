@@ -19,10 +19,15 @@ class PenilaianEtikaController extends Controller
         $data = [];
         foreach($pegawai as $p){
             $data[] = [
+                'uuid' => $p->uuid,
                 'nip' => $p->nip,
                 'foto' => $p->foto,
                 'nama' => $p->nama,
-                'etika' => $p->etika,
+                'etika' => [
+                    'tanggal' => $p->etika[0]->tanggal,
+                    'persentase' => $p->etika[0]->persentase,
+                    'keterangan' => $p->etika[0]->keterangan,
+                ],
             ];
         }
         
