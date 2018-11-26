@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Absen\Checkinout;
 use App\Models\Absen\Etika;
 use App\Models\Absen\Kinerja;
+use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
 use Carbon\Carbon;
@@ -77,9 +78,9 @@ class KinerjaController extends ApiController
         $bulan = (int)($bulan ? $bulan : date('m'));
         $tahun = $tahun ? $tahun : date('Y');
 
-        $persen_absen = 30;
-        $persen_kinerja = 40;
-        $persen_etika = 30;
+        $persen_absen = FormulaVariable::where('variable','absen')->first()->persentase_nilai;
+        $persen_kinerja =  FormulaVariable::where('variable','kinerja')->first()->persentase_nilai;
+        $persen_etika =  FormulaVariable::where('variable','etika')->first()->persentase_nilai;
 
         $pegawai = auth('web')->user();
         $userid = $pegawai->userid;
@@ -148,7 +149,7 @@ class KinerjaController extends ApiController
             foreach ($persentase_total AS $key => $value) {
                 $total_persentase_tunjangan += $value;
             }
-            $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan / 100);
+            $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan) /*/ 100*/;
         }
         $response = [
             'pegawai' => $pegawai,
