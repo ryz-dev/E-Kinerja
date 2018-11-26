@@ -100,37 +100,6 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData' ],function (
     });
 });
 
-//API-MOBILE
-Route::group(['prefix' => 'api-mobile','namespace' => 'APIMobile'],function (){
-    Route::group(['prefix'=> 'monitoring-absen'], function(){
-        Route::get('','MonitoringAbsenController@dataAbsensi')->name('api.mobile.monitoring.absen');
-        Route::get('getpage','MonitoringAbsenController@getPage')->name('api.mobile.monitoring.absen.page');
-    });
-    Route::group(['prefix' => 'rekap-bulanan'],function (){
-        Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('api.mobile.rekap-bulanan.get-bawahan');
-        Route::get('/{nip}/{tanggal}','RekapBulananController@getDetailRekap')->name('api.mobile.rekap-detail');
-        Route::get('/{nip}/{bulan?}/{tahun?}','RekapBulananController@getRekap')->name('api.mobile.rekap-bulanan');
-    });
-    Route::group(['prefix' => 'penilaian-kinerja'],function (){
-        Route::get('/get-bawahan','PenilaianKinerjaController@getBawahan')->name('api.mobile.get-bawahan-kinerja');
-        Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('api.mobile.get-penilaian-kinerja');
-        Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('api.mobile.reply-penilaian-kinerja');
-    });
-    Route::group(['prefix' => 'penilaian-etika'], function(){
-        Route::get('/get-pegawai', 'PenilaianEtikaController@getPegawai')->name('api.mobile.penilaian-etika.get-pegawai');
-        Route::post('', 'PenilaianEtikaController@storePenilaian')->name('api.mobile.penilaian-etika.store.penilaian');
-    });
-    Route::group(['prefix' => 'master-data'],function (){
-        Route::group(['prefix' => 'skpd'],function (){
-            Route::get('','SkpdController@listSkpd')->name('api.mobile.master-data.skpd');
-            Route::get('get-pagination','SkpdController@getpage')->name('api.mobile.master-data.skpd.page');
-            Route::post('store','SkpdController@storeSkpd')->name('api.mobile.master-data.skpd.store');
-            Route::post('{id}','SkpdController@updateSkpd')->name('api.mobile.master-data.skpd.update');
-            Route::post('delete/{id}','SkpdController@deleteSkpd')->name('api.mobile.master-data.skpd.delete');
-        });
-    });
-});
-
 //API-WEB
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     Route::group(['prefix'=> 'monitoring-absen'], function(){
