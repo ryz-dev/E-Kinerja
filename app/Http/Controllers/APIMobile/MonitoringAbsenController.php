@@ -15,33 +15,32 @@ class MonitoringAbsenController extends Controller
         $skpd = $request->input('skpd');
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
-        $user = $user = auth('web')->user();
+        $user = auth('web')->user();
 
-        $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))->whereDate('tgl_mulai','<=',$date)->whereDate('tgl_selesai','>=',$date)->where('approve',2);
-
-        try {
-            if ($skpd == 0) {
-                $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){
-                    $query->where('id_atasan','=',2);
-                })->with(['checkinout' => function($query) use ($date){
-                    $query->select('userid','checktime','checktype')
-                        ->whereDate('checktime','=',$date);
-                    },'kinerja' => function($query) use ($date){
-                        $query->select('userid','jenis_kinerja', 'tgl_mulai', 'tgl_selesai')
+        $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))
                             ->whereDate('tgl_mulai','<=',$date)
                             ->whereDate('tgl_selesai','>=',$date)
-                            ->where('approve',2);
-                }])->orderBy('nama','desc');
-            }
-            else {
-                $pegawai = Pegawai::where('id_skpd',$skpd)->with(['checkinout' => function($query) use ($date){
-                        $query->select('userid','checktime','checktype')
-                        ->whereDate('checktime','=',$date);
-                    },
-                    'kinerja' => function($query) use ($date){
-                        $query->select('userid','jenis_kinerja')->where('approve',2)->whereDate('tgl_selesai','=',$date);
-                    }
-                ])->orderBy('nama','asc');
+                            ->where('approve',2)
+                            ->whereHas('jabatan', function($query) use($user){
+                                $query->where('id_atasan','>',2); //ganti setelah ada auth
+                            });
+
+        $pegawai = Pegawai::whereHas('jabatan', function($query) use ($user){
+                                $query->where('id_atasan','>',2); //ganti setelah ada auth
+                            })->with(['checkinout' => function($query) use ($date){
+                                    $query->select('userid','checktime','checktype')->whereDate('checktime','=',$date);
+                                },
+                                    'kinerja' => function($query) use ($date){
+                                    $query->select('userid','jenis_kinerja')->where('approve',2)
+                                    ->whereDate('tgl_mulai','<=',$date)
+                                    ->whereDate('tgl_selesai','>=',$date);
+                                }
+                            ]);
+
+        try {
+            if ($skpd > 0) {
+                $pegawai->where('id_skpd',$skpd);
+
                 $summary->whereHas('pegawai', function($query) use ($skpd){
                     $query->where('id_skpd','=',$skpd);
                 });
@@ -56,11 +55,11 @@ class MonitoringAbsenController extends Controller
                     $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
                 });
             }
-
+            $pegawai->orderBy('nama','asc');
             $total = (int) $pegawai->count();
             $pegawai = $pegawai->paginate($this->show_limit);
             $res = $summary->get();
-
+            
             $data = [];
             foreach($pegawai->items() as $p) {
                 $data[] = [
@@ -76,10 +75,6 @@ class MonitoringAbsenController extends Controller
             return $this->ApiSpecResponses(
                 [
                     'pegawai' => $data,
-                    'dayBefore' => Carbon::parse($date)->addDays(-1)->format('Y/m/d'),
-                    'dayAfter' => Carbon::parse($date)->addDays(1)->format('Y/m/d'),
-                    'today' => Carbon::parse($date)->format('Y/m/d'),
-                    'dateString' => Carbon::parse($date)->format('d F Y'),
                     'summary' => $this->summary($total,$res)
                 ]
             );

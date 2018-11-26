@@ -20,7 +20,7 @@ class Controller extends BaseController
             'response' => method_exists($response,'total') ? ($response->toArray())['data'] : $response,
             'diagnostic' => [
                 'code' => 200,
-                'status' => 'HTTP_OK'
+                'status' => 'OK'
             ]
         ];
         if (isset($paging->total)){
