@@ -13,10 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
- Route::middleware('auth:api')->get('/v1', function (Request $request) {
+/*Route::middleware('auth:api')->get('/v1', function (Request $request) {
      return $request->user()->load('role');
- });
-
+ });*/
+Route::group(['middleware' => 'auth:api','prefix' => 'v1'],function(){
+   Route::get('test',function(){
+       return 'test';
+   })->middleware('can:monitoring-absen');
+});
 
 Route::group(['prefix' => '/v1','namespace' => 'API'],function (){
   Route::group(['prefix' => 'pegawai'],function (){
