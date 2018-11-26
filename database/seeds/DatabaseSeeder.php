@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
         $this->call(BulanSeeder::class);
         $this->call(AgamaSeeder::class);
         $this->call(EselonSeeder::class);
+        $this->call(SkpdSeeder::class);
         $this->call(JabatanSeeder::class);
         $this->call(RoleSeeder::class);
-        $this->call(SkpdSeeder::class);
 //        $this->call(CheckinoutSeeder::class);
         /*
             generate dengan "php artisan generate:hari-kerja" dan

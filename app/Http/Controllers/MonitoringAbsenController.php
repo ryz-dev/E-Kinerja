@@ -9,10 +9,14 @@ use App\Models\MasterData\Skpd;
 class MonitoringAbsenController extends Controller
 {
     public function index(Request $request){
+        // special user
+        $special_user = ['Bupati','Wakil Bupati','Sekda'];
+
         $user = \Auth::user();
-        $skpd = $user->id_jabatan > 1? Skpd::where('id',$user->id_skpd) :Skpd::all();
+        $skpd = in_array($user->role()->first()->nama_role,$special_user)?Skpd::all():Skpd::where('id',$user->id_skpd);
         $skpd = $skpd->pluck('nama_skpd','id');
-        if ($user->id_jabatan == 1) {
+
+        if (in_array($user->role()->first()->nama_role,$special_user)) {
             $skpd->prepend('-- ALL --');
         }
 

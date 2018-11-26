@@ -22,7 +22,7 @@
                     <th></th>
                     <th scope="col">Nip</th>
                     <th scope="col">Nama Pegawai</th>
-                    <th scope="col">Jabatan</th>
+                    <th scope="col" width="70%">Jabatan</th>
                     <th scope="col">Role Pegawai</th>
                     <th scope="col">Aksi</th>
                 </tr>

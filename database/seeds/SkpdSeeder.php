@@ -182,11 +182,14 @@ class SkpdSeeder extends Seeder
             $s['uuid'] = (string)\Illuminate\Support\Str::uuid();
             \Illuminate\Support\Facades\DB::table('skpd')->insert($s);
         }
-        $skpd_id = \Illuminate\Support\Facades\DB::table('skpd')->pluck('id')->toArray();
-        $pegawai = \App\Models\MasterData\Pegawai::all();
-        foreach ($pegawai as $item) {
-            $item->id_skpd = array_random($skpd_id);
-            $item->save();
-        }
+        
+        // $skpd_id = \Illuminate\Support\Facades\DB::table('skpd')->pluck('id')->toArray();
+        // $pegawai = \App\Models\MasterData\Pegawai::all();
+        // foreach ($pegawai as $item) {
+        //     if (in_array($item->id_jabatan,[1,2,3]) == false ){
+        //         $item->id_skpd = array_random($skpd_id);
+        //         $item->save();
+        //     }
+        // }
     }
 }

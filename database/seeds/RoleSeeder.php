@@ -20,11 +20,26 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
-                'nama_role' => 'Top Level Government',
+                'nama_role' => 'Bupati',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'monitoring-absen'=> true,
-                    'rekap-bulanan'=> true,
+                    'penilaian-kinerja' => true,
+                    'penilaian-etika' => true,
+                ])
+            ],
+            [
+                'nama_role' => 'Wakil Bupati',
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'permissions' => json_encode([
+                    'monitoring-absen'=> true,
+                ])
+            ],
+            [
+                'nama_role' => 'Sekertaris Daerah',
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'permissions' => json_encode([
+                    'monitoring-absen'=> true,
                     'input-kinerja' => true,
                     'penilaian-kinerja' => true,
                     'penilaian-etika' => true,
@@ -32,11 +47,10 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
-                'nama_role' => 'Middle Level Government',
+                'nama_role' => 'Kepala Dinas',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'monitoring-absen'=> true,
-                    'rekap-bulanan'=> true,
                     'input-kinerja' => true,
                     'penilaian-kinerja' => true,
                     'penilaian-etika' => true,
@@ -44,13 +58,24 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
-                'nama_role' => 'Low Level Government',
+                'nama_role' => 'Atasan',
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'permissions' => json_encode([
+                    'monitoring-absen'=> true,
+                    'input-kinerja' => true,
+                    'penilaian-kinerja' => true,
+                    'penilaian-etika' => true,
+                    'tunjangan-kinerja' => true
+                ])
+            ],[
+                'nama_role' => 'Staff',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'input-kinerja' => true,
                     'tunjangan-kinerja' => true
                 ])
-            ]            
+            ]
+
         ];
 
         try {

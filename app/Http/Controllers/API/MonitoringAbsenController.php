@@ -10,6 +10,7 @@ use Carbon\Carbon;
 
 class MonitoringAbsenController extends Controller
 {
+    private $special_user = ['Bupati','Wakil Bupati','Sekda'];
 
     public function dataAbsensi(Request $request){
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
@@ -21,14 +22,9 @@ class MonitoringAbsenController extends Controller
         $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))
                             ->whereDate('tgl_mulai','<=',$date)
                             ->whereDate('tgl_selesai','>=',$date)
-                            ->where('approve',2)
-                            ->whereHas('jabatan', function($query) use($user){
-                                $query->where('id_atasan','>',$user->id_jabatan);
-                            });
+                            ->where('approve',2);
 
-        $pegawai = Pegawai::whereHas('jabatan', function($query) use ($user){
-                                $query->where('id_atasan','>',$user->id_jabatan);
-                            })->with(['checkinout' => function($query) use ($date){
+        $pegawai = Pegawai::with(['checkinout' => function($query) use ($date){
                                     $query->select('userid','checktime','checktype')->whereDate('checktime','=',$date);
                                 },
                                     'kinerja' => function($query) use ($date){
@@ -39,6 +35,16 @@ class MonitoringAbsenController extends Controller
                             ]);
 
         try {
+            if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
+                $summary->whereHas('jabatan', function($query) use($user){
+                    $query->where('id_atasan','=',$user->id_jabatan);
+                });
+
+                $pegawai->whereHas('jabatan', function($query) use ($user){
+                    $query->where('id_atasan','=',$user->id_jabatan);
+                });
+            }
+
             if ($skpd > 0) {
                 $pegawai->where('id_skpd',$skpd);
 
@@ -83,9 +89,13 @@ class MonitoringAbsenController extends Controller
         $user = auth('web')->user();
         $search = $request->has('search')?$request->input('search'):'';
 
-        $data = Pegawai::whereHas('jabatan', function($query) use($user){
-            $query->where('id_atasan','>',$user->id_jabatan);
-        });
+        $data = Pegawai::where('nip','<>','');
+
+        if(in_array($user->role()->first()->nama_role,$this->special_user) == false){
+            $data->whereHas('jabatan', function($query) use($user){
+                $query->where('id_atasan','=',$user->id_jabatan);
+            });
+        }
 
         if ($skpd > 0) {
             $data = Pegawai::where('id_skpd',$skpd);
@@ -94,7 +104,6 @@ class MonitoringAbsenController extends Controller
         if ($search) {
             $data->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
         }
-
 
         $data = ceil($data->count() / $this->show_limit);
 
