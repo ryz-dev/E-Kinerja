@@ -53,13 +53,13 @@ class GenerateAbsenPegawai extends Command
                     $in = [
                         'userid' => $p->userid,
                         'checktime' => $chekin,
-                        'checktype' => 'i'
+                        'checktype' => '1'
                     ];
                     $chekout = (new Carbon($tanggal_mulai))->addDays($i)->setTime(random_int(15, 19), random_int(0, 59), random_int(0, 59));
                     $out = [
                         'userid' => $p->userid,
                         'checktime' => $chekout,
-                        'checktype' => 'o'
+                        'checktype' => '0'
                     ];
                     $kinerja = [
                         'userid' => $p->userid,

@@ -41,7 +41,7 @@ class KinerjaController extends ApiController
             if ($input['jenis_kinerja'] == 'hadir'){
                 $cek_hari_kerja = HariKerja::whereDate('tanggal',date('Y-m-d'))->first();
                 if ($cek_hari_kerja){
-                    $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','i')->where('userid',$input['userid'])->first();
+                    $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('userid',$input['userid'])->first();
                     if ($cek_hadir_kerja){
                         $kinerja = Kinerja::create($input);
                         return $this->ApiSpecResponses($kinerja);
@@ -104,10 +104,10 @@ class KinerjaController extends ApiController
                     $in = false;
                     $out = false;
                     foreach ($abs AS $a) {
-                        if ($a->checktype == 'i' || $a->checktype == 'I') {
+                        if ($a->checktype == '1' || $a->checktype == '1') {
                             $in = true;
                         }
-                        if ($a->checktype == 'o' || $a->checktype == 'O') {
+                        if ($a->checktype == '0' || $a->checktype == '0') {
                             $out = true;
                         }
                     }

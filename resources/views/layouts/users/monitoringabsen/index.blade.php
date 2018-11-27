@@ -182,9 +182,9 @@
                 var absenin;
                 var absenout;
                 var res = data.map(function (val){
-                    if (val.checktype == 'i') {
+                    if (val.checktype == '1') {
                         absenin = val.absen_time?val.absen_time:'data tidak ada';
-                    }else if(val.checktype == 'o'){
+                    }else if(val.checktype == '0'){
                         absenout =val.absen_time?val.absen_time:'data tidak ada';
                     }
                 }); 
