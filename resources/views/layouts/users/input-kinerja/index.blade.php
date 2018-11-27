@@ -8,9 +8,6 @@
                     <h4 class="mr-4">Input Kinerja</h4>
                     <span class="badge text-white">{{ucfirst(\App\Models\MasterData\Hari::find(date('N'))->nama_hari)}}, {{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
                 </div>
-                <div class="img-profile" id="user-profile" style="background-image: url('assets/images/img-user.png');">
-                </div>
-
                 @include('layouts.users.partial.part.logout')
             </div>
         </div>

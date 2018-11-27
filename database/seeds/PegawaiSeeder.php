@@ -27,7 +27,9 @@ class PegawaiSeeder extends Seeder
 
         try {
             DB::table('pegawai')->insert($admin_master_data);
-            
+        } catch (\Exception $e){}
+
+        try {
             $role_pegawai = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'nip_pegawai' => $admin_master_data[0]['nip'],
@@ -35,7 +37,8 @@ class PegawaiSeeder extends Seeder
             ];
 
             DB::table('role_pegawai')->insert($role_pegawai);
-
-        } catch (\Exception $e){}
+        } catch (\Exception $e){
+            return $e->getMessage();
+        }
     }
 }

@@ -8,26 +8,43 @@ use App\Models\MasterData\Pegawai;
 use App\Models\Absen\Kinerja;
 use App\Models\Absen\Etika;
 use App\Models\Absen\Checkinout;
+use Illuminate\Http\Request;
 
 class RekapBulananController extends ApiController
 {
-    public function getBawahan(){
+    private $special_user = ['Bupati','Wakil Bupati','Sekda'];
+
+    public function getBawahan(Request $request){
         $user = auth('web')->user();
-        $user->load('jabatan.pegawai_bawahan');
-        $bawahan = $user->jabatan->pegawai_bawahan;
+        $skpd = $request->has('skpd') ? $request->input('skpd') : null;
+        if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
+            $user->load('jabatan.pegawai_bawahan');
+            $bawahan = $user->jabatan->pegawai_bawahan;
+        } else {
+            $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip','<>',$user->nip)->where('id_jabatan','>',$user->id_jabatan);
+            if ($skpd){
+                $bawahan = $bawahan->where('id_skpd',$skpd);
+            }
+            $bawahan = $bawahan->get();
+        }
         return $this->ApiSpecResponses($bawahan);
     }
 
     public function getRekap($nip,$bulan = null,$tahun = null){
+        $user = auth('web')->user();
         $bulan = (int)($bulan?:date('m'));
         $tahun = ($tahun?:date('Y'));
         $hari_kerja = HariKerja::where('bulan',$bulan)->where('tahun',$tahun)->whereHas('statusHari',function ($query){
             $query->where('status_hari','kerja');
         })->get();
         try {
-            $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
-                $query->where('nip', auth('web')->user()->nip);
-            })->firstOrFail();
+            if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
+                $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
+                    $query->where('nip', auth('web')->user()->nip);
+                })->firstOrFail();
+            } else {
+                $pegawai = Pegawai::whereNip($nip)->where('id_jabatan','>',$user->id_jabatan)->firstOrFail();
+            }
         } catch (\Exception $exception){
             abort('404');
         }

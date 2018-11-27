@@ -4,7 +4,7 @@
     <div class="nav-top-container">
         <div class="group-search">
           <span><i class="fas fa-search"></i></span>
-          <input type="text" id='search' class="datepicker form-control" placeholder="Atur tanggal">
+          <input type="text" id="search" class="datepicker form-control" placeholder="Atur tanggal">
         </div>
         @include('layouts.admin.partial.part.logout')
     </div>
@@ -37,9 +37,10 @@
   </div>
   @push('script')
     <script>
+
       $(document).ready(function(){
         getPage('');
-        // getData('',1);
+          // getData('',1);
         var getKey = '';
       });
 
