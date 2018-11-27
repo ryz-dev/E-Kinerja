@@ -27,5 +27,6 @@ class DatabaseSeeder extends Seeder
         */
         $this->call(PegawaiSeeder::class);
         $this->call(FormulaVariableSeeder::class);
+        $this->call(OauthClientSeeder::class);
     }
 }
