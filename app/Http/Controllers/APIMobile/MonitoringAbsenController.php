@@ -78,7 +78,7 @@ class MonitoringAbsenController extends Controller
                         'in' => (count($p->checkinout) != null) ? $p->checkinout[0]->checktime : null,
                         'out' => (count($p->checkinout) > 1) ? $p->checkinout[1]->checktime : null,
                     ],
-                    'kinerja' => $p->kinerja,
+                    'kinerja' => (count($p->kinerja) != null) ? $p->kinerja[0]->jenis_kinerja : null,
                 ];
             }
 
