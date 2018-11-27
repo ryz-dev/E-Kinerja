@@ -139,13 +139,17 @@
                         'keterangan' : response.keterangan,
                         'userid' : response.userid
                     };
+
                     $('#tabPegawai li:nth-child('+(index+1)+')').slideUp().remove();
-                    $('#tabPegawai li:nth-child('+(index)+')').after(viewListPegawai(data,index)).slideDown();
+                    if (index==0) {
+                        $('#tabPegawai li:nth-child('+(index+1)+')').before(viewListPegawai(data,index)).slideDown();
+                    }
+                    else{
+                        $('#tabPegawai li:nth-child('+(index)+')').after(viewListPegawai(data,index)).slideDown();
+                    }
+                    console.log($("#tabPegawai li:nth-child(0)"));
                 }
             });
-
-
-            // $("#simpan-penilaian").prop('disabled', true);
         }
 
         function navPegawaiButton(el){
