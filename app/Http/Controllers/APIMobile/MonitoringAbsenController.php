@@ -75,8 +75,8 @@ class MonitoringAbsenController extends Controller
                     'nip' => $p->nip,
                     'foto' => $p->foto,
                     'checkinout' => [
-                        'in' => $p->checkinout[0]->checktime,
-                        'out' => $p->checkinout[1]->checktime,
+                        'in' => (count($p->checkinout) != null) ? $p->checkinout[0]->checktime : null,
+                        'out' => (count($p->checkinout) > 1) ? $p->checkinout[1]->checktime : null,
                     ],
                     'kinerja' => $p->kinerja,
                 ];
@@ -109,7 +109,7 @@ class MonitoringAbsenController extends Controller
         }
 
         if ($skpd > 0) {
-            $data = Pegawai::where('id_skpd',$skpd);
+            $data = $data->where('id_skpd',$skpd);
         }
 
         if ($search) {
