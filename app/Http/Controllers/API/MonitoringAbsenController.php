@@ -98,7 +98,7 @@ class MonitoringAbsenController extends Controller
         }
 
         if ($skpd > 0) {
-            $data = Pegawai::where('id_skpd',$skpd);
+            $data = $data->where('id_skpd',$skpd);
         }
 
         if ($search) {
