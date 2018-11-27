@@ -128,10 +128,10 @@
                     </div>
 
                     <div class="clock-side">
-                        <span>17:10</span>
+                        <span class="clock">--:--</span>
                     </div>
                     <div class="day-side">
-                        <small>Selasa, 23 September 2018</small>
+                        <small>{{ucfirst(\App\Models\MasterData\Hari::find(date('N'))->nama_hari)}}, {{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</small>
                     </div>
                 </div>
             </div>
@@ -279,6 +279,16 @@
                     $('#preload').hide();
                 }
             });
+            function getTime() {
+                var date =  new Date();
+                var jam = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours());
+                var menit = (date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes())
+                var separator = (date.getSeconds()%2 ? '<span style="opacity: 0.5">:</span>' : '<span>:</span>')
+                $('.clock').html(jam + separator + menit)
+            }
+            setInterval(function () {
+                getTime()
+            },1000)
         }
     </script>
 @endpush
