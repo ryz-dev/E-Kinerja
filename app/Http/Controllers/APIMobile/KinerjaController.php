@@ -104,10 +104,10 @@ class KinerjaController extends ApiController
                     $in = false;
                     $out = false;
                     foreach ($abs AS $a) {
-                        if ($a->checktype == '1' || $a->checktype == '1') {
+                        if ($a->checktype == '0') {
                             $in = true;
                         }
-                        if ($a->checktype == '0' || $a->checktype == '0') {
+                        if ($a->checktype == '1') {
                             $out = true;
                         }
                     }

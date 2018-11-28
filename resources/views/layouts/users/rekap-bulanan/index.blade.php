@@ -5,9 +5,21 @@
         <div class="nav-top-container">
             <div class="nav-top">
                 <div class="title-nav">
-                    <h4 class="mr-4">Rekap Bulanan</h4>
-                    <span
-                        class="badge text-white">{{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="input-group mb-3 skpd-option">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text">SKPD</label>
+                                </div>
+                                <select id="skpd" class="custom-select select-custome">
+                                    @foreach ($skpd as $key => $item)
+                                        <option value="{{ $key }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="img-profile" id="user-profile" style="background-image: url('images/img-user.png');">
                 </div>
@@ -34,6 +46,13 @@
         </div>
         <!-- isi tab pane -->
         <div class="main-content tab-content">
+            <div class="row">
+                <div class="col-md-12 mb-4 ml-3 title-rekap">
+                    <h4 class="mr-4 float-left">Rekap Bulanan</h4>
+                    <span
+                        class="badge text-white">{{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
+                </div>
+            </div>
             <!-- start tab pane -->
             <div class="tab-pane active" id="user1" role="tabpanel">
                 <div class="container">
@@ -149,8 +168,8 @@
     @push('script')
         <script>
 
-            var getBawahan = function () {
-                $.get('{{route('api.web.rekap-bulanan.get-bawahan')}}')
+            var getBawahan = function (skpd) {
+                $.get('{{route('api.web.rekap-bulanan.get-bawahan')}}'+(skpd ? '?skpd='+skpd : ''))
                     .then(function (res) {
                         if (res.response.length > 0) {
                             var data = res.response.map(function (val, i) {
@@ -343,7 +362,7 @@
                 }
             })
             $(document).ready(function () {
-                getBawahan()
+                getBawahan(null)
             })
 
             // Deklarasi variable
@@ -419,7 +438,10 @@
                 });
 
             }
-
+            $(document).on('change','#skpd', function(){
+                var skpd = $(this).val();
+                getBawahan(skpd);
+            });
         </script>
     @endpush
 @endsection
