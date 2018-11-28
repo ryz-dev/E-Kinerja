@@ -12,10 +12,21 @@ use App\Models\Absen\Checkinout;
 
 class RekapBulananController extends ApiController
 {
-    public function getBawahan(){
+    private $special_user = ['Bupati','Wakil Bupati','Sekda'];
+
+    public function getBawahan(Request $request){
         $user = auth('api')->user();
-        $user->load('jabatan.pegawai_bawahan');
-        $bawahan = $user->jabatan->pegawai_bawahan;
+        $skpd = $request->has('skpd') ? $request->input('skpd') : null;
+        if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
+            $user->load('jabatan.pegawai_bawahan');
+            $bawahan = $user->jabatan->pegawai_bawahan;
+        } else {
+            $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip','<>',$user->nip)->where('id_jabatan','>',$user->id_jabatan);
+            if ($skpd){
+                $bawahan = $bawahan->where('id_skpd',$skpd);
+            }
+            $bawahan = $bawahan->get();
+        }
 
         $data = [];
         foreach($bawahan as $b) {
@@ -30,12 +41,24 @@ class RekapBulananController extends ApiController
     }
 
     public function getRekap($nip,$bulan = null,$tahun = null){
+        $user = auth('api')->user();
         $bulan = (int)($bulan?:date('m'));
         $tahun = ($tahun?:date('Y'));
         $hari_kerja = HariKerja::where('bulan',$bulan)->where('tahun',$tahun)->whereHas('statusHari',function ($query){
             $query->where('status_hari','kerja');
         })->get();
-        $pegawai = Pegawai::whereNip($nip)->first();
+        try {
+            if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
+                $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
+                    $query->where('nip', auth('api')->user()->nip);
+                })->firstOrFail();
+            } else {
+                $pegawai = Pegawai::whereNip($nip)->where('id_jabatan','>',$user->id_jabatan)->firstOrFail();
+            }
+        } catch (\Exception $exception){
+            abort('404');
+        }
+
         $data_inout = [];
         foreach ($hari_kerja AS $key => $hk){
             $kinerja = $pegawai->kinerja()->where('tgl_mulai','<=',$hk->tanggal)->where('tgl_selesai','>=',$hk->tanggal)->first();
@@ -75,7 +98,7 @@ class RekapBulananController extends ApiController
         /* Data kinerja */
         $pegawai = Pegawai::where('nip',$nip)->first();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
-        ->select('jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
+        ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
         ->whereDate('tgl_mulai',$tgl)
         ->first();
 
@@ -100,8 +123,8 @@ class RekapBulananController extends ApiController
             'kinerja' => $kinerja,
             'etika' => $etika,
             'checkinout' => [
-              'in' => $checkinout[0]->checktime,
-              'out' => $checkinout[1]->checktime,
+                'in' => (count($checkinout) != null) ? $checkinout[0]->checktime : null,
+                'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : null,
             ]
         ];
 
