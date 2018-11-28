@@ -5,8 +5,28 @@
         <div class="nav-top-container">
             <div class="nav-top">
                 <div class="title-nav">
-                    <div class="row">
-                        <div class="col-md-12">
+                    <h4 class="mr-4 float-left">Rekap Bulanan</h4>
+                    <span
+                        class="badge text-white">{{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
+
+                </div>
+                <div class="img-profile" id="user-profile" style="background-image: url('images/img-user.png');">
+                </div>
+
+                @include('layouts.users.partial.part.logout')
+            </div>
+        </div>
+        <div class="sidebar2">
+
+            <div class="group-search" style="margin-bottom: 10px">
+                <span><i class="fas fa-search"></i></span>
+                <input id="search" type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
+            </div>
+
+            <div class="group-search" style="margin-bottom: 0px">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <div class="skpd-rekap">
                             <div class="input-group mb-3 skpd-option">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text">SKPD</label>
@@ -19,21 +39,8 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <div class="img-profile" id="user-profile" style="background-image: url('images/img-user.png');">
-                </div>
-
-                @include('layouts.users.partial.part.logout')
             </div>
-        </div>
-        <div class="sidebar2">
-
-            <div class="group-search">
-                <span><i class="fas fa-search"></i></span>
-                <input id="search" type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
-            </div>
-
 
             <div class="menu">
                 <!-- <div> -->
@@ -46,13 +53,6 @@
         </div>
         <!-- isi tab pane -->
         <div class="main-content tab-content">
-            <div class="row">
-                <div class="col-md-12 mb-4 ml-3 title-rekap">
-                    <h4 class="mr-4 float-left">Rekap Bulanan</h4>
-                    <span
-                        class="badge text-white">{{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
-                </div>
-            </div>
             <!-- start tab pane -->
             <div class="tab-pane active" id="user1" role="tabpanel">
                 <div class="container">
