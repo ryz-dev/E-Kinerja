@@ -16,7 +16,7 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
         $t = (string)$request->getRequestUri();
-        if (strpos($t, "/api/") !== false) {
+        if (strpos($t, "/api/v1") !== false) {
             $format = new ApiResponseFormat();
             return response()->json($format->formatResponseWithPages("Parameter Authorization Kosong / Authorization Kadaluarsa",[], $format->STAT_UNAUTHORIZED()));
         } else {
