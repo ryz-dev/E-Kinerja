@@ -39,6 +39,11 @@ Route::group(['middleware' => 'auth:api','prefix' => 'v1', 'namespace' => 'APIMo
         Route::get('/get-pegawai', 'PenilaianEtikaController@getPegawai')->name('api.mobile.penilaian-etika.get-pegawai');
         Route::post('', 'PenilaianEtikaController@storePenilaian')->name('api.mobile.penilaian-etika.store.penilaian');
     });
+    Route::group(['prefix' => 'kinerja'],function (){  
+        Route::post('','KinerjaController@inputKinerja')->name('api.mobile.input-kinerja.post');          
+        Route::get('/{tgl?}','KinerjaController@detailKinerja')->name('api.mobile.detail-kinerja.get');
+        Route::get('/{bulan?}/{tahun?}','KinerjaController@tunjanganKinerja')->name('api.mobile.tunjangan-kinerja.get');
+    });
     Route::group(['prefix' => 'master-data'],function (){
         Route::group(['prefix' => 'skpd'],function (){
             Route::get('','SkpdController@listSkpd')->name('api.mobile.master-data.skpd');
