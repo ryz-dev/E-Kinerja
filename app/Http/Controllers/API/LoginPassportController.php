@@ -31,8 +31,8 @@ class LoginPassportController extends ATC {
         // create custom parsedBody
         $additionalData = [
             "grant_type" => "password",
-            "client_id" => env("CLIENT_ID", "99"),
-            "client_secret" => env("CLIENT_SECRET", "123456789"),
+            "client_id" => env("CLIENT_ID", 99),
+            "client_secret" => env("CLIENT_SECRET", 123456789),
             "username" => $email[0],
             "password" => $pass[0],
             'scope' => '*',
