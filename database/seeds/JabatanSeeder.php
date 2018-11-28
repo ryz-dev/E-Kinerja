@@ -23,7 +23,7 @@ class JabatanSeeder extends Seeder
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'WAKIL BUPATI',
                 'id_eselon' => 14,
-                'id_atasan' => 1
+                'id_atasan' => null
             ],[
                 'id' => 3,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
