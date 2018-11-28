@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helper\ApiResponseFormat;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
@@ -14,8 +15,15 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
+        $t = (string)$request->getRequestUri();
+        if (strpos($t, "/api/") !== false) {
+            $format = new ApiResponseFormat();
+            return response()->json($format->formatResponseWithPages("Parameter Authorization Kosong / Authorization Kadaluarsa",[], $format->STAT_UNAUTHORIZED()));
+        } else {
+            if (! $request->expectsJson()) {
+                return route('login');
+            }
         }
+
     }
 }

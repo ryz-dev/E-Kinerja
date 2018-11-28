@@ -19,8 +19,13 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-      
+        \Illuminate\Auth\AuthenticationException::class,
+        \Illuminate\Auth\Access\AuthorizationException::class,
+        \Symfony\Component\HttpKernel\Exception\HttpException::class,
+        \Illuminate\Database\Eloquent\ModelNotFoundException::class,
+        \Illuminate\Validation\ValidationException::class,
     ];
+
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.
@@ -85,4 +90,15 @@ class Handler extends ExceptionHandler
         }
         return parent::render($request, $e);
     }
+
+    protected function unauthenticated($request, AuthenticationException $exception) {
+        $getUri = (string)$request->getRequestUri();
+        if (strpos($getUri, "/api/") !== false) {
+            $format = new ApiResponseFormat();
+            return response()->json($format->formatResponseWithPages("Parameter Authorization Kosong / Authorization Kadaluarsa",[], $format->STAT_UNAUTHORIZED()));
+        } else {
+            return redirect()->guest($exception->redirectTo() ?? route('login'));
+        }
+    }
+
 }
