@@ -188,7 +188,7 @@
                         absenout =val.absen_time?val.absen_time:'data tidak ada';
                     }
                 }); 
-                return absenin+' - '+absenout;
+                return absenin+'<span> - </span>'+absenout;
                 
             } else {
                 return 'data tidak ada';

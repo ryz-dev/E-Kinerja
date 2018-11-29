@@ -36,15 +36,12 @@
                             <div class="sandi mb-3">
                                 <span><i class="fas fa-unlock-alt"></i></span>
                                 <input type="password" name="password" class="form-control" placeholder="Kata sandi">
-                                @if ($errors->has('password'))
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('password') }}</strong>
-                                </span>
-                                @endif
                             </div>
-                            @if ($errors->has('nip'))
+                            @if ($errors->any())
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ $errors->first('nip') }}
+                                    @foreach ($errors->all() as $message)
+                                        <p> * {{ $message }}</p>
+                                    @endforeach
                                 </div>
                             @endif
                             <div class="ask mb-2">
