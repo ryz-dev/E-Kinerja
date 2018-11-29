@@ -122,10 +122,11 @@ class RekapBulananController extends ApiController
             'foto' => $pegawai->foto,
             'kinerja' => $kinerja,
             'etika' => $etika,
-            'checkinout' => [
-                'in' => (count($checkinout) != null) ? $checkinout[0]->checktime : null,
-                'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : null,
-            ]
+            'checkinout' => (count($checkinout) != null) ? 
+                [
+                    'in' => $checkinout[0]->checktime,
+                    'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : null,
+                ]  : [],
         ];
 
         return $this->ApiSpecResponses($result);
