@@ -118,9 +118,9 @@ class KinerjaController extends ApiController
                 $data_etika_kinerja[] = [
                     'tanggal' => $hk->tanggal,
                     'hari' => ucfirst($hk->Hari->nama_hari),
-                    'approve' => $knj->first() ? $knj->first()->approve : null,
-                    'etika' => $etk ? $etk->persentase : null,
-                    'absen' => $knj->first() ? $knj->first()->jenis_kinerja : null
+                    'approve' => $knj->first() ? $knj->first()->approve : "",
+                    'etika' => $etk ? $etk->persentase : "",
+                    'absen' => $knj->first() ? $knj->first()->jenis_kinerja : ""
                 ];
                 $etika[] = $etk ? $etk->toArray() : null;
                 if ($etk) {
@@ -213,12 +213,13 @@ class KinerjaController extends ApiController
             'nama' => $pegawai->nama,
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
-            'kinerja' => $kinerja,
-            'etika' => $etika,
-            'checkinout' => [
-                'in' => (count($checkinout) != null) ? $checkinout[0]->checktime : null,
-                'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : null,
-            ]
+            'kinerja' => $kinerja ? $kinerja : "",
+            'etika' => $etika ? $kinerja : "",
+            'checkinout' => (count($checkinout)) ? 
+                [
+                    'in' => $checkinout[0]->checktime,
+                    'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",
+                ]  : []
         ];
 
         return $this->ApiSpecResponses($result);
