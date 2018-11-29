@@ -102,7 +102,7 @@
         var nip = $(this).attr('data-nip');
 
         swal({
-            title: 'Silahkan pilih role',
+            title: 'Silakan pilih role',
             input: 'select',
             inputOptions: window.roles,
             inputPlaceholder:'Pilih Role',
