@@ -5,6 +5,7 @@ namespace App\Http\Controllers\APIMobile;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\MasterData\Pegawai;
+use App\Models\MasterData\HariKerja;
 use App\Models\Absen\Kinerja;
 use Carbon\Carbon;
 
@@ -18,6 +19,9 @@ class MonitoringAbsenController extends Controller
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
         $user = auth('api')->user();
+        $min_date = HariKerja::whereHas('statusHari', function ($query){
+            $query->where('status_hari', 'kerja');
+        })->select('tanggal')->orderBy('tanggal')->first();
 
         $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))
                             ->whereDate('tgl_mulai','<=',$date)
@@ -86,6 +90,7 @@ class MonitoringAbsenController extends Controller
             return $this->ApiSpecResponses(
                 [
                     'pegawai' => $data,
+                    'min_date' => $min_date->tanggal,
                     'summary' => $this->summary($total,$res)
                 ]
             );
