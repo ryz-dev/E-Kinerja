@@ -16,7 +16,7 @@
                                 <select class="form-control" name="id_eselon" id="eselon" required>
                                     <option value="">Pilih Kelas Jabatan</option>
                                     @foreach($data_option->eselon AS $ag)
-                                        <option value="{{$ag->id}}">{{$ag->eselon}}</option>
+                                        <option value="{{$ag->id}}">{{$ag->eselon}} (Rp.{{$ag->tunjangan_rp}})</option>
                                     @endforeach
                                 </select>
                             </div>

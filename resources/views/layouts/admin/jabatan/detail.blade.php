@@ -12,7 +12,7 @@
                         </div>
                         <div class="form-group">
                             <label for="eselon">Kelas Jabatan</label>
-                            <input id="eselon" type="text" class="form-control" name="eselon" placeholder="Kelas Jabatan" value="{{$jabatan->eselon->eselon}}" readonly="">
+                            <input id="eselon" type="text" class="form-control" name="eselon" placeholder="Kelas Jabatan" value="{{$jabatan->eselon->eselon}} (Rp.{{$jabatan->eselon->tunjangan_rp}})" readonly="">
                         </div>
                         <div class="form-group">
                             <label for="atasan">Atasan</label>
