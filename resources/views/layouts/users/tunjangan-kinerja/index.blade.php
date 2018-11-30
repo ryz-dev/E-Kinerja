@@ -230,7 +230,7 @@
                                 {
                                     label: "My First dataset",
                                     backgroundColor: ["#00B894", "#d8dadc"],
-                                    borderColor: ["#00B894",, "#d8dadc"],
+                                    borderColor: ["#00B894", "#d8dadc"],
                                     data: [parseInt(res.response.pencapaian.etika), 100 - parseInt(res.response.pencapaian.etika)]
                                 }
                             ]
