@@ -10,7 +10,7 @@ class MonitoringAbsenController extends Controller
 {
     public function index(Request $request){
         // special user
-        $special_user = ['Bupati','Wakil Bupati','Sekda'];
+        $special_user = ['Bupati','Wakil Bupati','Sekertaris Daerah'];
 
         $user = \Auth::user();
         $skpd = in_array($user->role()->first()->nama_role,$special_user)?Skpd::all():Skpd::where('id',$user->id_skpd);

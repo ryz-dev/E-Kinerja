@@ -12,7 +12,7 @@ use App\Models\Absen\Checkinout;
 
 class RekapBulananController extends ApiController
 {
-    private $special_user = ['Bupati','Wakil Bupati','Sekda'];
+    private $special_user = ['Bupati','Wakil Bupati','Sekertaris Daerah'];
 
     public function getBawahan(Request $request){
         $user = auth('api')->user();
@@ -44,6 +44,9 @@ class RekapBulananController extends ApiController
         $user = auth('api')->user();
         $bulan = (int)($bulan?:date('m'));
         $tahun = ($tahun?:date('Y'));
+        $min_date = HariKerja::whereHas('statusHari', function ($query){
+            $query->where('status_hari', 'kerja');
+        })->select('tanggal')->orderBy('tanggal')->first();
         $hari_kerja = HariKerja::where('bulan',$bulan)->where('tahun',$tahun)->whereHas('statusHari',function ($query){
             $query->where('status_hari','kerja');
         })->get();
@@ -76,12 +79,17 @@ class RekapBulananController extends ApiController
             'nama' => $pegawai->nama,
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
-            'rekap_bulanan' => $data_inout
+            'rekap_bulanan' => $data_inout,
+            'min_date' => $min_date->tanggal
         ]);
     }
 
     public function getDetailRekap($nip,$tgl) {
         $date = new HariKerja;
+
+        $min_date = HariKerja::whereHas('statusHari', function ($query){
+            $query->where('status_hari', 'kerja');
+        })->select('tanggal')->orderBy('tanggal')->first();
 
         /* Tarik tanggal sebelumnya */
         $date_prev = $date->whereDate('tanggal','<',$tgl)
@@ -120,12 +128,14 @@ class RekapBulananController extends ApiController
             'nama' => $pegawai->nama,
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
-            'kinerja' => $kinerja,
-            'etika' => $etika,
-            'checkinout' => [
-                'in' => (count($checkinout) != null) ? $checkinout[0]->checktime : null,
-                'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : null,
-            ]
+            'kinerja' => $kinerja ? $kinerja : [],
+            'etika' => $etika ? $kinerja : [],
+            'checkinout' => (count($checkinout)) ? 
+                [
+                    'in' => $checkinout[0]->checktime,
+                    'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",
+                ]  : [],
+            'min_date' => $min_date->tanggal
         ];
 
         return $this->ApiSpecResponses($result);

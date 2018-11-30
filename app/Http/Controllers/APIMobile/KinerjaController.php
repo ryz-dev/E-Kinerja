@@ -88,6 +88,9 @@ class KinerjaController extends ApiController
         $pegawai->load('jabatan.eselon');
         $jumlah_tunjangan = $pegawai->jabatan->eselon->tunjangan;
 
+        $min_date = HariKerja::whereHas('statusHari', function ($query){
+            $query->where('status_hari', 'kerja');
+        })->select('tanggal')->orderBy('tanggal')->first();
 
         $hari_kerja = HariKerja::whereHas('statusHari',function ($query){
             $query->where('status_hari','kerja');
@@ -118,9 +121,9 @@ class KinerjaController extends ApiController
                 $data_etika_kinerja[] = [
                     'tanggal' => $hk->tanggal,
                     'hari' => ucfirst($hk->Hari->nama_hari),
-                    'approve' => $knj->first() ? $knj->first()->approve : null,
-                    'etika' => $etk ? $etk->persentase : null,
-                    'absen' => $knj->first() ? $knj->first()->jenis_kinerja : null
+                    'approve' => $knj->first() ? $knj->first()->approve : 0,
+                    'etika' => $etk ? $etk->persentase : 0,
+                    'absen' => $knj->first() ? $knj->first()->jenis_kinerja : ""
                 ];
                 $etika[] = $etk ? $etk->toArray() : null;
                 if ($etk) {
@@ -168,7 +171,8 @@ class KinerjaController extends ApiController
             ],
             'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
             'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
-            'data' => $data_etika_kinerja
+            'data' => $data_etika_kinerja,
+            'min_date' => $min_date->tanggal
         ];
         return $this->ApiSpecResponses($response);
     }
@@ -187,6 +191,10 @@ class KinerjaController extends ApiController
         ->whereIdStatusHari(1)
         ->orderBy('tanggal','asc')
         ->first();
+
+        $min_date = HariKerja::whereHas('statusHari', function ($query){
+            $query->where('status_hari', 'kerja');
+        })->select('tanggal')->orderBy('tanggal')->first();
 
         /* Data kinerja */
         $pegawai = auth('api')->user();
@@ -213,12 +221,14 @@ class KinerjaController extends ApiController
             'nama' => $pegawai->nama,
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
-            'kinerja' => $kinerja,
-            'etika' => $etika,
-            'checkinout' => [
-                'in' => (count($checkinout) != null) ? $checkinout[0]->checktime : null,
-                'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : null,
-            ]
+            'kinerja' => $kinerja ? $kinerja : [],
+            'etika' => $etika ? $kinerja : [],
+            'checkinout' => (count($checkinout)) ? 
+                [
+                    'in' => $checkinout[0]->checktime,
+                    'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",
+                ]  : [],
+            'min_date' => $min_date->tanggal
         ];
 
         return $this->ApiSpecResponses($result);
