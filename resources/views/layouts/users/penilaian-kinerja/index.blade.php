@@ -85,10 +85,10 @@
                     var foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
                     var status = '';
                     if (val.kinerja.length != 0) {
-                      if (val.kinerja[0].approve == 0) {
+                      if (val.kinerja[0].approve == 1) {
                         var attrClass = 'not-list';
                         var status = 'fa-times';
-                      } else if(val.kinerja[0].approve == 1) {
+                      } else if(val.kinerja[0].approve == 2) {
                         var attrClass = 'check-list';
                         var status = 'fa-check'
                       }
