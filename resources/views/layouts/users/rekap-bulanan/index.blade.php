@@ -22,21 +22,18 @@
                 <span><i class="fas fa-search"></i></span>
                 <input id="search" type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
             </div>
-
-            <div class="group-search" style="margin-bottom: 0px">
-                <div class="row">
-                    <div class="col-md-12 mb-2">
-                        <div class="skpd-rekap">
-                            <div class="input-group mb-3 skpd-option">
-                                <div class="input-group-prepend">
-                                    <label class="input-group-text">SKPD</label>
-                                </div>
-                                <select id="skpd" class="custom-select select-custome">
-                                    @foreach ($skpd as $key => $item)
-                                        <option value="{{ $key }}">{{ $item }}</option>
-                                    @endforeach
-                                </select>
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <div class="skpd-rekap">
+                        <div class="input-group mb-3 skpd-option">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text">SKPD</label>
                             </div>
+                            <select id="skpd" class="custom-select select-custome">
+                                @foreach ($skpd as $key => $item)
+                                    <option value="{{ $key }}">{{ $item }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
