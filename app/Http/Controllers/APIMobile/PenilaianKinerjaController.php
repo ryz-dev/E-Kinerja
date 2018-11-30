@@ -55,7 +55,7 @@ class PenilaianKinerjaController extends Controller
     public function replyKinerja(Request $r) {
         $r->validate([
             'userid' => ['numeric','required',Rule::in(Pegawai::pluck('userid')->toArray())],
-            'type' => ['numeric','required',Rule::in([1,0])],
+            'type' => ['numeric','required',Rule::in([1,2])],
             'keterangan_approve' => ['required']
         ]);
         try {
