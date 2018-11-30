@@ -29,7 +29,7 @@ class PenilaianKinerjaController extends Controller
                 'nip' => $p->nip,
                 'foto' => $p->foto,
                 'nama' => $p->nama,
-                'approve' => $p->kinerja[0]->approve,
+                'approve' => $p->kinerja ? $p->kinerja[0]->approve : 0,
             ];
         }
 
