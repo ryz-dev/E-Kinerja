@@ -129,7 +129,7 @@ class RekapBulananController extends ApiController
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
             'kinerja' => $kinerja ? $kinerja : [],
-            'etika' => $etika ? $kinerja : [],
+            'etika' => $etika ? $etika : [],
             'checkinout' => (count($checkinout)) ? 
                 [
                     'in' => $checkinout[0]->checktime,
