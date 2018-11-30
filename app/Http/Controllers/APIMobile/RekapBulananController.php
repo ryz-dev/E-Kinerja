@@ -70,8 +70,8 @@ class RekapBulananController extends ApiController
                 'tanggal' => $hk->tanggal,
                 'hari' => ucfirst($hk->Hari->nama_hari),
                 'status' => ucfirst(str_replace('_',' ',isset($kinerja->jenis_kinerja)?$kinerja->jenis_kinerja:'')),
-                'persentase' => isset($etika->persentase)?$etika->persentase : '',
-                'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
+                'persentase' => isset($etika->persentase)?$etika->persentase : 0,
+                'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
             ];
         }
         return $this->ApiSpecResponses([
