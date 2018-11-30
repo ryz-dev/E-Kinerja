@@ -6,7 +6,7 @@ $(document).ready(function() {
   var ctx4 = document.getElementById("chart-tunjangan").getContext("2d");
 
   var dataAbsen = {
-    labels: ["Absen"],
+    labels: ["Absen", ""],
     datasets: [
       {
         label: "My First dataset",
@@ -18,7 +18,7 @@ $(document).ready(function() {
   };
 
   var dataKinerja = {
-    labels: ["Kinerja"],
+    labels: ["Kinerja", ""],
     datasets: [
       {
         label: "My First dataset",
@@ -30,19 +30,19 @@ $(document).ready(function() {
   };
 
   var dataEtika = {
-    labels: ["Etika"],
+    labels: ["Etika", ""],
     datasets: [
       {
         label: "My First dataset",
-        backgroundColor: ["#00B894"],
-        borderColor: ["#00B894"],
+        backgroundColor: ["#00B894", "#d8dadc"],
+        borderColor: ["#00B894", "#d8dadc"],
         data: [100]
       }
     ]
   };
 
   var dataTunjangan = {
-    labels: ["Tunjangan"],
+    labels: ["Tunjangan", ""],
     datasets: [
       {
         label: "My First dataset",

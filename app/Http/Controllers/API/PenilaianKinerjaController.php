@@ -28,6 +28,7 @@ class PenilaianKinerjaController extends ApiController
         $pegawai = Pegawai::where('nip',$nip)->first();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
         ->whereDate('tgl_mulai',date('Y-m-d'))
+            /* todo : where data berdasarkan interval tgl_mulai dan tgl_selesai*/
         ->first();
        return $this->ApiSpecResponses($kinerja);
     }
