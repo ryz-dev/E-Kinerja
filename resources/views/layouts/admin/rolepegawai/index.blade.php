@@ -70,9 +70,9 @@
                     var role = val.role.length>0?"<span class='badge badge-table badge-red'>"+val.role[0].nama_role+"</span>":"<span class='badge badge-table badge-green'>User</span>";
                     var action = function(role){
                         if (role.role.length > 0){    
-                            return "<button type='button' data-nip="+val.nip+" data-role-id="+role.role[0].id+" class='btn remove-role-pegawai btn-danger btn-delete'><i class='fas fa-trash'></i></button>";
+                            return "<button type='button' data-nip="+val.nip+" data-role-id="+role.role[0].id+" class='btn btn-sm remove-role-pegawai btn-danger btn-delete'><i class='fas fa-trash'></i></button>";
                         }else{
-                            return "<button data-nip="+val.nip+" class='btn btn-info add-role-pegawai'><i class='fas fa-plus'></i></button>";
+                            return "<button data-nip="+val.nip+" class='btn btn-sm btn-info add-role-pegawai'><i class='fas fa-plus'></i></button>";
                         }
                     }
                     row += "<tr>";

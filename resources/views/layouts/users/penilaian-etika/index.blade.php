@@ -73,7 +73,7 @@
             formData.append('nip',nip_pegawai);
             formData.append('persentase',parseInt($("#rate").val()));
             formData.append('keterangan',$("#keterangan-etika").val());
-            
+            formData.append('_token','{{ csrf_token() }}')
             var action = this.action;
 
             swal({
