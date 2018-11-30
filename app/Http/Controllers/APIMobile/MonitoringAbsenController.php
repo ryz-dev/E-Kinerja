@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 class MonitoringAbsenController extends Controller
 {
-    private $special_user = ['Bupati','Wakil Bupati','Sekda'];
+    private $special_user = ['Bupati','Wakil Bupati','Sekertaris Daerah'];
     
     public function dataAbsensi(Request $request){
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;

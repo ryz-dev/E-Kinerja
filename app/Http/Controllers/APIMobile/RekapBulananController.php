@@ -12,7 +12,7 @@ use App\Models\Absen\Checkinout;
 
 class RekapBulananController extends ApiController
 {
-    private $special_user = ['Bupati','Wakil Bupati','Sekda'];
+    private $special_user = ['Bupati','Wakil Bupati','Sekertaris Daerah'];
 
     public function getBawahan(Request $request){
         $user = auth('api')->user();
