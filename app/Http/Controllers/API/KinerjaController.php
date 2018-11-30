@@ -18,8 +18,8 @@ class KinerjaController extends ApiController
         $input = $request->input();
         $input['userid'] = auth('web')->user()->userid;
         if (in_array($input['jenis_kinerja'],['hadir','sakit'])){
-            $input['tgl_mulai'] = Carbon::now();
-            $input['tgl_selesai'] = Carbon::now();
+            $input['tgl_mulai'] = date('Y-m-d');
+            $input['tgl_selesai'] = date('Y-m-d');
         } else {
             $tgl_mulai = explode('/',$input['tgl_mulai']);
             $tgl_selesai = explode('/',$input['tgl_selesai']);

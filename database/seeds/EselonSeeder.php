@@ -66,79 +66,196 @@ class EselonSeeder extends Seeder
         ];*/
         $eselon_seed = [
             [
-                'id' => 1,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '1',
                 'tunjangan' => 190
             ],[
-                'id' => 2,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '2',
                 'tunjangan' => 0
             ],[
-                'id' => 3,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '3',
                 'tunjangan' => 340
             ],[
-                'id' => 4,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '4',
                 'tunjangan' => 440
             ],[
-                'id' => 5,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '5',
+                'eselon' => '5a',
+                'tunjangan' => 520
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '5b',
                 'tunjangan' => 490
             ],[
-                'id' => 6,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '6',
+                'eselon' => '6a',
+                'tunjangan' => 770
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '6b',
+                'tunjangan' => 755
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '6c',
+                'tunjangan' => 740
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '6d',
                 'tunjangan' => 690
             ],[
-                'id' => 7,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '7',
+                'eselon' => '7a',
+                'tunjangan' => 1035
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '7b',
+                'tunjangan' => 1020
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '7c',
+                'tunjangan' => 1005
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '7d',
                 'tunjangan' => 890
             ],[
-                'id' => 8,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '8',
+                'eselon' => '8a',
+                'tunjangan' => 1320
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '8b',
+                'tunjangan' => 1310
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '8c',
+                'tunjangan' => 1295
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '8d',
                 'tunjangan' => 1280
             ],[
-                'id' => 9,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '9',
+                'eselon' => '8e',
+                'tunjangan' => 1260
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '8f',
+                'tunjangan' => 1245
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '8g',
+                'tunjangan' => 1230
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '8h',
+                'tunjangan' => 1190
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '8i',
+                'tunjangan' => 1165
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9a',
+                'tunjangan' => 1960
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9b',
+                'tunjangan' => 1570
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9c',
+                'tunjangan' => 1555
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9d',
+                'tunjangan' => 1540
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9e',
+                'tunjangan' => 1535
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9f',
+                'tunjangan' => 1455
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9g',
+                'tunjangan' => 1430
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9h',
+                'tunjangan' => 1385
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9i',
+                'tunjangan' => 1370
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '9j',
                 'tunjangan' => 1355
             ],[
-                'id' => 10,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '10',
+                'eselon' => '10a',
                 'tunjangan' => 1720
             ],[
-                'id' => 11,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '11',
+                'eselon' => '10b',
+                'tunjangan' => 1670
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '11a',
+                'tunjangan' => 2090
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '11b',
+                'tunjangan' => 2045
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '11c',
+                'tunjangan' => 1990
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '11d',
                 'tunjangan' => 1930
             ],[
-                'id' => 12,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '12',
+                'eselon' => '11e',
+                'tunjangan' => 1960
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '12a',
+                'tunjangan' => 2315
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '12b',
                 'tunjangan' => 2225
             ],[
-                'id' => 13,
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '12c',
+                'tunjangan' => 2140
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '12d',
+                'tunjangan' => 2115
+            ],[
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'eselon' => '13',
                 'tunjangan' => 2715
             ],[
-                'id' => 14,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '14',
+                'eselon' => '14a',
                 'tunjangan' => 3030
             ],[
-                'id' => 15,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '15',
+                'eselon' => '14b',
+                'tunjangan' => 2865
+            ],[
+                'uuid' => (string)\Illuminate\Support\Str::uuid(),
+                'eselon' => '5',
                 'tunjangan' => 3555
             ],
         ];

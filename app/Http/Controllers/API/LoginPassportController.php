@@ -50,7 +50,7 @@ class LoginPassportController extends ATC {
 
             //get user and check valid Login
             //change to 'email' if you want
-            $user = Pegawai::where('nip', '=', $username)->first();
+            $user = Pegawai::with('jabatan','role')->where('nip', '=', $username)->first();
             if (!$user) {
                 return response()->json($format->formatResponseWithPages("Username/NIP tidak ditemukan", [], $format->STAT_NOT_FOUND()), $format->STAT_NOT_FOUND());
             } else if (!Hash::check($password, $user->password)) {
