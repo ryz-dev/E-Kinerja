@@ -81,7 +81,7 @@
                         </div>
                         <div class="box-diagram" id="diagram4">
                             <div class="chart-container p-2">
-                                <canvas id="chart-tunjangan" height="140vh" width="120vw"></canvas>
+                                <canvas id="chart-tunjangan" height="50vh" width="50vw"></canvas>
                             </div>
                             <div class="container-desc">
                                 <label>TUNJANGAN</label>
@@ -230,7 +230,7 @@
                                 {
                                     label: "My First dataset",
                                     backgroundColor: ["#00B894", "#d8dadc"],
-                                    borderColor: ["#00B894"],
+                                    borderColor: ["#00B894",, "#d8dadc"],
                                     data: [parseInt(res.response.pencapaian.etika), 100 - parseInt(res.response.pencapaian.etika)]
                                 }
                             ]
