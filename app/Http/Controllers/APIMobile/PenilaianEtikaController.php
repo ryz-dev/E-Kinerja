@@ -25,7 +25,7 @@ class PenilaianEtikaController extends Controller
                 'nama' => $p->nama,
                 'etika' => [
                     'tanggal' => $p->etika[0]->tanggal ? $p->etika[0]->tanggal : "",
-                    'persentase' => $p->etika[0]->persentase ? $p->etika[0]->persentase : "",
+                    'persentase' => $p->etika[0]->persentase ? $p->etika[0]->persentase : 0,
                     'keterangan' => $p->etika[0]->keterangan ? $p->etika[0]->keterangan : "",
                 ],
             ];

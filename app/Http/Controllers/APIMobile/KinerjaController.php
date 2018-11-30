@@ -121,8 +121,8 @@ class KinerjaController extends ApiController
                 $data_etika_kinerja[] = [
                     'tanggal' => $hk->tanggal,
                     'hari' => ucfirst($hk->Hari->nama_hari),
-                    'approve' => $knj->first() ? $knj->first()->approve : "",
-                    'etika' => $etk ? $etk->persentase : "",
+                    'approve' => $knj->first() ? $knj->first()->approve : 0,
+                    'etika' => $etk ? $etk->persentase : 0,
                     'absen' => $knj->first() ? $knj->first()->jenis_kinerja : ""
                 ];
                 $etika[] = $etk ? $etk->toArray() : null;
@@ -221,8 +221,8 @@ class KinerjaController extends ApiController
             'nama' => $pegawai->nama,
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
-            'kinerja' => $kinerja ? $kinerja : "",
-            'etika' => $etika ? $kinerja : "",
+            'kinerja' => $kinerja ? $kinerja : [],
+            'etika' => $etika ? $kinerja : [],
             'checkinout' => (count($checkinout)) ? 
                 [
                     'in' => $checkinout[0]->checktime,
