@@ -35,6 +35,7 @@ class RekapBulananController extends ApiController
                 'nama' => $b->nama,
                 'foto' => $b->foto,
                 'nip' => $b->nip,
+                'created_at' => $b->created_at,
             ];
         }
         return $this->ApiSpecResponses($data);
