@@ -14,13 +14,23 @@ use Illuminate\Validation\Rule;
 
 class PenilaianKinerjaController extends Controller
 {
-    public function getBawahan(){
+    public function getBawahan(Request $request){
         $user = auth('api')->user();
+        $search = $request->has('search')? $request->input('search'):'';
+
         $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){
             $query->where('id_atasan','=', $user->id_jabatan);
             })->with(['kinerja' => function($query){
             $query->whereDate('tgl_mulai','=',date('Y-m-d'));
-        }])->get();
+        }]);
+
+        if ($search) {
+            $pegawai->where(function($query) use ($search){
+                $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+            });
+        }
+
+        $pegawai = $pegawai->get();
 
         $data = [];
         foreach($pegawai as $p){

@@ -9,14 +9,23 @@ use App\Models\Absen\Etika;
 
 class PenilaianEtikaController extends Controller
 {
-    public function getPegawai(){
+    public function getPegawai(Request $request){
         $user = auth('api')->user();
+        $search = $request->has('search')? $request->input('search'):'';
         $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){ 
         $query->where('id_atasan','=', $user->id_jabatan ); })
             ->with(['etika' => function($query){
                  $query->select('userid' ,'tanggal', 'persentase', 'keterangan')->whereDate('tanggal','=',date('Y-m-d'));
-            }])->get();
+            }]);
+
+        if ($search) {
+            $pegawai->where(function($query) use ($search){
+                $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+            });
+        }
         
+        $pegawai = $pegawai->get();
+
         $data = [];
         foreach($pegawai as $p){
             $data[] = [
