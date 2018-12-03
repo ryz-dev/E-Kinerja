@@ -17,6 +17,8 @@ class RekapBulananController extends ApiController
     public function getBawahan(Request $request){
         $user = auth('api')->user();
         $skpd = $request->has('skpd') ? $request->input('skpd') : null;
+        $search = $request->has('search')? $request->input('search'):'';
+
         if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
             $user->load('jabatan.pegawai_bawahan');
             $bawahan = $user->jabatan->pegawai_bawahan;
@@ -25,9 +27,15 @@ class RekapBulananController extends ApiController
             if ($skpd){
                 $bawahan = $bawahan->where('id_skpd',$skpd);
             }
-            $bawahan = $bawahan->get();
         }
 
+        if ($search) {
+            $bawahan->where(function($query) use ($search){
+                $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+            });
+        }
+
+        $bawahan = $bawahan->get();
         $data = [];
         foreach($bawahan as $b) {
             $data[] = [
