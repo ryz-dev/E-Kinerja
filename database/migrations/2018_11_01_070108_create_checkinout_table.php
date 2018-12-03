@@ -15,7 +15,7 @@ class CreateCheckinoutTable extends Migration
     {
         Schema::create('checkinout', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('userid');
+            $table->string('nip');
             $table->timestamp('checktime');
             $table->string('checktype')->nullable();
             $table->string('verifycode')->nullable();

@@ -51,18 +51,18 @@ class GenerateAbsenPegawai extends Command
                 if ($cek_hari_kerja) {
                     $chekin = (new Carbon($tanggal_mulai))->addDays($i)->setTime(random_int(7, 10), random_int(0, 59), random_int(0, 59));
                     $in = [
-                        'userid' => $p->userid,
+                        'nip' => $p->nip,
                         'checktime' => $chekin,
                         'checktype' => '0'
                     ];
                     $chekout = (new Carbon($tanggal_mulai))->addDays($i)->setTime(random_int(15, 19), random_int(0, 59), random_int(0, 59));
                     $out = [
-                        'userid' => $p->userid,
+                        'nip' => $p->nip,
                         'checktime' => $chekout,
                         'checktype' => '1'
                     ];
                     $kinerja = [
-                        'userid' => $p->userid,
+                        'nip' => $p->nip,
                         'tgl_mulai' => $now_date,
                         'tgl_selesai' => $now_date,
                         'jenis_kinerja' => 'hadir',
@@ -71,7 +71,7 @@ class GenerateAbsenPegawai extends Command
                         'keterangan_approve' => str_random(100)
                     ];
                     $etika = [
-                        'userid' => $p->userid,
+                        'nip' => $p->nip,
                         'tanggal' => $now_date,
                         'persentase' => random_int(0,100),
                         'keterangan' => str_random(100)

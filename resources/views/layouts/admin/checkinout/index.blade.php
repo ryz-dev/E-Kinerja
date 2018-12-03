@@ -48,10 +48,10 @@
 	        	let row;
 	        	if (res.data.length > 0) {
 	        		for (var i = 0; i < res.data.length; i++) {
-	        			row += res.data[i].userid;
+	        			row += res.data[i].nip;
 	        			row += "<tr id='_id_"+res.data[i].id+"'>";
 		                row += "<td>"+(i+1)+"</td>";
-		                row += "<td>"+res.data[i].userid+"</td>";
+		                row += "<td>"+res.data[i].nip+"</td>";
 		                row += "<td>"+moment(res.data[i].checktime).fromNow()+"</td>";
 		                row += "<td>"+res.data[i].checktype+"</td>";
 		                row += "<td>"+res.data[i].verifycode+"</td>";

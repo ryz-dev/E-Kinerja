@@ -27,7 +27,10 @@ class RoleSeeder extends Seeder
                     'monitoring-absen'=> true,
                     'penilaian-kinerja' => true,
                     'penilaian-etika' => true,
-                    'rekap-bulanan' => true
+                    'rekap-bulanan' => true,
+
+                    'input-kinerja' => false,
+                    'tunjangan-kinerja' => false,
                 ])
             ],
             [
@@ -35,7 +38,12 @@ class RoleSeeder extends Seeder
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'monitoring-absen'=> true,
-                    'rekap-bulanan' => true
+                    'rekap-bulanan' => true,
+
+                    'input-kinerja' => false,
+                    'penilaian-kinerja' => false,
+                    'penilaian-etika' => false,
+                    'tunjangan-kinerja' => false,
                 ])
             ],
             [
@@ -78,7 +86,12 @@ class RoleSeeder extends Seeder
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'input-kinerja' => true,
-                    'tunjangan-kinerja' => true
+                    'tunjangan-kinerja' => true,
+
+                    'monitoring-absen'=> false,
+                    'penilaian-kinerja' => false,
+                    'penilaian-etika' => false,
+                    'rekap-bulanan' => false
                 ])
             ]
 

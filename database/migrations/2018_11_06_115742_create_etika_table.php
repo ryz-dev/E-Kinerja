@@ -15,7 +15,7 @@ class CreateEtikaTable extends Migration
     {
         Schema::create('etika', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('userid')->index();
+            $table->string('nip')->index();
             $table->date('tanggal');
             $table->integer('persentase');
             $table->text('keterangan');

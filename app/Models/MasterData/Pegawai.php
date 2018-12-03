@@ -38,15 +38,15 @@ class Pegawai extends Authenticatable
     }
 
     public function checkinout(){
-        return $this->hasMany('App\Models\Absen\Checkinout','userid','userid');
+        return $this->hasMany('App\Models\Absen\Checkinout','nip','nip');
     }
 
     public function etika(){
-        return $this->hasMany(Etika::class,'userid','userid');
+        return $this->hasMany(Etika::class,'nip','nip');
     }
 
     public function kinerja(){
-        return $this->hasMany(Kinerja::class,'userid','userid');
+        return $this->hasMany(Kinerja::class,'nip','nip');
     }
 
     public function hasAccess(array $permissions){
