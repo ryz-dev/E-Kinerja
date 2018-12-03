@@ -5,6 +5,7 @@ namespace App\Http\Controllers\APIMobile;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\MasterData\Pegawai;
+use App\Models\Absen\Etika;
 
 class PenilaianEtikaController extends Controller
 {
@@ -23,11 +24,28 @@ class PenilaianEtikaController extends Controller
                 'nip' => $p->nip,
                 'foto' => $p->foto,
                 'nama' => $p->nama,
-                'etika' => $p->etika,
-               
+                'etika' => count($p->etika) ? $p->etika[0]->persentase : 0,
             ];
         }
         
+        return $this->ApiSpecResponses($data);
+    }
+
+    public function getEtika($nip){
+        $pegawai = Pegawai::where('nip', $nip)->first();
+        $etika = Etika::where('userid',$pegawai->userid)
+            ->select('id', 'userid', 'persentase', 'keterangan')
+            ->whereDate('tanggal','=',date('Y-m-d'))
+            ->first();
+
+        $data = [
+            'uuid' => $pegawai->uuid,
+            'nip' => $pegawai->nip,
+            'foto' => $pegawai->foto,
+            'nama' => $pegawai->nama,
+            'etika' => $etika,   
+        ];
+
         return $this->ApiSpecResponses($data);
     }
 
