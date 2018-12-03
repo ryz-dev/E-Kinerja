@@ -14,7 +14,7 @@ class AddNipToCheckinout extends Migration
     public function up()
     {
         Schema::table('checkinout', function (Blueprint $table) {
-            $table->string('nip')->after('userid');
+            $table->string('nip');
         });
     }
 
