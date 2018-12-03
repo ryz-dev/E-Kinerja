@@ -36,7 +36,7 @@ class RekapBulananController extends ApiController
         $tahun = ($tahun?:date('Y'));
         $hari_kerja = HariKerja::where('bulan',$bulan)->where('tahun',$tahun)->whereHas('statusHari',function ($query){
             $query->where('status_hari','kerja');
-        })->get();
+        })->orderBy('tanggal','asc')->get();
         try {
             if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
                 $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
@@ -88,7 +88,8 @@ class RekapBulananController extends ApiController
         /* Data kinerja */
         $pegawai = Pegawai::where('nip',$nip)->first();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
-        ->whereDate('tgl_mulai',$tgl)
+        ->whereDate('tgl_mulai','<=',$tgl)
+        ->whereDate('tgl_selesai','>=',$tgl)
         ->first();
 
         /* Data etika */

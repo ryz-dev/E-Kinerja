@@ -91,7 +91,7 @@ class KinerjaController extends ApiController
 
         $hari_kerja = HariKerja::whereHas('statusHari',function ($query){
             $query->where('status_hari','kerja');
-        })->where('bulan',$bulan)->where('tahun',$tahun)->get();
+        })->where('bulan',$bulan)->where('tahun',$tahun)->orderBy('tanggal','asc')->get();
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $jumlah_etika = $absen = 0;
         $data_etika_kinerja = [];
