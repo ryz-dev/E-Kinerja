@@ -14,8 +14,8 @@
         @endif
         <h2 class="mb-2">Tambah Absensi</h2>
         <div class="form-group">
-            <label for="userid">UserID</label>
-            {{ Form::number('userid', null, ['class'=>'form-control']) }}
+            <label for="nip">NIP</label>
+            {{ Form::number('nip', null, ['class'=>'form-control']) }}
         </div>
         <div class='form-group'>
             <input id="datetimepicker" name="checktime" value="{{ !empty($checkinout) ? $checkinout->checktime : "" }}" />

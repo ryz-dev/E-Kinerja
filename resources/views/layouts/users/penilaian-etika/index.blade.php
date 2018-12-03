@@ -137,7 +137,7 @@
                     window.pegawai[index].etika[0] = {
                         'persentase' : response.persentase,
                         'keterangan' : response.keterangan,
-                        'userid' : response.userid
+                        'nip' : response.nip
                     };
 
                     $('#tabPegawai li:nth-child('+(index+1)+')').slideUp().remove();

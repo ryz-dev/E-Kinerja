@@ -15,7 +15,7 @@ class CreateKinerjaTable extends Migration
     {
         Schema::create('kinerja', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('userid')->index();
+            $table->string('nip')->index();
             $table->date('tgl_mulai');
             $table->date('tgl_selesai');
             $table->enum('jenis_kinerja',['hadir','perjalanan_dinas','cuti','izin','sakit']);

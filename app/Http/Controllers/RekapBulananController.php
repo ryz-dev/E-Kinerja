@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\MasterData\Skpd;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class RekapBulananController extends Controller

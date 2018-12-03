@@ -21,13 +21,13 @@ class CreatePegawaiTable extends Migration
 //            $table->integer('id_fp')->nullable()->unsigned()->index();
             $table->string('foto')->nullable();
             $table->string('nama');
-            $table->date('tanggal_lahir');
+            $table->date('tanggal_lahir')->nullable();
 //            $table->string('unit_kerja')->nullable()->index();
 //            $table->boolean('status_upload')->default(false);
-            $table->integer('id_agama')->unsigned()->index();
+            $table->integer('id_agama')->unsigned()->nullable()->index();
             $table->integer('id_jabatan')->nullable()->unsigned()->index();
-            $table->enum('jns_kel',['laki-laki','perempuan']);
-            $table->string('tempat_lahir');
+            $table->enum('jns_kel',['laki-laki','perempuan'])->nullable();
+            $table->string('tempat_lahir')->nullable();
             $table->string('badgenumber')->nullable();
             $table->softDeletes();
             $table->timestamps();

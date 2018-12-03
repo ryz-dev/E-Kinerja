@@ -28,7 +28,7 @@ class PenilaianKinerjaController extends ApiController
 
     public function getKinerja($nip){
         $pegawai = Pegawai::where('nip',$nip)->first();
-        $kinerja = Kinerja::where('userid',$pegawai->userid)
+        $kinerja = Kinerja::where('nip',$pegawai->nip)
         ->whereDate('tgl_mulai','<=',date('Y-m-d'))
         ->whereDate('tgl_mulai','>=',date('Y-m-d'))
         ->terbaru()
@@ -38,7 +38,7 @@ class PenilaianKinerjaController extends ApiController
 
     public function replyKinerja(Request $r) {
       $r->validate([
-        'userid' => ['numeric','required',Rule::in(Pegawai::pluck('userid')->toArray())],
+        'nip' => ['numeric','required',Rule::in(Pegawai::pluck('nip')->toArray())],
         'type' => ['numeric','required',Rule::in([1,2])],
         'keterangan_approve' => ['required']
       ]);

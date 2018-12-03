@@ -60,7 +60,7 @@
                           <h6 class="mb-2 mt-4">Keterangan Penilaian Kinerja</h6>
                           <form id='formReply'>
                             <input id="id" type='hidden' name='id' required>
-                            <input id="userid" type='hidden' name='userid' required>
+                            <input id="nip" type='hidden' name='nip' required>
                             <textarea autofocus rows="8" name="keterangan_approve" class="form-control"></textarea>
                           </form>
                           <div class="mt-2 float-right">
@@ -176,7 +176,7 @@
                   .then(function (res) {
                     if (res.response != null) {
                       $('#id').val(res.response.id);
-                      $('#userid').val(res.response.userid);
+                      $('#nip').val(res.response.nip);
                       $('#ket_kinerja').html(res.response.rincian_kinerja);
                       $('textarea').val(res.response.keterangan_approve);
 
