@@ -4,33 +4,35 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\Controller;
-use App\Models\Pegawai;
-use App\Models\Checkinout;
+use App\Models\MasterData\Pegawai;
+use App\Models\Absen\Checkinout;
 use Illuminate\Support\Str;
 
 class ReceivedController extends ApiController
 {
 	public function receiver(Request $req){
-		$var = '{"userId":3,"badgenumber":"000000003","defaultdeptid":0,"name":"Dirham","Card":"0","Privilege":0,"AccGroup":0,"SECURITYFLAGAS":0,"DelTag":0,"RegisterOT":0,"AutoSchPlan":0,"MinAutoSchInterval":0,"Image_id":0,"checkinout":{"userid":3,"checktime":"2018-12-03 04:29:05","checktype":"0","verifycode":0,"sn":"4225553031055","sensorid":"2"}}'
-		
-		$to_array = json_decode($var, true);
-		// $to_array = json_decode($req->all(), true);
+		$js = response()->json($req->all());
+		$to_array = json_decode($js, true);
 		$pegawai = Pegawai::where('nip', $to_array['Card'])->first();
-		$checkinout = Checkinout::where('nip', $to_array['Card'])->first();
 		if(empty($pegawai)){
 			$peg = Pegawai::create([
-				'uuid' => (string)Str::uuid(),'nip' => $to_array['Card'], 
+				'uuid' => (string)Str::uuid(),'nip' => $to_array['Card'],
 				'nama' => $to_array['name'] ? $to_array['name'] : "No Name",
-				'badgenumber' => $to_array['badgenumber']
+				'badgenumber' => $to_array['badgenumber']]);
+
+			$absen = Checkinout::create(['userid' => $to_array['checkinout']['userid'],'nip' => $to_array['Card'],'checktime' => $to_array['checktime'],'checktype' => $to_array['checktype'],'verifycode'=> $to_array['verifycode'],'sn' => $to_array['sn'],'sensorid'=> $to_array['sensorid']]);
+
+			// return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil mengirim data ke server'] );
+		}else{
+			$absen = Checkinout::create([
+				'userid' => $to_array['checkinout']['userid'],
+				'nip' => $to_array['Card'],'checktime' => $to_array['checktime'],
+				'checktype' => $to_array['checktype'],
+				'verifycode'=> $to_array['verifycode'],
+				'sn' => $to_array['sn'],'sensorid'=> $to_array['sensorid']
 			]);
 
-			$check = $to_array['checkinout']['userid'] = $pe
-
-			Checkinout::
-		}else{
-
+			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil mengirim data ke server'] );
 		}
-
-		return response()->json($req->all());
 	}
 }
