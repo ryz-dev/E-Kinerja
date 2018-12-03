@@ -222,12 +222,11 @@ class KinerjaController extends ApiController
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
             'kinerja' => $kinerja ? $kinerja : [],
-            'etika' => $etika ? $kinerja : [],
-            'checkinout' => (count($checkinout)) ? 
-                [
-                    'in' => $checkinout[0]->checktime,
+            'etika' => $etika ? $etika : [],
+            'checkinout' => [
+                    'in' => (count($checkinout)) ? $checkinout[0]->checktime : "",
                     'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",
-                ]  : [],
+                ],
             'min_date' => $min_date->tanggal
         ];
 

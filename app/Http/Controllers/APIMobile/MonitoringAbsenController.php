@@ -78,12 +78,12 @@ class MonitoringAbsenController extends Controller
                     'nama' => $p->nama,
                     'nip' => $p->nip,
                     'foto' => $p->foto,
-                    'checkinout' => (count($p->checkinout)) ? 
-                        [
-                            'in' => $p->checkinout[0]->checktime,
-                            'out' => (count($p->checkinout) > 1) ? $p->checkinout[1]->checktime : "",
-                        ]  : [],
+                    'checkinout' => [
+                        'in' => (count($p->checkinout)) ? $p->checkinout[0]->checktime : "",
+                        'out' => (count($p->checkinout) > 1) ? $p->checkinout[1]->checktime : "",
+                    ],
                     'kinerja' => (count($p->kinerja)) ? $p->kinerja[0]->jenis_kinerja : "",
+                    'created_at' => $p->created_at,
                 ];
             }
 
