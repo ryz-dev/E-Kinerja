@@ -10,7 +10,7 @@ class Checkinout extends Model
     protected $appends = ['absen_time'];
 
     protected $fillable = [
-        'userid','checktime', 'checktype', 'verifycode', 'sensorid', 'workcode', 'sn', 'userextmft'
+        'userid', 'nip', 'checktime', 'checktype', 'verifycode', 'sensorid', 'workcode', 'sn', 'userextmft'
     ];
 
     public function pegawai(){

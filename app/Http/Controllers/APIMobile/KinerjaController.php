@@ -18,8 +18,8 @@ class KinerjaController extends ApiController
         $input = $request->input();
         $input['userid'] = auth('api')->user()->userid;
         if (in_array($input['jenis_kinerja'],['hadir','sakit'])){
-            $input['tgl_mulai'] = Carbon::now();
-            $input['tgl_selesai'] = Carbon::now();
+            $input['tgl_mulai'] = date('Y-m-d');
+            $input['tgl_selesai'] = date('Y-m-d');
         } else {
             $tgl_mulai = explode('/',$input['tgl_mulai']);
             $tgl_selesai = explode('/',$input['tgl_selesai']);
@@ -35,7 +35,17 @@ class KinerjaController extends ApiController
                 ]);
             }
         }
-        $cek_kinerja = Kinerja::where('userid',$input['userid'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->first();
+//        $cek_kinerja = Kinerja::where('userid',$input['userid'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->whereIn('approve',[0,2])->first();
+        $cek_kinerja = Kinerja::where('userid',$input['userid'])->where(function ($query)use($input){
+            $query->where(function ($query) use ($input){
+                $query->where('tgl_mulai','<=',$input['tgl_mulai']);
+                $query->where('tgl_selesai','>=',$input['tgl_mulai']);
+            });
+            $query->orWhere(function ($query)use($input){
+                $query->where('tgl_mulai','<=',$input['tgl_selesai']);
+                $query->where('tgl_selesai','>=',$input['tgl_selesai']);
+            });
+        })->whereIn('approve',[0,2])->first();
         if (!$cek_kinerja){
             $input['approve'] = 0;
             if ($input['jenis_kinerja'] == 'hadir'){
@@ -154,9 +164,9 @@ class KinerjaController extends ApiController
         }
         $response = [
             'pencapaian' => [
-                'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase['absen']) : 0,
-                'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase['kinerja']) : 0,
-                'etika' => $jumlah_hari > 0 ? $this->toDecimal($persentase['etika']) : 0,
+                'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase['absen']) : 0,
+                'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase['kinerja']) : 0,
+                'etika' => $jumlah_hari > 0 ? $this->toFloat($persentase['etika']) : 0,
             ],
             'persentase' => [
                 'absen' => $persen_absen,
@@ -164,10 +174,10 @@ class KinerjaController extends ApiController
                 'etika' => $persen_etika,
             ],
             'total' => [
-                'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['absen']) : 0,
-                'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['kinerja']) : 0,
-                'etika' => $jumlah_hari > 0 ?  $this->toDecimal($persentase_total['etika']) : 0,
-                'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
+                'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['absen']) : 0,
+                'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['kinerja']) : 0,
+                'etika' => $jumlah_hari > 0 ?  $this->toFloat($persentase_total['etika']) : 0,
+                'total' => $jumlah_hari > 0 ? $this->toFloat($total_persentase_tunjangan) : 0
             ],
             'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
             'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
@@ -199,9 +209,10 @@ class KinerjaController extends ApiController
         /* Data kinerja */
         $pegawai = auth('api')->user();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
-        ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
-        ->whereDate('tgl_mulai',$tgl)
-        ->first();
+        ->whereDate('tgl_mulai','<=',$tgl)
+        ->whereDate('tgl_selesai','>=',$tgl)
+            ->terbaru()
+            ->first();
 
         /* Data etika */
         $etika = Etika::where("userid",$pegawai->userid)
@@ -235,5 +246,9 @@ class KinerjaController extends ApiController
 
     private function toDecimal($number){
         return number_format((float)$number,2,',','.');
+    }
+
+    private function toFloat($number){
+        return (float)number_format((float)$number,2,'.',',');
     }
 }
