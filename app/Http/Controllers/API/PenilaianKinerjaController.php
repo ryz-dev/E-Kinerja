@@ -18,7 +18,9 @@ class PenilaianKinerjaController extends ApiController
       $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){
         $query->where('id_atasan','=',$user->id_jabatan);
       })->with(['kinerja' => function($query){
-        $query->whereDate('tgl_mulai','=',date('Y-m-d'));
+        $query->whereDate('tgl_mulai','<=',date('Y-m-d'));
+        $query->whereDate('tgl_mulai','>=',date('Y-m-d'));
+        $query->terbaru();
       }])->get();
 
       return $this->ApiSpecResponses($pegawai);
@@ -27,8 +29,9 @@ class PenilaianKinerjaController extends ApiController
     public function getKinerja($nip){
         $pegawai = Pegawai::where('nip',$nip)->first();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
-        ->whereDate('tgl_mulai',date('Y-m-d'))
-            /* todo : where data berdasarkan interval tgl_mulai dan tgl_selesai*/
+        ->whereDate('tgl_mulai','<=',date('Y-m-d'))
+        ->whereDate('tgl_mulai','>=',date('Y-m-d'))
+        ->terbaru()
         ->first();
        return $this->ApiSpecResponses($kinerja);
     }

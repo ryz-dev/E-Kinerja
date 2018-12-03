@@ -255,7 +255,7 @@ class EselonSeeder extends Seeder
                 'tunjangan' => 2865
             ],[
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
-                'eselon' => '5',
+                'eselon' => '15',
                 'tunjangan' => 3555
             ],
         ];

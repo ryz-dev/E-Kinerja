@@ -113,7 +113,7 @@
 
       $(document).on('click','.deleteData',function (e) {
           swal({
-            title: 'Yakin Ingin Menghapus Pegawai?',
+            title: 'Yakin Ingin Menghapus Hari Kerja?',
             text: "Proses tidak dapat di kembalikan",
             type: 'warning',
             showCancelButton: true,

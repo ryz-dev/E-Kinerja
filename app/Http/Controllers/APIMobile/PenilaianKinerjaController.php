@@ -29,7 +29,7 @@ class PenilaianKinerjaController extends Controller
                 'nip' => $p->nip,
                 'foto' => $p->foto,
                 'nama' => $p->nama,
-                'approve' => $p->kinerja == null ? $p->kinerja[0]->approve : 0,
+                'approve' => count($p->kinerja) ? $p->kinerja[0]->approve : 0,
             ];
         }
 
@@ -45,7 +45,7 @@ class PenilaianKinerjaController extends Controller
     public function getKinerja($nip){
         $pegawai = Pegawai::where('nip',$nip)->first();
         $kinerja = Kinerja::where('userid',$pegawai->userid)
-            ->select('userid', 'tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
+        ->select('id', 'userid','tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
             ->whereDate('tgl_mulai',date('Y-m-d'))
             ->first();
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\MasterData;
 
 use App\Models\MasterData\Skpd;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -56,13 +57,35 @@ class SkpdController extends MasterDataController
         $skpd = Skpd::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
         try {
             $skpd->delete();
-        } catch (\Exception $exception){}
+        } catch (QueryException $exception){
+            if ($json)
+            return response()->json([
+                'status' => '500',
+                'message' => 'Tidak dapat menghapus SKPD, SKPD memiliki pegawai aktif'
+            ]);
+            return [
+                'status' => '500',
+                'message' => 'Tidak dapat menghapus SKPD, SKPD memiliki pegawai aktif'
+            ];
+        } catch (\Exception $exception){
+            if ($json)
+            return response()->json([
+                'status' => '500',
+                'message' => $exception->getMessage()
+            ]);
+            return [
+                'status' => '500',
+                'message' => $exception->getMessage()
+            ];
+        }
         if ($json)
             return response()->json([
+                'status' => '200',
                 'message' => 'data berhasil dihapus'
             ]);
 
         return [
+            'status' => '200',
             'message' => 'data berhasil dihapus'
         ];
     }

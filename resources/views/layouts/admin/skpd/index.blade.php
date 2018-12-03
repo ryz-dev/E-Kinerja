@@ -105,14 +105,22 @@
                     }).then((result) => {
                         if (result.value) {
                         $.post(delete_uri)
-                            .then(function () {
-                                getPage(search);
-                                swal(
-                                    'Terhapus!',
-                                    'Data SKPD Berhasil Dihapus.',
-                                    'success'
-                                )
-                            },function () {
+                            .then(function (res) {
+                                if (res.response.status == '200') {
+                                    getPage(search);
+                                    swal(
+                                        'Terhapus!',
+                                        'Data SKPD Berhasil Dihapus.',
+                                        'success'
+                                    )
+                                } else {
+                                    swal(
+                                        'Gagal Menghapus Data SKPD',
+                                        res.response.message,
+                                        'error'
+                                    )
+                                }
+                            },function (err) {
                                 swal(
                                     'Gagal Menghapus Data',
                                     '',
