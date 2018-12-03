@@ -154,9 +154,9 @@ class KinerjaController extends ApiController
         }
         $response = [
             'pencapaian' => [
-                'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase['absen']) : 0,
-                'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase['kinerja']) : 0,
-                'etika' => $jumlah_hari > 0 ? $this->toDecimal($persentase['etika']) : 0,
+                'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase['absen']) : 0,
+                'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase['kinerja']) : 0,
+                'etika' => $jumlah_hari > 0 ? $this->toFloat($persentase['etika']) : 0,
             ],
             'persentase' => [
                 'absen' => $persen_absen,
@@ -164,10 +164,10 @@ class KinerjaController extends ApiController
                 'etika' => $persen_etika,
             ],
             'total' => [
-                'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['absen']) : 0,
-                'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['kinerja']) : 0,
-                'etika' => $jumlah_hari > 0 ?  $this->toDecimal($persentase_total['etika']) : 0,
-                'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
+                'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['absen']) : 0,
+                'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['kinerja']) : 0,
+                'etika' => $jumlah_hari > 0 ?  $this->toFloat($persentase_total['etika']) : 0,
+                'total' => $jumlah_hari > 0 ? $this->toFloat($total_persentase_tunjangan) : 0
             ],
             'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
             'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
@@ -235,5 +235,9 @@ class KinerjaController extends ApiController
 
     private function toDecimal($number){
         return number_format((float)$number,2,',','.');
+    }
+
+    private function toFloat($number){
+        return (float)number_format((float)$number,2,'.',',');
     }
 }
