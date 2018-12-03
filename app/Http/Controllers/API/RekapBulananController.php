@@ -90,7 +90,8 @@ class RekapBulananController extends ApiController
         $kinerja = Kinerja::where('userid',$pegawai->userid)
         ->whereDate('tgl_mulai','<=',$tgl)
         ->whereDate('tgl_selesai','>=',$tgl)
-        ->first();
+            ->terbaru()
+            ->first();
 
         /* Data etika */
         $etika = Etika::where("userid",$pegawai->userid)
