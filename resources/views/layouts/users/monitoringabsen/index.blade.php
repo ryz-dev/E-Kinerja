@@ -121,7 +121,7 @@
                                 <span class="alpha">
                                     <img src="assets/images/icons/alpha.svg">
                                 </span>
-                                <label>Alpha</label>
+                                <label>Alpa</label>
                                 <label class="float-right count count-alpha">0</label>
                             </li>
                         </ul>
@@ -179,14 +179,15 @@
 
         var parseAbsen = function(data){
             if (data.length > 0) {
-                var absenin;
-                var absenout;
+                var absenin = 'data tidak ada';
+                var absenout = 'data tidak ada';
                 var res = data.map(function (val){
                     if (val.checktype == '0') {
                         absenin = val.absen_time?val.absen_time:'data tidak ada';
                     }else if(val.checktype == '1'){
                         absenout =val.absen_time?val.absen_time:'data tidak ada';
                     }
+                    
                 }); 
                 return absenin+'<span> - </span>'+absenout;
                 
@@ -216,7 +217,7 @@
                         break;
                 }
             }
-            return  '<span class="badge badge-table badge-gray">Alpha</span>';
+            return  '<span class="badge badge-table badge-gray">Alpa</span>';
         }
 
 
