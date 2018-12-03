@@ -16,19 +16,19 @@ class JabatanSeeder extends Seeder
                 'id' => 1,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'BUPATI',
-                'id_eselon' => 15,
+                'id_eselon' => 48,
                 'id_atasan' => null
             ],[
                 'id' => 2,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'WAKIL BUPATI',
-                'id_eselon' => 14,
+                'id_eselon' => 46,
                 'id_atasan' => null
             ],[
                 'id' => 3,
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'SEKERTARIS DAERAH',
-                'id_eselon' => 13,
+                'id_eselon' => 45,
                 'id_atasan' => 1
             ]
         ];
@@ -46,7 +46,7 @@ class JabatanSeeder extends Seeder
             $kepala_dinas = [
                     'uuid' => (string)\Illuminate\Support\Str::uuid(),
                     'jabatan' => 'KEPALA DINAS '.strtoupper($value->nama_skpd),
-                    'id_eselon' => 12,
+                    'id_eselon' => 41,
                     'id_atasan' => 3 ];
 
             $id_kepala_dinas = DB::table('jabatan')->insertGetId($kepala_dinas);
@@ -59,7 +59,7 @@ class JabatanSeeder extends Seeder
             $sekertaris_dinas = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'SEKERTARIS DINAS '.strtoupper($value->nama_skpd),
-                'id_eselon' => 11,
+                'id_eselon' => 36,
                 'id_atasan' => $id_kepala_dinas
             ];
             $id_sekertaris_dinas = DB::table('jabatan')->insertGetId($sekertaris_dinas);
@@ -73,7 +73,7 @@ class JabatanSeeder extends Seeder
             $kepala_bagian = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'KEPALA BAGIAN '.strtoupper($value->nama_skpd),
-                'id_eselon' => 10,
+                'id_eselon' => 34,
                 'id_atasan' => $id_kepala_dinas
             ];
             $id_kepala_bagian = DB::table('jabatan')->insertGetId($kepala_bagian);
@@ -86,7 +86,7 @@ class JabatanSeeder extends Seeder
             $staff_bagian = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'STAFF BAGIAN '.strtoupper($value->nama_skpd),
-                'id_eselon' => 8,
+                'id_eselon' => 15,
                 'id_atasan' => $id_kepala_bagian
             ];
             $id_staff_bagian = DB::table('jabatan')->insertGetId($staff_bagian);
@@ -99,7 +99,7 @@ class JabatanSeeder extends Seeder
             $kepala_sub_bagian = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'KEPALA SUB BAGIAN'.strtoupper($value->nama_skpd),
-                'id_eselon' => 9,
+                'id_eselon' => 24,
                 'id_atasan' => $id_kepala_dinas
             ];
             $id_kepala_sub_bagian = DB::table('jabatan')->insertGetId($kepala_sub_bagian);
@@ -112,7 +112,7 @@ class JabatanSeeder extends Seeder
             $staff_sub_bagian = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'STAFF SUB BAGIAN '.strtoupper($value->nama_skpd),
-                'id_eselon' => 8,
+                'id_eselon' => 15,
                 'id_atasan' => $id_kepala_sub_bagian
             ];
             $id_staff_sub_bagian = DB::table('jabatan')->insertGetId($staff_sub_bagian);
@@ -125,7 +125,7 @@ class JabatanSeeder extends Seeder
             $kepala_bidang = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'KEPALA BIDANG '.strtoupper($value->nama_skpd),
-                'id_eselon' => 10,
+                'id_eselon' => 34,
                 'id_atasan' => $id_kepala_dinas
             ]; 
             $id_kepala_bidang = DB::table('jabatan')->insertGetId($kepala_bidang);
@@ -138,7 +138,7 @@ class JabatanSeeder extends Seeder
             $staff_bidang = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'STAFF BIDANG '.strtoupper($value->nama_skpd),
-                'id_eselon' => 8,
+                'id_eselon' => 15,
                 'id_atasan' => $id_kepala_bidang
             ];
             $id_staff_bidang = DB::table('jabatan')->insertGetId($staff_bidang);
@@ -150,7 +150,7 @@ class JabatanSeeder extends Seeder
             $kepala_seksi = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'KEPALA SEKSI '.strtoupper($value->nama_skpd),
-                'id_eselon' => 10,
+                'id_eselon' => 35,
                 'id_atasan' => $id_kepala_dinas
             ];
             $id_kepala_seksi = DB::table('jabatan')->insertGetId($kepala_seksi);
@@ -163,7 +163,7 @@ class JabatanSeeder extends Seeder
             $staff_seksi = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'STAFF SEKSI '.strtoupper($value->nama_skpd),
-                'id_eselon' => 8,
+                'id_eselon' => 15,
                 'id_atasan' => $id_kepala_seksi
             ];
             $id_staff_seksi = DB::table('jabatan')->insertGetId($staff_seksi);
@@ -176,7 +176,7 @@ class JabatanSeeder extends Seeder
             $kepala_unit = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'KEPALA UNIT '.strtoupper($value->nama_skpd),
-                'id_eselon' => 10,
+                'id_eselon' => 34,
                 'id_atasan' => $id_kepala_dinas
             ];
             $id_kepala_unit = DB::table('jabatan')->insertGetId($kepala_unit);
@@ -188,7 +188,7 @@ class JabatanSeeder extends Seeder
             $staff_unit = [
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'jabatan' => 'STAFF UNIT '.strtoupper($value->nama_skpd),
-                'id_eselon' => 8,
+                'id_eselon' => 15,
                 'id_atasan' => $id_kepala_unit
             ];
             $id_staff_unit = DB::table('jabatan')->insertGetId($staff_unit);
