@@ -13,26 +13,26 @@ class ReceivedController extends ApiController
 	public function receiver(Request $req){
 		$js = response()->json($req->all());
 		$to_array = json_decode($js, true);
-		$pegawai = Pegawai::where('nip', $to_array['Card'])->first();
+		$pegawai = Pegawai::where('nip', $to_array['Card'])->orWhere('nip', "null_used_badge_". $to_array['badgenumber'])->first();
 		if(empty($pegawai)){
 			$peg = Pegawai::create([
-				'uuid' => (string)Str::uuid(),'nip' => $to_array['Card'],
+				'uuid' => (string)Str::uuid(),'nip' => $to_array['Card'] ? $to_array['Card'] : "null_used_badge_". $to_array['badgenumber'],
 				'nama' => $to_array['name'] ? $to_array['name'] : "No Name",
 				'badgenumber' => $to_array['badgenumber']]);
 
-			$absen = Checkinout::create(['userid' => $to_array['checkinout']['userid'],'nip' => $to_array['Card'] ? $to_array['Card'] : "null_used_badge_". $to_array['badgenumber'],'checktime' => $to_array['checktime'],'checktype' => $to_array['checktype'],'verifycode'=> $to_array['verifycode'],'sn' => $to_array['sn'],'sensorid'=> $to_array['sensorid']]);
+			$absen = Checkinout::create(['nip' => $to_array['Card'] ? $to_array['Card'] : "null_used_badge_". $to_array['badgenumber'],'checktime' => $to_array['checktime'],'checktype' => $to_array['checktype'],'verifycode'=> $to_array['verifycode'],'sn' => $to_array['sn'],'sensorid'=> $to_array['sensorid']]);
 
-			// return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil mengirim data ke server'] );
+			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil data di terima dan di simpan ke server'] );
 		}else{
 			$absen = Checkinout::create([
-				'userid' => $to_array['checkinout']['userid'],
-				'nip' => $to_array['Card'],'checktime' => $to_array['checktime'],
+				'nip' => $to_array['Card'] ? $to_array['Card'] : "null_used_badge_". $to_array['badgenumber'],
+				'checktime' => $to_array['checktime'],
 				'checktype' => $to_array['checktype'],
 				'verifycode'=> $to_array['verifycode'],
 				'sn' => $to_array['sn'],'sensorid'=> $to_array['sensorid']
 			]);
 
-			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil mengirim data ke server'] );
+			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil data diterima dan di simpan ke server'] );
 		}
 	}
 }
