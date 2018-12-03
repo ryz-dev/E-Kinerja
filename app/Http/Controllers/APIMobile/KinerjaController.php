@@ -16,7 +16,7 @@ class KinerjaController extends ApiController
 {
     public function inputKinerja(Request $request){
         $input = $request->input();
-        $input['userid'] = auth('api')->user()->userid;
+        $input['nip'] = auth('api')->user()->nip;
         if (in_array($input['jenis_kinerja'],['hadir','sakit'])){
             $input['tgl_mulai'] = date('Y-m-d');
             $input['tgl_selesai'] = date('Y-m-d');
@@ -35,8 +35,8 @@ class KinerjaController extends ApiController
                 ]);
             }
         }
-//        $cek_kinerja = Kinerja::where('userid',$input['userid'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->whereIn('approve',[0,2])->first();
-        $cek_kinerja = Kinerja::where('userid',$input['userid'])->where(function ($query)use($input){
+//        $cek_kinerja = Kinerja::where('nip',$input['nip'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->whereIn('approve',[0,2])->first();
+        $cek_kinerja = Kinerja::where('nip',$input['nip'])->where(function ($query)use($input){
             $query->where(function ($query) use ($input){
                 $query->where('tgl_mulai','<=',$input['tgl_mulai']);
                 $query->where('tgl_selesai','>=',$input['tgl_mulai']);
@@ -51,7 +51,7 @@ class KinerjaController extends ApiController
             if ($input['jenis_kinerja'] == 'hadir'){
                 $cek_hari_kerja = HariKerja::whereDate('tanggal',date('Y-m-d'))->first();
                 if ($cek_hari_kerja){
-                    $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('userid',$input['userid'])->first();
+                    $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('nip',$input['nip'])->first();
                     if ($cek_hadir_kerja){
                         $kinerja = Kinerja::create($input);
                         return $this->ApiSpecResponses($kinerja);
@@ -93,7 +93,7 @@ class KinerjaController extends ApiController
         $persen_etika = FormulaVariable::where('variable','etika')->first()->persentase_nilai;
 
         $pegawai = auth('api')->user();
-        $userid = $pegawai->userid;
+        $nip = $pegawai->nip;
 
         $pegawai->load('jabatan.eselon');
         $jumlah_tunjangan = $pegawai->jabatan->eselon->tunjangan;
@@ -110,9 +110,9 @@ class KinerjaController extends ApiController
         $data_etika_kinerja = [];
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
-                $knj = Kinerja::where('userid', $userid)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal);
-                $etk = Etika::where('userid', $userid)->where('tanggal', '=', $hk->tanggal)->first();
-                $abs = Checkinout::where('userid', $userid)->whereDate('checktime', $hk->tanggal)->get();
+                $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal);
+                $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
+                $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->get();
                 if ($abs->count() > 0) {
                     $in = false;
                     $out = false;
@@ -208,20 +208,20 @@ class KinerjaController extends ApiController
 
         /* Data kinerja */
         $pegawai = auth('api')->user();
-        $kinerja = Kinerja::where('userid',$pegawai->userid)
+        $kinerja = Kinerja::where('nip',$pegawai->nip)
         ->whereDate('tgl_mulai','<=',$tgl)
         ->whereDate('tgl_selesai','>=',$tgl)
             ->terbaru()
             ->first();
 
         /* Data etika */
-        $etika = Etika::where("userid",$pegawai->userid)
+        $etika = Etika::where("nip",$pegawai->nip)
         ->select('persentase', 'keterangan')
         ->where("tanggal",$tgl)
         ->first();
 
         /* Data checkinout */
-        $checkinout = Checkinout::where("userid",$pegawai->userid)
+        $checkinout = Checkinout::where("nip",$pegawai->nip)
         ->select('checktime')
         ->whereDate("checktime",$tgl)
         ->get();

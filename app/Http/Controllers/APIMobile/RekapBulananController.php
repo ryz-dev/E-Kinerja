@@ -114,20 +114,20 @@ class RekapBulananController extends ApiController
 
         /* Data kinerja */
         $pegawai = Pegawai::where('nip',$nip)->first();
-        $kinerja = Kinerja::where('userid',$pegawai->userid)
+        $kinerja = Kinerja::where('nip',$pegawai->nip)
         ->whereDate('tgl_mulai','<=',$tgl)
         ->whereDate('tgl_selesai','>=',$tgl)
             ->terbaru()
             ->first();
 
         /* Data etika */
-        $etika = Etika::where("userid",$pegawai->userid)
+        $etika = Etika::where("nip",$pegawai->nip)
         ->select('persentase', 'keterangan')
         ->where("tanggal",$tgl)
         ->first();
 
         /* Data checkinout */
-        $checkinout = Checkinout::where("userid",$pegawai->userid)
+        $checkinout = Checkinout::where("nip",$pegawai->nip)
         ->select('checktime')
         ->whereDate("checktime",$tgl)
         ->get();
