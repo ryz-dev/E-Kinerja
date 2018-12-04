@@ -27,13 +27,14 @@ class RekapBulananController extends ApiController
             if ($skpd){
                 $bawahan = $bawahan->where('id_skpd',$skpd);
             }
-            
-            if ($search) {
-                $bawahan->where(function($query) use ($search){
-                    $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
-                });
-            }
-    
+            $bawahan = $bawahan->get();
+        }
+        
+        if ($search) {
+            $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip','<>',$user->nip)->where('id_jabatan','>',$user->id_jabatan);
+            $bawahan->where(function($query) use ($search){
+                $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+            });
             $bawahan = $bawahan->get();
         }
 
