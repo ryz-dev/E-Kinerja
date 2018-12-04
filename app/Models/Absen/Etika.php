@@ -15,7 +15,7 @@ class Etika extends Model
     protected $casts = ['persentase' => 'integer'];
 
     public function pegawai(){
-        return $this->belongsTo(Pegawai::class,'userid','userid');
+        return $this->belongsTo(Pegawai::class,'nip','nip');
     }
 
 }
