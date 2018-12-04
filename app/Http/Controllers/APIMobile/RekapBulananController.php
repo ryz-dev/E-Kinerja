@@ -36,6 +36,7 @@ class RekapBulananController extends ApiController
         }
 
         $bawahan = $bawahan->get();
+        
         $data = [];
         foreach($bawahan as $b) {
             $data[] = [

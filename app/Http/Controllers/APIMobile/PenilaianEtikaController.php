@@ -52,7 +52,8 @@ class PenilaianEtikaController extends Controller
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
             'nama' => $pegawai->nama,
-            'etika' => $etika,   
+            'persentase' => $etika ? $etika->persentase : 0,   
+            'keterangan' => $etika ? $etika->keterangan : "",   
         ];
 
         return $this->ApiSpecResponses($data);
