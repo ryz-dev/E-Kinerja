@@ -9,10 +9,10 @@ class InputKinerjaController extends Controller
 {
     public function inputKinerja(Request $request){
         $user = Auth::user();
-        $role = $user->role()->first()->nama_role;
+        $role = $user->role()->first()->id;
         $permission = $user->role()->first()->permissions;
-        if ($role == 'Bupati' || $role == 'Wakil Bupati'){
-            if (!key_exists('input-kinerja',$permission))
+        if ($role == 2 || $role == 3){
+            if ($permission['input-kinerja'] == false)
             return redirect()->route('monitoring.absen.index');
         }
         return view('layouts.users.input-kinerja.index');
