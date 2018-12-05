@@ -84,6 +84,8 @@ class Handler extends ExceptionHandler
             $response['diagnostic'] = [
                 'message' => $mesaage,
                 'status' => $status,
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
 
             ];
             return response()->json($response,$status);
