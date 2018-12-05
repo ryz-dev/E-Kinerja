@@ -92,7 +92,7 @@ Route::group(['prefix' => '/v1', 'namespace' => 'API'], function () {
     });
 
     Route::group(['prefix' => 'checklock'], function () {
-        Route::get('', 'ReceivedController@receiver')->name('api_checklock');
+        Route::post('', 'ReceivedController@receiver')->name('api_checklock');
     });
 
 });

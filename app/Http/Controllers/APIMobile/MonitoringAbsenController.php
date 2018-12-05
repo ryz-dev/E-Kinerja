@@ -23,16 +23,16 @@ class MonitoringAbsenController extends Controller
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
 
-        $summary = Kinerja::select(\DB::raw('distinct(userid),jenis_kinerja'))
+        $summary = Kinerja::select(\DB::raw('distinct(nip),jenis_kinerja'))
                             ->whereDate('tgl_mulai','<=',$date)
                             ->whereDate('tgl_selesai','>=',$date)
                             ->where('approve',2);
 
         $pegawai = Pegawai::with(['checkinout' => function($query) use ($date){
-                                    $query->select('userid','checktime','checktype')->whereDate('checktime','=',$date);
+                                    $query->select('nip','checktime','checktype')->whereDate('checktime','=',$date);
                                 },
                                     'kinerja' => function($query) use ($date){
-                                    $query->select('userid','jenis_kinerja')->where('approve',2)
+                                    $query->select('nip','jenis_kinerja')->where('approve',2)
                                     ->whereDate('tgl_mulai','<=',$date)
                                     ->whereDate('tgl_selesai','>=',$date);
                                 }

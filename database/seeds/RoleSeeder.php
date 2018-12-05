@@ -13,6 +13,7 @@ class RoleSeeder extends Seeder
     {
         $role_seed = [
             [
+                'id' => 1,
                 'nama_role' => 'Super Admin',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
@@ -21,6 +22,7 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
+                'id' => 2,
                 'nama_role' => 'Bupati',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
@@ -34,6 +36,7 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
+                'id' => 3,
                 'nama_role' => 'Wakil Bupati',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
@@ -47,7 +50,8 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
-                'nama_role' => 'Sekertaris Daerah',
+                'id' => 4,
+                'nama_role' => 'Sekretaris Daerah',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'monitoring-absen'=> true,
@@ -59,6 +63,7 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
+                'id' => 5,
                 'nama_role' => 'Kepala Dinas',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
@@ -71,6 +76,7 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
+                'id' => 6,
                 'nama_role' => 'Atasan',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
@@ -82,7 +88,8 @@ class RoleSeeder extends Seeder
                     'rekap-bulanan' => true
                 ])
             ],[
-                'nama_role' => 'Staff',
+                'id' => 7,
+                'nama_role' => 'Staf',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'input-kinerja' => true,

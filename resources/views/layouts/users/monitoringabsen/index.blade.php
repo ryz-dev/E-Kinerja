@@ -140,10 +140,6 @@
 </div>
 @push('script')
     <script>
-        // $(document).ready(function(){
-        //     getPage('{{date('Y-m-d')}}',0);
-        // });
-        
         $(document).on('click','.date-nav', function(){
             var date = $(this).attr('data-date');
             var skpd = $('#skpd').val();

@@ -17,7 +17,7 @@ class Kinerja extends Model
     }
 
     public function jabatan(){
-        return $this->hasManyThrough('App\Models\MasterData\Jabatan','App\Models\MasterData\Pegawai','userid','id','nip','id_jabatan');
+        return $this->hasManyThrough('App\Models\MasterData\Jabatan','App\Models\MasterData\Pegawai','nip','id','nip','id_jabatan');
     }
 
     public function scopeTerbaru($query){

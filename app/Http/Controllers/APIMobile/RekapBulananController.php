@@ -27,15 +27,18 @@ class RekapBulananController extends ApiController
             if ($skpd){
                 $bawahan = $bawahan->where('id_skpd',$skpd);
             }
+            $bawahan = $bawahan->get();
         }
-
+        
         if ($search) {
+            $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip','<>',$user->nip)->where('id_jabatan','>',$user->id_jabatan);
             $bawahan->where(function($query) use ($search){
                 $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
             });
+            $bawahan = $bawahan->get();
         }
 
-        $bawahan = $bawahan->get();
+        
         $data = [];
         foreach($bawahan as $b) {
             $data[] = [
@@ -114,20 +117,20 @@ class RekapBulananController extends ApiController
 
         /* Data kinerja */
         $pegawai = Pegawai::where('nip',$nip)->first();
-        $kinerja = Kinerja::where('userid',$pegawai->userid)
+        $kinerja = Kinerja::where('nip',$pegawai->nip)
         ->whereDate('tgl_mulai','<=',$tgl)
         ->whereDate('tgl_selesai','>=',$tgl)
             ->terbaru()
             ->first();
 
         /* Data etika */
-        $etika = Etika::where("userid",$pegawai->userid)
+        $etika = Etika::where("nip",$pegawai->nip)
         ->select('persentase', 'keterangan')
         ->where("tanggal",$tgl)
         ->first();
 
         /* Data checkinout */
-        $checkinout = Checkinout::where("userid",$pegawai->userid)
+        $checkinout = Checkinout::where("nip",$pegawai->nip)
         ->select('checktime')
         ->whereDate("checktime",$tgl)
         ->get();

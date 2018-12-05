@@ -56,6 +56,7 @@ class LoginPassportController extends ATC {
             } else if (!Hash::check($password, $user->password)) {
                 return response()->json($format->formatResponseWithPages("Password tidak sesuai", [], $format->STAT_NOT_FOUND()), $format->STAT_NOT_FOUND());
             }
+            $user['nama_agama'] = $user->agama->agama;
             $user = $user->toArray();
             unset($user['remember_token'],$user['detail_uri'],$user['delete_uri'],$user['edit_uri'],$user['update_uri']);
 

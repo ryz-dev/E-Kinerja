@@ -60,6 +60,7 @@ class Handler extends ExceptionHandler
         if (str_contains($request->getRequestUri(),'api/v1')){
             $status = 500;
             $mesaage = $e->getMessage();
+
             if ($e instanceof AuthenticationException){
                 $status = 401;
             }
@@ -86,7 +87,6 @@ class Handler extends ExceptionHandler
                 'status' => $status,
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
-
             ];
             return response()->json($response,$status);
         }
