@@ -13,7 +13,7 @@ class MonitoringAbsenController extends Controller
         $special_user = [2,3,4];
 
         $user = \Auth::user();
-        $skpd = in_array($user->role()->first()->nama_role,$special_user)?Skpd::all():Skpd::where('id',$user->id_skpd);
+        $skpd = in_array($user->role()->first()->id,$special_user)?Skpd::all():Skpd::where('id',$user->id_skpd);
         $skpd = $skpd->pluck('nama_skpd','id');
 
         if (in_array($user->role()->first()->id,$special_user)) {
