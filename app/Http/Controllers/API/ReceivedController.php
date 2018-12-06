@@ -22,7 +22,7 @@ class ReceivedController extends ApiController
 
 			$absen = Checkinout::create(['nip' => $to_array['Card'] ? $to_array['Card'] : "null_used_badge_". $to_array['badgenumber'],'checktime' => $to_array['checktime'],'checktype' => $to_array['checktype'],'verifycode'=> $to_array['verifycode'],'sn' => $to_array['sn'],'sensorid'=> $to_array['sensorid']]);
 
-			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil data di terima dan di simpan ke server'] );
+			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil data di terima dan di simpan ke server', 'data' => $peg] );
 		}else{
 			$absen = Checkinout::create([
 				'nip' => $to_array['Card'] ? $to_array['Card'] : "null_used_badge_". $to_array['badgenumber'],
@@ -32,7 +32,7 @@ class ReceivedController extends ApiController
 				'sn' => $to_array['sn'],'sensorid'=> $to_array['sensorid']
 			]);
 
-			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil data diterima dan di simpan ke server'] );
+			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil data diterima dan di simpan ke server', 'data' => $peg] );
 		}
 	}
 }
