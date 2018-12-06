@@ -13,7 +13,8 @@ class ReceivedController extends ApiController
 	public function receiver(Request $req){
 		$js = response()->json($req->all());
 		$to_array = json_decode($js, true);
-		dd($to_array);
+		var_dump($to_array);
+		die();
 		$pegawai = Pegawai::where('nip', $to_array['Card'])->orWhere('nip', "null_used_badge_". $to_array['badgenumber'])->first();
 		if(empty($pegawai)){
 			$peg = Pegawai::create([
