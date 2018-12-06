@@ -15,8 +15,6 @@ class ReceivedController extends ApiController
 		$js = $req->all();
 		// $to_array = json_decode($js, true);
 		// var_dump($to_array);
-		var_dump($js['checkinout']['checktime']);
-		die();
 		$pegawai = Pegawai::where('nip', $js['Card'])->orWhere('nip', "null_used_badge_". $js['badgenumber'])->first();
 		if(empty($pegawai)){
 			$peg = Pegawai::create([
