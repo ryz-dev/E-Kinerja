@@ -31,6 +31,7 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
       return redirect()->route('pegawai.index');
     });
     Route::group(['prefix' => 'pegawai'],function (){
+        Route::post('import','PegawaiController@import')->name('pegawai.import');
         Route::get('','PegawaiController@index')->name('pegawai.index');
         Route::get('add','PegawaiController@add')->name('pegawai.add');
         Route::get('{id}','PegawaiController@show')->name('pegawai.detail');
