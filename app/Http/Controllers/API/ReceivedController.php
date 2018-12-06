@@ -32,7 +32,7 @@ class ReceivedController extends ApiController
 				'sn' => $to_array['sn'],'sensorid'=> $to_array['sensorid']
 			]);
 
-			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil data diterima dan di simpan ke server', 'data' => $peg] );
+			return response()->json( ['status' => 'Sukses', 'message' => 'Berhasil data diterima dan di simpan ke server', 'data' => $pegawai] );
 		}
 	}
 }
