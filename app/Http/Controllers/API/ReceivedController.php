@@ -13,7 +13,7 @@ class ReceivedController extends ApiController
 	public function receiver(Request $req){
 		// $js = response()->json($req->all());
 		$js = $req->all();
-		$to_array = json_decode($js, true);
+		// $to_array = json_decode($js, true);
 		// var_dump($to_array);
 		var_dump($js['data']['Card']);
 		die();
