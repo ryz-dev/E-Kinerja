@@ -14,6 +14,7 @@ class ReceivedController extends ApiController
 		$js = response()->json($req->all());
 		$to_array = json_decode($js, true);
 		var_dump($to_array);
+		var_dump($js);
 		die();
 		$pegawai = Pegawai::where('nip', $to_array['Card'])->orWhere('nip', "null_used_badge_". $to_array['badgenumber'])->first();
 		if(empty($pegawai)){
