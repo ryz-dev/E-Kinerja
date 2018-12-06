@@ -15,10 +15,7 @@ class ReceivedController extends ApiController
 		$js = $req->all();
 		// $to_array = json_decode($js, true);
 		// var_dump($to_array);
-		$tz = new \DateTimeZone('Asia/Makassar');
-		$date = new \DateTIme($js['checkinout']['checktime']);
-		$date->setTimezone($tz);
-		var_dump($date);
+		var_dump($js['checkinout']['checktime']);
 		die();
 		$pegawai = Pegawai::where('nip', $to_array['Card'])->orWhere('nip', "null_used_badge_". $to_array['badgenumber'])->first();
 		if(empty($pegawai)){
