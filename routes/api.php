@@ -45,6 +45,7 @@ Route::group(['prefix' => 'v1'], function () {
         });
         Route::group(['prefix' => 'kinerja','middleware' => 'can:tunjangan-kinerja'], function () {
             Route::post('/reply', 'KinerjaController@inputKinerja')->name('api.mobile.input-kinerja.post');
+            Route::get('/cek', 'KinerjaController@cekKinerja')->name('api.mobile.cek-kinerja.get');
             Route::get('/{tgl?}', 'KinerjaController@detailKinerja')->name('api.mobile.detail-kinerja.get');
             Route::get('/{bulan?}/{tahun?}', 'KinerjaController@tunjanganKinerja')->name('api.mobile.tunjangan-kinerja.get');
         });
