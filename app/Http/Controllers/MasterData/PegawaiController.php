@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\MasterData;
 
+use App\Imports\PegawaiImport;
 use App\Models\MasterData\Agama;
 use App\Models\MasterData\Jabatan;
 use App\Models\MasterData\Pegawai;
 use App\Models\MasterData\Skpd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PegawaiController extends MasterDataController
 {
@@ -56,6 +58,7 @@ class PegawaiController extends MasterDataController
         }
         /*================*/
         $input['uuid'] = (string)Str::uuid();
+        $input['password'] = bcrypt('secret');
         $pegawai = Pegawai::create($input);
         if ($json) {
             return response()->json($pegawai);
@@ -114,6 +117,11 @@ class PegawaiController extends MasterDataController
         if ($request->hasFile('foto')) {
             return str_replace('public/','',$request->file('foto')->store('public/upload'));
         }
+    }
+
+    public function import(Request $request){
+        Excel::import(new PegawaiImport,$request->file('import'));
+        return redirect()->back();
     }
 
 }

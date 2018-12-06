@@ -20,7 +20,7 @@ class Pegawai extends Authenticatable
     protected $primaryKey = 'nip';
     public $incrementing = false;
     protected $fillable = [
-        'nip','nama','tanggal_lahir','id_agama','id_jabatan','jns_kel','tempat_lahir','foto','uuid','id_skpd'
+        'nip','nama','tanggal_lahir','id_agama','id_jabatan','jns_kel','tempat_lahir','foto','uuid','id_skpd','password','userid'
     ];
     protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri'];
     protected $hidden = ['password'];
