@@ -11,10 +11,11 @@ use Illuminate\Support\Str;
 class ReceivedController extends ApiController
 {
 	public function receiver(Request $req){
-		$js = response()->json($req->all());
+		// $js = response()->json($req->all());
+		$js = $req->all();
 		$to_array = json_decode($js, true);
-		var_dump($to_array);
-		var_dump($js);
+		// var_dump($to_array);
+		var_dump($js['data']['Card']);
 		die();
 		$pegawai = Pegawai::where('nip', $to_array['Card'])->orWhere('nip', "null_used_badge_". $to_array['badgenumber'])->first();
 		if(empty($pegawai)){
