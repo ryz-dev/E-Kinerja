@@ -65,11 +65,22 @@ class PenilaianEtikaController extends Controller
             'persentase' => 'required',
             'keterangan' => 'required'
         ]);
-        $data = $request->input();
-        $data['tanggal'] = \Carbon\Carbon::now();
-        $pegawai = Pegawai::find($data['nip']);
+        $e = Etika::where('nip',$request->nip)
+            ->whereDate('tanggal','=',date('Y-m-d'))
+            ->first();
 
-        return $this->ApiSpecResponses($pegawai->etika()->create($data));
-
+        if (!$e) {
+            $data = $request->input();
+            $data['tanggal'] = \Carbon\Carbon::now();
+            $pegawai = Pegawai::find($data['nip']);
+            return $this->ApiSpecResponses($pegawai->etika()->create($data));
+        } else {
+            return response()->json([
+                'diagnostic' => [
+                    'code' => '403',
+                    'message' => 'sudah ada etika yg diinput'
+                ]
+            ]);
+        }
     }
 }

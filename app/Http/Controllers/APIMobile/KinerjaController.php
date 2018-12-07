@@ -59,7 +59,7 @@ class KinerjaController extends ApiController
                         return response()->json([
                                 'diagnostic' => [
                                     'code' => '403',
-                                    'message' => 'gagal menambah kinerja, tidak tercata hadir pada absen'
+                                    'message' => 'gagal menambah kinerja, tidak tercatat hadir pada absen'
                                 ]
                             ]);
                     }
@@ -242,6 +242,29 @@ class KinerjaController extends ApiController
         ];
 
         return $this->ApiSpecResponses($result);
+    }
+
+    public function cekKinerja(){
+        $pegawai = auth('api')->user();
+        $nip = $pegawai->nip;
+        $cek_kinerja = Kinerja::where('nip',$nip)->where(function ($query){
+            $query->where(function ($query) {
+                $query->where('tgl_mulai','<=',date('Y-m-d'));
+                $query->where('tgl_selesai','>=',date('Y-m-d'));
+            });
+            $query->orWhere(function ($query){
+                $query->where('tgl_mulai','<=',date('Y-m-d'));
+                $query->where('tgl_selesai','>=',date('Y-m-d'));
+            });
+        })->whereIn('approve',[0,2])->first(); 
+
+        $true = true;
+        $false = false;
+        if ($cek_kinerja) {
+            return $this->ApiSpecResponses($true);
+        } else{
+            return $this->ApiSpecResponses($false);
+        }
     }
 
     private function toDecimal($number){
