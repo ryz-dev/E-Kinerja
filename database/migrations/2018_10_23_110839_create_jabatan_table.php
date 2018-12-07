@@ -17,7 +17,8 @@ class CreateJabatanTable extends Migration
             $table->increments('id');
             $table->uuid('uuid');
             $table->string('jabatan');
-            $table->integer('id_eselon')->unsigned()->index();
+//            $table->integer('id_eselon')->unsigned()->index();
+            $table->integer('id_golongan')->unsigned()->index();
             $table->integer('id_atasan')->nullable()->unsigned();
             $table->text('keterangan')->nullable();
             $table->timestamps();

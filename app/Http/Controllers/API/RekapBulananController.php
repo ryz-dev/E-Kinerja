@@ -8,6 +8,7 @@ use App\Models\MasterData\Pegawai;
 use App\Models\Absen\Kinerja;
 use App\Models\Absen\Etika;
 use App\Models\Absen\Checkinout;
+use App\User;
 use Illuminate\Http\Request;
 
 class RekapBulananController extends ApiController

@@ -21,13 +21,13 @@ class CreateEselonTable extends Migration
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });
-        Schema::table('jabatan',function (Blueprint $table){
-            $table->foreign('id_eselon')
-                ->references('id')
-                ->on('eselon')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-        });
+//        Schema::table('jabatan',function (Blueprint $table){
+//            $table->foreign('id_eselon')
+//                ->references('id')
+//                ->on('eselon')
+//                ->onUpdate('cascade')
+//                ->onDelete('cascade');
+//        });
     }
 
     /**
@@ -37,9 +37,9 @@ class CreateEselonTable extends Migration
      */
     public function down()
     {
-        Schema::table('jabatan',function (Blueprint $table){
-            $table->dropForeign('jabatan_id_eselon_foreign');
-        });
+//        Schema::table('jabatan',function (Blueprint $table){
+//            $table->dropForeign('jabatan_id_eselon_foreign');
+//        });
         Schema::dropIfExists('eselon');
     }
 }

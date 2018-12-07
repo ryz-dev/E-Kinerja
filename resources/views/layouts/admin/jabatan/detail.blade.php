@@ -11,8 +11,8 @@
                             <input id="jabatan" type="text" class="form-control" name="jabatan" placeholder="Jabatan" value="{{$jabatan->jabatan}}" readonly="">
                         </div>
                         <div class="form-group">
-                            <label for="eselon">Kelas Jabatan</label>
-                            <input id="eselon" type="text" class="form-control" name="eselon" placeholder="Kelas Jabatan" value="{{$jabatan->eselon->eselon}} (Rp.{{$jabatan->eselon->tunjangan_rp}})" readonly="">
+                            <label for="golongan">Golongan Jabatan</label>
+                            <input id="golongan" type="text" class="form-control" name="golongan" placeholder="Golongan Jabatan" value="{{$jabatan->golongan->golongan}} (Rp.{{$jabatan->golongan->tunjangan_rp}})" readonly="">
                         </div>
                         <div class="form-group">
                             <label for="atasan">Atasan</label>

@@ -49,6 +49,15 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
         Route::post('{id}','EselonController@update')->name('eselon.update');
         Route::post('delete/{id}','EselonController@delete')->name('eselon.delete');
     });
+    Route::group(['prefix' => 'golongan'],function (){
+        Route::get('','GolonganController@index')->name('golongan.index');
+        Route::get('add','GolonganController@add')->name('golongan.add');
+        Route::get('{id}','GolonganController@show')->name('golongan.detail');
+        Route::get('edit/{id}','GolonganController@edit')->name('golongan.edit');
+        Route::post('','GolonganController@store')->name('golongan.store');
+        Route::post('{id}','GolonganController@update')->name('golongan.update');
+        Route::post('delete/{id}','GolonganController@delete')->name('golongan.delete');
+    });
     Route::group(['prefix' => 'hari-kerja'],function (){
         Route::get('','HariKerjaController@index')->name('hari_kerja');
         Route::get('add','HariKerjaController@add')->name('hari_kerja_add');
@@ -133,6 +142,13 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
             Route::post('store','EselonController@storeEselon')->name('api.web.master-data.eselon.store');
             Route::post('{id}','EselonController@updateEselon')->name('api.web.master-data.eselon.update');
             Route::post('delete/{id}','EselonController@deleteEselon')->name('api.web.master-data.eselon.delete');
+        });
+        Route::group(['prefix' => 'golongan'],function (){
+            Route::get('','GolonganController@listGolongan')->name('api.web.master-data.golongan');
+            Route::get('get-pagination','GolonganController@getpage')->name('api.web.master-data.golongan.page');
+            Route::post('store','GolonganController@storeGolongan')->name('api.web.master-data.golongan.store');
+            Route::post('{id}','GolonganController@updateGolongan')->name('api.web.master-data.golongan.update');
+            Route::post('delete/{id}','GolonganController@deleteGolongan')->name('api.web.master-data.golongan.delete');
         });
         Route::group(['prefix' => 'skpd'],function (){
             Route::get('','SkpdController@listSkpd')->name('api.web.master-data.skpd');
