@@ -177,6 +177,11 @@ class LoginPassportController extends ATC {
     }
     
     public function getChangePassword(Request $r){
+        $r->validate([
+            'old_password' => 'required',
+            'new_password' => 'required'
+        ]);
+
         $user = auth('api')->user();
         if (!Hash::check($r->old_password, $user->password)) {
             return response()->json([
@@ -197,6 +202,4 @@ class LoginPassportController extends ATC {
             ]);
         }
     }
-    
-    
 }
