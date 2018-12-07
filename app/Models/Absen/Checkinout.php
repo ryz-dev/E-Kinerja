@@ -11,10 +11,14 @@ class Checkinout extends Model
     protected $fillable = [
         'nip', 'checktime', 'checktype', 'verifycode', 'sensorid', 'workcode', 'sn', 'userextmft'
     ];
-    protected $appends = ['absen_time','detail_uri','delete_uri','edit_uri','update_uri'];
+    protected $appends = ['absen_time','detail_uri','delete_uri','edit_uri','update_uri', 'pegawai'];
 
     public function pegawai(){
-        return $this->belongsTo('App\Models\MasterData\Pegawai','userid','userid');
+        return $this->belongsTo('App\Models\MasterData\Pegawai','nip','nip');
+    }
+
+    public function getPegawaiAttribute(){
+        return $this->pegawai()->pluck('nama');
     }
 
     public function getAbsenTimeAttribute(){

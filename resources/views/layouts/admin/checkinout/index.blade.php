@@ -4,7 +4,7 @@
     <div class="nav-top-container">
         <div class="group-search">
             <span><i class="fas fa-search"></i></span>
-            <input id="search" type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
+            <input id="search" type="text" class="form-control" placeholder="NIP Pegawai">
         </div>
         @include('layouts.admin.partial.part.logout')
     </div>
@@ -24,6 +24,7 @@
                         <th scope="col">Sensor ID</th>
                         <th scope="col">Work Code</th>
                         <th scope="col">SN</th>
+                        <th scope="ccol">Nama Pegawai</th>
                         <th scope="col">Aksi</th>
                     </tr>
                     </thead>
@@ -85,6 +86,7 @@
                       row += "<td>"+(val.sensorid ? val.sensorid : '')+"</td>";
                       row += "<td>"+(val.workcode ? val.workcode : '')+"</td>";
                       row += "<td>"+(val.sn ? val.sn : '')+"</td>";
+                      row += "<td>"+(val.pegawai ? val.pegawai : '')+"</td>";
                       row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='"+val.edit_uri+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='"+val.delete_uri+"' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
                       row += "</tr>";
                       return row;

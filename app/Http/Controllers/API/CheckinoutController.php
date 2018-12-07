@@ -24,6 +24,7 @@ class CheckinoutController extends ApiController
                 $checkinout = $checkinout->where('nip', 'like', '%' . $request->input('q') . '%');
             }
             $checkinout = $checkinout->paginate($this->show_limit);
+            
             return $this->ApiSpecResponses($checkinout);
         } catch (Exception $e) {
             return response()->json([
