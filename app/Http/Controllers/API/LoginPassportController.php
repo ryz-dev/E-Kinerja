@@ -178,8 +178,8 @@ class LoginPassportController extends ATC {
     
     public function getChangePassword(Request $r){
         $r->validate([
-            'old_password' => 'required',
-            'new_password' => 'required'
+            'old_password' => 'required|string',
+            'new_password' => 'required|string'
         ]);
 
         $user = auth('api')->user();

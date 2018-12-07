@@ -20,24 +20,24 @@ class RekapBulananController extends ApiController
         $search = $request->has('search')? $request->input('search'):'';
 
         if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
-            $user->load('jabatan.pegawai_bawahan');
-            $bawahan = $user->jabatan->pegawai_bawahan;
+            $bawahan = $user->load(['jabatan.pegawai_bawahan' => function ($query)use($search){
+                if ($search){
+                    $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+                }
+            }])->jabatan->pegawai_bawahan;
         } else {
             $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip','<>',$user->nip)->where('id_jabatan','>',$user->id_jabatan);
             if ($skpd){
                 $bawahan = $bawahan->where('id_skpd',$skpd);
             }
-            $bawahan = $bawahan->get();
-        }
-        
-        if ($search) {
-            $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip','<>',$user->nip)->where('id_jabatan','>',$user->id_jabatan);
-            $bawahan->where(function($query) use ($search){
-                $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
-            });
-            $bawahan = $bawahan->get();
-        }
+            if ($search) {
+                $bawahan->where(function($query) use ($search){
+                    $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+                });
+            }
 
+            $bawahan = $bawahan->get();
+        }
         
         $data = [];
         foreach($bawahan as $b) {
