@@ -22,6 +22,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/status', 'Api\LoginPassportController@getStatus');
         Route::get('/refresh', 'Api\LoginPassportController@getRefresh');
         Route::get('/logout', 'Api\LoginPassportController@getLogout');
+        Route::post('/change-password', 'Api\LoginPassportController@getChangePassword');
     });
     Route::group(['middleware' => 'auth:api', 'namespace' => 'APIMobile'], function () {
         Route::group(['prefix' => 'monitoring-absen', 'middleware' => 'can:monitoring-absen'], function () {
