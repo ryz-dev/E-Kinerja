@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Absen;
+
+namespace App\Http\Controllers\MasterData;
 
 use App\Models\Absen\Checkinout;
 use App\Http\Controllers\Controller;
@@ -8,7 +9,7 @@ use App\Http\Requests\CheckinoutRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class CheckinoutController extends Controller
+class CheckinoutController extends MasterDataController
 {
     public function index(Request $request){
         $all = Checkinout::paginate(10);
@@ -47,11 +48,7 @@ class CheckinoutController extends Controller
 
     public function destroy($id){
         $checkinout = Checkinout::findOrFail($id);
-        if ($checkinout->delete()) {
-           return response()->json(['status' => 'success']);
-        }else{
-           return response()->json(['status' => 'error']);
-        }
-
+        $checkinout->delete();
+        return view('layouts.admin.checkinout.index')->with('success', 'Data Berhasil di Di hapus');
     }
 }

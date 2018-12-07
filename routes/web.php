@@ -108,6 +108,17 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
         Route::post('{id}','SkpdController@update')->name('skpd.update');
         Route::post('delete/{id}','SkpdController@delete')->name('skpd.delete');
     });
+
+    Route::group(['prefix' => 'checkinout'], function(){
+        Route::get('','CheckinoutController@index')->name('checkinout.index');
+        Route::get('add','CheckinoutController@add')->name('checkinout.create');
+        Route::get('{id}','CheckinoutController@show')->name('checkinout.show');
+        Route::get('edit/{id}','CheckinoutController@edit')->name('checkinout.edit');
+        Route::post('','CheckinoutController@store')->name('checkinout.store');
+        Route::post('{id}','CheckinoutController@update')->name('checkinout.update');
+        Route::post('delete/{id}','CheckinoutController@destroy')->name('api.checkinout.delete-absen');
+    });
+
 });
 
 //API-WEB
@@ -183,17 +194,18 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::post('','KinerjaController@inputKinerja')->name('api.web.input-kinerja.post');
         Route::get('{bulan?}/{tahun?}','KinerjaController@tunjanganKinerja')->name('api.web.tunjangan-kinerja.get');
     });
+
+    /* Absen Routing */
+    Route::group(['prefix' => 'absensi'],function (){
+      Route::get('test', 'CheckinoutController@list')->name('api.web.master-data.absen-list');
+      Route::get('get-pagination', 'CheckinoutController@getPage')->name('api.web.master-data.checkinout.page');
+    });
+
 });
 
 /*
   Route User
 */
-
-
-/* Absen Routing */
-Route::group(['prefix' => 'absensi','namespace' => 'Absen'],function (){
-  Route::resource('checkinout','CheckinoutController');
-});
 
 
 Auth::routes();

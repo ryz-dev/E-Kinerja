@@ -3,7 +3,7 @@
     <div class="main">
         <div class="main-content tab-content">
             <div class="container-fluid">
-            {!! Form::model($checkinout, ['method' => 'PUT', 'action' => ['Absen\CheckinoutController@update', $checkinout->id] ]) !!}
+            {!! Form::model($checkinout, ['route' => ['checkinout.update', $checkinout->id] ]) !!}
   
               @include('layouts.admin.checkinout._form', ['btnText' => 'Simpan Perubahan'])
 
