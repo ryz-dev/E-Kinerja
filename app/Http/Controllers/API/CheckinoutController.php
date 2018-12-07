@@ -31,4 +31,17 @@ class CheckinoutController extends ApiController
             ], 404);
         }
 	}
+
+	public function getPage(Request $request)
+    {
+        if ($request->has('q')) {
+            $data = Checkinout::where('nip', 'like', '%' . $request->input('q') . '%')->count();
+        } else {
+            $data = checkinout::count();
+        }
+        $data = ceil($data / $this->show_limit);
+        return response()->json([
+            'halaman' => $data
+        ]);
+    }
 }

@@ -26,7 +26,7 @@ class Checkinout extends Model
     }
 
     public function getDeleteUriAttribute(){
-        return route('api.checkinout.delete',['id' => $this->uuid]);
+        return route('api.checkinout.delete-absen',['id' => $this->id]);
     }
 
     public function getEditUriAttribute(){
@@ -34,6 +34,6 @@ class Checkinout extends Model
     }
 
     public function getUpdateuriAttribute(){
-        return route('checkinout.update',['id' => $this->uuid]);
+        return route('checkinout.update',['id' => $this->id]);
     }
 }

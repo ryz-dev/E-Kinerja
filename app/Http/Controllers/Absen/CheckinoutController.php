@@ -47,7 +47,7 @@ class CheckinoutController extends Controller
 
     public function destroy($id){
         $checkinout = Checkinout::findOrFail($id);
-        if ($checkinout->delete();) {
+        if ($checkinout->delete()) {
            return response()->json(['status' => 'success']);
         }else{
            return response()->json(['status' => 'error']);

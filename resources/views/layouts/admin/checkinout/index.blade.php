@@ -47,7 +47,7 @@
 
       var getPage = function (search) {
           $('#pagination').twbsPagination('destroy');
-          $.get('{{route('api.web.master-data.eselon.page')}}?q='+search)
+          $.get('{{route('api.web.master-data.checkinout.page')}}?q='+search)
               .then(function (res) {
                   if (res.halaman == 0){
                       $('#preload').hide()
@@ -73,7 +73,6 @@
               url: "{{ route('api.web.master-data.absen-list') }}?page="+page+'&q='+search,
               data: '',
               success: function(res) {
-                console.log(res.response);
                   var data = res.response.map(function (val) {
                     let date = moment(val.checktime);                    
                       var row = '';
@@ -101,43 +100,44 @@
       }
 
       $(document).on('click','.btn-delete',function (e) {
-        alert("ddd");
-        e.preventDefault();
-        var delete_uri = $(this).attr('delete-uri');
-        var search = $('#search').val();
-        swal({
-            title: 'Yakin Ingin Menghapus Kelas Jabatan?',
-            text: "Proses tidak dapat di kembalikan",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            confirmButtonText: 'Iya, Hapus Kelas Jabatan!',
-            cancelButtonText: 'Tidak'
-        }).then((result) => {
-            if (result.status==='success') {
-            $.post(delete_uri)
-                .then(function () {
-                    getPage(search);
-                    swal(
-                        'Terhapus!',
-                        'Data Kelas Jabatan Berhasil Dihapus.',
-                        'success'
-                    )
-                },function () {
-                    swal(
-                        'Gagal Menghapus Data',
-                        '',
-                        'error'
-                    )
+                    e.preventDefault();
+                    var delete_uri = $(this).attr('delete-uri');
+                    var search = $('#search').val();
+                    swal({
+                        title: 'Yakin Ingin Menghapus Absen?',
+                        text: "Proses tidak dapat di kembalikan",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Iya, Hapus Absen!',
+                        cancelButtonText: 'Tidak'
+                    }).then((result) => {
+                        if (result.value) {
+                        $.post(delete_uri)
+                            .then(function () {
+                                getPage(search);
+                                swal(
+                                    'Terhapus!',
+                                    'Data Absen Berhasil Dihapus.',
+                                    'success'
+                                )
+                            },function () {
+                                swal(
+                                    'Gagal Menghapus Data',
+                                    '',
+                                    'error'
+                                )
+                            })
+                        }
+                    })
                 })
-            }
-        })
-    })
-    $('#search').on('keyup',function (e) {
-        e.preventDefault();
-        var search = $(this).val();
-        getPage(search);
-    })
+                $('#search').on('keyup',function (e) {
+                    e.preventDefault();
+                    var search = $(this).val();
+                    getPage(search);
+                })
+
+      
   	</script>
   @endpush
 

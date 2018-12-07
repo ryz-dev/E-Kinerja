@@ -116,7 +116,7 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
         Route::get('edit/{id}','CheckinoutController@edit')->name('checkinout.edit');
         Route::post('','CheckinoutController@store')->name('checkinout.store');
         Route::post('{id}','CheckinoutController@update')->name('checkinout.update');
-        Route::post('delete/{id}','CheckinoutController@destroy')->name('api.checkinout.delete');
+        Route::post('delete/{id}','CheckinoutController@destroy')->name('api.checkinout.delete-absen');
     });
 
 });
@@ -198,6 +198,7 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     /* Absen Routing */
     Route::group(['prefix' => 'absensi'],function (){
       Route::get('test', 'CheckinoutController@list')->name('api.web.master-data.absen-list');
+      Route::get('get-pagination', 'CheckinoutController@getPage')->name('api.web.master-data.checkinout.page');
     });
 
 });
