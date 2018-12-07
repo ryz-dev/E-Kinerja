@@ -7,7 +7,8 @@
     <ul>
         <li><a href="{{route('pegawai.index')}}" class="{{str_contains(url()->current(),route('pegawai.index')) ? 'active' : ''}}">Pegawai</a></li>
         <li><a href="{{route('hari_kerja')}}" class="{{str_contains(url()->current(),route('hari_kerja')) ? 'active' : ''}}">Hari Kerja</a></li>
-        <li><a href="{{route('eselon.index')}}" class="{{str_contains(url()->current(),route('eselon.index')) ? 'active' : ''}}">Kelas Jabatan</a></li>
+{{--        <li><a href="{{route('eselon.index')}}" class="{{str_contains(url()->current(),route('eselon.index')) ? 'active' : ''}}">Kelas Jabatan</a></li>--}}
+        <li><a href="{{route('golongan.index')}}" class="{{str_contains(url()->current(),route('golongan.index')) ? 'active' : ''}}">Golongan Jabatan</a></li>
         <li><a href="{{route('jabatan.index')}}" class="{{str_contains(url()->current(),route('jabatan.index')) ? 'active' : ''}}">Jabatan</a></li>
         <li><a href="{{route('checkinout.index')}}" class="{{str_contains(url()->current(),route('checkinout.index')) ? 'active' : ''}}">Absensi</a></li>
         <li><a href="{{route('skpd.index')}}" class="{{str_contains(url()->current(),route('skpd.index')) ? 'active' : ''}}">SKPD</a></li>

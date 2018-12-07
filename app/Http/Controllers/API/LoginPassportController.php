@@ -155,26 +155,51 @@ class LoginPassportController extends ATC {
             // result Refresh TRUE
             return response()->json($format->formatResponseWithPages("Refresh Token berhasil", $resultLogin, $format->STAT_OK()), $format->STAT_OK());
         } catch (Exception $e) {
-
+            
             //return error message
             return response()->json($format->formatResponseWithPages("Internal Server Error", [], $format->INTERNAL_SERVER_ERROR()), $format->INTERNAL_SERVER_ERROR());
         }
     }
-
+    
     public function getStatus() {
         try {
-
+            
             // helper format JSON
             $format = new ApiResponseFormat();
-
+            
             // result Login TRUE
             return response()->json($format->formatResponseWithPages("Token Aktif", [], $format->STAT_OK()), $format->STAT_OK());
         } catch (Exception $e) {
-
+            
             //return error message
             return response()->json($format->formatResponseWithPages("Internal Server Error", [], $format->INTERNAL_SERVER_ERROR()), $format->INTERNAL_SERVER_ERROR());
         }
     }
+    
+    public function getChangePassword(Request $r){
+        $r->validate([
+            'old_password' => 'required|string',
+            'new_password' => 'required|string'
+        ]);
 
-
+        $user = auth('api')->user();
+        if (!Hash::check($r->old_password, $user->password)) {
+            return response()->json([
+                'diagnostic' => [
+                    'code' => '403',
+                    'message' => 'Kata Sandi Lama Tidak Sesuai'
+                ]
+            ]);
+        } else {
+            $user = auth('api')->user();
+            $user->password = bcrypt($r->new_password);
+            $user->save();
+            return response()->json([
+                'diagnostic' => [
+                    'code' => '200',
+                    'message' => 'Kata Sandi Berhasil Diubah'
+                ]
+            ]);
+        }
+    }
 }

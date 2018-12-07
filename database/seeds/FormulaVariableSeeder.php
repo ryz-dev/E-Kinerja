@@ -17,10 +17,10 @@ class FormulaVariableSeeder extends Seeder
                 'persentase_nilai' => 30
             ],[
                 'variable' => 'kinerja',
-                'persentase_nilai' => 40
+                'persentase_nilai' => 50
             ],[
                 'variable' => 'etika',
-                'persentase_nilai' => 30
+                'persentase_nilai' => 20
             ],
         ];
 

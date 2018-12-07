@@ -2,18 +2,19 @@
 
 namespace App\Models\MasterData;
 
+use App\Models\MasterData\Golongan;
 use Illuminate\Database\Eloquent\Model;
 
 class Jabatan extends Model
 {
     protected $table = 'jabatan';
     protected $fillable = [
-        'jabatan','id_eselon','id_atasan','keterangan','uuid'
+        'jabatan','id_golongan','id_atasan','keterangan','uuid'
     ];
     protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri'];
 
-    public function eselon(){
-        return $this->belongsTo(Eselon::class,'id_eselon');
+    public function golongan(){
+        return $this->belongsTo(Golongan::class,'id_golongan');
     }
 
     public function atasan(){

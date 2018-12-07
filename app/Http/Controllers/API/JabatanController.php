@@ -12,7 +12,7 @@ class JabatanController extends ApiController
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         try {
-            $jabatan = Jabatan::with('eselon','atasan')->orderBy('created_at', 'DESC');
+            $jabatan = Jabatan::with('golongan','atasan')->orderBy('created_at', 'DESC');
             if ($request->has('q')) {
                 $jabatan = $jabatan->where('jabatan','like','%'.$request->input('q').'%');
             }
@@ -27,7 +27,7 @@ class JabatanController extends ApiController
 
     public function detailJabatan($id){
         try {
-            $jabatan = Jabatan::with('eselon','atasan')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+            $jabatan = Jabatan::with('golongan','atasan')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
             return $this->ApiSpecResponses($jabatan);
         } catch (\Exception $exception){
             return response()->json([

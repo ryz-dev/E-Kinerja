@@ -12,11 +12,11 @@
                                 <input id="jabatan" type="text" class="form-control" name="jabatan" placeholder="Jabatan" value="{{$jabatan->jabatan}}" required>
                             </div>
                             <div class="form-group">
-                                <label for="eselon">Kelas Jabatan</label>
-                                <select class="form-control" name="id_eselon" id="eselon" required>
-                                    <option value="">Pilih Kelas Jabatan</option>
-                                    @foreach($data_option->eselon AS $ag)
-                                        <option value="{{$ag->id}}" {{$ag->id == $jabatan->id_eselon ? 'selected' : ''}}>{{$ag->eselon}} (Rp.{{$ag->tunjangan_rp}})</option>
+                                <label for="golongan">Golongan Jabatan</label>
+                                <select class="form-control" name="id_golongan" id="golongan" required>
+                                    <option value="">Pilih Golongan Jabatan</option>
+                                    @foreach($data_option->golongan AS $gol)
+                                        <option value="{{$gol->id}}" {{$gol->id == $jabatan->id_golongan ? 'selected' : ''}}>{{$gol->golongan}} ({{$gol->kriteria}}) (Rp.{{$gol->tunjangan_rp}})</option>
                                     @endforeach
                                 </select>
                             </div>

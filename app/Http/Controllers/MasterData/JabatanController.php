@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\MasterData;
 
 use App\Models\MasterData\Eselon;
+use App\Models\MasterData\Golongan;
 use App\Models\MasterData\Jabatan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -16,7 +17,7 @@ class JabatanController extends MasterDataController
         $jabatan = new Jabatan();
         if ($this->query){
             $jabatan = $jabatan->where('jabatan','like','%'.$this->query.'%')
-                ->orWhere('id_eselon','like','%'.$this->query.'%')
+                ->orWhere('id_golongan','like','%'.$this->query.'%')
                 ->orWhere('id_atasan','like','%'.$this->query.'%');
         }
         $jabatan = $jabatan->paginate($this->show_limit);*/
@@ -46,7 +47,7 @@ class JabatanController extends MasterDataController
     public function store(Request $request,$json = true){
         $this->validate($request,[
             'jabatan' => 'required',
-            'id_eselon' => 'required|in:'.$this->getListEselon(),
+            'id_golongan' => 'required|in:'.$this->getListGolongan(),
 //            'id_atasan' => 'in:'.$this->getListJabatan(),
         ]);
         $input = $request->input();
@@ -62,7 +63,7 @@ class JabatanController extends MasterDataController
         $jabatan = Jabatan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
         $this->validate($request,[
             'jabatan' => 'required',
-            'id_eselon' => 'required|in:'.$this->getListEselon(),
+            'id_golongan' => 'required|in:'.$this->getListGolongan(),
 //            'id_atasan' => 'in:'.$this->getListJabatan().'|not_in:'.$jabatan->id,
         ]);
         $input = $request->input();
@@ -88,6 +89,10 @@ class JabatanController extends MasterDataController
 
     private function getListEselon(){
         return implode(',',Eselon::select('id')->pluck('id')->all());
+    }
+
+    private function getListGolongan(){
+        return implode(',',Golongan::select('id')->pluck('id')->all());
     }
 
     private function getListJabatan(){

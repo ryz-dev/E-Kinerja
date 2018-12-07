@@ -3,35 +3,25 @@
     <div class="main">
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-jabatan" action="{{route('api.web.master-data.jabatan.store')}}" class="form">
+                <form id="form-update-golongan" action="{{$golongan->update_uri}}" class="form">
                     <div class="row">
                         <div class="col-md-6">
-                            <h2 class="mb-2">Tambah Jabatan</h2>
+                            <h2 class="mb-2">Edit Golongan</h2>
                             <div class="form-group">
-                                <label for="jabatan">Jabatan</label>
-                                <input id="jabatan" type="text" class="form-control" name="jabatan" placeholder="Jabatan" value="" required>
+                                <label for="golongan">Golongan</label>
+                                <input id="golongan" type="text" class="form-control" name="golongan" placeholder="Golongan" value="{{$golongan->golongan}}" required>
                             </div>
                             <div class="form-group">
-                                <label for="golongan">Golongan Jabatan</label>
-                                <select class="form-control" name="id_golongan" id="golongan" required>
-                                    <option value="">Pilih Golongan Jabatan</option>
-                                    @foreach($data_option->golongan AS $gol)
-                                        <option value="{{$gol->id}}">{{$gol->golongan}} ({{$gol->kriteria}}) (Rp.{{$gol->tunjangan_rp}})</option>
-                                    @endforeach
-                                </select>
+                                <label for="golongan">Kriteria</label>
+                                <input id="golongan" type="text" class="form-control" name="kriteria" placeholder="Kriteria" value="{{$golongan->kriteria}}" required>
                             </div>
                             <div class="form-group">
-                                <label for="jabatan">Atasan</label>
-                                <select class="form-control" name="id_atasan" id="jabatan">
-                                    <option value="">Pilih Atasan</option>
-                                    @foreach($data_option->jabatan AS $jb)
-                                        <option value="{{$jb->id}}">{{$jb->jabatan}}</option>
-                                    @endforeach
-                                </select>
+                                <label for="golongan">Tunjangan</label>
+                                <input type="number" class="form-control" name="tunjangan" placeholder="tunjangan" value="{{$golongan->tunjangan}}" required>
                             </div>
                             <div class="form-group">
-                                <label for="keterangan">Keterangan Jabatan</label>
-                                <textarea name="keterangan" id="keterangan" rows="3" class="form-control"></textarea>
+                                <label for="keterangan">Keterangan</label>
+                                <textarea class="form-control" name="keterangan" id="keterangan">{{$golongan->keterangan}}</textarea>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -46,7 +36,7 @@
     </div>
     @push('script')
         <script>
-            $('#form-store-jabatan').on('submit',function (e) {
+            $('#form-update-golongan').on('submit',function (e) {
                 e.preventDefault();
                 var action = this.action;
                 var formData = new FormData($(this)[0]);
