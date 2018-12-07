@@ -47,7 +47,11 @@ class CheckinoutController extends Controller
 
     public function destroy($id){
         $checkinout = Checkinout::findOrFail($id);
-        $checkinout->delete();
-        return view('layouts.admin.checkinout.index')->with('success', 'Data Berhasil di Di hapus');
+        if ($checkinout->delete();) {
+           return response()->json(['status' => 'success']);
+        }else{
+           return response()->json(['status' => 'error']);
+        }
+
     }
 }

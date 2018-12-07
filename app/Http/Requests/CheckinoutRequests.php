@@ -24,7 +24,7 @@ class CheckinoutRequests extends FormRequest
     public function rules()
     {
         $rules = [
-            'userid'    => 'required|integer',
+            'nip'    => 'required|min:10|max:30',
             'checktime' => 'required',
             'checktype' => 'required|integer',
             'verifycode'=> 'required|integer',

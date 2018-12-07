@@ -88,10 +88,6 @@ Route::group(['prefix' => '/v1', 'namespace' => 'API'], function () {
         Route::get('get-pagination', 'EselonController@getpage')->name('page_eselon');
     });
 
-    Route::group(['prefix' => 'checkinout'], function () {
-        Route::get('', 'CheckinoutController@index')->name('api_index_checkinout');
-    });
-
     Route::group(['prefix' => 'checklock'], function () {
         Route::post('', 'ReceivedController@receiver')->name('api_checklock');
     });
