@@ -71,7 +71,10 @@
             var formData = new FormData();
             var nip_pegawai = $('.nip-pegawai').text();
             formData.append('nip',nip_pegawai);
-            formData.append('persentase',parseInt($("#rate").val()));
+            formData.append('persentase',parseInt($("output[name='thisRate']").val()));
+            formData.append('mengikuti_upacara',parseInt($("#rate_upacara").val()));
+            formData.append('perilaku_kerja',parseInt($("#rate_perilaku_kerja").val()));
+            formData.append('kegiatan_kebersamaan',parseInt($("#rate_kegiatan_kebersamaan").val()));
             formData.append('keterangan',$("#keterangan-etika").val());
             formData.append('_token','{{ csrf_token() }}')
             var action = this.action;
@@ -161,21 +164,46 @@
         }
 
         function showFormPegawai(data){
+            var rate=$("output[name='thisRate']");
+            var mengikuti_upacara = $("#rate_upacara");
+            var perilaku_kerja = $("#rate_perilaku_kerja");
+            var kegiatan_kebersamaan = $("#rate_kegiatan_kebersamaan");
+            var keterangan=$("#keterangan-etika");
+            var buttonSimpan = $("#simpan-penilaian");
             $(".nama-pegawai").text(data.nama);
             $(".nip-pegawai").text(data.nip);
             
             if (data.etika.length > 0) {
-                $("#rate").val(data.etika[0].persentase);
-                $("#keterangan-etika").val(data.etika[0].keterangan);
-                $("#rate").trigger('onchange'); 
-                $("#simpan-penilaian").prop('disabled', true);
+                rate.val(data.etika[0].persentase);
+                mengikuti_upacara.val(data.etika[0].mengikuti_upacara);
+                perilaku_kerja.val(data.etika[0].perilaku_kerja);
+                kegiatan_kebersamaan.val(data.etika[0].kegiatan_kebersamaan);
+                keterangan.val(data.etika[0].keterangan);
+                buttonSimpan.prop('disabled', true);
             }
             else{
-                $("#rate").val(0);
-                $("#keterangan-etika").val('');
-                $("#rate").trigger('onchange');
-                $("#simpan-penilaian").prop('disabled', false); 
+                rate.val(0);
+                keterangan.val('');
+                mengikuti_upacara.val(0);
+                perilaku_kerja.val(0);
+                kegiatan_kebersamaan.val(0);
+                buttonSimpan.prop('disabled', false); 
             }
+
+            mengikuti_upacara.trigger('oninput');
+            mengikuti_upacara.trigger('onchange');
+            perilaku_kerja.trigger('oninput');
+            kegiatan_kebersamaan.trigger('oninput');
+        }
+
+        function updateKeterangan()
+        {
+            var total = parseInt($("output[name='thisRate']").val());
+            var selector = $(".ket");
+            if (total < 25) {selector.text('Buruk')};
+            if (total >= 25) {selector.text('Cukup Baik')};
+            if (total >= 50) {selector.text('Baik')};
+            if (total >= 75) {selector.text('Sangat Baik')};
         }
 
         function viewListPegawai(data, key){

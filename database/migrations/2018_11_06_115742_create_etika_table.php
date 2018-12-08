@@ -18,6 +18,9 @@ class CreateEtikaTable extends Migration
             $table->string('nip')->index();
             $table->date('tanggal');
             $table->integer('persentase');
+            $table->integer('mengikuti_upacara');
+            $table->integer('perilaku_kerja');
+            $table->integer('kegiatan_kebersamaan');
             $table->text('keterangan');
             $table->timestamps();
         });

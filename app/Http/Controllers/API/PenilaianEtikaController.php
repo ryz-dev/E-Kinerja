@@ -23,10 +23,14 @@ class PenilaianEtikaController extends ApiController
     }
 
     public function storePenilaian(Request $request){
+        // dd($request->input());
         $this->validate($request, [
             'nip' => 'required',
             'persentase' => 'required',
-            'keterangan' => 'required'
+            'keterangan' => 'required',
+            'mengikuti_upacara' => 'required',
+            'perilaku_kerja' => 'required',
+            'kegiatan_kebersamaan' => 'required'
         ]);
         $data = $request->input();
         $data['tanggal'] = \Carbon\Carbon::now();
