@@ -8,8 +8,6 @@
     <title>E-Kinerja Kabupaten Kolaka</title>
     <!-- inject:css -->
     <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
-    <!-- endinject -->
-    <link rel="stylesheet" href="{{ asset('assets/css/datepicker3.css') }}">
 </head>
 
 <body>
@@ -18,11 +16,11 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 text-center logo">
-                        <img src="{{ asset('assets/images/logo.svg') }}" alt="logo" width="180">
+                        <img src="{{ asset('assets/images/logo_ekinerja.png') }}" alt="logo" width="180">
                     </div>
                 </div>
                 <div class="img-bg">
-                    <img src="{{ asset('assets/images/icons/anoa.svg') }}" alt="anoa" width="60%">
+                    <img src="{{ asset('assets/images/bg_login_whitebase.png') }}" alt="anoa" width="100%">
                 </div>
                 <div class="row">
                     <div class="offset-md-4 col-md-4">
@@ -46,16 +44,24 @@
                             @endif
                             <div class="ask mb-2">
                                 <label class="container-check">Ingat saya
-                                    <input type="checkbox" name="remeber" {{ old('remember') ? 'checked' : '' }}>
+                                    <input type="checkbox" checked name="remeber" {{ old('remember') ? 'checked' : '' }}>
                                     <span class="checkmark"></span>
                                 </label>
                                 <a href="">Lupa kata sandi ?</a>
                             </div>
                             <div class="clearfix"></div>
-                            <button class="btn btn-default btn-block">Masuk</button>
+                            <button 
+                            class="btn btn-default btn-block"
+                            id="btn-login">Masuk</button>
                         </div>
                     </form>
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 logo-kab">
+                    <img src="{{asset('assets/images/logo_kab.kolaka.png')}}" alt="logo Kabupaten">
+                    <h5>Kabupaten Kolaka</h5>
                 </div>
             </div>
         </div>

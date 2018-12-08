@@ -25,7 +25,7 @@
         </div>
         <div class="sidebar1">
             <div class="brand">
-                <img src="{{ asset('assets/images/logo.svg') }}" width="120">
+                <img src="{{ asset('assets/images/logo_ekinerja.png') }}" width="120">
             </div>
             <ul>
                 @can('monitoring-absen')
