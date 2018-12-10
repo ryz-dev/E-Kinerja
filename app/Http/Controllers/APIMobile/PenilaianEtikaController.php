@@ -43,7 +43,7 @@ class PenilaianEtikaController extends Controller
     public function getEtika($nip){
         $pegawai = Pegawai::where('nip', $nip)->first();
         $etika = Etika::where('nip',$pegawai->nip)
-            ->select('id', 'nip', 'persentase', 'keterangan')
+            ->select('id', 'nip', 'persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan','keterangan')
             ->whereDate('tanggal','=',date('Y-m-d'))
             ->first();
 
@@ -52,6 +52,9 @@ class PenilaianEtikaController extends Controller
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
             'nama' => $pegawai->nama,
+            'mengikuti_upacara' => $etika ? $etika->mengikuti_upacara : 0,   
+            'perilaku_kerja' => $etika ? $etika->perilaku_kerja : 0,   
+            'kegiatan_kebersamaan' => $etika ? $etika->kegiatan_kebersamaan : 0,   
             'persentase' => $etika ? $etika->persentase : 0,   
             'keterangan' => $etika ? $etika->keterangan : "",   
         ];
@@ -63,7 +66,10 @@ class PenilaianEtikaController extends Controller
         $this->validate($request, [
             'nip' => 'required',
             'persentase' => 'required',
-            'keterangan' => 'required'
+            'keterangan' => 'required',
+            'mengikuti_upacara' => 'required',
+            'perilaku_kerja' => 'required',
+            'kegiatan_kebersamaan' => 'required'
         ]);
         $e = Etika::where('nip',$request->nip)
             ->whereDate('tanggal','=',date('Y-m-d'))
