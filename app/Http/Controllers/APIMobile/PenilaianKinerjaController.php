@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\APIMobile;
-use App\Http\Controllers\Controller;
 
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
@@ -12,17 +11,30 @@ use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class PenilaianKinerjaController extends Controller
+class PenilaianKinerjaController extends ApiController
 {
-    public function getBawahan(Request $request){
+    public function getBawahan(Request $r){
         $user = auth('api')->user();
-        $search = $request->has('search')? $request->input('search'):'';
-
-        $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){
-            $query->where('id_atasan','=', $user->id_jabatan);
-            })->with(['kinerja' => function($query){
-            $query->whereDate('tgl_mulai','=',date('Y-m-d'));
-        }]);
+        $search = $r->has('search')? $r->input('search'):'';
+        if ($r->date != null) {
+            $user = auth('api')->user();
+            $pegawai = Pegawai::wherehas('jabatan', function ($query) use ($user) {
+                $query->where('id_atasan', '=', $user->id_jabatan);
+            })->with(['kinerja' => function ($query) use ($r) {
+                $query->whereDate('tgl_mulai', '<=', $r->date);
+                $query->whereDate('tgl_mulai', '>=', $r->date);
+                $query->terbaru();
+            }]);
+        } else {
+            $user = auth('api')->user();
+            $pegawai = Pegawai::wherehas('jabatan', function ($query) use ($user) {
+                $query->where('id_atasan', '=', $user->id_jabatan);
+            })->with(['kinerja' => function ($query) {
+                $query->whereDate('tgl_mulai', '<=', date('Y-m-d'));
+                $query->whereDate('tgl_mulai', '>=', date('Y-m-d'));
+                $query->terbaru();
+            }]);
+        }
 
         if ($search) {
             $pegawai->where(function($query) use ($search){
@@ -52,14 +64,32 @@ class PenilaianKinerjaController extends Controller
         return $this->ApiSpecResponses($data);
     }
   
-    public function getKinerja($nip){
-        $pegawai = Pegawai::where('nip',$nip)->first();
-        $kinerja = Kinerja::where('nip',$pegawai->nip)
-        ->select('id', 'nip','tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
-            ->whereDate('tgl_mulai',date('Y-m-d'))
+    public function getKinerja($nip, Request $r){
+        $pegawai = Pegawai::where('nip', $nip)->first();
+        $old_kinerja = Kinerja::where('nip', $pegawai->nip)
+        ->where('approve', 0)
+        ->whereMonth('tgl_mulai', date('m'))
+        ->whereDate('tgl_mulai', '<', date('Y-m-d'))
+        ->get();
+        if ($r->date != null) {
+            $kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->whereDate('tgl_mulai', '<=', $r->date)
+            ->whereDate('tgl_mulai', '>=', $r->date)
+            ->select('id', 'nip', 'tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
+            ->terbaru()
             ->first();
-
-        return $this->ApiSpecResponses($kinerja);
+        } else {
+            $kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->whereDate('tgl_mulai', '<=', date('Y-m-d'))
+            ->whereDate('tgl_mulai', '>=', date('Y-m-d'))
+            ->select('id', 'nip', 'tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
+            ->terbaru()
+            ->first();
+        }
+        return $this->ApiSpecResponses([
+          'now'=>$kinerja,
+          'old'=>$old_kinerja->pluck('tgl_mulai')->toArray()
+        ]);
     }
   
     public function replyKinerja(Request $r) {
