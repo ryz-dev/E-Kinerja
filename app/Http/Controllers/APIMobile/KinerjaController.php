@@ -5,6 +5,7 @@ namespace App\Http\Controllers\APIMobile;
 use App\Models\Absen\Checkinout;
 use App\Models\Absen\Etika;
 use App\Models\Absen\Kinerja;
+use App\Models\MasterData\Bulan;
 use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
@@ -104,41 +105,53 @@ class KinerjaController extends ApiController
 
         $hari_kerja = HariKerja::whereHas('statusHari',function ($query){
             $query->where('status_hari','kerja');
-        })->where('bulan',$bulan)->where('tahun',$tahun)->get();
+        })->where('bulan',$bulan)->where('tahun',$tahun)->orderBy('tanggal', 'asc')->get();
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $jumlah_etika = $absen = 0;
         $data_etika_kinerja = [];
+        $etika = Etika::where('nip', $nip)->where('tanggal','like', $tahun."-".$bulan."%")->first();
+        $jumlah_etika = $etika ? $etika->persentase : 0;
+        if ($etika){
+            $etika->tanggal_etika = ucfirst(Bulan::where('kode',$bulan)->first()->nama_bulan)." ".$tahun;
+        }
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
-                $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal);
-                $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
+                $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
+                // $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
                 $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->get();
+                $status = 'alpa';                
                 if ($abs->count() > 0) {
                     $in = false;
                     $out = false;
+                    $masuk = $pulang = null;
                     foreach ($abs AS $a) {
                         if ($a->checktype == '0') {
                             $in = true;
+                            $masuk = $a->checktime;
                         }
                         if ($a->checktype == '1') {
                             $out = true;
+                            $pulang = $a->checktime;
                         }
                     }
-                    if ($in && $out) {
-                        $absen++;
+                    if (strtotime($masuk) <= strtotime($hk->tanggal." 09:00:00") ){
+                        if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
+                            $absen++;
+                            $status = 'hadir';
+                        }
                     }
                 }
                 $data_etika_kinerja[] = [
                     'tanggal' => $hk->tanggal,
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'approve' => $knj->first() ? $knj->first()->approve : 0,
-                    'etika' => $etk ? $etk->persentase : 0,
-                    'absen' => $knj->first() ? $knj->first()->jenis_kinerja : ""
+                    'etika' => $etika ? $etika->persentase : 0,
+                    'status' => ucfirst($status)
                 ];
-                $etika[] = $etk ? $etk->toArray() : null;
-                if ($etk) {
-                    $jumlah_etika += $etk->persentase;
-                }
+                // $etika[] = $etk ? $etk->toArray() : null;
+                // if ($etk) {
+                //     $jumlah_etika += $etk->persentase;
+                // }
                 if ($knj->where('approve', 2)->first()) {
                     $jumlah_kinerja++;
                 }
@@ -149,7 +162,8 @@ class KinerjaController extends ApiController
             $persentase = [
                 'absen' => ($absen / $jumlah_hari) * 100,
                 'kinerja' => ($jumlah_kinerja / $jumlah_hari) * 100,
-                'etika' => ($jumlah_etika / (100 * $jumlah_hari)) * 100
+                // 'etika' => ($jumlah_etika / (100 * $jumlah_hari)) * 100
+                'etika' => $jumlah_etika
             ];
             $persentase_total = [
                 'absen' => $persentase['absen'] * $persen_absen / 100,
@@ -190,17 +204,17 @@ class KinerjaController extends ApiController
     public function detailKinerja($tgl) {
         $date = new HariKerja;
 
-        /* Tarik tanggal sebelumnya */
-        $date_prev = $date->whereDate('tanggal','<',$tgl)
-        ->whereIdStatusHari(1)
-        ->orderBy('tanggal','desc')
-        ->first();
+        // /* Tarik tanggal sebelumnya */
+        // $date_prev = $date->whereDate('tanggal','<',$tgl)
+        // ->whereIdStatusHari(1)
+        // ->orderBy('tanggal','desc')
+        // ->first();
 
-        /* Tarik tanggal setelahnya */
-        $date_next = $date->whereDate('tanggal','>',$tgl)
-        ->whereIdStatusHari(1)
-        ->orderBy('tanggal','asc')
-        ->first();
+        // /* Tarik tanggal setelahnya */
+        // $date_next = $date->whereDate('tanggal','>',$tgl)
+        // ->whereIdStatusHari(1)
+        // ->orderBy('tanggal','asc')
+        // ->first();
 
         $min_date = HariKerja::whereHas('statusHari', function ($query){
             $query->where('status_hari', 'kerja');
@@ -209,16 +223,22 @@ class KinerjaController extends ApiController
         /* Data kinerja */
         $pegawai = auth('api')->user();
         $kinerja = Kinerja::where('nip',$pegawai->nip)
-        ->whereDate('tgl_mulai','<=',$tgl)
-        ->whereDate('tgl_selesai','>=',$tgl)
+            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')            
+            ->whereDate('tgl_mulai','<=',$tgl)
+            ->whereDate('tgl_selesai','>=',$tgl)
             ->terbaru()
             ->first();
 
         /* Data etika */
+        $bulan = date('m',strtotime($tgl));
+        $tahun = date('Y',strtotime($tgl));
         $etika = Etika::where("nip",$pegawai->nip)
-        ->select('persentase', 'keterangan')
-        ->where("tanggal",$tgl)
-        ->first();
+            ->where("tanggal",'like',$tahun."-".$bulan."%")
+            ->select('persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan', 'keterangan')
+            ->first();
+        if ($etika)
+        $etika->tanggal_etika = ucfirst(Bulan::where('kode',$bulan)->first()->nama_bulan)." ".$tahun;
+
 
         /* Data checkinout */
         $checkinout = Checkinout::where("nip",$pegawai->nip)
