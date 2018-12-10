@@ -342,9 +342,30 @@
                                         color_persentase = ''
                                     }
                                 }
+                                if (val.kinerja){
+                                    kinerja = ( val.kinerja ? (val.kinerja.jenis_kinerja == 'hadir') ? val.status : capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '');
+                                    var badge_kinerja
+                                    if (kinerja == 'Hadir'){
+                                        if (val.absen){
+                                            masuk = val.absen[0].checktime.split(" ");
+                                            pulang = val.absen[1].checktime.split(" ");
+                                            badge_kinerja = '<div class="badge badge-primary text-white mr-2">'+masuk[1]+' - '+pulang[1]+'</div>';
+                                        }
+                                    } else if (kinerja == "Perjalanan Dinas"){
+                                        badge_kinerja = '<div class="badge badge-green text-white mr-2">'+kinerja+'</div>'
+                                    } else if (kinerja == "Cuti"){
+                                        badge_kinerja = '<div class="badge badge-purple text-white mr-2">'+kinerja+'</div>'
+                                    } else if (kinerja == "Alpa"){
+                                        badge_kinerja = '<div class="badge badge-gray text-white mr-2">'+kinerja+'</div>'
+                                    } else if (kinerja == "Izin"){
+                                        badge_kinerja = '<div style="background-color:#f3bd59!important;" class="badge text-white mr-2">'+kinerja+'</div>'
+                                    } else if (kinerja == "Sakit"){
+                                        badge_kinerja = '<div class="badge badge-red text-white mr-2">'+kinerja+'</div>'
+                                    }
+                                }
                                 var row = '<tr class="data-tunjangan" data-index="' + i + '">\n' +
                                     '                                <td>' + val.hari + ', ' + val.tanggal_string + '</td>\n' +
-                                    '                                <td>' + ( val.kinerja ? (val.kinerja.jenis_kinerja == 'hadir') ? val.status : capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '') + '</td>\n' +
+                                    '                                <td>' + badge_kinerja + '</td>\n' +
                                     '                                <td>\n' +
                                     '                                    <span class="' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '') + '"><i class="fas fa-lg ' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '' ): '') + '"></i></span>\n' +
                                     '                                </td>\n' +
