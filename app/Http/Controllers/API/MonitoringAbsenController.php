@@ -45,10 +45,6 @@ class MonitoringAbsenController extends Controller
                 $pegawai->where(function($query) use ($search){
                     $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
                 });
-
-                $summary->whereHas('pegawai', function($query) use($search){
-                    $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
-                });
             }
 
             $pegawai->orderBy('nama','asc');
