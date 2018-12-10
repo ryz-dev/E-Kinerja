@@ -344,7 +344,7 @@
                                 }
                                 var row = '<tr class="data-tunjangan" data-index="' + i + '">\n' +
                                     '                                <td>' + val.hari + ', ' + val.tanggal_string + '</td>\n' +
-                                    '                                <td>' + ( val.kinerja ? capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '') + '</td>\n' +
+                                    '                                <td>' + ( val.kinerja ? (val.kinerja.jenis_kinerja == 'hadir') ? val.status : capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '') + '</td>\n' +
                                     '                                <td>\n' +
                                     '                                    <span class="' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '') + '"><i class="fas fa-lg ' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '' ): '') + '"></i></span>\n' +
                                     '                                </td>\n' +
