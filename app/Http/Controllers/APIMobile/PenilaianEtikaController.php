@@ -72,7 +72,7 @@ class PenilaianEtikaController extends Controller
             'kegiatan_kebersamaan' => 'required'
         ]);
         $e = Etika::where('nip',$request->nip)
-            ->whereDate('tanggal','=',date('Y-m-d'))
+            ->whereMonth('tanggal','=',date('m'))
             ->first();
 
         if (!$e) {
