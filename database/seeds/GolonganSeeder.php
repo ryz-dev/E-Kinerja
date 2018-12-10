@@ -94,12 +94,11 @@ class GolonganSeeder extends Seeder
                 'kriteria' => 'Pejabat Fungsional Umum'
             ],
         ];
-        foreach ($golongan AS $gol) {
+        foreach ($golongan as $gol) {
             $gol['uuid'] = (string)\Illuminate\Support\Str::uuid();
             try {
                 DB::table('golongan')->insert($gol);
             } catch (\Exception $exception) {
-
             }
         }
     }

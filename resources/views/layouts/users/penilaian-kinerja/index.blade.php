@@ -6,7 +6,10 @@
           <div class="nav-top">
               <div class="title-nav">
                   <h4 class="mr-4">Penilaian Kinerja</h4>
-                  <span class="badge text-white">{{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
+                  <span class="badge text-white" id='setDate'>
+                    {{-- {{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}} --}}
+                    
+                  </span>
               </div>
               <div class="img-profile" id="user-profile" style="background-image: url('assets/images/img-user.png');"></div>
               @include('layouts.users.partial.part.logout')
@@ -32,19 +35,26 @@
           <div class="tab-pane detailItem" id="user1" role="tabpanel">
               <div class="container">
                   <input type="hidden" name="index" value="0">
+                  
                   <div class="row">
-                      <div class="col-md-12">
-                          <div class="img-user" id="detail-img" style="background-image: url('images/img-user.png');"></div>
-                          <div class="nama-id">
-                              <h6 id="detail-nama"></h6>
-                              <span id="detail-nip"></span>
-                          </div>
-                          <div class="btn-control float-right">
-                            <button id="pegawai-sebelumnya" inc-index="-1" class="btn btn-rounded prev"><i class="fas fa-angle-left"></i></button>
-                            <button id="pegawai-selanjutnya" inc-index="1" class="btn btn-rounded next active"><i class="fas fa-angle-right"></i></button>
-                          </div>
-                          <div class="clearfix"></div>
+                      <div class="col-md-6 wrap-user">
+                        <div class="img-user" id="detail-img" style="background-image: url('images/img-user.png');"></div>
+                        <div class="nama-id">
+                            <h6 id="detail-nama"></h6>
+                            <span id="detail-nip"></span>
+                        </div>
                       </div>
+                      <div class="col-md-4 col-8 select-date">
+                        <select class="custom-select" id="missedDate"></select>
+                      </div>
+                      <div class="col-md-2 col-4">
+                        <div class="btn-control float-right">
+                          <button id="pegawai-sebelumnya" inc-index="-1" class="btn btn-rounded prev"><i class="fas fa-angle-left"></i></button>
+                          <button id="pegawai-selanjutnya" inc-index="1" class="btn btn-rounded next active"><i class="fas fa-angle-right"></i></button>
+                        </div>
+                      </div>
+                      <div class="clearfix"></div>
+                  </div>
                   </div>
                   <div class="row">
                       <div class="col-md-12">
@@ -78,6 +88,13 @@
       <script>
           var cacheDOM = $("#wrapReply");
           var storePegawai;
+          var now = new Date();
+          var dateNow = now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate();
+          var nameMonth = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+          var nameDay = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+          var setDate = '';
+          var viewDate = now.getDate()+' '+nameMonth[now.getMonth()]+' '+now.getFullYear();
+          var nip; 
 
           var loadData = function(result) {
             if (result.length > 0) {
@@ -114,13 +131,55 @@
           }
 
           var getBawahan = function () {
-            $.get('{{route('api.web.get-bawahan-kinerja')}}')
+            $.get('{{route('api.web.get-bawahan-kinerja')}}'+'?date='+setDate)
               .then(function (res) {
                   storePegawai = res;
                   loadData(res.response);
               })
           };
 
+          var getKinerja = function (nip) {
+              $('#preload').show();
+              $.get('{{route('api.web.get-penilaian-kinerja',['nip' => ''])}}/' + nip +'?date='+setDate)
+                  .then(function (res) {
+                    if (res.response.now != null) {
+                      $('#id').val(res.response.now.id);
+                      $('#nip').val(res.response.now.nip);
+                      $('#ket_kinerja').html(res.response.now.rincian_kinerja);
+                      $('textarea').val(res.response.now.keterangan_approve);
+                    } else {
+                      $('#ket_kinerja').html('Belum ada rincian kinerja hari ini.');
+                      $(cacheDOM).remove();
+                    }                    
+                    var missed = ['<option value="'+dateNow+'">Pilih Tanggal Penilaian saat ini</option>'];
+                    if (res.response.old.length > 0) {
+                      for (let i = 0; i < res.response.old.length; i++) {
+                        date = new Date(res.response.old[i]);
+                        viewDate = nameDay[date.getDay()]+' ,'+date.getDate()+' '+nameMonth[date.getMonth()]+' '+date.getFullYear();
+                        if(setDate == res.response.old[i]) {
+                          missed += `<option value="`+res.response.old[i]+`" selected>`+viewDate+`</option>`
+                        } else {
+                          missed += `<option value="`+res.response.old[i]+`">`+viewDate+`</option>`
+                        }
+                      }                        
+                    }
+                    $('#missedDate').html(missed);
+                    $('#preload').hide();
+                    window['trigger'] = 0;
+                }, function () {
+              }).catch((err) => {
+                $('#preload').hide();
+              });
+          }
+
+          $("#missedDate").change(function(e){
+            setDate = $(this).val();
+            date = new Date(setDate);
+            viewDate = date.getDate()+' '+nameMonth[date.getMonth()]+' '+date.getFullYear();
+            $('#setDate').html(viewDate);
+            getBawahan();
+            getKinerja(nip);
+          });          
 
           $('#search').on('keyup', function (e) {
               e.preventDefault();
@@ -148,7 +207,7 @@
               $(this).addClass('active').siblings().removeClass('active');
               $(this).find('.listSelect').addClass('active')
               var nama = $(this).attr('data-nama');
-              var nip = $(this).attr('data-nip');
+              nip = $(this).attr('data-nip');
               var foto = $(this).attr('data-foto');
               var index = $(this).attr('data-index');
               $('#date-rekap').val('');
@@ -167,30 +226,9 @@
               } else {
                 $('#pegawai-selanjutnya').addClass('active')
               }
+              nip = nip;
               getKinerja(nip);
           })
-
-          var getKinerja = function (nip) {
-              $('#preload').show();
-              $.get('{{route('api.web.get-penilaian-kinerja',['nip' => ''])}}/' + nip)
-                  .then(function (res) {
-                    if (res.response != null) {
-                      $('#id').val(res.response.id);
-                      $('#nip').val(res.response.nip);
-                      $('#ket_kinerja').html(res.response.rincian_kinerja);
-                      $('textarea').val(res.response.keterangan_approve);
-
-                    } else {
-                      $('#ket_kinerja').html('Belum ada rincian kinerja hari ini.');
-                      $(cacheDOM).remove();
-                    }
-                    $('#preload').hide();
-                    window['trigger'] = 0;
-                }, function () {
-              }).catch((err) => {
-                $('#preload').hide();
-              });
-          }
 
           $('#pegawai-sebelumnya,#pegawai-selanjutnya').on('click', function (e) {
               e.preventDefault();
@@ -204,7 +242,8 @@
           })
 
           $(document).ready(function () {
-            getBawahan();
+            getBawahan();            
+            $('#setDate').html(viewDate);
           });
 
           $(document).on('click','.btn-approve',function(){
