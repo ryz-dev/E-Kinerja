@@ -115,20 +115,27 @@ class KinerjaController extends ApiController
             foreach ($hari_kerja AS $hk) {
                 $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
 //                $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
-                $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->get();
+                $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->orderBy('checktype','asc')->get();
+                $status = 'alpa';
                 if ($abs->count() > 0) {
                     $in = false;
                     $out = false;
+                    $masuk = $pulang = null;
                     foreach ($abs AS $a) {
                         if ($a->checktype == '0') {
                             $in = true;
+                            $masuk = $a->checktime;
                         }
                         if ($a->checktype == '1') {
                             $out = true;
+                            $pulang = $a->checktime;
                         }
                     }
-                    if ($in && $out) {
-                        $absen++;
+                    if (strtotime($masuk) <= strtotime($hk->tanggal." 09:00:00") ){
+                        if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
+                            $absen++;
+                            $status = 'hadir';
+                        }
                     }
                 }
                 $data_etika_kinerja[] = [
@@ -138,7 +145,8 @@ class KinerjaController extends ApiController
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'kinerja' => $knj->first() ? $knj->first()->toArray() : null,
                     'etika' => $etika ? $etika->toArray() : null,
-                    'absen' => $abs ? $abs->toArray() : null
+                    'absen' => $abs ? $abs->toArray() : null,
+                    'status' => ucfirst($status)
                 ];
                 /*$etika[] = $etk ? $etk->toArray() : null;
                 if ($etk) {
