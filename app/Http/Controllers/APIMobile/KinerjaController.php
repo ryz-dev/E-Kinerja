@@ -95,8 +95,8 @@ class KinerjaController extends ApiController
         $pegawai = auth('api')->user();
         $nip = $pegawai->nip;
 
-        $pegawai->load('jabatan.eselon');
-        $jumlah_tunjangan = $pegawai->jabatan->eselon->tunjangan;
+        $pegawai->load('jabatan.golongan');
+        $jumlah_tunjangan = $pegawai->jabatan->golongan->tunjangan;
 
         $min_date = HariKerja::whereHas('statusHari', function ($query){
             $query->where('status_hari', 'kerja');
@@ -160,7 +160,7 @@ class KinerjaController extends ApiController
             foreach ($persentase_total AS $key => $value) {
                 $total_persentase_tunjangan += $value;
             }
-            $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan) /*/ 100*/;
+            $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan) / 100;
         }
         $response = [
             'pencapaian' => [
