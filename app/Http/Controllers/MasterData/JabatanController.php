@@ -31,7 +31,7 @@ class JabatanController extends MasterDataController
 
     public function add(){
         $data_option = new \stdClass();
-        $data_option->eselon = Eselon::get();
+        $data_option->golongan = Golongan::get();
         $data_option->jabatan = Jabatan::get();
         return view('layouts.admin.jabatan.add',compact('data_option'));
     }
