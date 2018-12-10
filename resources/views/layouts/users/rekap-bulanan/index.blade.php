@@ -93,7 +93,7 @@
                                     <th scope="col">Hari, Tanggal</th>
                                     <th scope="col">Absen</th>
                                     <th scope="col">Kinerja</th>
-                                    <th scope="col">Etika</th>
+                                    {{--<th scope="col">Etika</th>--}}
                                     <th scope="col">Detail</th>
                                 </tr>
                                 </thead>
@@ -318,7 +318,7 @@
                                     '<span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
                                     '</td>\n' +
                                     '<td>\n' +
-                                    '<div class="' + color_persentase + ' text-white mr-2">' + (val.persentase) + ' ' + (typeof val.persentase == 'number' ? '%' : '') + '</div>\n' +
+                                    // '<div class="' + color_persentase + ' text-white mr-2">' + (val.persentase) + ' ' + (typeof val.persentase == 'number' ? '%' : '') + '</div>\n' +
                                     '</td>\n' +
                                     '<td>\n' +
                                     '<button class="btn rounded btn-detail detailRekap" ' + (val.status == "" ? "style='display : none'" : "") + ' id="detailRekap" list-index="' + i + '" data-prev="' + val.tgl_prev + '" data-start="' + val.tgl + '" data-next="' + val.tgl_next + '" title="Detail">\n' +

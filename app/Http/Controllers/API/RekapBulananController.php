@@ -52,7 +52,7 @@ class RekapBulananController extends ApiController
         $data_inout = [];
         foreach ($hari_kerja AS $key => $hk){
             $kinerja = $pegawai->kinerja()->where('tgl_mulai','<=',$hk->tanggal)->where('tgl_selesai','>=',$hk->tanggal)->terbaru()->first();
-            $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
+//            $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
             $data_inout[] = [
                 'tgl_prev' => isset($hari_kerja[$key-1]->tanggal) ? $hari_kerja[$key-1]->tanggal : '',
                 'tgl_next' => isset($hari_kerja[$key+1]->tanggal) ? $hari_kerja[$key+1]->tanggal : '',
@@ -61,7 +61,7 @@ class RekapBulananController extends ApiController
                 'hari' => ucfirst($hk->Hari->nama_hari),
                 'checkinout' => $pegawai->checkinout()->where('checktime','like','%'.$hk->tanggal.'%')->get()->toArray(),
                 'status' => ucfirst(str_replace('_',' ',isset($kinerja->jenis_kinerja)?$kinerja->jenis_kinerja:'')),
-                'persentase' => isset($etika->persentase)?$etika->persentase : '',
+//                'persentase' => isset($etika->persentase)?$etika->persentase : '',
                 'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
             ];
         }
