@@ -11,7 +11,7 @@ class Checkinout extends Model
     protected $fillable = [
         'nip', 'checktime', 'checktype', 'verifycode', 'sensorid', 'workcode', 'sn', 'userextmft'
     ];
-    protected $appends = ['absen_time','detail_uri','delete_uri','edit_uri','update_uri', 'pegawai'];
+    protected $appends = ['absen_timestamp','absen_time','detail_uri','delete_uri','edit_uri','update_uri', 'pegawai'];
 
     public function pegawai(){
         return $this->belongsTo('App\Models\MasterData\Pegawai','nip','nip');
@@ -23,6 +23,10 @@ class Checkinout extends Model
 
     public function getAbsenTimeAttribute(){
         return date('H:i',strtotime($this->checktime));
+    }
+
+    public function getAbsenTimestampAttribute(){
+        return \Carbon\Carbon::parse($this->checktime)->toDateTimeString();
     }
 
     public function getDetailUriAttribute(){

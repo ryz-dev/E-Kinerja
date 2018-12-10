@@ -11,6 +11,7 @@ use Carbon\Carbon;
 class MonitoringAbsenController extends Controller
 {
     private $special_user = [2,3,4];
+    private $jam_masuk = '09:00:59';
 
     public function dataAbsensi(Request $request){
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
@@ -18,10 +19,6 @@ class MonitoringAbsenController extends Controller
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
         $user = auth('web')->user();
-        $summary = Kinerja::select(\DB::raw('distinct(nip),jenis_kinerja'))
-                            ->whereDate('tgl_mulai','<=',$date)
-                            ->whereDate('tgl_selesai','>=',$date)
-                            ->where('approve',2);
 
         $pegawai = Pegawai::with(['checkinout' => function($query) use ($date){
                                     $query->select('nip','checktime','checktype')->whereDate('checktime','=',$date);
@@ -32,13 +29,9 @@ class MonitoringAbsenController extends Controller
                                     ->whereDate('tgl_selesai','>=',$date);
                                 }
                             ]);
-
+        
         try {
             if (in_array($user->role()->first()->id,$this->special_user) == false) {
-                $summary->whereHas('jabatan', function($query) use($user){
-                    $query->where('id_atasan','=',$user->id_jabatan);
-                });
-
                 $pegawai->whereHas('jabatan', function($query) use ($user){
                     $query->where('id_atasan','=',$user->id_jabatan);
                 });
@@ -46,10 +39,6 @@ class MonitoringAbsenController extends Controller
 
             if ($skpd > 0) {
                 $pegawai->where('id_skpd',$skpd);
-
-                $summary->whereHas('pegawai', function($query) use ($skpd){
-                    $query->where('id_skpd','=',$skpd);
-                });
             }
 
             if ($search) {
@@ -61,10 +50,11 @@ class MonitoringAbsenController extends Controller
                     $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
                 });
             }
+
             $pegawai->orderBy('nama','asc');
+            $sum = $this->summary($pegawai);
             $total = (int) $pegawai->count();
             $pegawai = $pegawai->paginate($this->show_limit);
-            $res = $summary->get();
 
             return $this->ApiSpecResponses(
                 [
@@ -73,7 +63,8 @@ class MonitoringAbsenController extends Controller
                     'dayAfter' => Carbon::parse($date)->addDays(1)->format('m/d/Y'),
                     'today' => Carbon::parse($date)->format('m/d/Y'),
                     'dateString' => Carbon::parse($date)->format('d F Y'),
-                    'summary' => $this->summary($total,$res)
+                    'jam_masuk_timestamp' => Carbon::parse($this->jam_masuk)->toDateTimeString(),
+                    'summary' => $sum
                 ]
             );
         } catch (Exception $e) {
@@ -109,13 +100,40 @@ class MonitoringAbsenController extends Controller
         return response()->json([ 'page'=> $data ]);
     }
 
-    private function summary($pegawai,$kinerja){
-        $hadir = (int) $kinerja->where('jenis_kinerja','hadir')->count();
-        $cuti = (int) $kinerja->where('jenis_kinerja','cuti')->count();
-        $perjalanan_dinas = (int) $kinerja->where('jenis_kinerja','perjalanan_dinas')->count();
-        $izin = (int) $kinerja->where('jenis_kinerja','izin')->count();
-        $sakit = (int) $kinerja->where('jenis_kinerja','sakit')->count();
-        $alpha = $pegawai - ($hadir + $cuti + $perjalanan_dinas + $izin + $sakit);
+    private function summary($pegawai){
+        $data = $pegawai->get();
+        $summary = $data->map(function($item, $key) {
+            if (count($item['checkinout']) > 0) {
+                if ($item['checkinout']->contains('checktype',0)) {
+                    
+                    $time = $item['checkinout']->where('checktype',0)->first()->checktime;
+                    
+                    if(Carbon::parse($time) >= Carbon::parse($this->jam_masuk)){
+                        return collect(['data'=>'alpa']);
+                    }
+                    else{
+                        return collect(['data' => 'hadir']);
+                    }
+                }
+                else{
+                    return collect(['data' => 'hadir']);
+                }
+            }
+            else{
+                if (count($item['kinerja']) > 0) {
+                    return collect(['data' => $item['kinerja'][0]['jenis_kinerja']]);
+                }
+                return collect(['data'=>'alpa']);
+            }
+        });
+
+        $hadir =(int) $summary->where('data','hadir')->count();
+        $cuti = (int) $summary->where('data','cuti')->count();
+        $perjalanan_dinas = (int) $summary->where('data','perjalanan_dinas')->count();
+        $izin = (int) $summary->where('data','izin')->count();
+        $sakit = (int) $summary->where('data','sakit')->count();
+        $alpha = (int) $summary->where('data','alpa')->count();
+
 
         return [
             'hadir' => $hadir,

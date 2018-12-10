@@ -173,19 +173,47 @@
             }
         })
 
-        var parseAbsen = function(data){
-            if (data.length > 0) {
-                var absenin = 'data tidak ada';
-                var absenout = 'data tidak ada';
-                var res = data.map(function (val){
-                    if (val.checktype == '0') {
-                        absenin = val.absen_time?val.absen_time:'data tidak ada';
-                    }else if(val.checktype == '1'){
-                        absenout =val.absen_time?val.absen_time:'data tidak ada';
+        var parseAbsen = function(absen,kinerja,jam_masuk){
+            if (absen.length > 0) {
+                var absenin = '';
+                var absenout = '';
+                var alpa = '';
+                var BreakException = {};
+
+                try{
+                    var res = absen.forEach(function(val){
+                        var checkdate = new Date(val.absen_timestamp);
+                        if (val.checktype =='0' && checkdate > jam_masuk) {
+                            alpa = true;   
+                            throw BreakException;
+                        }
+                        else{
+                            alpa = false;
+                            if (val.checktype == '0') {
+                                absenin = val.absen_time?val.absen_time:'';
+                            }else if(val.checktype == '1'){
+                                absenout =val.absen_time?val.absen_time:'';
+                            }
+                        }
+    
+                    });
+                } catch (e) {
+                    if (e !== BreakException) throw e;
+                }
+
+                if (alpa) {
+                    return parseKinerja('alpa');
+                }
+                else{
+                    if (absenin == '' && absenout == '' ) {
+                        return parseKinerja(kinerja);
+                    }else{
+                        return absenin+'<span> - </span>'+absenout;
                     }
-                    
-                }); 
-                return absenin+'<span> - </span>'+absenout;
+                }
+
+                console.log(alpa);
+
                 
             } else {
                 return 'data tidak ada';
@@ -194,11 +222,8 @@
 
         var parseKinerja = function(data){
 
-            if (data.kinerja.length > 0) {
-                switch (data.kinerja[0].jenis_kinerja) {
-                    case 'hadir':
-                        return parseAbsen(data.checkinout)
-                        break;
+            if (data.length > 0) {
+                switch (data[0].jenis_kinerja) {
                     case 'sakit':
                         return '<span class="badge badge-table badge-red">Sakit</span>'
                         break;
@@ -254,6 +279,7 @@
                     $('.count-izin').text(res.response.summary.izin);
                     $('.count-sakit').text(res.response.summary.sakit);
                     $('.count-alpha').text(res.response.summary.alpha);
+                    var jam_masuk = new Date(res.response.jam_masuk_timestamp);
                     if (res.response.pegawai.data.length > 0) {
                         var data = res.response.pegawai.data.map(function (val) { 
                             var row = '';
@@ -262,7 +288,7 @@
                             row += "<td><div class='img-user' id='user1' style='background-image: url(" + foto + ");'></div></td>";
                             row += "<td><a href=''>" + val.nip + "</a></td>";
                             row += "<td>" + val.nama + "</td>";
-                            row += "<td>"+parseKinerja(val)+"</td>";
+                            row += "<td>"+parseAbsen(val.checkinout,val.kinerja,jam_masuk)+"</td>";
                             row += "</tr>";
                             return row;
                         })
