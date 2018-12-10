@@ -105,7 +105,7 @@
                                 <th scope="col">Hari, Tanggal</th>
                                 <th scope="col">Absen</th>
                                 <th scope="col">Kinerja</th>
-                                <th scope="col">Etika</th>
+                                {{--<th scope="col">Etika</th>--}}
                                 <th scope="col">Detail</th>
                             </tr>
                             </thead>
@@ -161,10 +161,38 @@
                                     excepturi dolorem doloripsa delectus tempora? Magni, atque totam dicta
                                     accusantium, velit itaque dolores magnam nihil repellendus!</p>
                                 <hr>
-                                <h4>Penilaian Etika</h4>
-                                <span id="detail-etika-persentase" class="float-right value-etika"></span>
-                                <h6>Keterangan Penilaian</h6>
-                                <p id="detail-etika-keterangan"></p>
+                                <div class="wrap-modal-value table-responsive">
+                                    <h4 class="float-left">Penilaian Etika</h4>
+                                    <span class="badge text-white float-right" id="tanggal_kinerja">-</span>
+                                    <table>
+                                        <tbody><tr>
+                                            <td>Upacara dan Apel 30(%)</td>
+                                            <td id="upacara">0%</td>
+                                            <td colspan="3" rowspan="3">
+                                                <div class="value-percent">
+                                                    <div class="values">
+                                                        <h2 id="detail-etika-persentase">0%</h2>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <div class="ket" id="keterangan_etika">-</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Perilaku Kerja 30(%)</td>
+                                            <td id="prilaku">0%</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Kegiatan Kebersamaan 40(%)</td>
+                                            <td id="kegiatan_kebersamaan">0%</td>
+                                        </tr>
+
+                                        </tbody></table>
+                                    <h6>Keterangan Penilaian</h6>
+                                    <p id="detail-etika-keterangan"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -320,9 +348,9 @@
                                     '                                <td>\n' +
                                     '                                    <span class="' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '') + '"><i class="fas fa-lg ' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '' ): '') + '"></i></span>\n' +
                                     '                                </td>\n' +
-                                    '                                <td>\n' +
+                                    /*'                                <td>\n' +
                                     '                                    <div class="' + color_persentase + ' text-white mr-2">' + (val.etika ? val.etika.persentase+'%' : '') + ' </div>\n' +
-                                    '                                </td>\n' +
+                                    '                                </td>\n' +*/
                                     '                                <td>\n' +
                                     '                                    <button data-index="'+i+'" class="btn rounded btn-detail '+(val.kinerja || val.etika ? '' : 'invisible')+'" title="Detail">\n' +
                                     '                                        <i class="fas fa-search-plus"></i>\n' +
@@ -433,6 +461,23 @@
                 $('#detail-keterangan-approve').html(kinerja ? kinerja.keterangan_approve : '');
                 $('#detail-etika-persentase').html(etika ? etika.persentase+'%' : '');
                 $('#detail-etika-keterangan').html(etika ? etika.keterangan : '');
+                $('#upacara').html(etika ? etika.mengikuti_upacara + '%' : "-");
+                $('#kegiatan_kebersamaan').html(etika ? etika.kegiatan_kebersamaan + '%' : "-");
+                $('#prilaku').html(etika ? etika.perilaku_kerja + '%' : "-");
+                $('#tanggal_etika').html(etika ? etika.tanggal_etika : "-");
+                ket = "-";
+                if (etika){
+                    if (etika.persentase < 25){
+                        ket = 'Buruk'
+                    } else if (etika.persentase < 50){
+                        ket = 'Cukup Baik'
+                    } else if (etika.persentase < 75){
+                        ket = 'Baik'
+                    } else if (etika.persentase <= 100){
+                        ket = 'Sangat Baik'
+                    }
+                }
+                $('#keterangan_etika').html(ket);
                 if (i == 0){
                     $('.control-left').addClass('invisible')
                 } else {

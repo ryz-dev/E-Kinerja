@@ -146,10 +146,38 @@
                                     <h6>Keterangan Penilaian</h6>
                                     <p id='kinerja_ket'></p>
                                     <hr>
-                                    <h4>Penilaian Etika</h4>
-                                    <span class="float-right value-etika"><p id='etika_val'></p></span>
-                                    <h6>Keterangan Penilaian</h6>
-                                    <p id='etika_ket'></p>
+                                    <div class="wrap-modal-value table-responsive">
+                                        <h4 class="float-left">Penilaian Etika</h4>
+                                        <span class="badge text-white float-right" id="tanggal_etika">-</span>
+                                        <table>
+                                            <tbody><tr>
+                                                <td>Upacara dan Apel 30(%)</td>
+                                                <td id="upacara">0%</td>
+                                                <td colspan="3" rowspan="3">
+                                                    <div class="value-percent">
+                                                        <div class="values">
+                                                            <h2 id="etika_val">0%</h2>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                        <div class="ket" id="keterangan_etika">-</div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Perilaku Kerja 30(%)</td>
+                                                <td id="prilaku">0%</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Kegiatan Kebersamaan 40(%)</td>
+                                                <td id="kegiatan_kebersamaan">0%</td>
+                                            </tr>
+
+                                            </tbody></table>
+                                        <h6>Keterangan Penilaian</h6>
+                                        <p id='etika_ket'></p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -317,9 +345,9 @@
                                     '<td>\n' +
                                     '<span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
                                     '</td>\n' +
-                                    '<td>\n' +
+                                    // '<td>\n' +
                                     // '<div class="' + color_persentase + ' text-white mr-2">' + (val.persentase) + ' ' + (typeof val.persentase == 'number' ? '%' : '') + '</div>\n' +
-                                    '</td>\n' +
+                                    // '</td>\n' +
                                     '<td>\n' +
                                     '<button class="btn rounded btn-detail detailRekap" ' + (val.status == "" ? "style='display : none'" : "") + ' id="detailRekap" list-index="' + i + '" data-prev="' + val.tgl_prev + '" data-start="' + val.tgl + '" data-next="' + val.tgl_next + '" title="Detail">\n' +
                                     '<i class="fas fa-search-plus"></i>\n' +
@@ -416,6 +444,7 @@
                         var etika = res.response.etika;
                         var kinerja = res.response.kinerja;
                         var chekinout = res.response.checkinout;
+
                         // Tampilkan ke view
                         $('#mdlNama').html($('#detail-nama').html());
                         $('#mdlNip').html($('#detail-nip').html());
@@ -425,8 +454,33 @@
                         $('#checkout').html(chekinout[1] ? chekinout[1].absen_time : '--:--');
                         $('#kinerja_rinci').html(kinerja.rincian_kinerja);
                         $('#kinerja_ket').html(kinerja.keterangan_approve);
-                        $('#etika_val').html(etika.persentase + '%');
-                        $('#etika_ket').html(etika.keterangan);
+                        if (etika) {
+                            if (etika.persentase < 25){
+                                ket = 'Buruk'
+                            } else if (etika.persentase < 50){
+                                ket = 'Cukup Baik'
+                            } else if (etika.persentase < 75){
+                                ket = 'Baik'
+                            } else if (etika.persentase <= 100){
+                                ket = 'Sangat Baik'
+                            }
+                            var keterangan_kinerja
+                            $('#etika_val').html(etika.persentase + '%');
+                            $('#upacara').html(etika.mengikuti_upacara + '%');
+                            $('#kegiatan_kebersamaan').html(etika.kegiatan_kebersamaan + '%');
+                            $('#prilaku').html(etika.perilaku_kerja + '%');
+                            $('#keterangan_etika').html(ket);
+                            $('#etika_ket').html(etika.keterangan);
+                            $('#tanggal_etika').html(etika.tanggal_etika);
+                        } else {
+                            $('#etika_val').html("-");
+                            $('#upacara').html("-");
+                            $('#kegiatan_kebersamaan').html("-");
+                            $('#prilaku').html("-");
+                            $('#keterangan_etika').html("-");
+                            $('#etika_ket').html("-");
+                            $('#tanggal_etika').html("-");
+                        }
                         if (kinerja.approve == 2) {
                             $('#kinerja_status').addClass('fa-check');
                         }

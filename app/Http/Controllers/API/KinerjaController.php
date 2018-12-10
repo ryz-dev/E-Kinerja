@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Absen\Checkinout;
 use App\Models\Absen\Etika;
 use App\Models\Absen\Kinerja;
+use App\Models\MasterData\Bulan;
 use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
@@ -105,10 +106,15 @@ class KinerjaController extends ApiController
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $jumlah_etika = $absen = 0;
         $data_etika_kinerja = [];
+        $etika = Etika::where('nip', $nip)->where('tanggal','like', $tahun."-".$bulan."%")->first();
+        $jumlah_etika = $etika ? $etika->persentase : 0;
+        if ($etika){
+            $etika->tanggal_etika = ucfirst(Bulan::where('kode',$bulan)->first()->nama_bulan)." ".$tahun;
+        }
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
                 $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
-                $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
+//                $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
                 $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->get();
                 if ($abs->count() > 0) {
                     $in = false;
@@ -131,13 +137,13 @@ class KinerjaController extends ApiController
                     'tanggal_string2' => $this->formatDate2($hk->tanggal),
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'kinerja' => $knj->first() ? $knj->first()->toArray() : null,
-                    'etika' => $etk ? $etk->toArray() : null,
+                    'etika' => $etika ? $etika->toArray() : null,
                     'absen' => $abs ? $abs->toArray() : null
                 ];
-                $etika[] = $etk ? $etk->toArray() : null;
+                /*$etika[] = $etk ? $etk->toArray() : null;
                 if ($etk) {
                     $jumlah_etika += $etk->persentase;
-                }
+                }*/
                 if ($knj->where('approve', 2)->first()) {
                     $jumlah_kinerja++;
                 }
@@ -148,7 +154,8 @@ class KinerjaController extends ApiController
             $persentase = [
                 'absen' => ($absen / $jumlah_hari) * 100,
                 'kinerja' => ($jumlah_kinerja / $jumlah_hari) * 100,
-                'etika' => ($jumlah_etika / (100 * $jumlah_hari)) * 100
+//                'etika' => ($jumlah_etika / (100 * $jumlah_hari)) * 100
+                'etika' => $jumlah_etika
             ];
             $persentase_total = [
                 'absen' => $persentase['absen'] * $persen_absen / 100,

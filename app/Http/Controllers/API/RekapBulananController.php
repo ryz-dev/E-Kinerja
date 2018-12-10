@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 
+use App\Models\MasterData\Bulan;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
 use App\Models\Absen\Kinerja;
@@ -52,15 +53,39 @@ class RekapBulananController extends ApiController
         $data_inout = [];
         foreach ($hari_kerja AS $key => $hk){
             $kinerja = $pegawai->kinerja()->where('tgl_mulai','<=',$hk->tanggal)->where('tgl_selesai','>=',$hk->tanggal)->terbaru()->first();
+            $kehadiran = $pegawai->checkinout()->where('checktime','like','%'.$hk->tanggal.'%')->orderBy('checktype','desc')->get()->toArray();
+            if (count($kehadiran) > 0){
+                $kehadiran['status'] = 'alpa';
+                $masuk = $pulang = null;
+                foreach ($kehadiran AS $kh){
+                    if (isset($kh['checktype'])) {
+                        if ($kh['checktype'] == 0) {
+                            $masuk = $kh['checktime'];
+                        }
+                        if ($kh['checktype'] == 1) {
+                            $pulang = $kh['checktime'];
+                        }
+                    }
+                }
+                if (strtotime($masuk) <= strtotime($hk->tanggal." 09:00:00") ){
+                    if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
+                        $kehadiran['status'] = 'hadir';
+                    }
+                }
+            }
 //            $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
+            $status = ucfirst(str_replace('_',' ',isset($kinerja->jenis_kinerja)?$kinerja->jenis_kinerja:''));
+            if ($status == 'Hadir'){
+                $status = ucfirst($kehadiran['status']);
+            }
             $data_inout[] = [
                 'tgl_prev' => isset($hari_kerja[$key-1]->tanggal) ? $hari_kerja[$key-1]->tanggal : '',
                 'tgl_next' => isset($hari_kerja[$key+1]->tanggal) ? $hari_kerja[$key+1]->tanggal : '',
                 'tgl' => $hk->tanggal,
                 'tanggal' => $this->formatDate($hk->tanggal),
                 'hari' => ucfirst($hk->Hari->nama_hari),
-                'checkinout' => $pegawai->checkinout()->where('checktime','like','%'.$hk->tanggal.'%')->get()->toArray(),
-                'status' => ucfirst(str_replace('_',' ',isset($kinerja->jenis_kinerja)?$kinerja->jenis_kinerja:'')),
+                'checkinout' => $kehadiran,
+                'status' => $status,
 //                'persentase' => isset($etika->persentase)?$etika->persentase : '',
                 'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
             ];
@@ -95,9 +120,13 @@ class RekapBulananController extends ApiController
             ->first();
 
         /* Data etika */
+        $bulan = date('m',strtotime($tgl));
+        $tahun = date('Y',strtotime($tgl));
         $etika = Etika::where("nip",$pegawai->nip)
-        ->where("tanggal",$tgl)
+        ->where("tanggal",'like',$tahun."-".$bulan."%")
         ->first();
+        if ($etika)
+        $etika->tanggal_etika = ucfirst(Bulan::where('kode',$bulan)->first()->nama_bulan)." ".$tahun;
 
         /* Data checkinout */
         $checkinout = Checkinout::where("nip",$pegawai->nip)
