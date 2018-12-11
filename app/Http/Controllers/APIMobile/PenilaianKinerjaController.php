@@ -67,10 +67,10 @@ class PenilaianKinerjaController extends ApiController
     public function getKinerja($nip, Request $r){
         $pegawai = Pegawai::where('nip', $nip)->first();
         $old_kinerja = Kinerja::where('nip', $pegawai->nip)
-        ->where('approve', 0)
-        ->whereMonth('tgl_mulai', date('m'))
-        ->whereDate('tgl_mulai', '<', date('Y-m-d'))
-        ->get();
+            ->where('approve', 0)
+            ->whereMonth('tgl_mulai', date('m'))
+            ->whereDate('tgl_mulai', '<', date('Y-m-d'))
+            ->get();
         if ($r->date != null) {
             $kinerja = Kinerja::where('nip', $pegawai->nip)
             ->whereDate('tgl_mulai', '<=', $r->date)
