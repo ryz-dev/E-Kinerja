@@ -22,7 +22,7 @@ class Pegawai extends Authenticatable
     protected $fillable = [
         'nip','nama','tanggal_lahir','id_agama','id_jabatan','jns_kel','tempat_lahir','foto','uuid','id_skpd','password','userid'
     ];
-    protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri'];
+    protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri','update_password_uri'];
     protected $hidden = ['password'];
 
     public function agama(){
@@ -79,6 +79,10 @@ class Pegawai extends Authenticatable
 
     public function findForPassport($username) {
         return self::where('nip',$username)->first(); // change column name whatever you use in credentials
+    }
+
+    public function getUpdatePasswordUriAttribute(){
+        return route('api.web.master-data.pegawai.update-password');
     }
 
 }

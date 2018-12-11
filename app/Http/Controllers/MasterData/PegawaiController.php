@@ -119,6 +119,14 @@ class PegawaiController extends MasterDataController
         }
     }
 
+    public function updatePassword($nip,$newPassword){
+        $pegawai =Pegawai::whereNip($nip)->first();
+        $pegawai->password = bcrypt($newPassword);
+        $pegawai->save();
+        return $pegawai;
+
+    }
+
     public function import(Request $request){
         Excel::import(new PegawaiImport,$request->file('import'));
         return redirect()->back();

@@ -59,6 +59,27 @@ class PegawaiController extends ApiController
         return $this->ApiSpecResponses($data);
     }
 
+    public function updatePassword(Request $request){
+        $user = auth('web')->user();
+        
+        if ($request->input('oldPassword') === $request->input('newPassword')) {
+            return response()->json([
+                'message' => 'Kata sandi lama dan kata sandi baru tidak boleh sama!'
+            ],500);
+        }
+
+        if (\Hash::check($request->input('oldPassword'), $user->password)){
+            $pegawai = new \App\Http\Controllers\MasterData\PegawaiController();
+            $data = $pegawai->updatePassword($user->nip,$request->input('newPassword'));
+            return $this->ApiSpecResponses($data);
+        }
+        else{
+            return response()->json([
+                'message' => 'Kata sandi lama salah!'
+            ],500);
+        }
+    }
+
     public function getPage(Request $request)
     {
         if ($request->has('q')) {
