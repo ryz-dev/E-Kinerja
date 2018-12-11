@@ -7,7 +7,7 @@
         <div class="nav-top">
             <div class="title-nav">
                 <h4 class="mr-4">Penilaian Etika</h4>
-                <span class="badge text-white">{{ date('d F Y') }}</span>
+                <span class="badge text-white">{{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
             </div>
             <div class="img-profile" id="user-profile" style="background-image: url('assets/images/img-user.png');">
             </div>

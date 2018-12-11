@@ -40,7 +40,7 @@
                         <div class="col-md-12">
                             <div class="title-nav float-left">
                                 <h4 class="mr-3 float-left">Monitoring Absen</h4>
-                                <span id="text-date" class="badge text-white">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+                                <span id="text-date" class="badge text-white">{{ucfirst(\App\Models\MasterData\Hari::find(date('N'))->nama_hari)}}, {{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</span>
                             </div>
                             <div class="btn-control float-right mt-1">
                                 <div class="date-group float-left">
