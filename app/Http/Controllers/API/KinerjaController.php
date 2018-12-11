@@ -52,10 +52,13 @@ class KinerjaController extends ApiController
             if ($input['jenis_kinerja'] == 'hadir'){
                 $cek_hari_kerja = HariKerja::whereDate('tanggal',date('Y-m-d'))->first();
                 if ($cek_hari_kerja){
-                    $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('nip',$input['nip'])->first();
-                    if ($cek_hadir_kerja){
-                        $kinerja = Kinerja::create($input);
-                        return $this->ApiSpecResponses($kinerja);
+                    $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','0')->where('nip',$input['nip'])->first();
+                    $cek_pulang_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('nip',$input['nip'])->first();
+                    if (strtotime($cek_hadir_kerja->checktime) <= strtotime(date('Y-m-d')." 09:00:00")){
+                        if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8.5 * 3600)) {
+                            $kinerja = Kinerja::create($input);
+                            return $this->ApiSpecResponses($kinerja);
+                        }
                     } else {
                         return response()->json([
                                 'diagnostic' => [
