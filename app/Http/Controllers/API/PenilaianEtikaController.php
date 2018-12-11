@@ -13,7 +13,7 @@ class PenilaianEtikaController extends ApiController
         $pegawai = Pegawai::wherehas('jabatan', function($query) use($user){ 
                                         $query->where('id_atasan','=',$user->id_jabatan ); })
                                     ->with(['etika' => function($query){
-                                        $query->whereDate('tanggal','=',date('Y-m-d'));
+                                        $query->whereMonth('tanggal','=',date('m'));
                                     }]);
         if ($user->id_jabtan > 1) {
             $pegawai->where('id_skpd',$user->id_skpd);
