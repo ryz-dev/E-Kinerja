@@ -15,7 +15,7 @@ class PenilaianEtikaController extends Controller
         $pegawai = Pegawai::wherehas('jabatan', function($query) use ($user){ 
         $query->where('id_atasan','=', $user->id_jabatan ); })
             ->with(['etika' => function($query){
-                 $query->select('nip' ,'tanggal', 'persentase', 'keterangan')->whereDate('tanggal','=',date('Y-m-d'));
+                 $query->select('nip' ,'tanggal', 'persentase', 'keterangan')->whereMonth('tanggal','=',date('m'));
             }]);
 
         if ($search) {
@@ -44,7 +44,7 @@ class PenilaianEtikaController extends Controller
         $pegawai = Pegawai::where('nip', $nip)->first();
         $etika = Etika::where('nip',$pegawai->nip)
             ->select('id', 'nip', 'persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan','keterangan')
-            ->whereDate('tanggal','=',date('Y-m-d'))
+            ->whereMonth('tanggal','=',date('m'))
             ->first();
 
         $data = [
