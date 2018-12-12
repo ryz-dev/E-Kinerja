@@ -34,6 +34,7 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
         Route::post('import','PegawaiController@import')->name('pegawai.import');
         Route::get('','PegawaiController@index')->name('pegawai.index');
         Route::get('add','PegawaiController@add')->name('pegawai.add');
+        Route::get('deleted','PegawaiController@deleted')->name('pegawai.deleted');
         Route::get('{id}','PegawaiController@show')->name('pegawai.detail');
         Route::get('edit/{id}','PegawaiController@edit')->name('pegawai.edit');
         Route::post('','PegawaiController@store')->name('pegawai.store');
@@ -135,6 +136,7 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
             Route::post('store','PegawaiController@storePegawai')->name('api.web.master-data.pegawai.store');
             Route::post('{id}','PegawaiController@updatePegawai')->name('api.web.master-data.pegawai.update');
             Route::post('delete/{id}','PegawaiController@deletePegawai')->name('api.web.master-data.pegawai.delete');
+            Route::post('restore/{nip}','PegawaiController@restorePegawai')->name('api.web.master-data.pegawai.restore');
         });
         Route::group(['prefix' => 'hari-kerja'],function (){
 //        Route::get('','HariKerjaController@index')->name('list_hari_kerja');

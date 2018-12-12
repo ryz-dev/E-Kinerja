@@ -18,8 +18,13 @@ class PegawaiController extends ApiController
         try {
             $pegawai = Pegawai::with('jabatan','agama','skpd')->orderBy('created_at', 'DESC');
             if ($request->has('q')) {
-                $pegawai = $pegawai->where('nip','like','%'.$request->input('q').'%')
-                    ->orWhere('nama','like','%'.$request->input('q').'%');
+                $pegawai = $pegawai->where(function ($query)use($request){
+                    $query->where('nip','like','%'.$request->input('q').'%');
+                    $query->orWhere('nama','like','%'.$request->input('q').'%');
+                });
+            }
+            if ($request->has('deleted')){
+                $pegawai = $pegawai->withTrashed()->whereNotNull('deleted_at');
             }
             $pegawai = $pegawai->paginate($this->show_limit);
             return $this->ApiSpecResponses($pegawai);
@@ -80,12 +85,26 @@ class PegawaiController extends ApiController
         }
     }
 
+    public function restorePegawai($nip){
+        Pegawai::withTrashed()->whereNip($nip)->restore();
+    }
+
     public function getPage(Request $request)
     {
-        if ($request->has('q')) {
+        if ($request->has('deleted') && $request->has('q')) {
+            $data = Pegawai::withTrashed()
+                ->whereNotNull('deleted_at')
+                ->where(function ($query)use($request){
+                    $query->where('nip','like','%'.$request->input('q').'%');
+                    $query->orWhere('nama','like','%'.$request->input('q').'%');
+                })
+                ->count();
+        } else if ($request->has('q')){
             $data = Pegawai::where('nip','like','%'.$request->input('q').'%')
                 ->orWhere('nama','like','%'.$request->input('q').'%')
                 ->count();
+        } else if ($request->has('deleted')){
+            $data = Pegawai::withTrashed()->count();
         } else {
             $data = Pegawai::count();
         }

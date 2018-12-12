@@ -7,6 +7,7 @@ use App\Models\MasterData\Agama;
 use App\Models\MasterData\Jabatan;
 use App\Models\MasterData\Pegawai;
 use App\Models\MasterData\Skpd;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -93,15 +94,41 @@ class PegawaiController extends MasterDataController
         $pegawai = Pegawai::where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
         try {
             $pegawai->delete();
-        } catch (\Exception $exception){}
+        } catch (QueryException $exception){
+            if ($json)
+                return response()->json([
+                    'status' => '500',
+                    'message' => 'Tidak dapat menghapus Pegawai, Pegawai memiliki pegawai aktif'
+                ]);
+            return [
+                'status' => '500',
+                'message' => 'Tidak dapat menghapus Pegawai, Pegawai memiliki pegawai aktif'
+            ];
+        } catch (\Exception $exception){
+            if ($json)
+                return response()->json([
+                    'status' => '500',
+                    'message' => $exception->getMessage()
+                ]);
+            return [
+                'status' => '500',
+                'message' => $exception->getMessage()
+            ];
+        }
         if ($json)
-        return response()->json([
-            'message' => 'data berhasil dihapus'
-        ]);
+            return response()->json([
+                'status' => '200',
+                'message' => 'data berhasil dihapus'
+            ]);
 
         return [
+            'status' => '200',
             'message' => 'data berhasil dihapus'
         ];
+    }
+
+    public function deleted(){
+        return view('layouts/admin/pegawai/deleted');
     }
 
     private function getListAgama(){

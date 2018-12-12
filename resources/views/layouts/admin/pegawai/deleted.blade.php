@@ -10,20 +10,6 @@
         </div>
         <div class="main-content">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-2">
-                        <a href="{{route('pegawai.add')}}" class="btn btn-success">Tambah Pegawai</a>
-                    </div>
-                    <div class="col-md-5">
-                        <form id="import-pegawai" action="{{route('pegawai.import')}}" method="post" enctype="multipart/form-data">
-                            {{csrf_field()}}
-                            <input type="file" name="import" class=""
-                                   accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                   placeholder="Excel" value="" required>
-                            <button type="submit" class="btn btn-primary">Import</button>
-                        </form>
-                    </div>
-                </div>
                 <br><br>
                 <div class="table-responsive">
                     <table class="table">
@@ -55,7 +41,7 @@
             });
             var getPage = function (search) {
                 $('#pagination').twbsPagination('destroy');
-                $.get('{{route('api.web.master-data.pegawai.page')}}?q=' + search)
+                $.get('{{route('api.web.master-data.pegawai.page')}}?q=' + search+'&deleted=1')
                     .then(function (res) {
                         if (res.halaman == 0) {
                             if (search != '') {
@@ -81,7 +67,7 @@
                 var selector = $('.list_pegawai');
                 $('#preload').show();
                 $.ajax({
-                    url: "{{ route('api.web.master-data.pegawai') }}?page=" + page + '&q=' + search,
+                    url: "{{ route('api.web.master-data.pegawai') }}?page=" + page + '&q=' + search+'&deleted=1',
                     data: '',
                     success: function (res) {
                         if (res.response.length > 0) {
@@ -95,7 +81,7 @@
                                 row += "<td>" + (val.jabatan ? val.jabatan.jabatan : '') + "</td>";
                                 row += "<td>" + (val.skpd ? val.skpd.nama_skpd : '') + "</td>";
                                 row += "<td>" + val.jns_kel + "</td>";
-                                row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='" + val.edit_uri + "' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='" + val.delete_uri + "' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
+                                row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a class='btn badge-warning btn-edit' data-nip='"+val.nip+"'><i class=''></i>Kembalikan Data</a></div></td>";
                                 row += "</tr>";
                                 return row;
                             })
@@ -110,56 +96,17 @@
                     }
                 });
             }
-            $(document).on('click', '.btn-delete', function (e) {
-                e.preventDefault();
-                var delete_uri = $(this).attr('delete-uri');
-                var search = $('#search').val();
-                swal({
-                    title: 'Yakin Ingin Menghapus Pegawai?',
-                    text: "Proses tidak dapat di kembalikan",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'Iya, Hapus Pegawai!',
-                    cancelButtonText: 'Tidak'
-                }).then((result) => {
-                    if (result.value) {
-                        $.post(delete_uri)
-                            .then(function (res) {
-                                if (res.response.status == '200') {
-                                    getPage(search);
-                                    swal(
-                                        'Terhapus!',
-                                        'Data Pegawai Berhasil Dihapus.',
-                                        'success'
-                                    )
-                                } else {
-                                    swal(
-                                        'Gagal Menghapus Data Pegawai',
-                                        res.response.message,
-                                        'error'
-                                    )
-                                }
-                            }, function () {
-                                swal(
-                                    'Gagal Menghapus Data',
-                                    '',
-                                    'error'
-                                )
-                            })
-                    }
-                })
-            })
             $('#search').on('keyup', function (e) {
                 e.preventDefault();
                 getPage($(this).val())
             })
-            $('#import-pegawai').on('submit',function (e) {
+            $(document).on('click','.btn-edit',function (e) {
                 e.preventDefault();
-                var action = this.action;
-                var formData = new FormData($(this)[0]);
+                nip = $(this).data('nip');
+                search = $('#search').val();
+                row = $(this).parent().parent().parent();
                 swal({
-                    title: 'Ingin Mengimport Pegawai?',
+                    title: 'Ingin Mengembalikan data Pegawai?',
                     text: "",
                     type: 'warning',
                     showCancelButton: true,
@@ -167,31 +114,16 @@
                     cancelButtonText: 'Batalkan'
                 }).then((result) => {
                     if (result.value) {
-                        $.ajax({
-                            url: action,
-                            type: "POST",
-                            data: formData,
-                            success: function (res) {
-                                swal(
-                                    'Berhasil Mengimport Data!',
-                                    '',
-                                    'success'
-                                )
-                                getPage('')
-                            },
-                            error: function () {
-                                swal(
-                                    'Gagal Mengimport Data!',
-                                    '',
-                                    'error'
-                                )
-                            },
-                            cache: false,
-                            contentType: false,
-                            processData: false
-                        });
+                        $.post('{{route('api.web.master-data.pegawai.restore',['nip' => ''])}}/'+nip)
+                            .then(function () {
+                                getPage(search)
+                                row.fadeOut();
+                            },function () {
+
+                            })
                     }
                 })
+
             })
         </script>
     @endpush
