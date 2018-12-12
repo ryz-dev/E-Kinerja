@@ -106,7 +106,7 @@ class RekapBulananController extends ApiController
                 // 'tgl_prev' => isset($hari_kerja[$key-1]->tanggal) ? $hari_kerja[$key-1]->tanggal : '',
                 // 'tgl_next' => isset($hari_kerja[$key+1]->tanggal) ? $hari_kerja[$key+1]->tanggal : '',
                 // 'tgl' => $hk->tanggal,
-                'tanggal' => $this->formatDate($hk->tanggal),
+                'tanggal' => $hk->tanggal,
                 'hari' => ucfirst($hk->Hari->nama_hari),
                 // 'checkinout' => $kehadiran,
                 'status' => $status,
