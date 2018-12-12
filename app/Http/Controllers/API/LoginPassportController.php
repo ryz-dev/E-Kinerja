@@ -183,7 +183,17 @@ class LoginPassportController extends ATC {
         ]);
 
         $user = auth('api')->user();
-        if (!Hash::check($r->old_password, $user->password)) {
+        
+        if ($r->input('old_password') === $r->input('new_password')) {
+            return response()->json([
+                'diagnostic' => [
+                    'code' => '403',
+                    'message' => 'Kata sandi lama dan kata sandi baru tidak boleh sama!'
+                ]
+            ]);
+        }
+
+        if (!Hash::check($r->input('old_password'), $user->password)) {
             return response()->json([
                 'diagnostic' => [
                     'code' => '403',
@@ -192,7 +202,7 @@ class LoginPassportController extends ATC {
             ]);
         } else {
             $user = auth('api')->user();
-            $user->password = bcrypt($r->new_password);
+            $user->password = bcrypt($r->input('new_password'));
             $user->save();
             return response()->json([
                 'diagnostic' => [
