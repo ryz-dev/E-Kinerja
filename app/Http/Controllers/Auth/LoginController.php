@@ -56,5 +56,26 @@ class LoginController extends Controller
 
         return $this->loggedOut($request) ?: redirect('/login');
     }
+
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        $request->session()->put('user',collect([
+            'nama' => $user->nama,
+            'nip' => $user->nip,
+            'foto' => $user->foto,
+            'jabatan' => $user->jabatan()->first()->jabatan,
+            'tempat_lahir' => $user->tempat_lahir,
+            'tanggal_lahir' => $user->tanggal_lahir,
+            'bulan_lahir' => ucfirst(\App\Models\MasterData\Bulan::find((int)date('m', strtotime($user->tanggal_lahir)))->nama_bulan),
+            'agama' => $user->agama()->get()->first()->agama
+        ]));
+    }
     
 }

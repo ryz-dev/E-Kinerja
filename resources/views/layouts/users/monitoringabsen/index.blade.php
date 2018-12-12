@@ -175,14 +175,14 @@
 
         var parseAbsen = function(absen,kinerja,jam_masuk){
             if (absen.length > 0) {
-                var absenin = '';
-                var absenout = '';
-                var alpa = '';
-                var BreakException = {};
+                let absenin = '';
+                let absenout = '';
+                let alpa = '';
+                let BreakException = {};
 
                 try{
                     var res = absen.forEach(function(val){
-                        var checkdate = new Date(val.absen_timestamp);
+                        let checkdate = new Date(val.absen_timestamp);
                         if (val.checktype =='0' && checkdate > jam_masuk) {
                             alpa = true;   
                             throw BreakException;

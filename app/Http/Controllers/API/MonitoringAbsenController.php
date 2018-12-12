@@ -17,6 +17,7 @@ class MonitoringAbsenController extends Controller
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         $skpd = $request->input('skpd');
         $date = \Carbon\Carbon::parse($request->input('d'));
+        $raw_date = $request->input('d');
         $search = $request->has('search')? $request->input('search'):'';
         $user = auth('web')->user();
 
@@ -48,7 +49,7 @@ class MonitoringAbsenController extends Controller
             }
 
             $pegawai->orderBy('nama','asc');
-            $sum = $this->summary($pegawai);
+            $sum = $this->summary($pegawai,$raw_date);
             $total = (int) $pegawai->count();
             $pegawai = $pegawai->paginate($this->show_limit);
 
@@ -59,7 +60,7 @@ class MonitoringAbsenController extends Controller
                     'dayAfter' => Carbon::parse($date)->addDays(1)->format('m/d/Y'),
                     'today' => Carbon::parse($date)->format('m/d/Y'),
                     'dateString' => ucfirst(\App\Models\MasterData\Hari::find(date('N'))->nama_hari).' , '.date('d').' '.ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan).' '.date('Y'),
-                    'jam_masuk_timestamp' => Carbon::parse($this->jam_masuk)->toDateTimeString(),
+                    'jam_masuk_timestamp' => Carbon::parse($raw_date.' '.$this->jam_masuk)->toDateTimeString(),
                     'summary' => $sum
                 ]
             );
@@ -96,15 +97,15 @@ class MonitoringAbsenController extends Controller
         return response()->json([ 'page'=> $data ]);
     }
 
-    private function summary($pegawai){
+    private function summary($pegawai,$date){
         $data = $pegawai->get();
-        $summary = $data->map(function($item, $key) {
+        $summary = $data->map(function($item, $key) use($date) {
             if (count($item['checkinout']) > 0) {
                 if ($item['checkinout']->contains('checktype',0)) {
                     
                     $time = $item['checkinout']->where('checktype',0)->first()->checktime;
                     
-                    if(Carbon::parse($time) >= Carbon::parse($this->jam_masuk)){
+                    if(Carbon::parse($time) >= Carbon::parse($date.' '.$this->jam_masuk)){
                         return collect(['data'=>'alpa']);
                     }
                     else{
