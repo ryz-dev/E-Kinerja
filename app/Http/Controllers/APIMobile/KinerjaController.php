@@ -61,11 +61,11 @@ class KinerjaController extends ApiController
                         }
                     } else {
                         return response()->json([
-                                'diagnostic' => [
-                                    'code' => '403',
-                                    'message' => 'gagal menambah kinerja, tidak tercata hadir pada absen'
-                                ]
-                            ]);
+                            'diagnostic' => [
+                                'code' => '403',
+                                'message' => 'gagal menambah kinerja, tidak tercata hadir pada absen'
+                            ]
+                        ]);
                     }
                 }
 
