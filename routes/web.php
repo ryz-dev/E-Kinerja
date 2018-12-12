@@ -130,6 +130,7 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     Route::group(['prefix' => 'master-data'],function (){
         Route::group(['prefix' => 'pegawai'],function (){
             Route::get('','PegawaiController@listPegawai')->name('api.web.master-data.pegawai');
+            Route::post('update-password','PegawaiController@updatePassword')->name('api.web.master-data.pegawai.update-password');
             Route::get('get-pagination','PegawaiController@getpage')->name('api.web.master-data.pegawai.page');
             Route::post('store','PegawaiController@storePegawai')->name('api.web.master-data.pegawai.store');
             Route::post('{id}','PegawaiController@updatePegawai')->name('api.web.master-data.pegawai.update');

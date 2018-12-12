@@ -13,6 +13,7 @@ class MonitoringAbsenController extends Controller
         $special_user = [2,3,4];
 
         $user = \Auth::user();
+        // dd($user->foto);
         $skpd = in_array($user->role()->first()->id,$special_user)?Skpd::all():Skpd::where('id',$user->id_skpd);
         $skpd = $skpd->pluck('nama_skpd','id');
 

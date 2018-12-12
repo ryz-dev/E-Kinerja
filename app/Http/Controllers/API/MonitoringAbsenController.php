@@ -58,7 +58,7 @@ class MonitoringAbsenController extends Controller
                     'dayBefore' => Carbon::parse($date)->addDays(-1)->format('m/d/Y'),
                     'dayAfter' => Carbon::parse($date)->addDays(1)->format('m/d/Y'),
                     'today' => Carbon::parse($date)->format('m/d/Y'),
-                    'dateString' => Carbon::parse($date)->format('d F Y'),
+                    'dateString' => ucfirst(\App\Models\MasterData\Hari::find(date('N'))->nama_hari).' , '.date('d').' '.ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan).' '.date('Y'),
                     'jam_masuk_timestamp' => Carbon::parse($this->jam_masuk)->toDateTimeString(),
                     'summary' => $sum
                 ]
