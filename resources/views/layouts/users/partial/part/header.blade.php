@@ -27,11 +27,11 @@
                 <img src="{{asset('assets/images/bg_login_whitebase.png')}}" class="bgImg" />
                 <div
                 class="imgUser"
-                style="background-image: url('{{ \Auth::user()->foto?url('').'/storage/'.\Auth::user()->foto:asset('assets/images/img-user.png') }}')"
+                style="background-image: url('{{ session('user')->get('foto')?url('').'/storage/'.session('user')->get('foto'):asset('assets/images/img-user.png') }}')"
                 ></div>
                 <div class="descUser mt-2">
-                <h5 class="mb-1">{{ ucfirst(\Auth::user()->nama) }}</h5>
-                <p>{{ \Auth::user()->nip }}</p>
+                <h5 class="mb-1">{{ ucfirst(session('user')->get('nama')) }}</h5>
+                <p>{{ session('user')->get('nip') }}</p>
                 </div>
             </div>
     
@@ -40,15 +40,15 @@
                 <h5 class="mb-2">Informasi</h5>
                 <div>
                     <span>Jabatan</span>
-                    <p>{{ ucwords(strtolower(\Auth::user()->jabatan()->first()->jabatan)) }}</p>
+                    <p>{{ ucwords(strtolower(session('user')->get('jabatan'))) }}</p>
                 </div>
                 <div>
                     <span>Tempat, Tgl.Lahir</span>
-                    <p>{{ucwords(\Auth::user()->tempat_lahir)}}, {{ date('d',strtotime(\Auth::user()->tanggal_lahir)) }} {{ ucfirst(\App\Models\MasterData\Bulan::find((int)date('m', strtotime(\Auth::user()->tanggal_lahir)))->nama_bulan) }} {{ date('Y',strtotime(\Auth::user()->tanggal_lahir)) }} </p>
+                    <p>{{ucwords(session('user')->get('tempat_lahir'))}}, {{ date('m',strtotime(session('user')->get('tanggal_lahir'))) }} , {{ session('user')->get('bulan_lahir') }} {{ date('Y',strtotime(session('user')->get('tanggal_lahir'))) }} </p>
                 </div>
                 <div>
                     <span>Agama</span>
-                    <p>{{ ucwords(\Auth::user()->agama()->get()->first()->agama) }}</p>
+                    <p>{{ ucwords(session('user')->get('agama')) }}</p>
                 </div>
                 <div>
                     
