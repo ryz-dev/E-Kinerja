@@ -76,7 +76,7 @@ class MonitoringAbsenController extends Controller
                 [
                     'pegawai' => $data,
                     'min_date' => $min_date->tanggal,
-                    'jam_masuk_timestamp' => Carbon::parse($this->jam_masuk)->toDateTimeString(),
+                    // 'jam_masuk_timestamp' => Carbon::parse($this->jam_masuk)->toDateTimeString(),
                     'summary' => $sum
                 ]
             );

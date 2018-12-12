@@ -197,7 +197,7 @@ class LoginPassportController extends ATC {
             return response()->json([
                 'diagnostic' => [
                     'code' => '403',
-                    'message' => 'Kata Sandi Lama Tidak Sesuai'
+                    'message' => 'Kata sandi lama tidak sesuai!'
                 ]
             ]);
         } else {
@@ -207,7 +207,7 @@ class LoginPassportController extends ATC {
             return response()->json([
                 'diagnostic' => [
                     'code' => '200',
-                    'message' => 'Kata Sandi Berhasil Diubah'
+                    'message' => 'Kata sandi berhasil diubah'
                 ]
             ]);
         }
