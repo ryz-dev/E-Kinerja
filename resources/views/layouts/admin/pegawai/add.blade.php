@@ -84,7 +84,7 @@
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Iya, simpan data!',
-                    cancelButtonText: 'Batalakan'
+                    cancelButtonText: 'Batalkan'
                 }).then((result) => {
                     if (result.value) {
                         $.ajax({

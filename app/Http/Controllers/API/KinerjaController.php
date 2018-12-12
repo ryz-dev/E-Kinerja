@@ -54,11 +54,11 @@ class KinerjaController extends ApiController
                 if ($cek_hari_kerja){
                     $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','0')->where('nip',$input['nip'])->first();
                     $cek_pulang_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('nip',$input['nip'])->first();
-                    if (strtotime($cek_hadir_kerja->checktime) <= strtotime(date('Y-m-d')." 09:00:00")){
-                        if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8.5 * 3600)) {
+                    /*if (strtotime($cek_hadir_kerja->checktime) <= strtotime(date('Y-m-d')." 09:00:00")){
+                        if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8.5 * 3600)) {*/
                             $kinerja = Kinerja::create($input);
                             return $this->ApiSpecResponses($kinerja);
-                        }
+                        /*}
                     } else {
                         return response()->json([
                                 'diagnostic' => [
@@ -66,7 +66,7 @@ class KinerjaController extends ApiController
                                     'message' => 'gagal menambah kinerja, tidak tercata hadir pada absen'
                                 ]
                             ]);
-                    }
+                    }*/
                 }
 
                 return response()->json([
