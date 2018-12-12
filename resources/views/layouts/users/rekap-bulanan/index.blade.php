@@ -449,7 +449,7 @@
                         $('#mdlNama').html($('#detail-nama').html());
                         $('#mdlNip').html($('#detail-nip').html());
                         $('#user-modal').attr('style', $('#detail-img').attr('style'));
-                        $('#detailDate').html(date);
+                        $('#detailDate').html(res.response.tanggal);
                         $('#checkin').html(chekinout[0] ? chekinout[0].absen_time : '--:--');
                         $('#checkout').html(chekinout[1] ? chekinout[1].absen_time : '--:--');
                         $('#kinerja_rinci').html(kinerja.rincian_kinerja);
