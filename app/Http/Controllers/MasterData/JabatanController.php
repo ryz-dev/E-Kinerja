@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MasterData;
 use App\Models\MasterData\Eselon;
 use App\Models\MasterData\Golongan;
 use App\Models\MasterData\Jabatan;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
@@ -25,7 +26,7 @@ class JabatanController extends MasterDataController
     }
 
     public function show($id){
-        $jabatan = Jabatan::with('atasan','eselon')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $jabatan = Jabatan::with('atasan','golongan')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
         return view('layouts.admin.jabatan.detail',compact('jabatan'));
     }
 
@@ -37,9 +38,9 @@ class JabatanController extends MasterDataController
     }
 
     public function edit($id){
-        $jabatan = Jabatan::with('atasan','eselon')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $jabatan = Jabatan::with('atasan','golongan')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
         $data_option = new \stdClass();
-        $data_option->eselon = Eselon::get();
+        $data_option->golongan = Eselon::get();
         $data_option->jabatan = Jabatan::get();
         return view('layouts.admin.jabatan.edit',compact('jabatan','data_option'));
     }
@@ -77,13 +78,36 @@ class JabatanController extends MasterDataController
         $jabatan = Jabatan::whereId($id)->orWhere('uuid',$id)->firstOrFail();
         try {
             $jabatan->delete();
-        } catch (\Exception $exception){}
+        } catch (QueryException $exception){
+            if ($json)
+                return response()->json([
+                    'status' => '500',
+                    'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif'
+                ]);
+            return [
+                'status' => '500',
+                'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif'
+            ];
+        } catch (\Exception $exception){
+            if ($json)
+                return response()->json([
+                    'status' => '500',
+                    'message' => $exception->getMessage()
+                ]);
+            return [
+                'status' => '500',
+                'message' => $exception->getMessage()
+            ];
+        }
         if ($json)
-        return response()->json([
-            'message' => 'berhasil menghapus data'
-        ]);
+            return response()->json([
+                'status' => '200',
+                'message' => 'data berhasil dihapus'
+            ]);
+
         return [
-            'message' => 'berhasil menghapus data'
+            'status' => '200',
+            'message' => 'data berhasil dihapus'
         ];
     }
 

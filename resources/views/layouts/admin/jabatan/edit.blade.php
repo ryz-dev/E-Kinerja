@@ -33,11 +33,12 @@
                                 <label for="keterangan">Keterangan Jabatan</label>
                                 <textarea name="keterangan" id="keterangan" rows="3" class="form-control">{{$jabatan->keterangan}}</textarea>
                             </div>
-                        </div>
-                        <div class="col-md-6">
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
+                        </div>
+                        <div class="col-md-6">
+
                         </div>
                     </div>
                 </form>

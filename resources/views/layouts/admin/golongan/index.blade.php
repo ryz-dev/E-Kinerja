@@ -102,13 +102,21 @@
                     }).then((result) => {
                         if (result.value) {
                         $.post(delete_uri)
-                            .then(function () {
-                                getPage(search);
-                                swal(
-                                    'Terhapus!',
-                                    'Data Golongan Berhasil Dihapus.',
-                                    'success'
-                                )
+                            .then(function (res) {
+                                if (res.response.status == '200') {
+                                    getPage(search);
+                                    swal(
+                                        'Terhapus!',
+                                        'Data Golongan Jabatan Berhasil Dihapus.',
+                                        'success'
+                                    )
+                                } else {
+                                    swal(
+                                        'Gagal Menghapus Data Golongan Jabatan',
+                                        res.response.message,
+                                        'error'
+                                    )
+                                }
                             },function () {
                                 swal(
                                     'Gagal Menghapus Data',

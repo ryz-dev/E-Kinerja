@@ -58,14 +58,15 @@
                                     <option value="perempuan">Perempuan</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <input type="file" name="foto" class="form-control">
                             </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
+
                         </div>
                     </div>
                 </form>

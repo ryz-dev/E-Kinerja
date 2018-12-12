@@ -58,15 +58,16 @@
                                     <option value="perempuan" {{$pegawai->jns_kel == 'perempuan' ? 'selected' : ''}}>Perempuan</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group p-3">
                                 <img src="{{$pegawai->foto ? url('storage/'.$pegawai->foto) : url('assets/images/img-user.png')}}" class="img-fluid" alt="User Image">
                                 <input type="file" name="foto" class="form-control">
                             </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
+
                         </div>
                     </div>
                 </form>

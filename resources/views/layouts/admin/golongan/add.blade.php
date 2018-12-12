@@ -23,11 +23,12 @@
                                 <label for="keterangan">Keterangan</label>
                                 <textarea class="form-control" name="keterangan" id="keterangan"></textarea>
                             </div>
-                        </div>
-                        <div class="col-md-6">
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
+                        </div>
+                        <div class="col-md-6">
+
                         </div>
                     </div>
                 </form>

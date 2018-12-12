@@ -15,11 +15,12 @@
                                 <label for="keterangan">Keterangan</label>
                                 <textarea id="keterangan" name="keterangan" class="form-control">{{$skpd->keterangan}}</textarea>
                             </div>
-                        </div>
-                        <div class="col-md-6">
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
+                        </div>
+                        <div class="col-md-6">
+
                         </div>
                     </div>
                 </form>
