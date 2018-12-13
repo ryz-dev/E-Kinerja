@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 
 class RekapBulananController extends ApiController
 {
-    private $special_user = ['Bupati', 'Wakil Bupati', 'Sekertaris Daerah'];
+    private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
 
     public function getBawahan(Request $request)
     {
