@@ -156,9 +156,9 @@ class RekapBulananController extends ApiController
         $bulan = date('m',strtotime($tgl));
         $tahun = date('Y',strtotime($tgl));
         $etika = Etika::where("nip",$pegawai->nip)
-        ->where("tanggal",'like',$tahun."-".$bulan."%")
-        ->select('persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan', 'keterangan')
-        ->first();
+            ->where("tanggal",'like',$tahun."-".$bulan."%")
+            ->select('persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan', 'keterangan')
+            ->first();
         if ($etika)
         $etika->tanggal_etika = $tahun.'-'.$bulan;
 

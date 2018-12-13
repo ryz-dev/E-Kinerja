@@ -241,7 +241,7 @@ class KinerjaController extends ApiController
             ->select('persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan', 'keterangan')
             ->first();
         if ($etika)
-        $etika->tanggal_etika = ucfirst(Bulan::where('kode',$bulan)->first()->nama_bulan)." ".$tahun;
+        $etika->tanggal_etika = $tahun.'-'.$bulan;
 
 
         /* Data checkinout */
