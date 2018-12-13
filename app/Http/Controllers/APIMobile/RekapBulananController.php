@@ -106,7 +106,7 @@ class RekapBulananController extends ApiController
                 // 'tgl_prev' => isset($hari_kerja[$key-1]->tanggal) ? $hari_kerja[$key-1]->tanggal : '',
                 // 'tgl_next' => isset($hari_kerja[$key+1]->tanggal) ? $hari_kerja[$key+1]->tanggal : '',
                 // 'tgl' => $hk->tanggal,
-                'tanggal' => $this->formatDate($hk->tanggal),
+                'tanggal' => $hk->tanggal,
                 'hari' => ucfirst($hk->Hari->nama_hari),
                 // 'checkinout' => $kehadiran,
                 'status' => $status,
@@ -160,7 +160,7 @@ class RekapBulananController extends ApiController
         ->select('persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan', 'keterangan')
         ->first();
         if ($etika)
-        $etika->tanggal_etika = ucfirst(Bulan::where('kode',$bulan)->first()->nama_bulan)." ".$tahun;
+        $etika->tanggal_etika = $tahun.'-'.$bulan;
 
         /* Data checkinout */
         $checkinout = Checkinout::where("nip",$pegawai->nip)
@@ -174,8 +174,8 @@ class RekapBulananController extends ApiController
             'nama' => $pegawai->nama,
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
-            'kinerja' => $kinerja ? $kinerja : [],
-            'etika' => $etika ? $etika : [],
+            'kinerja' => $kinerja ? $kinerja : null,
+            'etika' => $etika ? $etika : null,
             'checkinout' => [
                 'in' => (count($checkinout)) ? $checkinout[0]->checktime : "",
                 'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",

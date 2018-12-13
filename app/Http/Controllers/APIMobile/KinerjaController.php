@@ -256,8 +256,8 @@ class KinerjaController extends ApiController
             'nama' => $pegawai->nama,
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
-            'kinerja' => $kinerja ? $kinerja : [],
-            'etika' => $etika ? $etika : [],
+            'kinerja' => $kinerja ? $kinerja : null,
+            'etika' => $etika ? $etika : null,
             'checkinout' => [
                     'in' => (count($checkinout)) ? $checkinout[0]->checktime : "",
                     'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",
