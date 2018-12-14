@@ -223,10 +223,8 @@ Route::group(['middleware' => 'auth'],function (){
     Route::get('/penilaian-kinerja','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index')->middleware('can:penilaian-kinerja');
     Route::get('/penilaian-etika', 'PenilaianEtikaController@index')->name('penilaian-etika.index')->middleware('can:penilaian-etika');
     Route::get('/tunjangan-kinerja','TunjanganKinerjaController@index')->name('tunjangan-kinerja.index')->middleware('can:tunjangan-kinerja');
+    Route::post('/rekap-bulanan', 'RekapBulananController@downloadRekapBulanan')->name('download.rekap.bulanan')->middleware('can:penilaian-etika');
 });
-// Route::get('/test', function(){
-//     dd(\App\Models\MasterData\Role::find(1)->permissions);
-// });
 //
 // Route::get('/', function () {
 //     return view('welcome');
