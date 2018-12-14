@@ -163,7 +163,7 @@
                                 <hr>
                                 <div class="wrap-modal-value table-responsive">
                                     <h4 class="float-left">Penilaian Etika</h4>
-                                    <span class="badge text-white float-right" id="tanggal_kinerja">-</span>
+                                    <span class="badge text-white float-right" id="tanggal_etika">-</span>
                                     <table>
                                         <tbody><tr>
                                             <td>Upacara dan Apel 30(%)</td>
@@ -344,7 +344,7 @@
                                 }
                                 if (val.kinerja){
                                     kinerja = ( val.kinerja ? (val.kinerja.jenis_kinerja == 'hadir') ? val.status : capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '');
-                                    var badge_kinerja
+                                    var badge_kinerja = '';
                                     if (kinerja == 'Hadir'){
                                         if (val.absen){
                                             masuk = val.absen[0].checktime.split(" ");
@@ -365,7 +365,7 @@
                                 }
                                 var row = '<tr class="data-tunjangan" data-index="' + i + '">\n' +
                                     '                                <td>' + val.hari + ', ' + val.tanggal_string + '</td>\n' +
-                                    '                                <td>' + badge_kinerja + '</td>\n' +
+                                    '                                <td>' +(typeof badge_kinerja != 'undefined' ? badge_kinerja : '')+ '</td>\n' +
                                     '                                <td>\n' +
                                     '                                    <span class="' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '') + '"><i class="fas fa-lg ' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '' ): '') + '"></i></span>\n' +
                                     '                                </td>\n' +
@@ -485,7 +485,7 @@
                 $('#upacara').html(etika ? etika.mengikuti_upacara + '%' : "-");
                 $('#kegiatan_kebersamaan').html(etika ? etika.kegiatan_kebersamaan + '%' : "-");
                 $('#prilaku').html(etika ? etika.perilaku_kerja + '%' : "-");
-                $('#tanggal_etika').html(etika ? etika.tanggal_etika : "-");
+                $('#tanggal_etika').html(data.tanggal_etika);
                 ket = "-";
                 if (etika){
                     if (etika.persentase < 25){

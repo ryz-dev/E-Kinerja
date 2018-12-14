@@ -14,6 +14,9 @@
                     <div class="col-md-2">
                         <a href="{{route('pegawai.add')}}" class="btn btn-success">Tambah Pegawai</a>
                     </div>
+                    <div class="col-md-2">
+                        <a href="{{route('pegawai.add')}}" class="btn btn-primary">Download Rekap</a>
+                    </div>
                     <div class="col-md-5">
                         <form id="import-pegawai" action="{{route('pegawai.import')}}" method="post" enctype="multipart/form-data">
                             {{csrf_field()}}
