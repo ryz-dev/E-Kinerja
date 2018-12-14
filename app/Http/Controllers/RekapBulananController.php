@@ -123,7 +123,7 @@ class RekapBulananController extends Controller
         $pdf = \PDF::loadView('pdf.rekap-bulanan', compact('data','skpd', 'periode','tanggal_cetak'));
         $pdf->setPaper('letter','landscape');
 
-        return $pdf->stream('rekap_bulanan.pdf');
+        return $pdf->download('rekap_bulanan.pdf');
     }
 
     private function getEtika($pegawai = null, $bulan = null, $tahun = null){
