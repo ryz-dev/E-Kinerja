@@ -28,7 +28,8 @@ class MonitoringAbsenController extends Controller
                 $query->select('nip','checktime','checktype')->whereDate('checktime','=',$date);
             },
                 'kinerja' => function($query) use ($date){
-                $query->select('nip','jenis_kinerja')->where('approve',2)
+                $query->select('nip','jenis_kinerja')
+                ->where('approve',2)
                 ->whereDate('tgl_mulai','<=',$date)
                 ->whereDate('tgl_selesai','>=',$date);
             }
@@ -57,7 +58,30 @@ class MonitoringAbsenController extends Controller
             $pegawai = $pegawai->paginate($this->show_limit);
             
             $data = [];
-            foreach($pegawai->items() as $p) {
+            foreach($pegawai as $p) {
+                if (count($p->checkinout)) {
+                    if ($p['checkinout']->contains('checktype',0)) {
+                        $time = $p['checkinout']->where('checktype',0)->first()->checktime;
+                        
+                        if(Carbon::parse($time) >= Carbon::parse($this->jam_masuk)){
+                            $k = (['data'=>'alpa']);
+                        }
+                        else{
+                            $k = (['data' => 'hadir']);
+                        }
+                    }
+                    else{
+                        $k = (['data' => 'hadir']);
+                    }
+                }
+                else{
+                    if (count($p->kinerja)) {
+                        $k = (['data' => $p['kinerja'][0]['jenis_kinerja']]);
+                    } else {
+                        $k = (['data'=>'alpa']);
+                    }
+                }
+
                 $data[] = [
                     'uuid' => $p->uuid,
                     'nama' => $p->nama,
@@ -67,7 +91,7 @@ class MonitoringAbsenController extends Controller
                         'in' => (count($p->checkinout)) ? $p->checkinout[0]->checktime : "",
                         'out' => (count($p->checkinout) > 1) ? $p->checkinout[1]->checktime : "",
                     ],
-                    'kinerja' => (count($p->kinerja)) ? $p->kinerja[0]->jenis_kinerja : "",
+                    'kinerja' => $k['data'],
                     'created_at' => $p->created_at,
                 ];
             }
@@ -107,7 +131,7 @@ class MonitoringAbsenController extends Controller
         if ($search) {
             $data->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
         }
-
+        
         $data = ceil($data->count() / $this->show_limit);
 
         return response()->json([ 'page'=> $data ]);
