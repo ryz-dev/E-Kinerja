@@ -15,7 +15,7 @@
                         <a href="{{route('pegawai.add')}}" class="btn btn-success">Tambah Pegawai</a>
                     </div>
                     <div class="col-md-2">
-                        <a href="{{route('pegawai.add')}}" class="btn btn-primary">Download Rekap</a>
+                        <a href="" class="btn btn-primary download-rekap">Download Rekap</a>
                     </div>
                     <div class="col-md-5">
                         <form id="import-pegawai" action="{{route('pegawai.import')}}" method="post" enctype="multipart/form-data">
@@ -56,6 +56,13 @@
             $(document).ready(function () {
                 getPage('');
             });
+            window.skpd = [];
+            $.get('{{route('api.web.master-data.pegawai.skpd')}}')
+                .then(function (res) {
+                    if (res.response) {
+                        window.skpd = res.response;
+                    }
+                })
             var getPage = function (search) {
                 $('#pagination').twbsPagination('destroy');
                 $.get('{{route('api.web.master-data.pegawai.page')}}?q=' + search)
@@ -196,6 +203,24 @@
                     }
                 })
             })
+            $(document).on('click', '.download-rekap', function(e){
+                e.preventDefault();
+                swal({
+                    title: 'Silakan pilih SKPD',
+                    input: 'select',
+                    inputOptions: window.skpd,
+                    inputPlaceholder:'Pilih SKPD',
+                    showCancelButton: true
+                }).then(function(result){
+                    if (result.value) {
+                        window.open("{{route('api.web.master-data.pegawai.download',[
+                            '_token' => csrf_token()
+                        ])}}&id_skpd="+result.value, '_blank');
+                    }
+                })
+
+            });
+
         </script>
     @endpush
 @endsection

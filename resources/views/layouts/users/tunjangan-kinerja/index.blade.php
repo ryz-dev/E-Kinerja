@@ -86,7 +86,7 @@
                             <div class="container-desc">
                                 <label>TUNJANGAN</label>
                                 <br>
-                                <span>Rp.<span id="total-tunjangan"></span></span>
+                                <span>Rp <span id="total-tunjangan"></span></span>
                                 <div class="capaian text-center">
                                     Pencapaian
                                     <x id="total">0</x>
