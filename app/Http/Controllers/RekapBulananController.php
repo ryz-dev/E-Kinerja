@@ -58,7 +58,7 @@ class RekapBulananController extends Controller
         $pdf = \PDF::loadView('pdf.rekap-bulanan', compact('data','namaSkpd', 'periode','tanggal_cetak'));
         $pdf->setPaper('legal','landscape');
 
-        return $pdf->stream('rekap_bulanan.pdf');
+        return $pdf->download('rekap_bulanan.pdf');
     }
 
     private function toDecimal($number){
