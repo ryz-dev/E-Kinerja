@@ -10,6 +10,8 @@ use App\Models\Absen\Etika;
 use App\Models\Absen\Checkinout;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class RekapBulananController extends ApiController
 {
@@ -17,6 +19,7 @@ class RekapBulananController extends ApiController
 
     public function getBawahan(Request $request){
         $user = auth('api')->user();
+        $page = $request->input('page');
         $skpd = $request->has('skpd') ? $request->input('skpd') : null;
         $search = $request->has('search')? $request->input('search'):'';
 
@@ -26,6 +29,15 @@ class RekapBulananController extends ApiController
                     $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
                 }
             }])->jabatan->pegawai_bawahan;
+
+            if ($page) {
+                $currentPage = LengthAwarePaginator::resolveCurrentPage();
+                $perPage = $this->show_limit;
+                $currentResults = $bawahan->slice(($currentPage - 1) * $perPage, $perPage)->all();
+                $bawahan = new LengthAwarePaginator($currentResults, $bawahan->count(), $perPage);
+            } else {
+                $bawahan = $bawahan;
+            }
         } else {
             $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip','<>',$user->nip)->where('id_jabatan','>',$user->id_jabatan);
             if ($skpd){
@@ -36,8 +48,11 @@ class RekapBulananController extends ApiController
                     $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
                 });
             }
-
-            $bawahan = $bawahan->get();
+            if ($page) {
+                $bawahan = $bawahan->paginate($this->show_limit);
+            } else {
+                $bawahan = $bawahan->get();
+            }
         }
         
         $data = [];
