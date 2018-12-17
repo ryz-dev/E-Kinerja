@@ -20,6 +20,7 @@ class MonitoringAbsenController extends Controller
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
         $user = auth('api')->user();
+        $page = $request->input('page');
         $min_date = HariKerja::whereHas('statusHari', function ($query){
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
@@ -55,7 +56,12 @@ class MonitoringAbsenController extends Controller
             $pegawai->orderBy('nama','asc');
             $sum = $this->summary($pegawai);
             $total = (int) $pegawai->count();
-            $pegawai = $pegawai->paginate($this->show_limit);
+            
+            if ($page) {
+                $pegawai = $pegawai->paginate($this->show_limit);
+            } else {
+                $pegawai = $pegawai->get();
+            }
             
             $data = [];
             foreach($pegawai as $p) {
