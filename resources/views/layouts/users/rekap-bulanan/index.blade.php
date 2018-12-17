@@ -55,22 +55,33 @@
                 <div class="container">
                     <input type="hidden" name="index" value="0">
                     <div class="row">
-                        <div class="col-md-12">
-
+                        <div class="col-md-6">
                             <div class="img-user" id="detail-img" style="background-image: url('images/img-user.png');">
                             </div>
                             <div class="nama-id">
                                 <h6 id="detail-nama"></h6>
                                 <span id="detail-nip"></span>
                             </div>
+                        </div>
+                        <form action="{{ route('download.rekap.bulanan')}}" method="POST">
+                            @csrf
+                            <div class="col-md-3 col-6 btnDownloads">
+                                <input type="hidden" name="periode_rekap" value="">
+                                <button class="btn btn-primary"> <img src="assets/images/icons/pdf.svg"> Download</button>
+                            </div>
+                        </form>
+
+                        <div class="col-md-3 col-6">
                             <div class="btn-control float-right">
                                 <button id="pegawai-sebelumnya" inc-index="-1" class="btn btn-rounded prev"><i
                                         class="fas fa-angle-left"></i></button>
                                 <button id="pegawai-selanjutnya" inc-index="1" class="btn btn-rounded next active"><i
                                         class="fas fa-angle-right"></i></button>
                             </div>
-                            <div class="clearfix"></div>
                         </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-12 mt-3 control-date-btn">
                             <div class="date-group float-left">
                                 <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
@@ -280,6 +291,7 @@
                             break;
                     }
                     var nip = $('#detail-nip').html();
+                    $("input[name='periode_rekap']").val('01/'+bulan+'/'+tahun);
                     getRekap(nip, bulan, tahun)
                 }
             })
@@ -375,6 +387,7 @@
                     d = new Date();
                 }
                 $("#date-rekap").datepicker("setDate", new Date(d.getFullYear(), d.getMonth() + parseInt($(this).attr('data-value')), d.getDate()));
+                $("input[name='periode_rekap']").val("setDate", new Date(d.getFullYear(), d.getMonth() + parseInt($(this).attr('data-value')), d.getDate()));
             })
             $('#pegawai-sebelumnya,#pegawai-selanjutnya').on('click', function (e) {
                 e.preventDefault();
