@@ -10,13 +10,19 @@ class SkpdController extends ApiController
 {
     public function listSkpd(Request $request)
     {
+        $page = $request->input('page');
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         try {
             $skpd = Skpd::orderBy('created_at', 'DESC');
             if ($request->has('q')) {
                 $skpd = $skpd->where('nama_skpd','like','%'.$request->input('q').'%');
             }
-            $skpd = $skpd->paginate($this->show_limit);
+
+            if ($page) {
+                $skpd = $skpd->paginate($this->show_limit);
+            } else {
+                $skpd = $skpd->get();
+            }
             
             $data = [];
             foreach($skpd as $s){
