@@ -32,7 +32,7 @@ class RekapBulananController extends ApiController
 
             if ($page) {
                 $currentPage = LengthAwarePaginator::resolveCurrentPage();
-                $perPage = $this->show_limit;
+                $perPage = $this->show_limit_mobile;
                 $currentResults = $bawahan->slice(($currentPage - 1) * $perPage, $perPage)->all();
                 $bawahan = new LengthAwarePaginator($currentResults, $bawahan->count(), $perPage);
             } else {
@@ -49,7 +49,7 @@ class RekapBulananController extends ApiController
                 });
             }
             if ($page) {
-                $bawahan = $bawahan->paginate($this->show_limit);
+                $bawahan = $bawahan->paginate($this->show_limit_mobile);
             } else {
                 $bawahan = $bawahan->get();
             }

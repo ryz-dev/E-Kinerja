@@ -22,4 +22,11 @@ class ApiController extends Controller
         $y = date('Y',strtotime($date));
         return $d." ".$m." ".$y;
     }
+
+    public function formatDate3($date){
+        $bulan = (int)date('m',strtotime($date));
+        $m = ucfirst(Bulan::where('id',$bulan)->first()->nama_bulan);
+        $y = date('Y',strtotime($date));
+        return $m." ".$y;
+    }
 }

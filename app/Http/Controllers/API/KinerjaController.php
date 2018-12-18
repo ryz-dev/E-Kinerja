@@ -146,6 +146,7 @@ class KinerjaController extends ApiController
                     'tanggal' => $hk->tanggal,
                     'tanggal_string' => $this->formatDate($hk->tanggal),
                     'tanggal_string2' => $this->formatDate2($hk->tanggal),
+                    'tanggal_etika' => $this->formatDate3($hk->tanggal),
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'kinerja' => $knj->first() ? $knj->first()->toArray() : null,
                     'etika' => $etika ? $etika->toArray() : null,

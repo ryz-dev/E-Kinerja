@@ -70,14 +70,14 @@ class RekapBulananController extends Controller
                     $query->where('id_atasan','=',$user->id_jabatan);
                 })->with(
                     [
-                        'etika'=>function($query){
-                            $query->select('nip','persentase')->whereMonth('tanggal',12)->whereYear('tanggal',2018);
+                        'etika'=>function($query)use($bulan,$tahun){
+                            $query->select('nip','persentase')->whereMonth('tanggal',$bulan)->whereYear('tanggal',$tahun);
                         },
-                        'checkinout' => function($query){
-                            $query->select('nip','checktime','checktype')->whereMonth('checktime',12)->whereYear('checktime',2018);
+                        'checkinout' => function($query)use($bulan,$tahun){
+                            $query->select('nip','checktime','checktype')->whereMonth('checktime',$bulan)->whereYear('checktime',$tahun);
                         },
-                        'kinerja' =>function($query){
-                            $query->select('nip','approve','jenis_kinerja','tgl_mulai','tgl_selesai')->whereMonth('tgl_mulai',12)->whereYear('tgl_mulai',2018);
+                        'kinerja' =>function($query)use($bulan,$tahun){
+                            $query->select('nip','approve','jenis_kinerja','tgl_mulai','tgl_selesai')->whereMonth('tgl_mulai',$bulan)->whereYear('tgl_mulai',$tahun);
                         }
                     ]
                 );
