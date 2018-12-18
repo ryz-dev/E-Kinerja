@@ -102,12 +102,12 @@
                             var data = $(e.target);
                             var form = this;
                             swal({
-                                title: 'Ingin Merubah Password?',
+                                title: 'Ingin Mengubah Password?',
                                 text: "",
                                 type: 'warning',
                                 showCancelButton: true,
-                                confirmButtonText: 'Iya, rubah password!',
-                                cancelButtonText: 'Batalakan'
+                                confirmButtonText: 'Iya, ubah password!',
+                                cancelButtonText: 'Batalkan'
                             }).then((result) => {
                                 if (result.value) {
                                     $('.preload').show();
@@ -117,7 +117,7 @@
                                             
                                             if (res.diagnostic.code == 200) {
                                                 swal(
-                                                    'Password berhasil di rubah!',
+                                                    'Password berhasil di ubah!',
                                                     '',
                                                     'success'
                                                 );
