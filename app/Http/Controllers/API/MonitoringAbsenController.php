@@ -32,10 +32,13 @@ class MonitoringAbsenController extends Controller
                             ]);
         
         try {
+            // dd($user->role()->first()->id);
             if (in_array($user->role()->first()->id,$this->special_user) == false) {
-                $pegawai->whereHas('jabatan', function($query) use ($user){
-                    $query->where('id_atasan','=',$user->id_jabatan);
-                });
+                if ($user->role()->first()->id != 5) {
+                    $pegawai->whereHas('jabatan', function($query) use ($user){
+                        $query->where('id_atasan','=',$user->id_jabatan);
+                    });
+                }
             }
 
             if ($skpd > 0) {
@@ -79,9 +82,11 @@ class MonitoringAbsenController extends Controller
         $data = Pegawai::where('nip','<>','');
 
         if(in_array($user->role()->first()->id,$this->special_user) == false){
-            $data->whereHas('jabatan', function($query) use($user){
-                $query->where('id_atasan','=',$user->id_jabatan);
-            });
+            if ($user->role()->first()->id != 5) {
+                $data->whereHas('jabatan', function($query) use($user){
+                    $query->where('id_atasan','=',$user->id_jabatan);
+                });
+            }
         }
 
         if ($skpd > 0) {
