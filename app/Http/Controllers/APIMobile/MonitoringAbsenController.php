@@ -15,7 +15,7 @@ class MonitoringAbsenController extends Controller
     private $jam_masuk = '09:00:59';
     
     public function dataAbsensi(Request $request){
-        $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
+        $this->show_limit_mobile = $request->has('s') ? $request->input('s') : $this->show_limit_mobile;
         $skpd = $request->input('skpd');
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
@@ -58,7 +58,7 @@ class MonitoringAbsenController extends Controller
             $total = (int) $pegawai->count();
             
             if ($page) {
-                $pegawai = $pegawai->paginate($this->show_limit);
+                $pegawai = $pegawai->paginate($this->show_limit_mobile);
             } else {
                 $pegawai = $pegawai->get();
             }
@@ -138,7 +138,7 @@ class MonitoringAbsenController extends Controller
             $data->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
         }
         
-        $data = ceil($data->count() / $this->show_limit);
+        $data = ceil($data->count() / $this->show_limit_mobile);
 
         return response()->json([ 'page'=> $data ]);
     }

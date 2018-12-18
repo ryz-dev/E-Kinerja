@@ -19,7 +19,7 @@ class SkpdController extends ApiController
             }
 
             if ($page) {
-                $skpd = $skpd->paginate($this->show_limit);
+                $skpd = $skpd->paginate($this->show_limit_mobile);
             } else {
                 $skpd = $skpd->get();
             }
@@ -42,35 +42,6 @@ class SkpdController extends ApiController
         }
     }
 
-    public function detailSkpd($id){
-        try {
-            $skpd = Skpd::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
-            return $this->ApiSpecResponses($skpd);
-        } catch (\Exception $exception){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
-        }
-    }
-
-    public function storeSkpd(Request $request){
-        $skpd = new \App\Http\Controllers\MasterData\SkpdController();
-        $data = $skpd->store($request,false);
-        return $this->ApiSpecResponses($data);
-    }
-
-    public function updateSkpd(Request $request,$id){
-        $skpd = new \App\Http\Controllers\MasterData\SkpdController();
-        $data = $skpd->update($request,$id,false);
-        return $this->ApiSpecResponses($data);
-    }
-
-    public function deleteSkpd($id){
-        $skpd = new \App\Http\Controllers\MasterData\SkpdController();
-        $data = $skpd->delete($id,false);
-        return $this->ApiSpecResponses($data);
-    }
-
     public function getPage(Request $request)
     {
         if ($request->has('q')) {
@@ -79,7 +50,7 @@ class SkpdController extends ApiController
         } else {
             $data = Skpd::count();
         }
-        $data = ceil($data / $this->show_limit);
+        $data = ceil($data / $this->show_limit_mobile);
         return response()->json([
             'halaman' => $data
         ]);
