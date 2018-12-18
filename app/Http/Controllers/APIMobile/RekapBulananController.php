@@ -24,11 +24,21 @@ class RekapBulananController extends ApiController
         $search = $request->has('search')? $request->input('search'):'';
 
         if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
-            $bawahan = $user->load(['jabatan.pegawai_bawahan' => function ($query)use($search){
-                if ($search){
-                    $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+            if ($user->role()->first()->nama_role == 'Kepala Dinas'){
+                $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('id_skpd',$user->id_skpd)->where('nip', '<>', $user->nip)->where('id_jabatan','>',$user->id_jabatan);
+                if ($search) {
+                    $bawahan->where(function($query) use ($search){
+                        $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+                    });
                 }
-            }])->jabatan->pegawai_bawahan;
+                $bawahan = $bawahan->get();
+            } else {
+                $bawahan = $user->load(['jabatan.pegawai_bawahan' => function ($query)use($search){
+                    if ($search){
+                        $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+                    }
+                }])->jabatan->pegawai_bawahan;
+            }
 
             if ($page) {
                 $currentPage = LengthAwarePaginator::resolveCurrentPage();
@@ -79,12 +89,16 @@ class RekapBulananController extends ApiController
             $query->where('status_hari','kerja');
         })->orderBy('tanggal','asc')->get();
         try {
-            if (in_array($user->role()->first()->nama_role,$this->special_user) == false) {
-                $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
-                    $query->where('nip', auth('api')->user()->nip);
-                })->firstOrFail();
+            if (in_array($user->role()->first()->nama_role, $this->special_user) == false) {
+                if ($user->role()->first()->nama_role == 'Kepala Dinas') {
+                    $pegawai = Pegawai::whereNip($nip)->where('id_skpd',$user->id_skpd)->where('id_jabatan','>',$user->id_jabatan)->firstOrFail();
+                } else{
+                    $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
+                        $query->where('nip', auth('api')->user()->nip);
+                    })->firstOrFail();
+                }
             } else {
-                $pegawai = Pegawai::whereNip($nip)->where('id_jabatan','>',$user->id_jabatan)->firstOrFail();
+                $pegawai = Pegawai::whereNip($nip)->where('id_jabatan', '>', $user->id_jabatan)->firstOrFail();
             }
         } catch (\Exception $exception){
             abort('404');
