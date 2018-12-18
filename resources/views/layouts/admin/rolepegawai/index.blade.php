@@ -22,9 +22,9 @@
                     <th></th>
                     <th scope="col">Nip</th>
                     <th scope="col">Nama Pegawai</th>
-                    <th scope="col" width="70%">Jabatan</th>
+                    <th scope="col" width="50%">Jabatan</th>
                     <th scope="col">Role Pegawai</th>
-                    <th scope="col">Aksi</th>
+                    <th scope="col" width="20%">Aksi</th>
                 </tr>
             </thead>
             <tbody class="list_role">
@@ -45,6 +45,7 @@
         getRoles();
     });
     var getPage = function (search) {
+        $("#preload").show();
         $('#pagination').twbsPagination('destroy');
         $.get('{{route('api.web.master-data.page.role.pegawai')}}?q='+search)
             .then(function (res) {
@@ -67,13 +68,30 @@
                 var data = res.response.map(function (val) {
                     var row = '';
                     var foto = val.foto ? "{{url('')}}/storage/"+val.foto : "{{url('assets/images/img-user.png')}}";
-                    var role = val.role.length>0?"<span class='badge badge-table badge-red'>"+val.role[0].nama_role+"</span>":"<span class='badge badge-table badge-green'>User</span>";
+                    var role = '';
+                    if (val.role.length > 0) {
+                        var role ="<span class='badge badge-table badge-red'>";
+                        role += val.role.map(function(current,index){
+                            return current.nama_role;
+                            
+                        });
+                        role +="</span>";
+                    }
+                    else{
+                        role = "<span class='badge badge-table badge-green'>User</span>";
+                    }
+                    // length>0?"<span class='badge badge-table badge-red'>"+val.role[0].nama_role+"</span>":;
                     var action = function(role){
+                        var button = '<div style="display:inline-flex;">';
                         if (role.role.length > 0){    
-                            return "<button type='button' data-nip="+val.nip+" data-role-id="+role.role[0].id+" class='btn btn-sm remove-role-pegawai btn-danger btn-delete'><i class='fas fa-trash'></i></button>";
+                            button +="<button type='button' data-nip="+val.nip+" data-role-id="+role.role[0].id+" class='btn btn-sm remove-role-pegawai btn-danger btn-delete'><i class='fas fa-trash'></i></button>";
+                            button +="<button data-nip="+val.nip+" class='btn btn-sm btn-info add-role-pegawai'><i class='fas fa-plus'></i></button>";
                         }else{
-                            return "<button data-nip="+val.nip+" class='btn btn-sm btn-info add-role-pegawai'><i class='fas fa-plus'></i></button>";
+                            button +="<button data-nip="+val.nip+" class='btn btn-sm btn-info add-role-pegawai'><i class='fas fa-plus'></i></button>";
                         }
+                        button+="</div>";
+
+                        return button;
                     }
                     row += "<tr>";
                     row += "<td><div class='img-user' id='user1' style='background-image: url("+foto+");'></div></td>";
@@ -86,6 +104,7 @@
                     return row;
                 });
                 selector.html(data.join(''));
+                $("#preload").hide();
             }
         });
     }
@@ -165,7 +184,7 @@
                                 swal('Berhasil Menghapus Data!','','success');
                                 setTimeout(function(){
                                     location.href = "{{ route('role-pegawai.index') }}"
-                                },2000);
+                                },1000);
                             }
                             else{
                                 swal('Gagal Menghapus Data!',res.diagnostic.message,'error')
