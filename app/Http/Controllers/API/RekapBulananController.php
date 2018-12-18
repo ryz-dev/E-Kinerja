@@ -21,8 +21,12 @@ class RekapBulananController extends ApiController
         $user = auth('web')->user();
         $skpd = $request->has('skpd') ? $request->input('skpd') : null;
         if (in_array($user->role()->first()->nama_role, $this->special_user) == false) {
-            $user->load('jabatan.pegawai_bawahan');
-            $bawahan = $user->jabatan->pegawai_bawahan;
+            if ($user->role()->first()->nama_role == 'Kepala Dinas'){
+                $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('id_skpd',$user->id_skpd)->where('nip', '<>', $user->nip)->where('id_jabatan','>',$user->id_jabatan)->get();
+            } else {
+                $user->load('jabatan.pegawai_bawahan');
+                $bawahan = $user->jabatan->pegawai_bawahan;
+            }
         } else {
             $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip', '<>', $user->nip)->where('id_jabatan', '>', $user->id_jabatan);
             if ($skpd) {
@@ -43,9 +47,13 @@ class RekapBulananController extends ApiController
         })->orderBy('tanggal', 'asc')->get();
         try {
             if (in_array($user->role()->first()->nama_role, $this->special_user) == false) {
-                $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
-                    $query->where('nip', auth('web')->user()->nip);
-                })->firstOrFail();
+                if ($user->role()->first()->nama_role == 'Kepala Dinas') {
+                    $pegawai = Pegawai::whereNip($nip)->where('id_skpd',$user->id_skpd)->where('id_jabatan','>',$user->id_jabatan)->firstOrFail();
+                } else{
+                    $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
+                        $query->where('nip', auth('web')->user()->nip);
+                    })->firstOrFail();
+                }
             } else {
                 $pegawai = Pegawai::whereNip($nip)->where('id_jabatan', '>', $user->id_jabatan)->firstOrFail();
             }
