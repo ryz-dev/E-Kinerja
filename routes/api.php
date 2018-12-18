@@ -54,9 +54,6 @@ Route::group(['prefix' => 'v1'], function () {
             Route::group(['prefix' => 'skpd'], function () {
                 Route::get('', 'SkpdController@listSkpd')->name('api.mobile.master-data.skpd');
                 Route::get('get-pagination', 'SkpdController@getpage')->name('api.mobile.master-data.skpd.page');
-                Route::post('store', 'SkpdController@storeSkpd')->name('api.mobile.master-data.skpd.store');
-                Route::post('{id}', 'SkpdController@updateSkpd')->name('api.mobile.master-data.skpd.update');
-                Route::post('delete/{id}', 'SkpdController@deleteSkpd')->name('api.mobile.master-data.skpd.delete');
             });
         });
     });
