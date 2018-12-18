@@ -6,6 +6,36 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Laporan Rekap Bulanan E-Kinerja Kab. Kolaka</title>
     <style>
+        body{
+            font-family: Calibri;
+        }
+
+        .main thead tr{
+            background-color: #aac1bf;
+        }
+
+        .main tr td{
+            padding:5px 5px;
+            font-size: 13px;
+            border: 2px solid white;
+        }
+
+        .main tr:nth-child(even) {
+            background-color: #7db5e0;
+        }
+
+        .main thead{
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .center-text{
+            text-align: center;
+        }
+
+        .right-text{
+            text-align: right;
+        }
     </style>
 </head>
 <body border=0>
@@ -24,25 +54,28 @@
         </tr>
         <tr>
             <td><b>SKPD</b></td>
-            <td>:{{$skpd}}</td>
+            <td>:{{$namaSkpd}}</td>
             <td></td>
             <td></td>
         </tr>
     </table>
     
     <br>
-    <table border="1" width="100%" style="border: 1px solid black;border-collapse: collapse;" >
+    <table border="1" width="100%" class="main" style="border: 2px solid white;border-collapse: collapse;" >
         <thead>
             <tr>
-                <td>NIP</td>
-                <td>Nama Pegawai</td>
-                <td>Jabatan</td>
-                <td>Kelas Jabatan</td>
-                <td>Kinerja</td>
-                <td>Etika</td>
-                <td>Absensi</td>
-                <td>% Tunjangan</td>
-                <td>Nilai Tunjangan</td>
+                <td rowspan="2">NIP</td>
+                <td rowspan="2">NAMA PEGAWAI</td>
+                <td rowspan="2">JABATAN</td>
+                <td rowspan="2">KELAS JABATAN</td>
+                <td rowspan="2">KINERJA (%)</td>
+                <td rowspan="2">ETIKA (%)</td>
+                <td rowspan="2">ABSEN (%)</td>
+                <td colspan="2">TUNJANGAN</td>
+            </tr>
+            <tr>
+                <td>%</td>
+                <td>NILAI</td>
             </tr>
         </thead>
         <tbody>
@@ -50,13 +83,13 @@
                 <tr>
                     <td>{{ $value['data_pribadi']['nip'] }}</td>
                     <td>{{ $value['data_pribadi']['nama'] }}</td>
-                    <td>{{ $value['data_pribadi']['nip'] }}</td>
-                    <td>jabatan</td>
-                    <td>{{ floor($value['persentase_total']['kinerja']) }}</td>
-                    <td>{{ number_format($value['persentase_total']['etika'],2) }}</td>
-                    <td>{{ number_format($value['persentase_total']['absen'],2) }}</td>
-                    <td>{{ floor(array_sum($value['persentase_total'])) }}</td>
-                    <td>{{ number_format((float)$value['total_tunjangan'],2,',','.') }}</td>
+                    <td>{{ $value['jabatan'] }}</td>
+                    <td>{{ $value['kelas_jabatan'] }}</td>
+                    <td class="center-text">{{ floor($value['persentase_kinerja']) }}</td>
+                    <td class="center-text">{{ number_format($value['persentase_etika'],2) }}</td>
+                    <td class="center-text">{{ number_format($value['persentase_absen'],2) }}</td>
+                    <td class="center-text">{{ floor($value['total_persentase']) }}</td>
+                    <td class="right-text">{{ number_format((float)$value['total_tunjangan'],2,',','.') }}</td>
                 </tr>
             @endforeach
         </tbody>

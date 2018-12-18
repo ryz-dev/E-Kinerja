@@ -38,102 +38,111 @@ class RekapBulananController extends Controller
         $bulan = (int)($periode_rekap ? date('m', strtotime($periode_rekap)) : date('m'));
         $tahun = (int)($periode_rekap ? date('Y', strtotime($periode_rekap)) : date('Y'));
         $user = Auth::user();
+        $hari_kerja = HariKerja::whereHas('statusHari',function ($query) use($bulan,$tahun){
+            $query->where('status_hari','kerja');
+        })->where('bulan',$bulan)->where('tahun',$tahun)->orderBy('tanggal','asc')->get();
 
         $formula = FormulaVariable::all();
         $persen['etika'] = $formula->where('variable','etika')->first()->persentase_nilai;
         $persen['kinerja'] = $formula->where('variable','kinerja')->first()->persentase_nilai;
         $persen['absen'] = $formula->where('variable','absen')->first()->persentase_nilai;
 
-        $hari_kerja = HariKerja::whereHas('statusHari',function ($query){
-            $query->where('status_hari','kerja');
-        })->where('bulan',$bulan)->where('tahun',$tahun)->orderBy('tanggal','asc')->get();
+        $pegawai = $this->getDataPegawai($user,$bulan,$tahun);
 
-        $jumlah_hari = $hari_kerja->count();
-
-        $jumlah_kinerja = $jumlah_etika = $absen = 0;
-
-        $pegawai = Pegawai::whereHas('jabatan', function($query) use($user){
-            $query->where('id_atasan','=',$user->id_jabatan);
-        });
-
-        $data = [];
-
-
-        foreach($pegawai->get() AS $key => $value){
-            
-            $data[$key]['data_pribadi'] = $value->toArray();
-            $data[$key]['etika'] = $this->getEtika($value, $bulan, $tahun);
-
-            if ($hari_kerja->count() > 0) {
-                $nip = $value->nip;
-                $jumlah_tunjangan = $value->jabatan->golongan->tunjangan;
-                foreach ($hari_kerja AS $hk) {
-                    $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
-                    $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->orderBy('checktype','asc')->get();
-                    $status = 'alpa';
-                    if ($abs->count() > 0) {
-                        $in = false;
-                        $out = false;
-                        $masuk = $pulang = null;
-                        foreach ($abs AS $a) {
-                            if ($a->checktype == '0') {
-                                $in = true;
-                                $masuk = $a->checktime;
-                            }
-                            if ($a->checktype == '1') {
-                                $out = true;
-                                $pulang = $a->checktime;
-                            }
-                        }
-                        if (strtotime($masuk) <= strtotime($hk->tanggal." 09:00:00") ){
-                            if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
-                                $absen++;
-                                $status = 'hadir';
-                            }
-                        }
-                    }
-                    
-                    if ($knj->where('approve', 2)->first()) {
-                        $jumlah_kinerja++;
-                    }
-                    if ($knj->where('jenis_kinerja', '<>', 'hadir')->where('approve', 2)->first()) {
-                        $absen++;
-                    }
-                }
-            }
-            $data[$key]['kinerja'] = $jumlah_kinerja;
-            $data[$key]['absen'] = $absen;
-            $data[$key]['persentase'] = [
-                'absen' => ($absen / $jumlah_hari) * 100,
-                'kinerja' => ($jumlah_kinerja / $jumlah_hari) * 100,
-                'etika' => $data[$key]['etika']
-            ];
-            $data[$key]['persentase_total'] = [
-                'absen' => $data[$key]['persentase']['absen'] * $persen['absen'] / 100,
-                'kinerja' => $data[$key]['persentase']['kinerja'] * $persen['kinerja'] / 100,
-                'etika' => $data[$key]['persentase']['etika'] * $persen['etika'] / 100
-            ];
-            $data[$key]['total_tunjangan'] = (array_sum($data[$key]['persentase_total']) * $jumlah_tunjangan)/100;
-
-        }
+        $data = $this->parseDataRekap($pegawai,$persen,$hari_kerja);
         
-        $skpd = Skpd::where('id',$user->id_skpd)->first()->nama_skpd;
+        $skpd = Skpd::where('id',$user->id_skpd)->first();
+        $namaSkpd = $skpd?$skpd->nama_skpd:'PEMERINTAH KABUPATEN KOLAKA';
         $periode = ucfirst(\App\Models\MasterData\Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan.' '.date('Y', strtotime($periode_rekap)));
         $tanggal_cetak = date('d').' '.ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan).' '.date('Y');
-        $pdf = \PDF::loadView('pdf.rekap-bulanan', compact('data','skpd', 'periode','tanggal_cetak'));
-        $pdf->setPaper('letter','landscape');
+        $pdf = \PDF::loadView('pdf.rekap-bulanan', compact('data','namaSkpd', 'periode','tanggal_cetak'));
+        $pdf->setPaper('legal','landscape');
 
         return $pdf->download('rekap_bulanan.pdf');
     }
 
-    private function getEtika($pegawai = null, $bulan = null, $tahun = null){
-        $persentase = $pegawai->etika()->where('tanggal','like', $tahun."-".$bulan."%")->first();
-        return $persentase?$persentase->persentase:0;
-    }
-
-
     private function toDecimal($number){
         return $number?number_format((float)$number,2,',','.'):0;
+    }
+
+    private function getDataPegawai($user,$bulan,$tahun){
+        return Pegawai::whereHas('jabatan', function($query) use($user,$bulan,$tahun){
+                    $query->where('id_atasan','=',$user->id_jabatan);
+                })->with(
+                    [
+                        'etika'=>function($query){
+                            $query->select('nip','persentase')->whereMonth('tanggal',12)->whereYear('tanggal',2018);
+                        },
+                        'checkinout' => function($query){
+                            $query->select('nip','checktime','checktype')->whereMonth('checktime',12)->whereYear('checktime',2018);
+                        },
+                        'kinerja' =>function($query){
+                            $query->select('nip','approve','jenis_kinerja','tgl_mulai','tgl_selesai')->whereMonth('tgl_mulai',12)->whereYear('tgl_mulai',2018);
+                        }
+                    ]
+                );
+    }
+
+    private function parseDataRekap($pegawai,$persen,$hari_kerja){
+        return $data = $pegawai->get()->map(function($item, $key) use($persen,$hari_kerja){
+            $tunjangan = $item->jabatan->golongan->tunjangan;
+            $data['jabatan'] = $item->jabatan->jabatan;
+            $data['kelas_jabatan'] = $item->jabatan->golongan->golongan;
+            $data['data_pribadi'] = $item->toArray();
+            $data['etika'] = $item->etika->first()?$item->etika->first()->persentase:0;
+            $data['persentase_etika'] = ($data['etika'] * $persen['etika'])/100;
+            $raw_kinerja = $this->parseKinerja($item,$key,$hari_kerja);
+            $tambahan_absen = $raw_kinerja->sum('absen_tambahan');
+            $raw_absen = $this->parseAbsen($item,$key,$hari_kerja);
+            $data['kinerja'] = $raw_kinerja->sum('kinerja');
+            $data['persentase_kinerja'] = ((($data['kinerja']/$hari_kerja->count()) * 100)*$persen['kinerja'])/100;
+            $data['absen'] = $raw_absen->count()+$tambahan_absen;
+            $data['persentase_absen'] = ((($data['absen'] / $hari_kerja->count()) * 100 ) *$persen['absen'])/100;
+            $total = $this->calculateTotalTunjangan($data['persentase_absen'],$data['persentase_kinerja'],$data['persentase_etika'],$tunjangan );
+            $data['total_tunjangan'] = $total['tunjangan'];
+            $data['total_persentase'] = $total['persentase'];
+            
+            return $data;
+        });    
+    }
+
+    private function parseAbsen($item,$key,$hari_kerja){
+        return $item->checkinout->groupBy(function($itemcheckiout,$keycheckiout){
+                    return date('Y-m-d',strtotime($itemcheckiout->checktime));
+                })->map(function($itemabsen,$keyabsen) use ($key,$hari_kerja) {
+                    if ($itemabsen->wherein('checktime',$hari_kerja->pluck('tanggal'))) {
+                        $masuk = $itemabsen->where('checktype','0')?$itemabsen->where('checktype','0'):false;
+                        $keluar = $itemabsen->where('checktype','1')?$itemabsen->where('checktype','1'):false;
+                        $nip = $itemabsen->first()->nip;
+                        
+                        if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 09:00:00") ) {
+                            if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8.5 * 3600) ){
+                                return 1;
+                            }
+                        }
+                    }
+                })->filter(function($value,$key){ return $value > 0 ; });
+    }
+
+    private function parseKinerja($item,$key,$hari_kerja){
+        return $item->kinerja->map(function($itemkinerja, $keykinerja) use($key,$hari_kerja){
+                    $kinerja = $absen_tambahan = 0;
+                    if ($itemkinerja->wherein('tgl_mulai',$hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2 ) {
+                        $kinerja = 1;                    
+                    }
+                    if ($itemkinerja->wherein('tgl_mulai',$hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2 && $itemkinerja->jenis_kinerja <> 'hadir') {
+                        $absen_tambahan = 1;
+                    }
+                    return collect(['kinerja'=>$kinerja,'absen_tambahan'=>$absen_tambahan]);
+                })->filter(function($value,$key){ return $value->filter(function($v,$k){ return $v > 0; }) ; });
+    }
+
+    private function calculateTotalTunjangan($absen,$kinerja,$etika,$tunjangan){
+        $jumlah = ($absen+$kinerja+$etika);
+        return [
+            'persentase' => $jumlah,
+            'tunjangan' => (floor($jumlah) * $tunjangan) /100 
+        ];
     }
 
 
