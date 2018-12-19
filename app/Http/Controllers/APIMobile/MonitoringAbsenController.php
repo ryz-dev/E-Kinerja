@@ -37,14 +37,14 @@ class MonitoringAbsenController extends Controller
         ]);
         
         try {
-            if (in_array($user->role()->first()->id,$this->special_user) == false) {
-                if ($user->role()->first()->id == 5) {
+            if (in_array($user->role()->pluck('id_role')->max(),$this->special_user) == false) {
+                if ($user->role()->pluck('id_role')->max() != 5) {
                     $pegawai->whereHas('jabatan', function($query) use ($user){
-                        $query->where('id_skpd', $user->id_skpd);
+                        $query->where('id_atasan','=',$user->id_jabatan);
                     });
                 } else {
                     $pegawai->whereHas('jabatan', function($query) use ($user){
-                        $query->where('id_atasan','=',$user->id_jabatan);
+                        $query->where('id_skpd', $user->id_skpd);
                     });
                 }
             }
@@ -130,14 +130,14 @@ class MonitoringAbsenController extends Controller
 
         $data = Pegawai::where('nip','<>','');
 
-        if(in_array($user->role()->first()->nama_role,$this->special_user) == false){
-            if ($user->role()->first()->id != 5) {
+        if(in_array($user->role()->pluck('id_role')->max(), $this->special_user) == false){
+            if ($user->role()->pluck('id_role')->max() != 5) {
                 $data->whereHas('jabatan', function($query) use($user){
-                    $query->where('id_skpd','=',$user->id_skpd);
+                    $query->where('id_atasan','=',$user->id_jabatan);
                 });
             } else {
                 $data->whereHas('jabatan', function($query) use($user){
-                    $query->where('id_atasan','=',$user->id_jabatan);
+                    $query->where('id_skpd','=',$user->id_skpd);
                 });
             }
         }
