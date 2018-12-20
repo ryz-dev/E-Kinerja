@@ -59,13 +59,15 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label for="jns_kel">Foto</label>
+                                <input type="file" name="foto" class="form-control">
+                            </div>
+                            <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <input type="file" name="foto" class="form-control">
-                            </div>
+
 
                         </div>
                     </div>
