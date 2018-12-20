@@ -12,6 +12,7 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     protected $show_limit = 7;
+    protected $show_limit_mobile = 20;
     protected $query = null;
 
     public function ApiSpecResponses($response){

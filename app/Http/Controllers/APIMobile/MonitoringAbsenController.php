@@ -15,7 +15,7 @@ class MonitoringAbsenController extends Controller
     private $jam_masuk = '09:00:59';
     
     public function dataAbsensi(Request $request){
-        $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
+        $this->show_limit_mobile = $request->has('s') ? $request->input('s') : $this->show_limit_mobile;
         $skpd = $request->input('skpd');
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
@@ -37,10 +37,16 @@ class MonitoringAbsenController extends Controller
         ]);
         
         try {
-            if (in_array($user->role()->first()->id,$this->special_user) == false) {
-                $pegawai->whereHas('jabatan', function($query) use ($user){
-                    $query->where('id_atasan','=',$user->id_jabatan);
-                });
+            if (in_array($user->role()->pluck('id_role')->max(),$this->special_user) == false) {
+                if ($user->role()->pluck('id_role')->max() != 5) {
+                    $pegawai->whereHas('jabatan', function($query) use ($user){
+                        $query->where('id_atasan','=',$user->id_jabatan);
+                    });
+                } else {
+                    $pegawai->whereHas('jabatan', function($query) use ($user){
+                        $query->where('id_skpd', $user->id_skpd);
+                    });
+                }
             }
 
             if ($skpd > 0) {
@@ -58,7 +64,7 @@ class MonitoringAbsenController extends Controller
             $total = (int) $pegawai->count();
             
             if ($page) {
-                $pegawai = $pegawai->paginate($this->show_limit);
+                $pegawai = $pegawai->paginate($this->show_limit_mobile);
             } else {
                 $pegawai = $pegawai->get();
             }
@@ -124,10 +130,16 @@ class MonitoringAbsenController extends Controller
 
         $data = Pegawai::where('nip','<>','');
 
-        if(in_array($user->role()->first()->nama_role,$this->special_user) == false){
-            $data->whereHas('jabatan', function($query) use($user){
-                $query->where('id_atasan','=',$user->id_jabatan);
-            });
+        if(in_array($user->role()->pluck('id_role')->max(), $this->special_user) == false){
+            if ($user->role()->pluck('id_role')->max() != 5) {
+                $data->whereHas('jabatan', function($query) use($user){
+                    $query->where('id_atasan','=',$user->id_jabatan);
+                });
+            } else {
+                $data->whereHas('jabatan', function($query) use($user){
+                    $query->where('id_skpd','=',$user->id_skpd);
+                });
+            }
         }
 
         if ($skpd > 0) {
@@ -138,7 +150,7 @@ class MonitoringAbsenController extends Controller
             $data->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
         }
         
-        $data = ceil($data->count() / $this->show_limit);
+        $data = ceil($data->count() / $this->show_limit_mobile);
 
         return response()->json([ 'page'=> $data ]);
     }

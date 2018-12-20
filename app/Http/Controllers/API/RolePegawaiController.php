@@ -50,7 +50,7 @@ class RolePegawaiController extends Controller
 
     public function delete(Request $request){
         $pegawai = Pegawai::find($request->input('nip'));
-        $data = $pegawai->role()->where('id',$request->input('role_id'))->detach();
+        $data = $pegawai->role()->detach();
         return $this->ApiSpecResponses($data);
     }
 

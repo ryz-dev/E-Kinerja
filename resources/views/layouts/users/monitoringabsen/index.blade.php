@@ -87,35 +87,35 @@
                                     <img src="assets/images/icons/hadir.svg">
                                 </span>
                                 <label>Hadir</label>
-                                <label class="float-right count count-hadir">21</label>
+                                <label class="float-right count count-hadir">0</label>
                             </li>
                             <li>
                                 <span class="dinas">
                                     <img src="assets/images/icons/perjalanan_dinas.svg">
                                 </span>
                                 <label>Perj. Dinas</label>
-                                <label class="float-right count count-perjalanan-dinas">21</label>
+                                <label class="float-right count count-perjalanan-dinas">0</label>
                             </li>
                             <li>
                                 <span class="cuti">
                                     <img src="assets/images/icons/cuti.svg">
                                 </span>
                                 <label>Cuti</label>
-                                <label class="float-right count count-cuti">3</label>
+                                <label class="float-right count count-cuti">0</label>
                             </li>
                             <li>
                                 <span class="izin">
                                     <img src="assets/images/icons/izin.svg">
                                 </span>
                                 <label>Izin</label>
-                                <label class="float-right count count-izin">4</label>
+                                <label class="float-right count count-izin">0</label>
                             </li>
                             <li>
                                 <span class="sakit">
                                     <img src="assets/images/icons/sakit.svg">
                                 </span>
                                 <label>Sakit</label>
-                                <label class="float-right count count-sakit">2</label>
+                                <label class="float-right count count-sakit">0</label>
                             </li>
                             <li>
                                 <span class="alpha">
