@@ -10,6 +10,7 @@ class SkpdController extends ApiController
 {
     public function listSkpd(Request $request)
     {
+        $user = auth('api')->user();
         $page = $request->input('page');
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         try {
@@ -23,8 +24,17 @@ class SkpdController extends ApiController
             } else {
                 $skpd = $skpd->get();
             }
-            
             $data = [];
+            
+            if ($user->role()->first()->nama_role == 'Bupati') {
+                $data[] = [
+                    'id' => -1,
+                    'uuid' => 'uuid',
+                    'nama_skpd' => 'SEKERTARIS DAERAH',
+                    'keterangan' => 'SEKERTARIS DAERAH',
+                ];
+            }
+
             foreach($skpd as $s){
                 $data[] = [
                     'id' => $s->id,
