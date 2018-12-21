@@ -25,7 +25,11 @@ class RekapBulananController extends Controller
         $skpd = $skpd->pluck('nama_skpd','id');
 
         if (in_array($user->role()->first()->nama_role,$special_user)) {
-            $skpd->prepend('-- ALL --');
+
+            if ($user->role()->first()->nama_role == 'Bupati'){
+                $skpd->prepend(strtoupper('Sekretaris Daerah'),'-1');
+            }
+            $skpd->prepend('-- ALL --','-2');
         }
 
         $skpd = $skpd->toArray();
