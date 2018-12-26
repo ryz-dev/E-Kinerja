@@ -40,7 +40,7 @@ class JabatanController extends MasterDataController
     public function edit($id){
         $jabatan = Jabatan::with('atasan','golongan')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
         $data_option = new \stdClass();
-        $data_option->golongan = Eselon::get();
+        $data_option->golongan = Golongan::get();
         $data_option->jabatan = Jabatan::get();
         return view('layouts.admin.jabatan.edit',compact('jabatan','data_option'));
     }
