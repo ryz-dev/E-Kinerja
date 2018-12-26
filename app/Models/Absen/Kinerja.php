@@ -21,7 +21,7 @@ class Kinerja extends Model
     }
 
     public function scopeTerbaru($query){
-        return $query->orderBy('created_at','desc');
+        return $query->where('approve','<>','5')->orderBy('created_at','desc');
     }
     
 }

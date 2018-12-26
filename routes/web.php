@@ -208,6 +208,8 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     });
     Route::group(['prefix' => 'kinerja'],function (){
         Route::post('','KinerjaController@inputKinerja')->name('api.web.input-kinerja.post');
+        Route::get('draft','KinerjaController@getKinerjaTersimpan')->name('api.web.input-kinerja.draft');
+        Route::post('delete/draft/{id}','KinerjaController@hapusKinerjaTersimpan')->name('api.web.input-kinerja.delete-draft');
         Route::get('{bulan?}/{tahun?}','KinerjaController@tunjanganKinerja')->name('api.web.tunjangan-kinerja.get');
     });
 
