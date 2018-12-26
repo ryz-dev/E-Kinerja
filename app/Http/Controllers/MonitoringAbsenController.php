@@ -13,12 +13,16 @@ class MonitoringAbsenController extends Controller
         $special_user = [2,3,4];
 
         $user = \Auth::user();
-        // dd($user->foto);
-        $skpd = in_array($user->role()->first()->id,$special_user)?Skpd::all():Skpd::where('id',$user->id_skpd);
+        $role = $user->role()->first()->id;
+        $skpd = in_array($role,$special_user)?Skpd::all():Skpd::where('id',$user->id_skpd);
         $skpd = $skpd->pluck('nama_skpd','id');
 
-        if (in_array($user->role()->first()->id,$special_user)) {
-            $skpd->prepend('-- ALL --');
+        if ($role == 2) {
+            $skpd = collect([-1=>'SEKERTARIS DAERAH'] + $skpd->all());
+        }
+        
+        if (in_array($role,$special_user)) {
+            $skpd = collect([0=>' ALL '] + $skpd->all());
         }
 
         $skpd = $skpd->toArray();
