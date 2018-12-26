@@ -38,6 +38,14 @@
                                 <label for="jns_kel">Jenis Kelamin</label>
                                 <input id="jns_kel" type="text" class="form-control" placeholder="Jenis Kelamin" readonly="" value="{{$pegawai->jns_kel}}">
                             </div>
+                            <div class="form-group">
+                                <label for="jns_kel">Status Upacara</label>
+                                @if ($pegawai->status_upacara == true)
+                                    <input id="status_upacara" type="text" class="form-control" placeholder="Status Upacara" readonly="" value="Wajib Mengikuti">
+                                @elseif($pegawai->status_upacara == false)                                    
+                                    <input id="status_upacara" type="text" class="form-control" placeholder="Status Upacara" readonly="" value="Tidak Wajib">
+                                @endif
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group p-3">

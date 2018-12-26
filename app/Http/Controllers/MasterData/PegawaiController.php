@@ -14,34 +14,39 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PegawaiController extends MasterDataController
 {
-    public function index(){
+    public function index()
+    {
         return view('layouts/admin/pegawai/index');
     }
 
-    public function show($id){
-        $pegawai = Pegawai::with('jabatan','agama','skpd')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
-        return view('layouts.admin.pegawai.detail',compact('pegawai'));
+    public function show($id)
+    {
+        $pegawai = Pegawai::with('jabatan', 'agama', 'skpd')->where('nip', $id)->orWhere('uuid', $id)->firstOrFail();
+        return view('layouts.admin.pegawai.detail', compact('pegawai'));
     }
 
-    public function edit($id){
-        $pegawai = Pegawai::with('jabatan','agama','skpd')->where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
+    public function edit($id)
+    {
+        $pegawai = Pegawai::with('jabatan', 'agama', 'skpd')->where('nip', $id)->orWhere('uuid', $id)->firstOrFail();
         $data_option = new \stdClass();
         $data_option->agama = Agama::get();
         $data_option->jabatan = Jabatan::get();
         $data_option->skpd = Skpd::get();
-        return view('layouts.admin.pegawai.edit',compact('pegawai','data_option'));
+        return view('layouts.admin.pegawai.edit', compact('pegawai', 'data_option'));
     }
 
-    public function add(){
+    public function add()
+    {
         $data_option = new \stdClass();
         $data_option->agama = Agama::get();
         $data_option->jabatan = Jabatan::get();
         $data_option->skpd = Skpd::get();
-        return view('layouts.admin.pegawai.add',compact('data_option'));
+        return view('layouts.admin.pegawai.add', compact('data_option'));
     }
 
-    public function store(Request $request,$json = true){
-        $this->validate($request,[
+    public function store(Request $request, $json = true)
+    {
+        $this->validate($request, [
             'nip' => 'required|unique:pegawai,nip',
             'foto' => 'image',
             'nama' => 'required',
@@ -50,7 +55,8 @@ class PegawaiController extends MasterDataController
             'id_jabatan' => 'in:'.$this->getListJabatan(),
             'jns_kel' => 'required|in:laki-laki,perempuan',
             'tempat_lahir' => 'required',
-            'id_skpd' => 'required'
+            'id_skpd' => 'required',
+            'status_upacara' => 'required'
         ]);
         $input = $request->input();
         /*upload file foto*/
@@ -67,15 +73,17 @@ class PegawaiController extends MasterDataController
         return $pegawai;
     }
 
-    public function update(Request $request,$id,$json = true){
-        $pegawai = Pegawai::where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
-        $this->validate($request,[
+    public function update(Request $request, $id, $json = true)
+    {
+        $pegawai = Pegawai::where('nip', $id)->orWhere('uuid', $id)->firstOrFail();
+        $this->validate($request, [
             'nip' => 'unique:pegawai,nip,'.$request->input('nip').',nip',
             'foto' => 'image',
             'id_agama' => 'in:'.$this->getListAgama(),
             'id_jabatan' => 'in:'.$this->getListJabatan(),
             'jns_kel' => 'in:laki-laki,perempuan',
-            'id_skpd' => 'required'
+            'id_skpd' => 'required',
+            'status_upacara' => 'required'
         ]);
         $input = $request->input();
         /*upload file foto*/
@@ -84,42 +92,47 @@ class PegawaiController extends MasterDataController
         }
         /*================*/
         $pegawai->update($input);
-        if ($json)
-        return response()->json($pegawai);
+        if ($json) {
+            return response()->json($pegawai);
+        }
 
         return $pegawai;
     }
 
-    public function delete($id,$json = true){
-        $pegawai = Pegawai::where('nip',$id)->orWhere('uuid',$id)->firstOrFail();
+    public function delete($id, $json = true)
+    {
+        $pegawai = Pegawai::where('nip', $id)->orWhere('uuid', $id)->firstOrFail();
         try {
             $pegawai->delete();
-        } catch (QueryException $exception){
-            if ($json)
+        } catch (QueryException $exception) {
+            if ($json) {
                 return response()->json([
                     'status' => '500',
                     'message' => 'Tidak dapat menghapus Pegawai, Pegawai memiliki pegawai aktif'
                 ]);
+            }
             return [
                 'status' => '500',
                 'message' => 'Tidak dapat menghapus Pegawai, Pegawai memiliki pegawai aktif'
             ];
-        } catch (\Exception $exception){
-            if ($json)
+        } catch (\Exception $exception) {
+            if ($json) {
                 return response()->json([
                     'status' => '500',
                     'message' => $exception->getMessage()
                 ]);
+            }
             return [
                 'status' => '500',
                 'message' => $exception->getMessage()
             ];
         }
-        if ($json)
+        if ($json) {
             return response()->json([
                 'status' => '200',
                 'message' => 'data berhasil dihapus'
             ]);
+        }
 
         return [
             'status' => '200',
@@ -127,36 +140,40 @@ class PegawaiController extends MasterDataController
         ];
     }
 
-    public function deleted(){
+    public function deleted()
+    {
         return view('layouts/admin/pegawai/deleted');
     }
 
-    private function getListAgama(){
-        return implode(',',Agama::select('id')->pluck('id')->all());
+    private function getListAgama()
+    {
+        return implode(',', Agama::select('id')->pluck('id')->all());
     }
 
-    private function getListJabatan(){
-        return implode(',',Jabatan::select('id')->pluck('id')->all());
+    private function getListJabatan()
+    {
+        return implode(',', Jabatan::select('id')->pluck('id')->all());
     }
 
-    private function uploadFoto(Request $request){
+    private function uploadFoto(Request $request)
+    {
         /*todo : handle untuk upload foto*/
         if ($request->hasFile('foto')) {
-            return str_replace('public/','',$request->file('foto')->store('public/upload'));
+            return str_replace('public/', '', $request->file('foto')->store('public/upload'));
         }
     }
 
-    public function updatePassword($nip,$newPassword){
+    public function updatePassword($nip, $newPassword)
+    {
         $pegawai =Pegawai::whereNip($nip)->first();
         $pegawai->password = bcrypt($newPassword);
         $pegawai->save();
         return $pegawai;
-
     }
 
-    public function import(Request $request){
-        Excel::import(new PegawaiImport,$request->file('import'));
+    public function import(Request $request)
+    {
+        Excel::import(new PegawaiImport, $request->file('import'));
         return redirect()->back();
     }
-
 }
