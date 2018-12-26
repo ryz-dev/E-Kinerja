@@ -13,7 +13,7 @@ class CreatePegawaiTable extends Migration
      */
     public function up()
     {
-        Schema::create('pegawai',function(Blueprint $table){
+        Schema::create('pegawai', function (Blueprint $table) {
             $table->uuid('uuid');
             $table->string('nip');
             $table->integer('id_skpd')->unsigned()->nullable();
@@ -21,12 +21,13 @@ class CreatePegawaiTable extends Migration
 //            $table->integer('id_fp')->nullable()->unsigned()->index();
             $table->string('foto')->nullable();
             $table->string('nama');
+            $table->boolean('status_upacara')->nullable();
             $table->date('tanggal_lahir')->nullable();
 //            $table->string('unit_kerja')->nullable()->index();
 //            $table->boolean('status_upload')->default(false);
             $table->integer('id_agama')->unsigned()->nullable()->index();
             $table->integer('id_jabatan')->nullable()->unsigned()->index();
-            $table->enum('jns_kel',['laki-laki','perempuan'])->nullable();
+            $table->enum('jns_kel', ['laki-laki','perempuan'])->nullable();
             $table->string('tempat_lahir')->nullable();
             $table->string('badgenumber')->nullable();
             $table->softDeletes();

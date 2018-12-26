@@ -59,6 +59,14 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label for="status_upacara">Status Upacara</label>
+                                <select class="form-control" name="status_upacara" id="status_upacara" required>
+                                    <option value="">Pilih Status</option>
+                                    <option value="1">Wajib Mengikuti</option>
+                                    <option value="0">Tidak Wajib</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="jns_kel">Foto</label>
                                 <input type="file" name="foto" class="form-control">
                             </div>
@@ -67,8 +75,6 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-
-
                         </div>
                     </div>
                 </form>

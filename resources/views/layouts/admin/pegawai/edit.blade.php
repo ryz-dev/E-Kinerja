@@ -59,6 +59,20 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label for="status_upacara">Status Upacara</label>
+                                <select class="form-control" name="status_upacara" id="status_upacara" required>
+                                    <option value="">Pilih Status</option>
+                                    @if ($pegawai->status_upacara == true)
+                                        <option value="1" selected>Wajib Mengikuti</option>                                        
+                                        <option value="0">Tidak Wajib</option>
+                                    @elseif($pegawai->status_upacara == false)                                    
+                                        <option value="1">Wajib Mengikuti</option>                                        
+                                        <option value="0" selected>Tidak Wajib</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
                         </div>
