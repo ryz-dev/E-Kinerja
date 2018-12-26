@@ -80,6 +80,7 @@
                 <div class="container">
                     <form action="{{route('api.web.input-kinerja.post')}}" class="form-submit-kinerja active-form">
                         {{csrf_field()}}
+                        <input type="hidden" name="id">
                         <input type="hidden" name="jenis_kinerja" value="hadir">
                         <div class="row">
                             <div class="col-md-8">
@@ -93,7 +94,9 @@
                                 <h6 class="mb-2 mt-4">Rincian Kinerja Harian</h6>
                                 <textarea name="rincian_kinerja" autofocus rows="10" class="form-control"
                                           required></textarea>
-                                <button type="submit" class="btn btn-custom float-right mt-3">Simpan</button>
+                                <a style="color: white; display: none" id="hapus-kinerja" class="btn btn-warning mt-3">Hapus</a>
+                                <button type="submit" data-status="5" class="btn btn-custom mt-3">Simpan</button>
+                                <button type="submit" data-status="0"  class="btn btn-success float-right mt-3">Kirim</button>
                             </div>
                             <div class="col-md-4">
                                 <div class="description">
@@ -344,41 +347,98 @@
                 form.addClass('active-form');
                 form.find('[name=radio]').attr('checked', 'checked')
             })
+            $('[type=submit]').on('click',function () {
+                $(this).addClass('active').siblings().removeClass('active')
+            })
+            var getDraft = function() {
+                $.get('{{route('api.web.input-kinerja.draft')}}', {
+                    '_token': '{{csrf_token()}}'
+                })
+                    .then(function (res) {
+                        data = res.response;
+                        $('#hadir').find('[name=id]').val(data.id)
+                        $('#hadir').find('[name=rincian_kinerja]').val(data.rincian_kinerja)
+                        $('#hapus-kinerja').show();
+                    }, function (err) {
+                        $('#hadir').find('[name=id]').val('')
+                        $('#hadir').find('[name=rincian_kinerja]').val('')
+                        $('#hapus-kinerja').hide();
+                    })
+            }
+            getDraft();
+            $('#hapus-kinerja').on('click',function (e) {
+                e.preventDefault();
+                id = $('#hadir').find('[name=id]').val()
+                if (id){
+                    swal({
+                        title: 'Ingin Menghapus Draft Kinerja?',
+                        text: "",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Iya, hapus draft!',
+                        cancelButtonText: 'Batalkan'
+                    }).then((result) => {
+                        if (result.value) {
+                            $.post('{{route('api.web.input-kinerja.delete-draft',['id' => ''])}}/' + id, {
+                                '_token': '{{csrf_token()}}'
+                            })
+                                .then(function (res) {
+                                    swal(
+                                        res.message,
+                                        '',
+                                        'success'
+                                    );
+                                    getDraft()
+                                }, function (err) {
+                                    console.log(err)
+                                })
+                        }
+                    })
+                }
+            })
             $(document).on('submit', '.form-submit-kinerja.active-form', function (e) {
                 e.preventDefault();
                 var data = $(e.target);
                 var action = this.action
                 var that = this;
+                var status = $('[type=submit].active').data('status');
+                if (status == 5){
+                    info = 'simpan'
+                    info2 = 'Menyimpan'
+                } else {
+                    info = 'kirim'
+                    info2 = 'Mengirim'
+                }
                 swal({
-                    title: 'Ingin Menyimpan Data Kinerja?',
+                    title: 'Ingin '+info2+' Data Kinerja?',
                     text: "",
                     type: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Iya, simpan data!',
+                    confirmButtonText: 'Iya, '+info+' data!',
                     cancelButtonText: 'Batalkan'
                 }).then((result) => {
                     if (result.value) {
                         $('.loading').show();
-                        $.post(action, data.serialize())
+                        $.post(action, data.serialize()+(status ? '&status='+status : ''))
                             .then(function (res) {
                                 $('.loading').hide();
                                 if (res.diagnostic.code == 200) {
                                     swal(
-                                        'Berhasil Menyimpan Data!',
+                                        'Berhasil '+info2+' Data!',
                                         '',
                                         'success'
                                     );
-                                    $(that)[0].reset()
+                                    getDraft()
                                 } else {
                                     swal(
-                                        'Gagal Menyimpan Data!',
+                                        'Gagal '+info2+' Data!',
                                         res.diagnostic.message,
                                         'warning'
                                     );
                                 }
                             }, function (err) {
                                 swal(
-                                    'Gagal Menyimpan Data!',
+                                    'Gagal '+info2+' Data!',
                                     '',
                                     'warning'
                                 );
