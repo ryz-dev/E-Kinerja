@@ -152,7 +152,7 @@
                                 <h6 class="mb-2">Rincian Kinerja Harian</h6>
                                 <textarea name="rincian_kinerja" autofocus rows="10" class="form-control"
                                           required></textarea>
-                                <button type="submit" class="btn btn-custom float-right mt-3">Simpan</button>
+                                <button type="submit" class="btn btn-custom float-right mt-3">Kirim</button>
                             </div>
                             <div class="col-md-4">
                                 <div class="description">
@@ -209,7 +209,7 @@
                                 <h6 class="mb-2">Keterangan</h6>
                                 <textarea name="rincian_kinerja" autofocus rows="10" class="form-control"
                                           required></textarea>
-                                <button type="submit" class="btn btn-custom float-right mt-3">Simpan</button>
+                                <button type="submit" class="btn btn-custom float-right mt-3">Kirim</button>
                             </div>
                             <div class="col-md-4">
                                 <div class="description">
@@ -266,7 +266,7 @@
                                 <h6 class="mb-2">Keterangan</h6>
                                 <textarea name="rincian_kinerja" autofocus rows="10" class="form-control"
                                           required></textarea>
-                                <button type="submit" class="btn btn-custom float-right mt-3">Simpan</button>
+                                <button type="submit" class="btn btn-custom float-right mt-3">Kirim</button>
                             </div>
                             <div class="col-md-4">
                                 <div class="description">
@@ -309,7 +309,7 @@
                                 <h6 class="mb-2 mt-4">Keterangan</h6>
                                 <textarea name="rincian_kinerja" autofocus rows="10" class="form-control"
                                           required></textarea>
-                                <button type="submit" class="btn btn-custom float-right mt-3">Simpan</button>
+                                <button type="submit" class="btn btn-custom float-right mt-3">Kirim</button>
                             </div>
                             <div class="col-md-4">
                                 <div class="description">
