@@ -50,8 +50,11 @@ class RekapBulananController extends ApiController
             }
         } else {
             $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip','<>',$user->nip)->where('id_jabatan','>',$user->id_jabatan);
-            if ($skpd){
-                $bawahan = $bawahan->where('id_skpd',$skpd);
+            if ($skpd > 0){
+                $bawahan = $bawahan->where('id_skpd', $skpd);
+            }
+            if ($skpd == -1){
+                $bawahan = $bawahan->where('id_jabatan', 3);
             }
             if ($search) {
                 $bawahan->where(function($query) use ($search){

@@ -31,7 +31,7 @@
                             </div>
                             <select id="skpd" class="custom-select select-custome">
                                 @foreach ($skpd as $key => $item)
-                                    <option value="{{ $key }}">{{ $item }}</option>
+                                    <option value="{{ $key }}" style="{{$key == -1 ? 'font-weight: bold;font-style: unset;' : ''}}">{{ $item }}</option>
                                 @endforeach
                             </select>
                         </div>
