@@ -80,7 +80,6 @@
                     else{
                         role = "<span class='badge badge-table badge-green'>User</span>";
                     }
-                    // length>0?"<span class='badge badge-table badge-red'>"+val.role[0].nama_role+"</span>":;
                     var action = function(role){
                         var button = '<div style="display:inline-flex;">';
                         if (role.role.length > 0){    
@@ -158,7 +157,6 @@
 
     });
     $("#search").on('keyup',function(){
-        // console.log('halo');
         getPage($(this).val());
     });
     $(document).on('click', '.remove-role-pegawai', function(){

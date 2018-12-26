@@ -13,6 +13,7 @@
         <li><a href="{{route('checkinout.index')}}" class="{{str_contains(url()->current(),route('checkinout.index')) ? 'active' : ''}}">Absensi</a></li>
         <li><a href="{{route('skpd.index')}}" class="{{str_contains(url()->current(),route('skpd.index')) ? 'active' : ''}}">SKPD</a></li>
         <li><a href="{{route('role-pegawai.index')}}" class="{{str_contains(url()->current(),route('role-pegawai.index')) ? 'active' : ''}}">Role Pegawai</a></li>
+        <li><a href="{{route('absen-upacara.index')}}" class="{{str_contains(url()->current(),'mesin-absen-upacara') ? 'active' : ''}}">Mesin Absen Upacara</a></li>
         {{--<li><a href="penilaian-etika.html">Penilaian Etika</a></li>--}}
         {{--<li><a href="tunjangan-kinerja.html">Tunjangan Kinerja</a></li>--}}
         @stack('sidebar')
