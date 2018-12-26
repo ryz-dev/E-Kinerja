@@ -44,6 +44,10 @@ class MonitoringAbsenController extends Controller
                 $pegawai->where('id_skpd',$skpd);
             }
 
+            if ($skpd < 0) {
+                $pegawai->where('id_jabatan',3);
+            }
+
             if ($search) {
                 $pegawai->where(function($query) use ($search){
                     $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');

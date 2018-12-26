@@ -120,6 +120,10 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
         Route::post('delete/{id}','CheckinoutController@destroy')->name('api.checkinout.delete-absen');
     });
 
+    Route::group(['prefix'=> 'mesin-absen-upacara'], function(){
+        Route::get('', 'AbsenUpacaraController@index')->name('absen-upacara.index');
+    });
+
 });
 
 //API-WEB
@@ -180,6 +184,13 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
             Route::post('store', 'RolePegawaiController@store')->name('api.web.master-data.role.store');
             Route::post('delete', 'RolePegawaiController@delete')->name('api.web.master-data.role.delete');
         });
+        Route::group(['prefix'=>'absen-upacara'], function(){
+            Route::get('','AbsenUpacaraController@list')->name('api.web.master-data.absen-upacara.list');
+            Route::get('/page','AbsenUpacaraController@page')->name('api.web.master-data.absen-upacara.page');
+            Route::post('/store','AbsenUpacaraController@store')->name('api.web.master-data.absen-upacara.store');
+            Route::post('/delete','AbsenUpacaraController@delete')->name('api.web.master-data.absen-upacara.delete');
+            Route::post('','AbsenUpacaraController@update')->name('api.web.master-data.absen-upacara.update');
+        });
     });
     Route::group(['prefix' => 'rekap-bulanan'],function (){
         Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('api.web.rekap-bulanan.get-bawahan');
@@ -197,6 +208,8 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
     });
     Route::group(['prefix' => 'kinerja'],function (){
         Route::post('','KinerjaController@inputKinerja')->name('api.web.input-kinerja.post');
+        Route::get('draft','KinerjaController@getKinerjaTersimpan')->name('api.web.input-kinerja.draft');
+        Route::post('delete/draft/{id}','KinerjaController@hapusKinerjaTersimpan')->name('api.web.input-kinerja.delete-draft');
         Route::get('{bulan?}/{tahun?}','KinerjaController@tunjanganKinerja')->name('api.web.tunjangan-kinerja.get');
     });
 
