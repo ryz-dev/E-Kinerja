@@ -26,21 +26,21 @@ class MonitoringAbsenController extends Controller
         })->select('tanggal')->orderBy('tanggal')->first();
 
         $pegawai = Pegawai::with(['checkinout' => function($query) use ($date){
-                $query->select('nip','checktime','checktype')->whereDate('checktime','=',$date);
+                $query->select('nip', 'checktime', 'checktype')->whereDate('checktime', '=', $date);
             },
                 'kinerja' => function($query) use ($date){
-                $query->select('nip','jenis_kinerja')
+                $query->select('nip', 'jenis_kinerja')
                 ->where('approve',2)
-                ->whereDate('tgl_mulai','<=',$date)
-                ->whereDate('tgl_selesai','>=',$date);
+                ->whereDate('tgl_mulai', '<=', $date)
+                ->whereDate('tgl_selesai', '>=', $date);
             }
         ]);
         
         try {
-            if (in_array($user->role()->pluck('id_role')->max(),$this->special_user) == false) {
+            if (in_array($user->role()->pluck('id_role')->max(), $this->special_user) == false) {
                 if ($user->role()->pluck('id_role')->max() != 5) {
                     $pegawai->whereHas('jabatan', function($query) use ($user){
-                        $query->where('id_atasan','=',$user->id_jabatan);
+                        $query->where('id_atasan', '=', $user->id_jabatan);
                     });
                 } else {
                     $pegawai->whereHas('jabatan', function($query) use ($user){
@@ -50,7 +50,7 @@ class MonitoringAbsenController extends Controller
             }
 
             if ($skpd > 0) {
-                $pegawai->where('id_skpd',$skpd);
+                $pegawai->where('id_skpd', $skpd);
             }
 
             if ($skpd == -1){
@@ -59,11 +59,11 @@ class MonitoringAbsenController extends Controller
 
             if ($search) {
                 $pegawai->where(function($query) use ($search){
-                    $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+                    $query->where('nip', 'like', '%'.$search.'%')->orWhere('nama', 'like', '%'.$search.'%');
                 });
             }
 
-            $pegawai->orderBy('nama','asc');
+            $pegawai->orderBy('nama', 'asc');
             $sum = $this->summary($pegawai);
             $total = (int) $pegawai->count();
             
@@ -76,11 +76,11 @@ class MonitoringAbsenController extends Controller
             $data = [];
             foreach($pegawai as $p) {
                 if (count($p->checkinout)) {
-                    if ($p['checkinout']->contains('checktype',0)) {
-                        $time = $p['checkinout']->where('checktype',0)->first()->checktime;
+                    if ($p['checkinout']->contains('checktype', 0)) {
+                        $time = $p['checkinout']->where('checktype', 0)->first()->checktime;
                         
                         if(Carbon::parse($time) >= Carbon::parse($this->jam_masuk)){
-                            $k = (['data'=>'alpa']);
+                            $k = (['data' => 'alpa']);
                         }
                         else{
                             $k = (['data' => 'hadir']);
@@ -94,7 +94,7 @@ class MonitoringAbsenController extends Controller
                     if (count($p->kinerja)) {
                         $k = (['data' => $p['kinerja'][0]['jenis_kinerja']]);
                     } else {
-                        $k = (['data'=>'alpa']);
+                        $k = (['data' => 'alpa']);
                     }
                 }
 
@@ -127,45 +127,13 @@ class MonitoringAbsenController extends Controller
         }
     }
 
-    public function getPage(Request $request){
-        $skpd = $request->input('skpd');
-        $user = auth('api')->user();
-        $search = $request->has('search')?$request->input('search'):'';
-
-        $data = Pegawai::where('nip','<>','');
-
-        if(in_array($user->role()->pluck('id_role')->max(), $this->special_user) == false){
-            if ($user->role()->pluck('id_role')->max() != 5) {
-                $data->whereHas('jabatan', function($query) use($user){
-                    $query->where('id_atasan','=',$user->id_jabatan);
-                });
-            } else {
-                $data->whereHas('jabatan', function($query) use($user){
-                    $query->where('id_skpd','=',$user->id_skpd);
-                });
-            }
-        }
-
-        if ($skpd > 0) {
-            $data = $data->where('id_skpd',$skpd);
-        }
-
-        if ($search) {
-            $data->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
-        }
-        
-        $data = ceil($data->count() / $this->show_limit_mobile);
-
-        return response()->json([ 'page'=> $data ]);
-    }
-
     private function summary($pegawai){
         $data = $pegawai->get();
         $summary = $data->map(function($item, $key) {
             if (count($item['checkinout']) > 0) {
-                if ($item['checkinout']->contains('checktype',0)) {
+                if ($item['checkinout']->contains('checktype', 0)) {
                     
-                    $time = $item['checkinout']->where('checktype',0)->first()->checktime;
+                    $time = $item['checkinout']->where('checktype', 0)->first()->checktime;
                     
                     if(Carbon::parse($time) >= Carbon::parse($this->jam_masuk)){
                         return collect(['data'=>'alpa']);
@@ -182,7 +150,7 @@ class MonitoringAbsenController extends Controller
                 if (count($item['kinerja']) > 0) {
                     return collect(['data' => $item['kinerja'][0]['jenis_kinerja']]);
                 }
-                return collect(['data'=>'alpa']);
+                return collect(['data' => 'alpa']);
             }
         });
 

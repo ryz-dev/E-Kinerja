@@ -15,6 +15,21 @@ use Illuminate\Http\Request;
 
 class KinerjaController extends ApiController
 {
+    public function getKinerjaTersimpan(){
+        $kinerja_tersimpan = Kinerja::where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->firstOrFail();
+        return $this->ApiSpecResponses($kinerja_tersimpan);
+    }
+
+    public function hapusKinerjaTersimpan($id){
+        $nip = auth('api')->user()->nip;
+        $cek_kinerja = Kinerja::where('nip', $nip)->where('jenis_kinerja','hadir')->where('approve','5')->where('tgl_mulai',date('Y-m-d'))->findOrFail($id);
+        $cek_kinerja->delete();
+        return response()->json([
+            'code' => '201',
+            'message' => 'Berhasil menghapus draft'
+        ]);
+    }
+
     public function inputKinerja(Request $request){
         $input = $request->input();
         $input['nip'] = auth('api')->user()->nip;
@@ -56,7 +71,20 @@ class KinerjaController extends ApiController
                     $cek_pulang_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('nip',$input['nip'])->first();
                     // if (strtotime($cek_hadir_kerja->checktime) <= strtotime(date('Y-m-d')." 09:00:00")){
                     //     if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8.5 * 3600)) {
-                            $kinerja = Kinerja::create($input);
+                            if ($request->has('status')){
+                                if ($request->input('status') == 5){
+                                    $input['approve'] = 5;
+                                }
+                            }
+                            if ($request->has('id') && $request->input('id')){
+                                $kinerja = Kinerja::where('nip', $input['nip'])->where('jenis_kinerja','hadir')->findOrFail($request->input('id'));
+                                $kinerja->update([
+                                    'rincian_kinerja' => $input['rincian_kinerja'],
+                                    'approve' => $input['approve']
+                                ]);
+                            } else {
+                                $kinerja = Kinerja::create($input);
+                            }
                             return $this->ApiSpecResponses($kinerja);
                     //     }
                     // } else {
@@ -76,6 +104,24 @@ class KinerjaController extends ApiController
                     ]
                 ]);
             } else {
+                $cek_kinerja = Kinerja::where('nip',$input['nip'])->where(function ($query)use($input){
+                    $query->where(function ($query) use ($input){
+                        $query->where('tgl_mulai','<=',$input['tgl_mulai']);
+                        $query->where('tgl_selesai','>=',$input['tgl_mulai']);
+                    });
+                    $query->orWhere(function ($query)use($input){
+                        $query->where('tgl_mulai','<=',$input['tgl_selesai']);
+                        $query->where('tgl_selesai','>=',$input['tgl_selesai']);
+                    });
+                })->whereIn('approve',[5])->first();
+                if ($cek_kinerja){
+                    return response()->json([
+                        'diagnostic' => [
+                            'code' => '403',
+                            'message' => 'gagal menambahkan kinerja, sdh ada kinerja yang disimpan untuk hari ini'
+                        ]
+                    ]);
+                }
                 $kinerja = Kinerja::create($input);
                 return $this->ApiSpecResponses($kinerja);
             }

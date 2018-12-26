@@ -51,18 +51,4 @@ class SkpdController extends ApiController
             ], 404);
         }
     }
-
-    public function getPage(Request $request)
-    {
-        if ($request->has('q')) {
-            $data = Skpd::where('nama_skpd','like','%'.$request->input('q').'%')
-                ->count();
-        } else {
-            $data = Skpd::count();
-        }
-        $data = ceil($data / $this->show_limit_mobile);
-        return response()->json([
-            'halaman' => $data
-        ]);
-    }
 }

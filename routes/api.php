@@ -27,7 +27,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => 'auth:api', 'namespace' => 'APIMobile'], function () {
         Route::group(['prefix' => 'monitoring-absen', 'middleware' => 'can:monitoring-absen'], function () {
             Route::get('', 'MonitoringAbsenController@dataAbsensi')->name('api.mobile.monitoring.absen');
-            Route::get('getpage', 'MonitoringAbsenController@getPage')->name('api.mobile.monitoring.absen.page');
         });
         Route::group(['prefix' => 'rekap-bulanan', 'middleware' => 'can:rekap-bulanan'], function () {
             Route::get('/get-bawahan', 'RekapBulananController@getBawahan')->name('api.mobile.rekap-bulanan.get-bawahan');
@@ -45,15 +44,16 @@ Route::group(['prefix' => 'v1'], function () {
             Route::post('reply', 'PenilaianEtikaController@storePenilaian')->name('api.mobile.penilaian-etika.store.penilaian');
         });
         Route::group(['prefix' => 'kinerja','middleware' => 'can:tunjangan-kinerja'], function () {
-            Route::post('/reply', 'KinerjaController@inputKinerja')->name('api.mobile.input-kinerja.post');
-            Route::get('/cek', 'KinerjaController@cekKinerja')->name('api.mobile.cek-kinerja.get');
+            Route::post('reply', 'KinerjaController@inputKinerja')->name('api.mobile.input-kinerja.post');
+            Route::get('cek', 'KinerjaController@cekKinerja')->name('api.mobile.cek-kinerja.get');
+            Route::get('draft','KinerjaController@getKinerjaTersimpan')->name('api.web.input-kinerja.draft');
+            Route::post('delete/draft/{id}','KinerjaController@hapusKinerjaTersimpan')->name('api.web.input-kinerja.delete-draft');
             Route::get('/{tgl?}', 'KinerjaController@detailKinerja')->name('api.mobile.detail-kinerja.get');
             Route::get('/{bulan?}/{tahun?}', 'KinerjaController@tunjanganKinerja')->name('api.mobile.tunjangan-kinerja.get');
         });
         Route::group(['prefix' => 'master-data'], function () {
             Route::group(['prefix' => 'skpd'], function () {
                 Route::get('', 'SkpdController@listSkpd')->name('api.mobile.master-data.skpd');
-                Route::get('get-pagination', 'SkpdController@getpage')->name('api.mobile.master-data.skpd.page');
             });
         });
     });
