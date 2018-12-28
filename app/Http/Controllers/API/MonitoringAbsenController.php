@@ -12,6 +12,7 @@ class MonitoringAbsenController extends Controller
 {
     private $special_user = [2,3,4];
     private $jam_masuk = '09:00:59';
+    private $jam_masuk_upacara = '07.30.59';
 
     public function dataAbsensi(Request $request){
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
@@ -22,7 +23,7 @@ class MonitoringAbsenController extends Controller
         $user = auth('web')->user();
 
         $pegawai = Pegawai::with(['checkinout' => function($query) use ($date){
-                                    $query->select('nip','checktime','checktype')->whereDate('checktime','=',$date);
+                                    $query->select('nip','checktime','checktype','sn')->whereDate('checktime','=',$date);
                                 },
                                     'kinerja' => function($query) use ($date){
                                     $query->select('nip','jenis_kinerja')->where('approve',2)
@@ -67,6 +68,7 @@ class MonitoringAbsenController extends Controller
                     'today' => Carbon::parse($date)->format('m/d/Y'),
                     'dateString' => ucfirst(\App\Models\MasterData\Hari::find(date('N'))->nama_hari).' , '.date('d').' '.ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan).' '.date('Y'),
                     'jam_masuk_timestamp' => Carbon::parse($raw_date.' '.$this->jam_masuk)->toDateTimeString(),
+                    'jam_masuk_upacara_timestamp' => Carbon::parse($raw_date.' '.$this->jam_masuk_upacara)->toDateTimeString(),
                     'summary' => $sum
                 ]
             );
