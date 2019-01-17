@@ -13,6 +13,7 @@ class MonitoringAbsenController extends Controller
 {
     private $special_user = [2,3,4];
     private $jam_masuk = '09:00:59';
+    private $jam_masuk_upacara = '07.30.59';
     
     public function dataAbsensi(Request $request){
         $this->show_limit_mobile = $request->has('s') ? $request->input('s') : $this->show_limit_mobile;
@@ -75,6 +76,7 @@ class MonitoringAbsenController extends Controller
             
             $data = [];
             foreach($pegawai as $p) {
+                $apel = false;
                 if (count($p->checkinout)) {
                     if ($p['checkinout']->contains('checktype', 0)) {
                         $time = $p['checkinout']->where('checktype', 0)->first()->checktime;
@@ -84,6 +86,9 @@ class MonitoringAbsenController extends Controller
                         }
                         else{
                             $k = (['data' => 'hadir']);
+                            if (Carbon::parse($time) <= Carbon::parse($this->jam_masuk_upacara)) {
+                                $apel = true;
+                            }
                         }
                     }
                     else{
@@ -108,6 +113,7 @@ class MonitoringAbsenController extends Controller
                         'out' => (count($p->checkinout) > 1) ? $p->checkinout[1]->checktime : "",
                     ],
                     'kinerja' => $k['data'],
+                    'apel' => $apel,
                     'created_at' => $p->created_at,
                 ];
             }

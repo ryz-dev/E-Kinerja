@@ -108,12 +108,13 @@ class RekapBulananController extends ApiController
         }
         $data_inout = [];
         foreach ($hari_kerja AS $key => $hk){
+            $apel = false;
             $kinerja = $pegawai->kinerja()->where('tgl_mulai','<=',$hk->tanggal)->where('tgl_selesai','>=',$hk->tanggal)->terbaru()->first();
             $kehadiran = $pegawai->checkinout()->where('checktime','like','%'.$hk->tanggal.'%')->orderBy('checktype','desc')->get()->toArray();
             if (count($kehadiran) > 0){
                 $kehadiran['status'] = 'alpa';
                 $masuk = $pulang = null;
-                foreach ($kehadiran AS $kh){
+                foreach ($kehadiran AS $kh){   
                     if (isset($kh['checktype'])) {
                         if ($kh['checktype'] == 0) {
                             $masuk = $kh['checktime'];
@@ -126,6 +127,11 @@ class RekapBulananController extends ApiController
                 if (strtotime($masuk) <= strtotime($hk->tanggal." 09:00:00") ){
                     if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
                         $kehadiran['status'] = 'hadir';
+                    }
+                    if (date('N',strtotime($hk->tanggal)) != 1){
+                        if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
+                            $apel = true;
+                        }
                     }
                 }
             }
@@ -142,6 +148,7 @@ class RekapBulananController extends ApiController
                 'hari' => ucfirst($hk->Hari->nama_hari),
                 // 'checkinout' => $kehadiran,
                 'status' => $status,
+                'apel' => $apel,
                 // 'persentase' => isset($etika->persentase)?$etika->persentase : 0,
                 'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
             ];
@@ -200,6 +207,37 @@ class RekapBulananController extends ApiController
         ->whereDate("checktime",$tgl)
         ->get();
 
+        $apel = false;
+        if ($kinerja){
+            if ($kinerja->jenis_kinerja == 'hadir'){
+                $chk = $checkinout->toArray();
+                if (count($chk) > 0) {
+                    $kinerja->jenis_kinerja = 'alpa';
+                    $masuk = $pulang = null;
+                    foreach ($chk AS $kh) {
+                        if (isset($kh['checktype'])) {
+                            if ($kh['checktype'] == 0) {
+                                $masuk = $kh['checktime'];
+                            }
+                            if ($kh['checktype'] == 1) {
+                                $pulang = $kh['checktime'];
+                            }
+                        }
+                    }
+                    if (strtotime($masuk) <= strtotime($tgl . " 09:00:00")) {
+                        if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
+                            $kinerja->jenis_kinerja = 'hadir';
+                        }
+                        if (date('N', strtotime($tgl)) != 1){
+                            if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
+                                $apel = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /* Data array */
         $result = [
             'uuid' => $pegawai->uuid,
@@ -212,6 +250,7 @@ class RekapBulananController extends ApiController
                 'in' => (count($checkinout)) ? $checkinout[0]->checktime : "",
                 'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",
             ],
+            'apel' => $apel,
             'min_date' => $min_date->tanggal
         ];
 

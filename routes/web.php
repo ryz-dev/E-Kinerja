@@ -112,7 +112,7 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
 
     Route::group(['prefix' => 'checkinout'], function(){
         Route::get('','CheckinoutController@index')->name('checkinout.index');
-        Route::get('add','CheckinoutController@add')->name('checkinout.create');
+        Route::get('add','CheckinoutController@create')->name('checkinout.create');
         Route::get('{id}','CheckinoutController@show')->name('checkinout.show');
         Route::get('edit/{id}','CheckinoutController@edit')->name('checkinout.edit');
         Route::post('','CheckinoutController@store')->name('checkinout.store');
