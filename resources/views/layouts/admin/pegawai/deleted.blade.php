@@ -81,7 +81,7 @@
                                 row += "<td>" + (val.jabatan ? val.jabatan.jabatan : '') + "</td>";
                                 row += "<td>" + (val.skpd ? val.skpd.nama_skpd : '') + "</td>";
                                 row += "<td>" + val.jns_kel + "</td>";
-                                row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a class='btn badge-warning btn-edit' data-nip='"+val.nip+"'><i class=''></i>Kembalikan Data</a></div></td>";
+                                row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a class='btn badge-warning btn-edit' data-nip='"+val.nip+"'><i class=''></i>Kembalikan Data</a><button type='button' delete-uri='" + val.delete_uri + "' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
                                 row += "</tr>";
                                 return row;
                             })
@@ -100,6 +100,47 @@
                 e.preventDefault();
                 getPage($(this).val())
             })
+            $(document).on('click', '.btn-delete', function (e) {
+                e.preventDefault();
+                var delete_uri = $(this).attr('delete-uri');
+                var search = $('#search').val();
+                swal({
+                    title: 'Yakin Ingin Menghapus Pegawai Secara Permanent?',
+                    text: "Proses tidak dapat di kembalikan",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Iya, Hapus Pegawai!',
+                    cancelButtonText: 'Tidak'
+                }).then((result) => {
+                    if (result.value) {
+                        $.post(delete_uri)
+                            .then(function (res) {
+                                if (res.response.status == '200') {
+                                    getPage(search);
+                                    swal(
+                                        'Terhapus!',
+                                        'Data Pegawai Berhasil Dihapus.',
+                                        'success'
+                                    )
+                                } else {
+                                    swal(
+                                        'Gagal Menghapus Data Pegawai',
+                                        res.response.message,
+                                        'error'
+                                    )
+                                }
+                            }, function () {
+                                swal(
+                                    'Gagal Menghapus Data',
+                                    '',
+                                    'error'
+                                )
+                            })
+                    }
+                })
+            })
+
             $(document).on('click','.btn-edit',function (e) {
                 e.preventDefault();
                 nip = $(this).data('nip');
@@ -110,7 +151,7 @@
                     text: "",
                     type: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Iya, simpan data!',
+                    confirmButtonText: 'Iya, kembalikan data!',
                     cancelButtonText: 'Batalkan'
                 }).then((result) => {
                     if (result.value) {

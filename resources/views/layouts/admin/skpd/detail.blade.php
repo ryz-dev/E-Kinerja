@@ -5,7 +5,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6">
-                        <h2 class="mb-2">Tambah SKPD</h2>
+                        <h2 class="mb-2">Detail SKPD</h2>
                         <div class="form-group">
                             <label for="nama_skpd">Nama SKPD</label>
                             <input id="nama_skpd" type="text" name="nama_skpd" class="form-control" placeholder="Nama SKPD" value="{{$skpd->nama_skpd}}" required>

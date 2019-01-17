@@ -101,9 +101,19 @@ class PegawaiController extends MasterDataController
 
     public function delete($id, $json = true)
     {
-        $pegawai = Pegawai::where('nip', $id)->orWhere('uuid', $id)->firstOrFail();
+        $trash = false;
         try {
-            $pegawai->delete();
+            $pegawai = Pegawai::where('nip', $id)->orWhere('uuid', $id)->firstOrFail();
+        } catch (\Exception $exception){
+            $pegawai = Pegawai::where('nip', $id)->orWhere('uuid', $id)->withTrashed()->whereNotNull('deleted_at')->firstOrFail();
+            $trash = true;
+        }
+        try {
+            if (!$trash) {
+                $pegawai->delete();
+            } else {
+                $pegawai->forceDelete();
+            }
         } catch (QueryException $exception) {
             if ($json) {
                 return response()->json([
