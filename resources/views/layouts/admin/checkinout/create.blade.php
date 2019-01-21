@@ -15,7 +15,7 @@
         <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/js/gijgo.min.js" type="text/javascript"></script>
 
         <script>
-            $('#datetimepicker').datetimepicker({ footer: true, modal: true, format: 'yyyy-dd-mm HH:MM:SS' });
+            $('#datetimepicker').datetimepicker({ footer: true, modal: true, format: 'yyyy-mm-dd HH:MM:SS' });
         </script>
     @endpush
 @endsection
