@@ -15,14 +15,14 @@
         <h2 class="mb-2">Tambah Absensi</h2>
         <div class="form-group">
             <label for="nip">NIP</label>
-            {{ Form::number('nip', null, ['class'=>'form-control']) }}
+            {{ Form::number('nip', null, ['class'=>'form-control', 'required' => '']) }}
         </div>
         <div class='form-group'>
-            <input id="datetimepicker" name="checktime" value="{{ !empty($checkinout) ? $checkinout->checktime : "" }}" />
+            <input id="datetimepicker" name="checktime" value="{{ !empty($checkinout) ? $checkinout->checktime : "" }}" required/>
         </div>
         <div class="form-group">
             <label for="verifycode">Verify Code</label>
-            {{ Form::number('verifycode', null, ['class'=>'form-control']) }}
+            {{ Form::number('verifycode', null, ['class'=>'form-control', 'required' => '']) }}
         </div>
         <div class="form-group">
             <label for="sensorid">Sensor ID</label>

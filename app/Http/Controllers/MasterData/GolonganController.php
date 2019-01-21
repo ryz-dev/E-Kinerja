@@ -54,7 +54,7 @@ class GolonganController extends MasterDataController
             'golongan' => 'required',
             'tunjangan' => 'required'
         ]);
-        $golongan = Golongan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $golongan = Golongan::where('uuid',$id)->firstOrFail();
         $golongan->update($request->input());
         if ($json)
         return response()->json($golongan->toArray());
