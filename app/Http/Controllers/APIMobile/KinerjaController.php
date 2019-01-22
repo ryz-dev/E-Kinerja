@@ -16,8 +16,28 @@ use Illuminate\Http\Request;
 class KinerjaController extends ApiController
 {
     public function getKinerjaTersimpan(){
-        $kinerja_tersimpan = Kinerja::where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->firstOrFail();
-        return $this->ApiSpecResponses($kinerja_tersimpan);
+        $kinerja_tersimpan = Kinerja::where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->first();
+
+        try {
+            $data = [
+                'id' => $kinerja_tersimpan->id,
+                'nip' => $kinerja_tersimpan->nip,
+                'tgl_mulai' => $kinerja_tersimpan->tgl_mulai,
+                'tgl_selesai' => $kinerja_tersimpan->tgl_selesai,
+                'jenis_kinerja' => $kinerja_tersimpan->jenis_kinerja,
+                'rincian_kinerja' => $kinerja_tersimpan->rincian_kinerja,
+                'approve' => $kinerja_tersimpan->approve
+            ];
+            return $this->ApiSpecResponses($data);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'diagnostic' => [
+                    'code' => '404',
+                    'message' => 'Tidak ada kinerja yang tersimpan'
+                ]
+            ]);
+        }
     }
 
     public function hapusKinerjaTersimpan($id){
@@ -25,8 +45,10 @@ class KinerjaController extends ApiController
         $cek_kinerja = Kinerja::where('nip', $nip)->where('jenis_kinerja','hadir')->where('approve','5')->where('tgl_mulai',date('Y-m-d'))->findOrFail($id);
         $cek_kinerja->delete();
         return response()->json([
-            'code' => '201',
-            'message' => 'Berhasil menghapus draft'
+            'diagnostic' => [
+                'code' => '201',
+                'message' => 'Berhasil menghapus draft'
+            ]
         ]);
     }
 
