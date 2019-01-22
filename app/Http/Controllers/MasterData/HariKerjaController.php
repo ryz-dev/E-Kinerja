@@ -45,7 +45,7 @@ class HariKerjaController extends MasterDataController
                   /*return redirect()
                       ->back()
                       ->with('message', 'Tanggal sudah ada !');*/
-                  return response()->json($e,500);
+//                  return response()->json($e,500);
               }
               $tgl = date('Y-m-d',strtotime($tgl) + 86400);
           }
