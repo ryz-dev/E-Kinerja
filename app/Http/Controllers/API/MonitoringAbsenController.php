@@ -55,7 +55,8 @@ class MonitoringAbsenController extends Controller
                 });
             }
 
-            $pegawai->orderBy('nama','asc');
+            $pegawai->groupBy('uuid','nip','id_skpd');
+            $pegawai->orderBy('id_jabatan','asc');
             $sum = $this->summary($pegawai,$raw_date);
             $total = (int) $pegawai->count();
             $pegawai = $pegawai->paginate($this->show_limit);
