@@ -92,7 +92,7 @@ class MonitoringAbsenController extends Controller
                         }
                     }
                     else{
-                        $k = (['data' => 'hadir']);
+                        $k = (['data' => 'alpa']);
                     }
                 }
                 else{
@@ -149,7 +149,7 @@ class MonitoringAbsenController extends Controller
                     }
                 }
                 else{
-                    return collect(['data' => 'hadir']);
+                    return collect(['data' => 'alpa']);
                 }
             }
             else{
