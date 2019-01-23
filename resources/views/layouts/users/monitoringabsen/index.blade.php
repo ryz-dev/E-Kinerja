@@ -188,7 +188,7 @@
                     var res = absen.forEach(function(val){
                         let checkdate = new Date(val.absen_timestamp);
                         if (val.checktype =='0' && checkdate > jam_masuk) {
-                            alpa = true;   
+                            alpa = true;
                             throw BreakException;
                         }
                         else{

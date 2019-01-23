@@ -178,6 +178,11 @@
                 @endcan
             </ul>
             <div class="toggleSwitch">
+                @can('master-data')
+                    <label class="mr-2">
+                        <a href="{{route('pegawai.index')}}">Masuk Panel Admin <i class="fas fa-cogs"></i> </a> 
+                    </label>
+                @endcan
                 <label class="mr-2">Mode Malam</label>
                 <label class="switch">
                     <input id="toggle-switch" type="checkbox" checked>
