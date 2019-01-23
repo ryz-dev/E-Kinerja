@@ -16,6 +16,7 @@
 
         <script>
             $('#datetimepicker').datetimepicker({ footer: true, modal: true, format: 'yyyy-mm-dd HH:MM:SS' });
+           
         </script>
     @endpush
 @endsection
