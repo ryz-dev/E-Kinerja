@@ -123,7 +123,7 @@ class MonitoringAbsenController extends Controller
                     }
                 }
                 else{
-                    return collect(['data' => 'hadir']);
+                    return collect(['data' => 'alpa']);
                 }
             }
             else{
