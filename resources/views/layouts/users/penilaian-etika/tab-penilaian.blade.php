@@ -8,8 +8,8 @@
                     <div class="img-user" id="img-user1" style="background-image: url('assets/images/img-user.png');">
                     </div>
                     <div class="nama-id">
-                        <h6 class="nama-pegawai">Alfian Labeda</h6>
-                        <span class="nip-pegawai">1929298282929000</span>
+                        <h6 class="nama-pegawai"> </h6>
+                        <span class="nip-pegawai"> </span>
                     </div>
                     <div class="btn-control float-right">
                         <button type="button" data-pegawai-index="" onclick="navPegawaiButton(this)" class="btn nav-pegawai btn-rounded prevItem"><i class="fas fa-angle-left"></i></button>
