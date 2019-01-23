@@ -35,7 +35,7 @@ class MonitoringAbsenController extends Controller
                 ->whereDate('tgl_mulai', '<=', $date)
                 ->whereDate('tgl_selesai', '>=', $date);
             }
-        ]);
+        ])->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
         
         try {
             if (in_array($user->role()->pluck('id_role')->max(), $this->special_user) == false) {
@@ -64,8 +64,8 @@ class MonitoringAbsenController extends Controller
                 });
             }
 
-            $pegawai->groupBy('uuid','nip','id_skpd');
-            $pegawai->orderBy('id_jabatan','asc');
+            $pegawai->groupBy('pegawai.uuid','nip','id_skpd');
+            $pegawai->orderBy('jabatan.id_golongan','desc');
             $sum = $this->summary($pegawai);
             $total = (int) $pegawai->count();
             
