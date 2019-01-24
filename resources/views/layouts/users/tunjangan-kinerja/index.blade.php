@@ -342,14 +342,22 @@
                                         color_persentase = ''
                                     }
                                 }
-                                if (val.kinerja){
+
+                                if (val.kinerja || val.status == 'Hadir' || val.status == 'Alpa'){
                                     kinerja = ( val.kinerja ? (val.kinerja.jenis_kinerja == 'hadir') ? val.status : capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '');
                                     var badge_kinerja = '';
-                                    if (kinerja == 'Hadir'){
+                                    if (val.absen){
+                                        masuk = val.absen[0] ? val.absen[0].checktime.split(" ") : null;
+                                        pulang = val.absen[1] ? val.absen[1].checktime.split(" ") : null;
+                                        if (masuk && pulang) {
+                                            if (val.status == 'Alpa') {
+                                                badge_kinerja = '<div class="badge badge-gray text-white mr-2">Alpa</div>'
+                                            }
+                                        }
+                                    }
+                                    if (kinerja == 'Hadir' || val.status == 'Hadir'){
                                         if (val.absen){
-                                            masuk = val.absen[0].checktime.split(" ");
-                                            pulang = val.absen[1].checktime.split(" ");
-                                            badge_kinerja = '<div class="badge badge-primary text-white mr-2">'+masuk[1]+' - '+pulang[1]+'</div>';
+                                            badge_kinerja = '<div class="badge badge-primary text-white mr-2">' + masuk[1] + ' - ' + pulang[1] + '</div>';
                                         }
                                     } else if (kinerja == "Perjalanan Dinas"){
                                         badge_kinerja = '<div class="badge badge-green text-white mr-2">'+kinerja+'</div>'
@@ -361,6 +369,15 @@
                                         badge_kinerja = '<div style="background-color:#f3bd59!important;" class="badge text-white mr-2">'+kinerja+'</div>'
                                     } else if (kinerja == "Sakit"){
                                         badge_kinerja = '<div class="badge badge-red text-white mr-2">'+kinerja+'</div>'
+                                    }
+                                }
+
+                                if (val.status == ''){
+                                    if (val.absen){
+                                        masuk = val.absen[0] ? val.absen[0].checktime.split(" ") : null;
+                                        if (masuk) {
+                                            badge_kinerja = '<div class="badge badge-primary text-white mr-2">' + masuk[1] + '- --:--:--</div>'
+                                        }
                                     }
                                 }
                                 var row = '<tr class="data-tunjangan" data-index="' + i + '">\n' +
@@ -473,7 +490,12 @@
                 $('#detail-nama').html(data_response.pegawai.nama)
                 $('#detail-nip').html(data_response.pegawai.nip)
                 $('#detail-tgl').html(data.tanggal_string2)
-                $('#detail-jenis-kinerja').html(kinerja ? capitalizeFirstLetter(kinerja.jenis_kinerja.replace('_',' ')) : '')
+                if (kinerja.jenis_kinerja == 'hadir') {
+
+                    $('#detail-jenis-kinerja').html(data.status)
+                } else {
+                    $('#detail-jenis-kinerja').html(kinerja ? capitalizeFirstLetter(kinerja.jenis_kinerja.replace('_', ' ')) : '')
+                }
                 $('#detail-jam-masuk').html(absen ? (typeof absen[0] !== 'undefined' ? absen[0].absen_time : '--:--') : '--:--')
                 $('#detail-jam-pulang').html(absen ? (typeof absen[1] !== 'undefined' ? absen[1].absen_time : '--:--') : '--:--')
                 $('#detail-approve').addClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '')).removeClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'not-list' : 'check-list') : '') : ''));
