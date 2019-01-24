@@ -18,7 +18,8 @@
             {{ Form::number('nip', null, ['class'=>'form-control', 'required' => '']) }}
         </div>
         <div class='form-group'>
-            <input id="datetimepicker" name="checktime" value="{{ !empty($checkinout) ? $checkinout->checktime : "" }}" required/>
+            <label for="datetimepicker">Masukkan Tgl dan jam kehadiaran</label>
+            <input class="me" id="datetimepicker" disabled="" placeholder="Klik icon di seblah" name="checktime" value="{{ !empty($checkinout) ? $checkinout->checktime : "" }}" required/>
         </div>
         <div class="form-group">
             <label for="verifycode">Verify Code</label>
@@ -30,7 +31,7 @@
         </div>
         <div class="form-group">
             <label for="checktype">Check Type</label>
-            {{ Form::number('checktype', null, ['class'=>'form-control', 'required' => '']) }}
+            {{ Form::select('checktype', [0=>'Absen Masuk', 1=>'Absen Pulang' ],!empty($checkinout) ?$checkinout->checktype:"", ['class'=>'form-control', 'required' => '']) }}
         </div>
         <div class="form-group">
             <label for="workcode">Work Code</label>

@@ -183,16 +183,18 @@
 
             if (absen.length > 0) {
 
+                let status_absen_masuk = false;
                 try{
                     var res = absen.forEach(function(val){
                         let checkdate = new Date(val.absen_timestamp);
                         if (val.checktype =='0' && checkdate > jam_masuk) {
-                            alpa = true;   
+                            alpa = true;
                             throw BreakException;
                         }
                         else{
                             alpa = false;
                             if (val.checktype == '0') {
+                                status_absen_masuk = true;
                                 if (checkdate < jam_masuk_upacara ) {
                                     upacara = '<img src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
                                 }
@@ -207,7 +209,7 @@
                     if (e !== BreakException) throw e;
                 }
 
-                if (alpa) {
+                if (alpa == true || status_absen_masuk==false ) {
                     absensi =  parseKinerja('alpa');
                 }
                 else{

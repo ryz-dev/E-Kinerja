@@ -12,6 +12,7 @@ class InputKinerjaController extends Controller
         $user = Auth::user();
         $role = $user->role()->first()->id;
         $permission = $user->role()->first()->permissions;
+
         if ($role == 2 || $role == 3){
             if ($permission['input-kinerja'] == false)
             return redirect()->route('monitoring.absen.index');

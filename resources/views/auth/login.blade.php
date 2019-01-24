@@ -9,7 +9,6 @@
     <!-- inject:css -->
     <link rel="stylesheet" href="{{ asset('assets/css/app.min.css') }}">
 </head>
-
 <body>
     <section class="login">
         <div class="bg-login">
@@ -41,6 +40,12 @@
                                         <p> * {{ $message }}</p>
                                     @endforeach
                                 </div>
+                            @endif
+                            
+                            @if (session('message'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <p>{{ session('message') }}</p>
+                            </div>
                             @endif
                             <div class="ask mb-2">
                                 <label class="container-check">Ingat saya
