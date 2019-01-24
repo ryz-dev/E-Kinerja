@@ -95,7 +95,17 @@ class KinerjaController extends ApiController
                     //     if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8.5 * 3600)) {
                             if ($request->has('status')){
                                 if ($request->input('status') == 5){
-                                    $input['approve'] = 5;
+                                    $check = Kinerja::where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->first();
+                                    if ($check) {
+                                        return response()->json([
+                                            'diagnostic' => [
+                                                'code' => '403',
+                                                'message' => 'gagal menambah draft, sudah ada draft yang tersimpan hari ini'
+                                            ]
+                                        ]);
+                                    } else {
+                                        $input['approve'] = 5;
+                                    }
                                 }
                             }
                             if ($request->has('id') && $request->input('id')){
