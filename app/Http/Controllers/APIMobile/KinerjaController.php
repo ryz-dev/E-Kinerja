@@ -16,7 +16,8 @@ use Illuminate\Http\Request;
 class KinerjaController extends ApiController
 {
     public function getKinerjaTersimpan(){
-        $kinerja_tersimpan = Kinerja::where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->first();
+        $nip = auth('api')->user()->nip;
+        $kinerja_tersimpan = Kinerja::where('nip', $nip)->where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->first();
 
         try {
             $data = [
@@ -42,14 +43,24 @@ class KinerjaController extends ApiController
 
     public function hapusKinerjaTersimpan($id){
         $nip = auth('api')->user()->nip;
-        $cek_kinerja = Kinerja::where('nip', $nip)->where('jenis_kinerja','hadir')->where('approve','5')->where('tgl_mulai',date('Y-m-d'))->findOrFail($id);
-        $cek_kinerja->delete();
-        return response()->json([
-            'diagnostic' => [
-                'code' => '201',
-                'message' => 'Berhasil menghapus draft'
-            ]
-        ]);
+        $cek_kinerja = Kinerja::where('nip', $nip)->where('jenis_kinerja','hadir')->where('approve','5')->where('tgl_mulai',date('Y-m-d'))->find($id);
+        
+        if ($cek_kinerja) {
+            $cek_kinerja->delete();
+            return response()->json([
+                'diagnostic' => [
+                    'code' => '201',
+                    'message' => 'Berhasil menghapus draft'
+                ]
+            ]);
+        } else {
+            return response()->json([
+                'diagnostic' => [
+                    'code' => '404',
+                    'message' => 'id tidak ditemukan'
+                ]
+            ]);
+        }
     }
 
     public function inputKinerja(Request $request){
