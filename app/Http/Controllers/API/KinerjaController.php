@@ -16,7 +16,8 @@ use Illuminate\Http\Request;
 class KinerjaController extends ApiController
 {
     public function getKinerjaTersimpan(){
-        $kinerja_tersimpan = Kinerja::where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->firstOrFail();
+        $nip = auth('web')->user()->nip;
+        $kinerja_tersimpan = Kinerja::where('nip',$nip)->where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->firstOrFail();
         return $this->ApiSpecResponses($kinerja_tersimpan);
     }
 
