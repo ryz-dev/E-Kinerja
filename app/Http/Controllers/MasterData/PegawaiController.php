@@ -46,31 +46,35 @@ class PegawaiController extends MasterDataController
 
     public function store(Request $request, $json = true)
     {
-        $this->validate($request, [
-            'nip' => 'required|unique:pegawai,nip',
-            'foto' => 'image',
-            'nama' => 'required',
-            'tanggal_lahir' => 'required|date',
-            'id_agama' => 'required|in:'.$this->getListAgama(),
-            'id_jabatan' => 'in:'.$this->getListJabatan(),
-            'jns_kel' => 'required|in:laki-laki,perempuan',
-            'tempat_lahir' => 'required',
-            'id_skpd' => 'required',
-            'status_upacara' => 'required'
-        ]);
-        $input = $request->input();
-        /*upload file foto*/
-        if ($request->hasFile('foto')) {
-            $input['foto'] = $this->uploadFoto($request);
+        $cek = Pegawai::where('nip',$request->input('nip'))->first();
+        if (!$cek) {
+            $this->validate($request, [
+                'nip' => 'required|unique:pegawai,nip',
+                'foto' => 'image',
+                'nama' => 'required',
+                'tanggal_lahir' => 'required|date',
+                'id_agama' => 'required|in:' . $this->getListAgama(),
+                'id_jabatan' => 'in:' . $this->getListJabatan(),
+                'jns_kel' => 'required|in:laki-laki,perempuan',
+                'tempat_lahir' => 'required',
+                'id_skpd' => 'required',
+                'status_upacara' => 'required'
+            ]);
+            $input = $request->input();
+            /*upload file foto*/
+            if ($request->hasFile('foto')) {
+                $input['foto'] = $this->uploadFoto($request);
+            }
+            /*================*/
+            $input['uuid'] = (string)Str::uuid();
+            $input['password'] = bcrypt('secret');
+            $pegawai = Pegawai::create($input);
+            if ($json) {
+                return response()->json($pegawai);
+            }
+            return $pegawai;
         }
-        /*================*/
-        $input['uuid'] = (string)Str::uuid();
-        $input['password'] = bcrypt('secret');
-        $pegawai = Pegawai::create($input);
-        if ($json) {
-            return response()->json($pegawai);
-        }
-        return $pegawai;
+        abort(500,"nip sudah ada");
     }
 
     public function update(Request $request, $id, $json = true)
