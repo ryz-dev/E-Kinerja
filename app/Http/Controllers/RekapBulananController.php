@@ -16,10 +16,11 @@ use Illuminate\Support\Facades\Auth;
 
 class RekapBulananController extends Controller
 {
-    public function rekapBulanan(){
-        // special user
-        $special_user = ['Bupati','Wakil Bupati','Sekretaris Daerah'];
+    private $special_user_id = [2,3,4];
+    
 
+    public function rekapBulanan(){
+        $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
         $user = Auth::user();
         $skpd = in_array($user->role()->first()->nama_role,$special_user)?Skpd::all():Skpd::where('id',$user->id_skpd);
         $skpd = $skpd->pluck('nama_skpd','id');
@@ -29,7 +30,6 @@ class RekapBulananController extends Controller
             if ($user->role()->first()->nama_role == 'Bupati'){
                 $skpd->prepend(strtoupper('Sekretaris Daerah'),'-1');
             }
-            $skpd->prepend('-- ALL --','-2');
         }
 
         $skpd = $skpd->toArray();
@@ -38,6 +38,7 @@ class RekapBulananController extends Controller
     }
 
     public function downloadRekapBulanan(Request $request){
+        // dd($request);
         $periode_rekap = $request->input('periode_rekap')?$request->input('periode_rekap'):date('Y-m-d');
         $bulan = (int)($periode_rekap ? date('m', strtotime($periode_rekap)) : date('m'));
         $tahun = (int)($periode_rekap ? date('Y', strtotime($periode_rekap)) : date('Y'));
@@ -51,7 +52,7 @@ class RekapBulananController extends Controller
         $persen['kinerja'] = $formula->where('variable','kinerja')->first()->persentase_nilai;
         $persen['absen'] = $formula->where('variable','absen')->first()->persentase_nilai;
 
-        $pegawai = $this->getDataPegawai($user,$bulan,$tahun);
+        $pegawai = $this->getDataPegawai($user,$bulan,$tahun,$request->input('d_id_skpd'));
 
         $data = $this->parseDataRekap($pegawai,$persen,$hari_kerja);
         
@@ -69,10 +70,28 @@ class RekapBulananController extends Controller
         return $number?number_format((float)$number,2,',','.'):0;
     }
 
-    private function getDataPegawai($user,$bulan,$tahun){
-        return Pegawai::whereHas('jabatan', function($query) use($user,$bulan,$tahun){
+    private function getDataPegawai($user,$bulan,$tahun,$id_skpd){
+        $pegawai = Pegawai::where('nip','!=','');
+        if ($id_skpd > 0) {
+            $pegawai->where('id_skpd',$id_skpd);
+        }
+
+        if ($id_skpd < 0) {
+            $pegawai->where('id_jabatan',3);
+        }
+        
+        $pegawai = $pegawai->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
+        $pegawai = $pegawai->orderBy('jabatan.id_golongan');
+        
+        if (in_array($user->role()->pluck('id_role')->max(),$this->special_user_id) == false) {
+            if ($user->role()->pluck('id_role')->max() != 5) {
+                $pegawai->whereHas('jabatan', function($query) use ($user){
                     $query->where('id_atasan','=',$user->id_jabatan);
-                })->with(
+                });
+            }
+        }
+
+        $pegawai = $pegawai->with(
                     [
                         'etika'=>function($query)use($bulan,$tahun){
                             $query->select('nip','persentase')->whereMonth('tanggal',$bulan)->whereYear('tanggal',$tahun);
@@ -85,13 +104,16 @@ class RekapBulananController extends Controller
                         }
                     ]
                 );
+        return $pegawai;
     }
 
     private function parseDataRekap($pegawai,$persen,$hari_kerja){
+        
         return $data = $pegawai->get()->map(function($item, $key) use($persen,$hari_kerja){
-            $tunjangan = $item->jabatan->golongan->tunjangan;
-            $data['jabatan'] = $item->jabatan->jabatan;
-            $data['kelas_jabatan'] = $item->jabatan->golongan->golongan;
+            // dd($item->jabatan());
+            $tunjangan = $item->jabatan()->first()->golongan->tunjangan;
+            $data['jabatan'] = $item->jabatan()->first()->jabatan;
+            $data['kelas_jabatan'] = $item->jabatan()->first()->golongan->golongan;
             $data['data_pribadi'] = $item->toArray();
             $data['etika'] = $item->etika->first()?$item->etika->first()->persentase:0;
             $data['persentase_etika'] = ($data['etika'] * $persen['etika'])/100;

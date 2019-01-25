@@ -15,29 +15,33 @@ use Illuminate\Http\Request;
 class RekapBulananController extends ApiController
 {
     private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
+    private $special_user_id = [2,3,4];
 
     public function getBawahan(Request $request)
     {
         $user = auth('web')->user();
         $skpd = $request->has('skpd') ? $request->input('skpd') : null;
-        if (in_array($user->role()->first()->nama_role, $this->special_user) == false) {
-            if ($user->role()->first()->nama_role == 'Kepala Dinas'){
-                $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('id_skpd',$user->id_skpd)->where('nip', '<>', $user->nip)->where('id_jabatan','>',$user->id_jabatan)->get();
-            } else {
-                $user->load('jabatan.pegawai_bawahan');
-                $bawahan = $user->jabatan->pegawai_bawahan;
-            }
-        } else {
-            $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip', '<>', $user->nip)->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id')->orderBy('jabatan.id_golongan','asc');
-            if ($skpd > 0) {
-                $bawahan = $bawahan->where('id_skpd', $skpd);
-            }
-            if ($skpd == -1){
-                $bawahan = $bawahan->where('id_jabatan',3);
-            }
-            $bawahan = $bawahan->get();
+        $pegawai = Pegawai::where('nip','!=',$user->nip);
+        if ($skpd > 0) {
+            $pegawai->where('id_skpd',$skpd);
         }
-        return $this->ApiSpecResponses($bawahan);
+
+        if ($skpd < 0) {
+            $pegawai->where('id_jabatan',3);
+        }
+        
+        $pegawai = $pegawai->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
+        $pegawai = $pegawai->orderBy('jabatan.id_golongan');
+        
+        if (in_array($user->role()->pluck('id_role')->max(),$this->special_user_id) == false) {
+            if ($user->role()->pluck('id_role')->max() != 5) {
+                $pegawai->whereHas('jabatan', function($query) use ($user){
+                    $query->where('id_atasan','=',$user->id_jabatan);
+                });
+            }
+        }
+
+        return $this->ApiSpecResponses($pegawai->get());
     }
 
     public function getRekap($nip, $bulan = null, $tahun = null)

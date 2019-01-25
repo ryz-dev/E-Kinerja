@@ -67,6 +67,7 @@
                             @csrf
                             <div class="col-md-3 col-6 btnDownloads">
                                 <input type="hidden" name="periode_rekap" value="">
+                                <input type="hidden" name="d_id_skpd" value="">
                                 <button class="btn btn-primary"> <img src="assets/images/icons/pdf.svg"> Download</button>
                             </div>
                         </form>
@@ -203,6 +204,7 @@
     </div>
     @push('script')
         <script>
+            $("input[name='d_id_skpd']").val($("#skpd").val());
 
             var getBawahan = function (skpd) {
                 $.get('{{route('api.web.rekap-bulanan.get-bawahan')}}'+(skpd ? '?skpd='+skpd : ''))
@@ -325,6 +327,7 @@
                 $('#preload').show();
                 $.get('{{route('api.web.rekap-bulanan',['nip' => ''])}}/' + nip + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
                     .then(function (res) {
+                        console.log(res);
                         if (res.response.rekap_bulanan.length > 0) {
                             var rekap = res.response.rekap_bulanan.map(function (val, i) {
                                 var color = approve = color_persentase = ''
@@ -400,7 +403,7 @@
                 }
             })
             $(document).ready(function () {
-                getBawahan(null)
+                getBawahan($('#skpd').val())
             })
 
             // Deklarasi variable
@@ -504,6 +507,7 @@
             }
             $(document).on('change','#skpd', function(){
                 var skpd = $(this).val();
+                $("input[name='d_id_skpd']").val($(this).val());
                 getBawahan(skpd);
             });
         </script>

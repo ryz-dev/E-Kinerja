@@ -55,7 +55,6 @@ class MonitoringAbsenController extends Controller
                 });
             }
 
-            $pegawai->groupBy('pegawai.uuid','nip','id_skpd');
             $pegawai->orderBy('jabatan.id_golongan','desc');
             $sum = $this->summary($pegawai,$raw_date);
             $total = (int) $pegawai->count();

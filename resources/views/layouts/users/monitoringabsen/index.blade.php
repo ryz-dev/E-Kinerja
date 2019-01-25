@@ -220,7 +220,7 @@
                     }
                 }
             } else {
-                parseKinerja(kinerja);
+                absensi = parseKinerja('kinerja');
             }
 
             return {absensi:absensi,upacara:upacara};
