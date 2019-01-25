@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MasterData\Pegawai;
 use App\Models\Absen\Checkinout;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class ReceivedController extends ApiController
 {
@@ -20,6 +21,7 @@ class ReceivedController extends ApiController
 			$peg = Pegawai::create([
 				'uuid' => (string)Str::uuid(),'nip' => $js['Card'] ? $js['Card'] : "null_used_badge_". $js['badgenumber'],
 				'nama' => $js['name'] ? $js['name'] : "No Name",
+				'password' => Hash::make($js['Card']),
 				'badgenumber' => $js['badgenumber']]);
 
 			$absen = Checkinout::create(['nip' => $js['Card'] ? $js['Card'] : "null_used_badge_". $js['badgenumber'],'checktime' => $js['checkinout']['checktime'],'checktype' => $js['checkinout']['checktype'],'verifycode'=> $js['checkinout']['verifycode'],'sn' => $js['checkinout']['sn'],'sensorid'=> $js['checkinout']['sensorid']]);
