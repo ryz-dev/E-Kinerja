@@ -28,7 +28,7 @@ class RekapBulananController extends ApiController
                 $bawahan = $user->jabatan->pegawai_bawahan;
             }
         } else {
-            $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip', '<>', $user->nip)->where('id_jabatan', '>', $user->id_jabatan);
+            $bawahan = Pegawai::with('jabatan')->whereNotNull('id_jabatan')->where('nip', '<>', $user->nip)->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id')->orderBy('jabatan.id_golongan','asc');
             if ($skpd > 0) {
                 $bawahan = $bawahan->where('id_skpd', $skpd);
             }
@@ -58,7 +58,7 @@ class RekapBulananController extends ApiController
                     })->firstOrFail();
                 }
             } else {
-                $pegawai = Pegawai::whereNip($nip)->where('id_jabatan', '>', $user->id_jabatan)->firstOrFail();
+                $pegawai = Pegawai::whereNip($nip)->firstOrFail();
             }
         } catch (\Exception $exception) {
             abort('404');

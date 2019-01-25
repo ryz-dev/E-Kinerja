@@ -16,7 +16,8 @@ use Illuminate\Http\Request;
 class KinerjaController extends ApiController
 {
     public function getKinerjaTersimpan(){
-        $kinerja_tersimpan = Kinerja::where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->firstOrFail();
+        $nip = auth('web')->user()->nip;
+        $kinerja_tersimpan = Kinerja::where('nip',$nip)->where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->firstOrFail();
         return $this->ApiSpecResponses($kinerja_tersimpan);
     }
 
@@ -165,7 +166,7 @@ class KinerjaController extends ApiController
                 $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
 //                $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
                 $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->orderBy('checktype','asc')->get();
-                $status = 'alpa';
+                $status = '';
                 if ($abs->count() > 0) {
                     $in = false;
                     $out = false;
@@ -180,12 +181,25 @@ class KinerjaController extends ApiController
                             $pulang = $a->checktime;
                         }
                     }
-                    if (strtotime($masuk) <= strtotime($hk->tanggal." 09:00:00") ){
-                        if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
-                            $absen++;
-                            $status = 'hadir';
-                        }
+                    if ($in){
+                        $status = '';
+                    } else {
+                        $status = 'alpa';
                     }
+
+                    if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
+                        if ($in && $out) {
+                            if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
+                                $absen++;
+                                $status = 'hadir';
+                            } else {
+                                $status = 'alpa';
+                            }
+                        }
+                    } else {
+                        $status = 'alpa';
+                    }
+
                 }
                 $data_etika_kinerja[] = [
                     'tanggal' => $hk->tanggal,
