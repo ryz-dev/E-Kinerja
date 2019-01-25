@@ -5,7 +5,7 @@
             <div class="container-fluid">
             {!! Form::model($checkinout, ['route' => ['checkinout.update', $checkinout->id] ]) !!}
   
-              @include('layouts.admin.checkinout._form', ['btnText' => 'Simpan Perubahan'])
+              @include('layouts.admin.checkinout._form', ['btnText' => 'Simpan Perubahan', 'h1text' => 'Edit Absensi'])
 
             {!! Form::close() !!}
             </div>

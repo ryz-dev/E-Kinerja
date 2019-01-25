@@ -5,7 +5,7 @@
             <div class="container-fluid">
             {!! Form::open(['url' => route('checkinout.store'), 'id' => 'form-store-eselon', 'class' => 'from']) !!}
   
-              @include('layouts.admin.checkinout._form', ['btnText' => 'Simpan Data Baru'])
+              @include('layouts.admin.checkinout._form', ['btnText' => 'Simpan Data Baru', 'h1text' => 'Tambah Absensi'])
 
             {!! Form::close() !!}
             </div>

@@ -12,7 +12,7 @@
         @if ($errors->any())
                 {{-- {{ $errors->all() }} --}}
         @endif
-        <h2 class="mb-2">Tambah Absensi</h2>
+        <h2 class="mb-2">{{ $h1text }}</h2>
         <div class="form-group">
             <label for="nip">NIP</label>
             {{ Form::number('nip', null, ['class'=>'form-control', 'required' => '']) }}
