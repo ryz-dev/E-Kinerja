@@ -55,7 +55,7 @@ class RekapBulananController extends ApiController
         try {
             if (in_array($user->role()->first()->nama_role, $this->special_user) == false) {
                 if ($user->role()->first()->nama_role == 'Kepala Dinas') {
-                    $pegawai = Pegawai::whereNip($nip)->where('id_skpd',$user->id_skpd)->where('id_jabatan','>',$user->id_jabatan)->firstOrFail();
+                    $pegawai = Pegawai::whereNip($nip)->where('id_skpd',$user->id_skpd)->firstOrFail();
                 } else{
                     $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
                         $query->where('nip', auth('web')->user()->nip);
