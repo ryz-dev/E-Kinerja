@@ -180,7 +180,7 @@
             let BreakException = {};
             let upacara = '';
             let absensi = '';
-
+            
             if (absen.length > 0) {
 
                 let status_absen_masuk = false;
@@ -220,7 +220,7 @@
                     }
                 }
             } else {
-                absensi = 'data tidak ada';
+                parseKinerja(kinerja);
             }
 
             return {absensi:absensi,upacara:upacara};

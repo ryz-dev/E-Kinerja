@@ -118,12 +118,14 @@ class RekapBulananController extends Controller
                         $masuk = $itemabsen->where('checktype','0')?$itemabsen->where('checktype','0'):false;
                         $keluar = $itemabsen->where('checktype','1')?$itemabsen->where('checktype','1'):false;
                         $nip = $itemabsen->first()->nip;
-                        
-                        if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 09:00:00") ) {
-                            if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8.5 * 3600) ){
-                                return 1;
+
+                        if ($masuk->first() && $keluar->first() ) {
+                            if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 09:00:00") ) {
+                                if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8.5 * 3600) ){
+                                    return 1;
+                                }
                             }
-                        }
+                        }                        
                     }
                 })->filter(function($value,$key){ return $value > 0 ; });
     }
