@@ -209,10 +209,11 @@ class KinerjaController extends ApiController
         }
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
-                $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
+                $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->where('approve', 2)->terbaru();
                 // $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
                 $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->get();
-                $status = 'alpa';                
+                $status = $knj->first() ? $knj->first()->jenis_kinerja : '';                
+                // $status = '';                
                 if ($abs->count() > 0) {
                     $in = false;
                     $out = false;
@@ -227,11 +228,24 @@ class KinerjaController extends ApiController
                             $pulang = $a->checktime;
                         }
                     }
+
+                    if ($in){
+                        $status = '';
+                    } else {
+                        $status = 'alpa';
+                    }
+
                     if (strtotime($masuk) <= strtotime($hk->tanggal." 09:00:00") ){
-                        if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
-                            $absen++;
-                            $status = 'hadir';
+                        if ($in && $out) {
+                            if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
+                                $absen++;
+                                $status = 'hadir';
+                            } else {
+                                $status = 'alpa';
+                            }
                         }
+                    } else {
+                        $status = 'alpa';
                     }
                 }
                 $data_etika_kinerja[] = [
@@ -239,7 +253,8 @@ class KinerjaController extends ApiController
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'approve' => $knj->first() ? $knj->first()->approve : 0,
                     'etika' => $etika ? $etika->persentase : 0,
-                    'status' => ucfirst($status)
+                    'status' => $status,
+                    
                 ];
                 // $etika[] = $etk ? $etk->toArray() : null;
                 // if ($etk) {
