@@ -26,6 +26,10 @@ class MonitoringAbsenController extends Controller
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
 
+        $cekLibur = HariKerja::whereDate('tanggal', $date)->whereHas('statusHari', function ($query){
+            $query->where('status_hari', 'libur');
+        })->select('tanggal')->orderBy('tanggal')->first();
+
         $pegawai = Pegawai::with(['checkinout' => function($query) use ($date){
                 $query->select('nip', 'checktime', 'checktype')->whereDate('checktime', '=', $date);
             },
@@ -97,7 +101,9 @@ class MonitoringAbsenController extends Controller
                     }
                 }
                 else{
-                    if (count($p->kinerja)) {
+                    if ($cekLibur) {
+                        $k = (['data' => 'libur']);
+                    } elseif (count($p->kinerja)) {
                         $k = (['data' => $p['kinerja'][0]['jenis_kinerja']]);
                     } else {
                         $k = (['data' => 'alpa']);
@@ -115,7 +121,7 @@ class MonitoringAbsenController extends Controller
                     ],
                     'kinerja' => $k['data'],
                     'apel' => $apel,
-                    'created_at' => $p->created_at,
+                    'created_at' => $p->created_at
                 ];
             }
 
