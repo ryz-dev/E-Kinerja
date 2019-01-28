@@ -65,7 +65,7 @@ class MonitoringAbsenController extends Controller
             }
 
 
-            $pegawai->orderBy('jabatan.id_golongan','desc');
+            $pegawai->orderBy('jabatan.id_golongan');
             $sum = $this->summary($pegawai);
             $total = (int) $pegawai->count();
             
