@@ -111,7 +111,7 @@ class RekapBulananController extends Controller
         
         return $data = $pegawai->get()->map(function($item, $key) use($persen,$hari_kerja){
             // dd($item->jabatan());
-            $tunjangan = $item->jabatan()->first()->golongan->tunjangan;
+            $tunjangan = $item->jabatan()->first()?$item->jabatan()->first()->golongan->tunjangan:0;
             $data['jabatan'] = $item->jabatan()->first()->jabatan;
             $data['kelas_jabatan'] = $item->jabatan()->first()->golongan->golongan;
             $data['data_pribadi'] = $item->toArray();
