@@ -145,7 +145,7 @@
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="desc-detail">
-                                    <h4>Hadir</h4>
+                                    <h4 id="kinerja">Hadir</h4>
                                     <small>Jam Masuk - Jam Pulang</small>
                                     <br>
                                     <label><span id='checkin'></span> - <span id='checkout'></span></label>
@@ -364,7 +364,7 @@
                                     // '<div class="' + color_persentase + ' text-white mr-2">' + (val.persentase) + ' ' + (typeof val.persentase == 'number' ? '%' : '') + '</div>\n' +
                                     // '</td>\n' +
                                     '<td>\n' +
-                                    '<button class="btn rounded btn-detail detailRekap" ' + (val.status == "" ? "style='display : none'" : "") + ' id="detailRekap" list-index="' + i + '" data-prev="' + val.tgl_prev + '" data-start="' + val.tgl + '" data-next="' + val.tgl_next + '" title="Detail">\n' +
+                                    '<button class="btn rounded btn-detail detailRekap" ' + (val.status == "" && val.checkinout.inout.length == 0 ? "style='display : none'" : "") + ' id="detailRekap" list-index="' + i + '" data-prev="' + val.tgl_prev + '" data-start="' + val.tgl + '" data-next="' + val.tgl_next + '" title="Detail">\n' +
                                     '<i class="fas fa-search-plus"></i>\n' +
                                     '</button>\n' +
                                     '</td>\n' +
@@ -458,10 +458,12 @@
                         }
                         rekapDetail = res.response; //return ke rekapDetail
                         var etika = res.response.etika;
-                        var kinerja = res.response.kinerja;
+                        var kinerja = res.response.kinerja ? res.response.kinerja : null;
                         var chekinout = res.response.checkinout;
 
                         // Tampilkan ke view
+
+                        $('#kinerja').html(rekapDetail.status);
                         $('#mdlNama').html($('#detail-nama').html());
                         $('#mdlNip').html($('#detail-nip').html());
                         $('#user-modal').attr('style', $('#detail-img').attr('style'));
@@ -510,6 +512,11 @@
                 $("input[name='d_id_skpd']").val($(this).val());
                 getBawahan(skpd);
             });
+            function capitalizeFirstLetter(str) {
+                return str.replace(/\w\S*/g, function(txt){
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+            }
         </script>
     @endpush
 @endsection

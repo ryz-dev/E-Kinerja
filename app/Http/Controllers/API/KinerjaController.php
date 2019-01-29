@@ -201,6 +201,11 @@ class KinerjaController extends ApiController
                     }
 
                 }
+                if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))){
+                    if ($status == ''){
+                        $status = 'alpa';
+                    }
+                }
                 $data_etika_kinerja[] = [
                     'tanggal' => $hk->tanggal,
                     'tanggal_string' => $this->formatDate($hk->tanggal),
