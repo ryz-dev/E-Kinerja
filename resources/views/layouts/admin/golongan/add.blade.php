@@ -1,15 +1,18 @@
 @extends('layouts.admin.partial.main')
 @section('content')
     <div class="main">
+        <div class="nav-top-container">
+            @include('layouts.admin.partial.part.logout')
+        </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
                 <form id="form-store-golongan" action="{{route('api.web.master-data.golongan.store')}}" class="form">
                     <div class="row">
                         <div class="col-md-6">
-                            <h2 class="mb-2">Tambah Golongan</h2>
+                            <h2 class="mb-2">Tambah Kelas Jabatan</h2>
                             <div class="form-group">
-                                <label for="golongan">Golongan</label>
-                                <input id="golongan" type="text" class="form-control" name="golongan" placeholder="Golongan" value="" required>
+                                <label for="golongan">Kelas Jabatan</label>
+                                <input id="golongan" type="text" class="form-control" name="golongan" placeholder="Kelas Jabatan" value="" required>
                             </div>
                             <div class="form-group">
                                 <label for="golongan">Kriteria</label>

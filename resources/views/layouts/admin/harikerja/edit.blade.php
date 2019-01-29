@@ -1,6 +1,9 @@
 @extends('layouts.admin.partial.main')
 @section('content')
   <div class="main">
+      <div class="nav-top-container">
+          @include('layouts.admin.partial.part.logout')
+      </div>
     <div class="main-content tab-content">
       <div class="container-fluid">
         {{ Form::open(array('route' => array('hari_kerja_update',$harikerja->id),'id'=>'formHariKerja','class'=>'form')) }}

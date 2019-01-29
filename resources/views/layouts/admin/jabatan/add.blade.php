@@ -1,6 +1,9 @@
 @extends('layouts.admin.partial.main')
 @section('content')
     <div class="main">
+        <div class="nav-top-container">
+            @include('layouts.admin.partial.part.logout')
+        </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
                 <form id="form-store-jabatan" action="{{route('api.web.master-data.jabatan.store')}}" class="form">
@@ -12,9 +15,9 @@
                                 <input id="jabatan" type="text" class="form-control" name="jabatan" placeholder="Jabatan" value="" required>
                             </div>
                             <div class="form-group">
-                                <label for="golongan">Golongan Jabatan</label>
+                                <label for="golongan">Kelas Jabatan</label>
                                 <select class="form-control" name="id_golongan" id="golongan" required>
-                                    <option value="">Pilih Golongan Jabatan</option>
+                                    <option value="">Pilih Kelas Jabatan</option>
                                     @foreach($data_option->golongan AS $gol)
                                         <option value="{{$gol->id}}">{{$gol->golongan}} ({{$gol->kriteria}}) (Rp.{{$gol->tunjangan_rp}})</option>
                                     @endforeach
