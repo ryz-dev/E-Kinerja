@@ -15,9 +15,9 @@
                                 <input id="jabatan" type="text" class="form-control" name="jabatan" placeholder="Jabatan" value="{{$jabatan->jabatan}}" required>
                             </div>
                             <div class="form-group">
-                                <label for="golongan">Golongan Jabatan</label>
+                                <label for="golongan">Kelas Jabatan</label>
                                 <select class="form-control" name="id_golongan" id="golongan" required>
-                                    <option value="">Pilih Golongan Jabatan</option>
+                                    <option value="">Pilih Kelas Jabatan</option>
                                     @foreach($data_option->golongan AS $gol)
                                         <option value="{{$gol->id}}" {{$gol->id == $jabatan->id_golongan ? 'selected' : ''}}>{{$gol->golongan}} ({{$gol->kriteria}}) (Rp.{{$gol->tunjangan_rp}})</option>
                                     @endforeach
