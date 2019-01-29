@@ -53,6 +53,7 @@
                     totalPages: res.page,
                     visiblePages: 5,
                     onPageClick: function (event, page) {
+                        $("#preload").show();
                         getData(page,search);
                     }
                 });
