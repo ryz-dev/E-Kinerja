@@ -5,10 +5,10 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6">
-                        <h2 class="mb-2">Detail Golongan</h2>
+                        <h2 class="mb-2">Detail Kelas Jabatan</h2>
                         <div class="form-group">
-                            <label for="golongan">Golongan</label>
-                            <input id="golongan" type="text" class="form-control" name="golongan" placeholder="Golongan" value="{{$golongan->golongan}}" required>
+                            <label for="golongan">Kelas Jabatan</label>
+                            <input id="golongan" type="text" class="form-control" name="golongan" placeholder="Kelas Jabatan" value="{{$golongan->golongan}}" required>
                         </div>
                         <div class="form-group">
                             <label for="golongan">Kriteria</label>

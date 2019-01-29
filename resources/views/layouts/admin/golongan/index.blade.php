@@ -4,20 +4,20 @@
       <div class="nav-top-container">
           <div class="group-search">
               <span><i class="fas fa-search"></i></span>
-              <input id="search" type="text" class="form-control" placeholder="Cari Golongan">
+              <input id="search" type="text" class="form-control" placeholder="Cari Kelas Jabatan">
           </div>
           @include('layouts.admin.partial.part.logout')
       </div>
     <div class="main-content">
         <div class="container-fluid">
-          <a href="{{route('golongan.add')}}" class="btn btn-success">Tambah Golongan</a>
+          <a href="{{route('golongan.add')}}" class="btn btn-success">Tambah Kelas Jabatan</a>
           <br><br>
           <div class="table-responsive">
             <table class="table">
               <thead>
                 <tr>
                   <th scope="col"></th>
-                  <th scope="col">Golongan</th>
+                  <th scope="col">Kelas Jabatan</th>
                   <th scope="col">Kriteria</th>
                   <th scope="col">Tunjangan</th>
                   <th scope="col">Keterangan</th>
@@ -92,12 +92,12 @@
                     var delete_uri = $(this).attr('delete-uri');
                     var search = $('#search').val();
                     swal({
-                        title: 'Yakin Ingin Menghapus Golongan?',
+                        title: 'Yakin Ingin Menghapus Kelas Jabatan?',
                         text: "Proses tidak dapat di kembalikan",
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
-                        confirmButtonText: 'Iya, Hapus Golongan!',
+                        confirmButtonText: 'Iya, Hapus Kelas Jabatan!',
                         cancelButtonText: 'Tidak'
                     }).then((result) => {
                         if (result.value) {
@@ -107,12 +107,12 @@
                                     getPage(search);
                                     swal(
                                         'Terhapus!',
-                                        'Data Golongan Jabatan Berhasil Dihapus.',
+                                        'Data Kelas Jabatan Berhasil Dihapus.',
                                         'success'
                                     )
                                 } else {
                                     swal(
-                                        'Gagal Menghapus Data Golongan Jabatan',
+                                        'Gagal Menghapus Data Kelas Jabatan',
                                         res.response.message,
                                         'error'
                                     )
