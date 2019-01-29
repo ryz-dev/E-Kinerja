@@ -212,7 +212,7 @@ class KinerjaController extends ApiController
                 $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->where('approve', 2)->terbaru();
                 // $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
                 $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->get();
-                $status = $knj->first() ? $knj->first()->jenis_kinerja : '';                
+                $status = '';                
                 // $status = '';                
                 if ($abs->count() > 0) {
                     $in = false;
@@ -248,6 +248,17 @@ class KinerjaController extends ApiController
                         $status = 'alpa';
                     }
                 }
+
+                if ($knj->first()) {
+                    $status = $knj->first()->jenis_kinerja;
+                }
+
+                if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))){
+                    if ($status == ''){
+                        $status = 'alpa';
+                    }
+                }
+
                 $data_etika_kinerja[] = [
                     'tanggal' => $hk->tanggal,
                     'hari' => ucfirst($hk->Hari->nama_hari),
