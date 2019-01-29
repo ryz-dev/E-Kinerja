@@ -1,6 +1,9 @@
 @extends('layouts.admin.partial.main')
 @section('content')
     <div class="main">
+        <div class="nav-top-container">
+            @include('layouts.admin.partial.part.logout')
+        </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
                 <form id="form-update-skpd" action="{{$skpd->update_uri}}" class="form" enctype="multipart/form-data">

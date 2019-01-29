@@ -1,6 +1,9 @@
 @extends('layouts.admin.partial.main')
 @section('content')
     <div class="main">
+        <div class="nav-top-container">
+            @include('layouts.admin.partial.part.logout')
+        </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
                 <form id="form-store-golongan" action="{{route('api.web.master-data.golongan.store')}}" class="form">

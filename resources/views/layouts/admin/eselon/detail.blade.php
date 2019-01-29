@@ -22,6 +22,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     @push('script')
     @endpush

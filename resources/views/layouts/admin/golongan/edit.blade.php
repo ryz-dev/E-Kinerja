@@ -1,6 +1,9 @@
 @extends('layouts.admin.partial.main')
 @section('content')
     <div class="main">
+        <div class="nav-top-container">
+            @include('layouts.admin.partial.part.logout')
+        </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
                 <form id="form-update-golongan" action="{{$golongan->update_uri}}" class="form">
