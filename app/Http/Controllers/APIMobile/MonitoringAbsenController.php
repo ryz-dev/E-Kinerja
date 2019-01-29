@@ -14,6 +14,7 @@ class MonitoringAbsenController extends Controller
     private $special_user = [2,3,4];
     private $jam_masuk = '09:00:59';
     private $jam_masuk_upacara = '07.30.59';
+    private $status_hari = true;
     
     public function dataAbsensi(Request $request){
         $this->show_limit_mobile = $request->has('s') ? $request->input('s') : $this->show_limit_mobile;
@@ -21,6 +22,8 @@ class MonitoringAbsenController extends Controller
         $date = \Carbon\Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
         $user = auth('api')->user();
+        $status_hari = $this->getStatusHariKerja($date);
+        $raw_date = $request->input('d');
         $page = $request->input('page');
         $min_date = HariKerja::whereHas('statusHari', function ($query){
             $query->where('status_hari', 'kerja');
@@ -70,7 +73,7 @@ class MonitoringAbsenController extends Controller
 
 
             $pegawai->orderBy('jabatan.id_golongan');
-            $sum = $this->summary($pegawai);
+            $sum = $this->summary($pegawai, $raw_date, $status_hari->id_status_hari);
             $total = (int) $pegawai->count();
             
             if ($page) {
@@ -140,40 +143,57 @@ class MonitoringAbsenController extends Controller
         }
     }
 
-    private function summary($pegawai){
+    private function summary($pegawai,$date,$status_hari){
         $data = $pegawai->get();
-        $summary = $data->map(function($item, $key) {
-            if (count($item['checkinout']) > 0) {
-                if ($item['checkinout']->contains('checktype', 0)) {
-                    
-                    $time = $item['checkinout']->where('checktype', 0)->first()->checktime;
-                    
-                    if(Carbon::parse($time) >= Carbon::parse($this->jam_masuk)){
+
+        if ($status_hari == 1 && strtotime(date('Y-m-d')) >= strtotime($date)) {
+            $summary = $data->map(function($item, $key) use($date) {
+                if (count($item['checkinout']) > 0) {
+                    if (count($item['checkinout']) < 2 && strtotime(date('Y-m-d')) >= strtotime($date)) {
                         return collect(['data'=>'alpa']);
                     }
-                    else{
-                        return collect(['data' => 'hadir']);
+                    else {
+                        if ($item['checkinout']->contains('checktype',0)) {
+                            
+                            $time = $item['checkinout']->where('checktype',0)->first()->checktime;
+                            
+                            if(Carbon::parse($time) >= Carbon::parse($date.' '.$this->jam_masuk)){
+                                return collect(['data'=>'alpa']);
+                            }
+                            else{
+                                return collect(['data' => 'hadir']);
+                            }
+                        }
+                        else{
+                            return collect(['data' => 'alpa']);
+                        }
                     }
                 }
                 else{
-                    return collect(['data' => 'alpa']);
+                    if (count($item['kinerja']) > 0) {
+                        return collect(['data' => $item['kinerja'][0]['jenis_kinerja']]);
+                    }
+                    return collect(['data'=>'alpa']);
                 }
-            }
-            else{
-                if (count($item['kinerja']) > 0) {
-                    return collect(['data' => $item['kinerja'][0]['jenis_kinerja']]);
-                }
-                return collect(['data' => 'alpa']);
-            }
-        });
+                
+            });
 
-        $hadir =(int) $summary->where('data','hadir')->count();
-        $cuti = (int) $summary->where('data','cuti')->count();
-        $perjalanan_dinas = (int) $summary->where('data','perjalanan_dinas')->count();
-        $izin = (int) $summary->where('data','izin')->count();
-        $sakit = (int) $summary->where('data','sakit')->count();
-        $alpha = (int) $summary->where('data','alpa')->count();
-        
+            $hadir =(int) $summary->where('data','hadir')->count();
+            $cuti = (int) $summary->where('data','cuti')->count();
+            $perjalanan_dinas = (int) $summary->where('data','perjalanan_dinas')->count();
+            $izin = (int) $summary->where('data','izin')->count();
+            $sakit = (int) $summary->where('data','sakit')->count();
+            $alpha = (int) $summary->where('data','alpa')->count();
+        }
+        else{
+            $hadir =0;
+            $cuti = 0;
+            $perjalanan_dinas = 0;
+            $izin = 0;
+            $sakit = 0;
+            $alpha = 0;
+        }
+
         return [
             'hadir' => $hadir,
             'cuti' => $cuti,
@@ -182,5 +202,9 @@ class MonitoringAbsenController extends Controller
             'sakit' => $sakit,
             'alpha' => $alpha,
         ];
+    }
+
+    private function getStatusHariKerja($date){
+        return \DB::table('hari_kerja')->where('tanggal',date('Y-m-d', strtotime($date)))->first();
     }
 }

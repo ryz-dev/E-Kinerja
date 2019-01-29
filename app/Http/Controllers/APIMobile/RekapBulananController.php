@@ -103,11 +103,11 @@ class RekapBulananController extends ApiController
         foreach ($hari_kerja AS $key => $hk){
             $apel = false;
             $kinerja = $pegawai->kinerja()->where('tgl_mulai','<=',$hk->tanggal)->where('tgl_selesai','>=',$hk->tanggal)->terbaru()->first();
-            $kehadiran = $pegawai->checkinout()->where('checktime','like','%'.$hk->tanggal.'%')->orderBy('checktype','desc')->get()->toArray();
-            if (count($kehadiran) > 0){
-                $kehadiran['status'] = 'alpa';
+            $kehadiran['inout'] = $pegawai->checkinout()->where('checktime', 'like', '%' . $hk->tanggal . '%')->orderBy('checktype', 'desc')->get()->toArray();
+            $kehadiran['status'] = '';
+            if (count($kehadiran['inout']) > 0) {
                 $masuk = $pulang = null;
-                foreach ($kehadiran AS $kh){   
+                foreach ($kehadiran['inout'] AS $kh) {
                     if (isset($kh['checktype'])) {
                         if ($kh['checktype'] == 0) {
                             $masuk = $kh['checktime'];
@@ -117,22 +117,42 @@ class RekapBulananController extends ApiController
                         }
                     }
                 }
-                if (strtotime($masuk) <= strtotime($hk->tanggal." 09:00:00") ){
-                    if ((strtotime($pulang)-(strtotime($masuk))) >= (8.5 * 3600)){
-                        $kehadiran['status'] = 'hadir';
+                if ($masuk){
+                    $kehadiran['status'] = '';
+                } else {
+                    $kehadiran['status'] = 'alpa';
+                }
+                if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
+                    if ($masuk && $pulang) {
+                        if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
+                            $kehadiran['status'] = 'hadir';
+                        } else {
+                            $kehadiran['status'] = 'alpa';
+                        }
                     }
+
                     if (date('N',strtotime($hk->tanggal)) != 1){
                         if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
                             $apel = true;
                         }
                     }
+                } else {
+                    $kehadiran['status'] = 'alpa';
                 }
             }
+
+            if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))){
+                if ($kehadiran['status'] == ''){
+                    $kehadiran['status'] = 'alpa';
+                }
+            }
+
 //            $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
-            $status = ucfirst(str_replace('_',' ',isset($kinerja->jenis_kinerja)?$kinerja->jenis_kinerja:''));
-            if ($status == 'Hadir'){
+            $status = ucfirst(str_replace('_', ' ', isset($kinerja->jenis_kinerja) ? $kinerja->jenis_kinerja : ''));
+            if ($status == 'Hadir' || $status == '') {
                 $status = ucfirst($kehadiran['status']);
             }
+
             $data_inout[] = [
                 // 'tgl_prev' => isset($hari_kerja[$key-1]->tanggal) ? $hari_kerja[$key-1]->tanggal : '',
                 // 'tgl_next' => isset($hari_kerja[$key+1]->tanggal) ? $hari_kerja[$key+1]->tanggal : '',
@@ -195,39 +215,56 @@ class RekapBulananController extends ApiController
         $etika->tanggal_etika = $tahun.'-'.$bulan;
 
         /* Data checkinout */
-        $checkinout = Checkinout::where("nip",$pegawai->nip)
-        ->select('checktime')
-        ->whereDate("checktime",$tgl)
-        ->get();
-
+        $checkinout = Checkinout::where("nip", $pegawai->nip)
+            ->whereDate("checktime", $tgl)
+            ->get();
+        $status = '';
         $apel = false;
-        if ($kinerja){
-            if ($kinerja->jenis_kinerja == 'hadir'){
-                $chk = $checkinout->toArray();
-                if (count($chk) > 0) {
-                    $kinerja->jenis_kinerja = 'alpa';
-                    $masuk = $pulang = null;
-                    foreach ($chk AS $kh) {
-                        if (isset($kh['checktype'])) {
-                            if ($kh['checktype'] == 0) {
-                                $masuk = $kh['checktime'];
-                            }
-                            if ($kh['checktype'] == 1) {
-                                $pulang = $kh['checktime'];
-                            }
-                        }
+        if (count($checkinout) > 0) {
+            $masuk = $pulang = null;
+            foreach ($checkinout->toArray() AS $kh) {
+                if (isset($kh['checktype'])) {
+                    if ($kh['checktype'] == 0) {
+                        $masuk = $kh['checktime'];
                     }
-                    if (strtotime($masuk) <= strtotime($tgl . " 09:00:00")) {
-                        if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
-                            $kinerja->jenis_kinerja = 'hadir';
-                        }
-                        if (date('N', strtotime($tgl)) != 1){
-                            if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
-                                $apel = true;
-                            }
-                        }
+                    if ($kh['checktype'] == 1) {
+                        $pulang = $kh['checktime'];
                     }
                 }
+            }
+            if ($masuk){
+                $status = '';
+            } else {
+                $status = 'alpa';
+            }
+            if (strtotime($masuk) <= strtotime($tgl . " 09:00:00")) {
+                if ($masuk && $pulang) {
+                    if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
+                        $status = 'hadir';
+                    } else {
+                        $status = 'alpa';
+                    }
+                }
+                if (date('N', strtotime($tgl)) != 1){
+                    if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
+                        $apel = true;
+                    }
+                }
+            } else {
+                $status = 'alpa';
+            }
+        }
+
+        if (strtotime($tgl) < strtotime(date('Y-m-d'))){
+            if ($status == ''){
+                $status = 'alpa';
+            }
+        }
+
+        /* Data array */
+        if ($kinerja){
+            if ($kinerja->jenis_kinerja != 'hadir'){
+                $status = $kinerja->jenis_kinerja;
             }
         }
 

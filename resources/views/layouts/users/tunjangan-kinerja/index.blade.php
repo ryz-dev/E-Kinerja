@@ -363,12 +363,12 @@
                                         badge_kinerja = '<div class="badge badge-green text-white mr-2">'+kinerja+'</div>'
                                     } else if (kinerja == "Cuti"){
                                         badge_kinerja = '<div class="badge badge-purple text-white mr-2">'+kinerja+'</div>'
-                                    } else if (kinerja == "Alpa" || val.status == 'Alpa'){
-                                        badge_kinerja = '<div class="badge badge-gray text-white mr-2">Alpa</div>'
                                     } else if (kinerja == "Izin"){
                                         badge_kinerja = '<div style="background-color:#f3bd59!important;" class="badge text-white mr-2">'+kinerja+'</div>'
                                     } else if (kinerja == "Sakit"){
                                         badge_kinerja = '<div class="badge badge-red text-white mr-2">'+kinerja+'</div>'
+                                    } else if (kinerja == "Alpa" || val.status == 'Alpa'){
+                                        badge_kinerja = '<div class="badge badge-gray text-white mr-2">Alpa</div>'
                                     }
                                 }
 
