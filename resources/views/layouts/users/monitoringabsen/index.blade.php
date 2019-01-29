@@ -191,7 +191,7 @@
 
                     let status_absen_masuk = false;
                     try{
-                        if (current_date >= selected_date && absen.length < 2) {
+                        if (current_date > selected_date && absen.length < 2) {
                             alpa = true
                         }
                         else{
