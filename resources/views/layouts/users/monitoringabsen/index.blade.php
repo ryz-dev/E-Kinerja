@@ -140,6 +140,8 @@
 </div>
 @push('script')
     <script>
+        var current_date;
+        var selected_date;
         $(document).on('click','.date-nav', function(){
             var date = $(this).attr('data-date');
             var skpd = $('#skpd').val();
@@ -173,7 +175,7 @@
             }
         })
 
-        var parseAbsen = function(absen,kinerja,jam_masuk,jam_masuk_upacara,today){
+        var parseAbsen = function(absen,kinerja,jam_masuk,jam_masuk_upacara,status_hari){
             let absenin = '';
             let absenout = '';
             let alpa = '';
@@ -181,44 +183,44 @@
             let upacara = '';
             let absensi = '';
 
-            let date_today = new Date(today);
-            // console.log(date_today.getDay());
-
-            if (date_today.getDay() == 6 || date_today.getDay() == 0){
-                absensi = parseKinerja('libur');
-                // console.log(absensi);
+            if (status_hari.id_status_hari == 2){
+                absensi = parseKinerja([{jenis_kinerja:'libur'}]);
             }
             else{
                 if (absen.length > 0) {
 
                     let status_absen_masuk = false;
                     try{
-                        var res = absen.forEach(function(val){
-                            let checkdate = new Date(val.absen_timestamp);
-                            if (val.checktype =='0' && checkdate > jam_masuk) {
-                                alpa = true;
-                                throw BreakException;
-                            }
-                            else{
-                                alpa = false;
-                                if (val.checktype == '0') {
-                                    status_absen_masuk = true;
-                                    if (checkdate < jam_masuk_upacara ) {
-                                        upacara = '<img src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
-                                    }
-                                    absenin = val.absen_time?val.absen_time:'';
-                                }else if(val.checktype == '1'){
-                                    absenout =val.absen_time?val.absen_time:'';
+                        if (current_date >= selected_date && absen.length < 2) {
+                            alpa = true
+                        }
+                        else{
+                            var res = absen.forEach(function(val){
+                                let checkdate = new Date(val.absen_timestamp);
+                                if (val.checktype =='0' && checkdate >= jam_masuk) {
+                                    alpa = true;
+                                    throw BreakException;
                                 }
-                            }
-        
-                        });
+                                else{
+                                    alpa = false;
+                                    if (val.checktype == '0') {
+                                        status_absen_masuk = true;
+                                        if (checkdate < jam_masuk_upacara ) {
+                                            upacara = '<img src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
+                                        }
+                                        absenin = val.absen_time?val.absen_time:'';
+                                    }else if(val.checktype == '1'){
+                                        absenout =val.absen_time?val.absen_time:'';
+                                    }
+                                }
+                            });
+                        }
                     } catch (e) {
                         if (e !== BreakException) throw e;
                     }
 
                     if (alpa == true || status_absen_masuk==false ) {
-                        absensi =  parseKinerja('alpa');
+                        absensi =  parseKinerja([{jenis_kinerja:'alpa'}]);
                     }
                     else{
                         if (absenin == '' && absenout == '' ) {
@@ -237,7 +239,7 @@
         }
 
         var parseKinerja = function(data){
-            // console.log(data);
+            
             if (typeof data === "object" && data.length > 0) {
                 switch (data[0].jenis_kinerja) {
                     case 'sakit':
@@ -252,18 +254,21 @@
                     case 'cuti':
                         return  '<span class="badge badge-table badge-purple">Cuti</span>'
                         break;
+                    case 'libur':
+                        return '<span class="badge badge-table badge-purple">LIBUR</span>';
+                        break;
+                    case 'alpa':
+                        return  '<span class="badge badge-table badge-gray">Alpa</span>';
+                        break;
                 }
             }
             else{
-                if (data == "libur") {
-                    return '<span class="badge badge-table badge-green">LIBUR</span>';
+                if (current_date >= selected_date) {
+                    return '<span class="badge badge-table badge-gray">Alpa</span>';
                 }
                 else{
-                    return  '<span class="badge badge-table badge-gray">Alpa</span>';
-
+                    return '-';
                 }
-                
-
             }
         }
 
@@ -307,13 +312,15 @@
                     $('.count-alpha').text(res.response.summary.alpha);
                     let jam_masuk = new Date(res.response.jam_masuk_timestamp);
                     let jam_masuk_upacara = new Date(res.response.jam_masuk_upacara_timestamp);
-                    let today = new Date(res.response.today);
+                    selected_date = new Date(res.response.today);
+                    current_date = new Date(res.response.current_date);
+
+                    let status_hari = res.response.status_hari;
                     if (res.response.pegawai.data.length > 0) {
                         var data = res.response.pegawai.data.map(function (val) { 
                             let row = '';
                             let foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
-                            let absen = parseAbsen(val.checkinout,val.kinerja,jam_masuk,jam_masuk_upacara,today);
-                            // console.log(absen);
+                            let absen = parseAbsen(val.checkinout,val.kinerja,jam_masuk,jam_masuk_upacara,status_hari);
                             row += "<tr data-nip='"+val.nip+"' >";
                             row += "<td><div class='img-user' id='user1' style='background-image: url(" + foto + ");'></div></td>";
                             row += "<td><a href=''>" + val.nip + "</a></td>";
@@ -332,6 +339,7 @@
                     $('#preload').hide();
                 }
             });
+
             function getTime() {
                 var date =  new Date();
                 var jam = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours());
