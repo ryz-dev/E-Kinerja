@@ -16,7 +16,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="golongan">Kelas Jabatan</label>
-                                <select class="form-control" name="id_golongan" id="golongan" required>
+                                <select class="select2 form-control" name="id_golongan" id="golongan" required>
                                     <option value="">Pilih Kelas Jabatan</option>
                                     @foreach($data_option->golongan AS $gol)
                                         <option value="{{$gol->id}}">{{$gol->golongan}} ({{$gol->kriteria}}) (Rp.{{$gol->tunjangan_rp}})</option>
@@ -25,7 +25,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="jabatan">Atasan</label>
-                                <select class="form-control" name="id_atasan" id="jabatan">
+                                <select class="select2 form-control" name="id_atasan" id="jabatan">
                                     <option value="">Pilih Atasan</option>
                                     @foreach($data_option->jabatan AS $jb)
                                         <option value="{{$jb->id}}">{{$jb->jabatan}}</option>

@@ -31,7 +31,7 @@
         </div>
         <div class="form-group">
             <label for="checktype">Check Type</label>
-            {{ Form::select('checktype', [0=>'Absen Masuk', 1=>'Absen Pulang' ],!empty($checkinout) ?$checkinout->checktype:"", ['class'=>'form-control', 'required' => '']) }}
+            {{ Form::select('checktype', [0=>'Absen Masuk', 1=>'Absen Pulang' ],!empty($checkinout) ?$checkinout->checktype:"", ['class'=>'form-control select2', 'required' => '']) }}
         </div>
         <div class="form-group">
             <label for="workcode">Work Code</label>

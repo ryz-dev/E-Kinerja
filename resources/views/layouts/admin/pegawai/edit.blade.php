@@ -20,7 +20,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="jabatan">Jabatan</label>
-                                <select class="form-control" name="id_jabatan" id="jabatan" required>
+                                <select class="select2 form-control" name="id_jabatan" id="jabatan" required>
                                     <option value="">Pilih Jabatan</option>
                                     @foreach($data_option->jabatan AS $jb)
                                         <option value="{{$jb->id}}" {{$jb->id == $pegawai->id_jabatan ? 'selected' : ''}}>{{$jb->jabatan}}</option>
@@ -29,7 +29,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="skpd">SKPD</label>
-                                <select class="form-control" name="id_skpd" id="skpd" required>
+                                <select class="select2 form-control" name="id_skpd" id="skpd" required>
                                     <option value="">Pilih SKPD</option>
                                     @foreach($data_option->skpd AS $skpd)
                                         <option value="{{$skpd->id}}" {{$skpd->id == $pegawai->id_skpd ? 'selected' : ''}}>{{$skpd->nama_skpd}}</option>
@@ -38,7 +38,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="agama">Agama</label>
-                                <select class="form-control" name="id_agama" id="agama" required>
+                                <select class="select2 form-control" name="id_agama" id="agama" required>
                                     <option value="">Pilih Agama</option>
                                     @foreach($data_option->agama AS $ag)
                                         <option value="{{$ag->id}}" {{$ag->id == $pegawai->id_agama ? 'selected' : ''}}>{{$ag->agama}}</option>
@@ -55,7 +55,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="jns_kel">Jenis Kelamin</label>
-                                <select class="form-control" name="jns_kel" id="jns_kel" required>
+                                <select class="select2 form-control" name="jns_kel" id="jns_kel" required>
                                     <option value="">Pilih Jenis Kelamin</option>
                                     <option value="laki-laki" {{$pegawai->jns_kel == 'laki-laki' ? 'selected' : ''}}>Laki-laki</option>
                                     <option value="perempuan" {{$pegawai->jns_kel == 'perempuan' ? 'selected' : ''}}>Perempuan</option>
@@ -63,7 +63,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="status_upacara">Status Upacara</label>
-                                <select class="form-control" name="status_upacara" id="status_upacara" required>
+                                <select class="select2 form-control" name="status_upacara" id="status_upacara" required>
                                     <option value="">Pilih Status</option>
                                     @if ($pegawai->status_upacara == true)
                                         <option value="1" selected>Wajib Mengikuti</option>                                        

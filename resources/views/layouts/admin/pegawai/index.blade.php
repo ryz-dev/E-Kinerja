@@ -210,7 +210,7 @@
                     input: 'select',
                     inputOptions: window.skpd,
                     inputPlaceholder:'Pilih SKPD',
-                    showCancelButton: true
+                    showCancelButton: true,
                 }).then(function(result){
                     if (result.value) {
                         window.open("{{route('api.web.master-data.pegawai.download',[

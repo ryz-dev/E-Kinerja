@@ -17,7 +17,7 @@
               <h2 class="mb-2">Tambah Hari Kerja</h2>
               <div class="form-group">
                 <label for="id_status_hari">Status Hari</label>
-                <select class="form-control" name="id_status_hari" id="id_status_hari" required>
+                <select class="select2 form-control" name="id_status_hari" id="id_status_hari" required>
                   @foreach ($status as $key => $sts)
                     @if ($harikerja->id_status_hari == $sts->id)
                         <option value="{{ $sts->id }}" selected>{{ $sts->status_hari }}</option>
