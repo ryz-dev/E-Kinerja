@@ -360,10 +360,18 @@ class KinerjaController extends ApiController
 
 
         /* Data checkinout */
-        $checkinout = Checkinout::where("nip",$pegawai->nip)
-        ->select('checktime')
+        $checkin = Checkinout::where("nip",$pegawai->nip)
+        ->where('checktype', 0)
         ->whereDate("checktime",$tgl)
         ->get();
+
+        $checkout = Checkinout::where("nip",$pegawai->nip)
+        ->where('checktype', 1)
+        ->whereDate("checktime",$tgl)
+        ->get();
+
+        $in = (count($checkin)) ? $checkin->min()->checktime : '';
+        $out = (count($checkout)) ? $checkout->max()->checktime : '';
 
         /* Data array */
         $result = [
@@ -374,8 +382,8 @@ class KinerjaController extends ApiController
             'kinerja' => $kinerja,
             'etika' => $etika,
             'checkinout' => [
-                    'in' => (count($checkinout)) ? $checkinout[0]->checktime : "",
-                    'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",
+                    'in' => $in,
+                    'out' => $out,
                 ],
             'min_date' => $min_date->tanggal
         ];

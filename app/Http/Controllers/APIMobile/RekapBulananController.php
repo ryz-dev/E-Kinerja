@@ -211,13 +211,28 @@ class RekapBulananController extends ApiController
             ->where("tanggal",'like',$tahun."-".$bulan."%")
             ->select('persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan', 'keterangan')
             ->first();
-        if ($etika)
-        $etika->tanggal_etika = $tahun.'-'.$bulan;
-
-        /* Data checkinout */
+            if ($etika)
+            $etika->tanggal_etika = $tahun.'-'.$bulan;
+            
+            /* Data checkinout */
         $checkinout = Checkinout::where("nip", $pegawai->nip)
             ->whereDate("checktime", $tgl)
             ->get();
+       
+        //absen masuk
+        $checkin = Checkinout::where("nip",$pegawai->nip)
+            ->where('checktype', 0)
+            ->whereDate("checktime",$tgl)
+            ->get();
+        //absen pulang
+        $checkout = Checkinout::where("nip",$pegawai->nip)
+            ->where('checktype', 1)
+            ->whereDate("checktime",$tgl)
+            ->get();
+
+        $in = (count($checkin)) ? $checkin->min()->checktime : '';
+        $out = (count($checkout)) ? $checkout->max()->checktime : '';
+   
         $status = '';
         $apel = false;
         if (count($checkinout) > 0) {
@@ -268,6 +283,7 @@ class RekapBulananController extends ApiController
             }
         }
 
+
         /* Data array */
         $result = [
             'uuid' => $pegawai->uuid,
@@ -277,8 +293,8 @@ class RekapBulananController extends ApiController
             'kinerja' => $kinerja,
             'etika' => $etika,
             'checkinout' => [
-                'in' => (count($checkinout)) ? $checkinout[0]->checktime : "",
-                'out' => (count($checkinout) > 1) ? $checkinout[1]->checktime : "",
+                'in' => $in,
+                'out' => $out,
             ],
             'apel' => $apel,
             'min_date' => $min_date->tanggal
