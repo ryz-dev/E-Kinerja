@@ -19,13 +19,14 @@ class MonitoringAbsenController extends Controller
         
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         $skpd = $request->input('skpd');
-        $date = \Carbon\Carbon::parse($request->input('d'));
+        $date = Carbon::parse($request->input('d'));
         $raw_date = $request->input('d');
         $search = $request->has('search')? $request->input('search'):'';
         $user = auth('web')->user();
         $status_hari = $this->getStatusHariKerja($date);
         $pegawai = Pegawai::with(['checkinout' => function($query) use ($date){
-                                    $query->select('nip','checktime','checktype','sn')->whereDate('checktime','=',$date);
+                                    $query->select(\DB::raw('DISTINCT(checktype),nip, date(checktime),checktime'))
+                                          ->whereDate('checktime','=',$date);
                                 },
                                     'kinerja' => function($query) use ($date){
                                     $query->select('nip','jenis_kinerja')->where('approve',2)
@@ -117,11 +118,15 @@ class MonitoringAbsenController extends Controller
         if ($status_hari == 1 && strtotime(date('Y-m-d')) >= strtotime($date)) {
             $summary = $data->map(function($item, $key) use($date) {
                 if (count($item['checkinout']) > 0) {
-                    if (count($item['checkinout']) < 2 && strtotime(date('Y-m-d')) >= strtotime($date)) {
+                    if (strtotime(date('Y-m-d')) == strtotime($date) && $item['checkinout']->contains('checktype',0)) {
+                        return collect(['data'=>'hadir']);
+                    }
+
+                    if (count($item['checkinout']) < 2 && strtotime(date('Y-m-d')) > strtotime($date)) {
                         return collect(['data'=>'alpa']);
                     }
                     else {
-                        if ($item['checkinout']->contains('checktype',0)) {
+                        if ($item['checkinout']->contains('checktype',0) && $item['checkinout']->contains('checktype',1)) {
                             
                             $time = $item['checkinout']->where('checktype',0)->first()->checktime;
                             
@@ -161,9 +166,6 @@ class MonitoringAbsenController extends Controller
             $sakit = 0;
             $alpha = 0;
         }
-
-
-
 
         return [
             'hadir' => $hadir,
