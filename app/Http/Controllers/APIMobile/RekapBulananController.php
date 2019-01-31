@@ -211,27 +211,17 @@ class RekapBulananController extends ApiController
             ->where("tanggal",'like',$tahun."-".$bulan."%")
             ->select('persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan', 'keterangan')
             ->first();
-            if ($etika)
-            $etika->tanggal_etika = $tahun.'-'.$bulan;
+            
+        if ($etika)
+        $etika->tanggal_etika = $tahun.'-'.$bulan;
             
             /* Data checkinout */
         $checkinout = Checkinout::where("nip", $pegawai->nip)
             ->whereDate("checktime", $tgl)
             ->get();
-       
-        //absen masuk
-        $checkin = Checkinout::where("nip",$pegawai->nip)
-            ->where('checktype', 0)
-            ->whereDate("checktime",$tgl)
-            ->get();
-        //absen pulang
-        $checkout = Checkinout::where("nip",$pegawai->nip)
-            ->where('checktype', 1)
-            ->whereDate("checktime",$tgl)
-            ->get();
 
-        $in = (count($checkin)) ? $checkin->min()->checktime : '';
-        $out = (count($checkout)) ? $checkout->max()->checktime : '';
+        $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
+        $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
    
         $status = '';
         $apel = false;

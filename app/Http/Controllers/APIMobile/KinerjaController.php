@@ -360,18 +360,12 @@ class KinerjaController extends ApiController
 
 
         /* Data checkinout */
-        $checkin = Checkinout::where("nip",$pegawai->nip)
-        ->where('checktype', 0)
+        $checkinout = Checkinout::where("nip",$pegawai->nip)
         ->whereDate("checktime",$tgl)
         ->get();
 
-        $checkout = Checkinout::where("nip",$pegawai->nip)
-        ->where('checktype', 1)
-        ->whereDate("checktime",$tgl)
-        ->get();
-
-        $in = (count($checkin)) ? $checkin->min()->checktime : '';
-        $out = (count($checkout)) ? $checkout->max()->checktime : '';
+        $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
+        $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
 
         /* Data array */
         $result = [
