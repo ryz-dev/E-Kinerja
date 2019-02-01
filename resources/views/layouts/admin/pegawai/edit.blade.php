@@ -23,7 +23,7 @@
                                 <select class="select2 form-control" name="id_jabatan" id="jabatan" required>
                                     <option value="">Pilih Jabatan</option>
                                     @foreach($data_option->jabatan AS $jb)
-                                        <option value="{{$jb->id}}" {{$jb->id == $pegawai->id_jabatan ? 'selected' : ''}}>{{$jb->jabatan}}</option>
+                                        <option value="{{$jb->id}}" {{$jb->id == $pegawai->id_jabatan ? 'selected' : ''}}>{{$jb->jabatan . " (".$jb->keterangan.")"}}</option>
                                     @endforeach
                                 </select>
                             </div>

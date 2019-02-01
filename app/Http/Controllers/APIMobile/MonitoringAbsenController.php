@@ -19,7 +19,7 @@ class MonitoringAbsenController extends Controller
     public function dataAbsensi(Request $request){
         $this->show_limit_mobile = $request->has('s') ? $request->input('s') : $this->show_limit_mobile;
         $skpd = $request->input('skpd');
-        $date = \Carbon\Carbon::parse($request->input('d'));
+        $date = Carbon::parse($request->input('d'));
         $search = $request->has('search')? $request->input('search'):'';
         $user = auth('api')->user();
         $status_hari = $this->getStatusHariKerja($date);
@@ -27,10 +27,6 @@ class MonitoringAbsenController extends Controller
         $page = $request->input('page');
         $min_date = HariKerja::whereHas('statusHari', function ($query){
             $query->where('status_hari', 'kerja');
-        })->select('tanggal')->orderBy('tanggal')->first();
-
-        $cekLibur = HariKerja::whereDate('tanggal', $date)->whereHas('statusHari', function ($query){
-            $query->where('status_hari', 'libur');
         })->select('tanggal')->orderBy('tanggal')->first();
 
         $pegawai = Pegawai::with(['checkinout' => function($query) use ($date){
@@ -90,27 +86,33 @@ class MonitoringAbsenController extends Controller
                         $time = $p['checkinout']->where('checktype', 0)->first()->checktime;
                         
                         if(Carbon::parse($time) >= Carbon::parse($this->jam_masuk)){
-                            $k = (['data' => 'alpa']);
+                            $kinerja = 'alpa';
                         }
                         else{
-                            $k = (['data' => 'hadir']);
+                            $kinerja = 'hadir';
                             if (Carbon::parse($time) <= Carbon::parse($this->jam_masuk_upacara)) {
                                 $apel = true;
                             }
                         }
                     }
                     else{
-                        $k = (['data' => 'alpa']);
+                        $kinerja = 'alpa';
                     }
                 }
                 else{
-                    if ($cekLibur) {
-                        $k = (['data' => 'libur']);
-                    } elseif (count($p->kinerja)) {
-                        $k = (['data' => $p['kinerja'][0]['jenis_kinerja']]);
+                    if (count($p->kinerja)) {
+                        $kinerja = $p['kinerja'][0]['jenis_kinerja'];
                     } else {
-                        $k = (['data' => 'alpa']);
+                        if (strtotime($date) >= strtotime(date('Y-m-d'))) {
+                            $kinerja = '';
+                        } else {
+                            $kinerja = 'alpa';
+                        }
                     }
+                }
+                
+                if ($status_hari->id_status_hari == 2) {
+                    $kinerja = 'libur';
                 }
 
                 $data[] = [
@@ -122,7 +124,7 @@ class MonitoringAbsenController extends Controller
                         'in' => (count($p->checkinout)) ? $p->checkinout[0]->checktime : "",
                         'out' => (count($p->checkinout) > 1) ? $p->checkinout[1]->checktime : "",
                     ],
-                    'kinerja' => $k['data'],
+                    'kinerja' => $kinerja,
                     'apel' => $apel,
                     'created_at' => $p->created_at
                 ];

@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\MasterData;
 
 use App\Models\Absen\Checkinout;
+use App\Models\MasterData\Pegawai;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CheckinoutRequests;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class CheckinoutController extends MasterDataController
     }
 
     public function create(){
-        return view('layouts.admin.checkinout.create');
+        $data = Pegawai::all()->pluck('nip');
+        return view('layouts.admin.checkinout.create', compact('data'));
     }
 
     public function store(CheckinoutRequests $request){
@@ -35,7 +37,8 @@ class CheckinoutController extends MasterDataController
 
     public function edit($id){
         $checkinout = Checkinout::find($id);
-        return view('layouts.admin.checkinout.edit', compact('checkinout'));
+        $data = Pegawai::all()->pluck('nip');
+        return view('layouts.admin.checkinout.edit', compact('checkinout', 'data'));
     }
 
     public function update(CheckinoutRequests $request,$id){
@@ -49,6 +52,7 @@ class CheckinoutController extends MasterDataController
     public function destroy($id){
         $checkinout = Checkinout::findOrFail($id);
         $checkinout->delete();
+     
         return view('layouts.admin.checkinout.index')->with('success', 'Data Berhasil di Di hapus');
     }
 }

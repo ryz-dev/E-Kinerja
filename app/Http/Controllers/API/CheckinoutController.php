@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Checkinout as resourceCheckinout;
 use Illuminate\Support\Str;
+use App\Models\MasterData\Pegawai;
 
 class CheckinoutController extends ApiController
 {
@@ -44,5 +45,13 @@ class CheckinoutController extends ApiController
         return response()->json([
             'halaman' => $data
         ]);
+    }
+
+    public function getPegawai(Request $req){
+        if ($req->has('term')) {
+            $data = Pegawai::where('nip', 'like', '%' . $req->input('term') . '%')->get();
+        }
+
+        return response()->json($data);
     }
 }

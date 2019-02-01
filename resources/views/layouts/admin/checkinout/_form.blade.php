@@ -15,11 +15,16 @@
         <h2 class="mb-2">{{ $h1text }}</h2>
         <div class="form-group">
             <label for="nip">NIP</label>
-            {{ Form::number('nip', null, ['class'=>'form-control', 'required' => '']) }}
+            <select id="s2" class="form-control select2" name="nip">
+                @foreach($data as $nip)
+                
+                    <option value="{{$nip}}" {{ !empty($checkinout) && $checkinout->nip === $nip ? "selected" : "" }}>{{$nip}}</option>
+                @endforeach
+            </select>
         </div>
         <div class='form-group'>
             <label for="datetimepicker">Masukkan Tgl dan jam kehadiaran</label>
-            <input class="me" id="datetimepicker" disabled="" placeholder="Klik icon di seblah" name="checktime" value="{{ !empty($checkinout) ? $checkinout->checktime : "" }}" required/>
+            <input class="me" id="datetimepicker" readonly placeholder="Klik icon di seblah" name="checktime" value="{{ !empty($checkinout) ? $checkinout->checktime : "" }}" required/>
         </div>
         <div class="form-group">
             <label for="verifycode">Verify Code</label>

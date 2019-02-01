@@ -118,6 +118,7 @@ Route::group(['prefix' => 'master-data','namespace' => 'MasterData', 'middleware
         Route::post('','CheckinoutController@store')->name('checkinout.store');
         Route::post('{id}','CheckinoutController@update')->name('checkinout.update');
         Route::post('delete/{id}','CheckinoutController@destroy')->name('api.checkinout.delete-absen');
+        Route::get('get/peg-cehckinout','CheckinoutController@getPegawai')->name('api.checkinout.peg-absen');
     });
 
     Route::group(['prefix'=> 'mesin-absen-upacara'], function(){
