@@ -29,14 +29,14 @@ class CreateJabatanTable extends Migration
                 ->references('id')
                 ->on('jabatan')
                 ->onUpdtae('cascade')
-                ->onDelete('restrict');
+                ->onDelete('cascade');
         });
         Schema::table('pegawai',function (Blueprint $table){
             $table->foreign('id_jabatan')
                 ->references('id')
                 ->on('jabatan')
                 ->onUpdate('cascade')
-                ->onDelete('restrict');
+                ->onDelete('cascade');
         });
     }
 

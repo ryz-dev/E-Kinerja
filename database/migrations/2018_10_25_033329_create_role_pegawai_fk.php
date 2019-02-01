@@ -18,7 +18,7 @@ class CreateRolePegawaiFk extends Migration
                 ->references('nip')
                 ->on('pegawai')
                 ->onUpdate('cascade')
-                ->onDelete('restrict');
+                ->onDelete('cascade');
             
             $table->foreign('id_role')
                 ->references('id')
