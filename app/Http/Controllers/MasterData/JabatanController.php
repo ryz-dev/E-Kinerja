@@ -82,11 +82,13 @@ class JabatanController extends MasterDataController
             if ($json)
                 return response()->json([
                     'status' => '500',
-                    'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif'
+                    'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif',
+                    'error_message' => $exception->getMessage()
                 ]);
             return [
                 'status' => '500',
-                'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif'
+                'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif',
+                'error_message' => $exception->getMessage()
             ];
         } catch (\Exception $exception){
             if ($json)
