@@ -61,7 +61,7 @@ class JabatanController extends MasterDataController
     }
 
     public function update(Request $request,$id,$json = true){
-        $jabatan = Jabatan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $jabatan = Jabatan::where('uuid',$id)->firstOrFail();
         $this->validate($request,[
             'jabatan' => 'required',
             'id_golongan' => 'required|in:'.$this->getListGolongan(),
@@ -75,7 +75,7 @@ class JabatanController extends MasterDataController
     }
 
     public function delete($id,$json=true){
-        $jabatan = Jabatan::whereId($id)->orWhere('uuid',$id)->firstOrFail();
+        $jabatan = Jabatan::where('uuid',$id)->firstOrFail();
         try {
             $jabatan->delete();
         } catch (QueryException $exception){
