@@ -32,7 +32,7 @@ class RekapBulananController extends ApiController
         
         $pegawai = $pegawai->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
         $pegawai = $pegawai->leftJoin('golongan','jabatan.id_golongan','=','golongan.id');
-        $pegawai = $pegawai->orderBy('golongan.tunjangan');
+        $pegawai = $pegawai->orderBy('golongan.tunjangan','desc');
         $pegawai = $pegawai->orderBy('pegawai.nama');
         
         if (in_array($user->role()->pluck('id_role')->max(),$this->special_user_id) == false) {
