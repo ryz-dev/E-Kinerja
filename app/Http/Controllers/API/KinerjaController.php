@@ -70,7 +70,7 @@ class KinerjaController extends ApiController
                     $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','0')->where('nip',$input['nip'])->first();
                     $cek_pulang_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('nip',$input['nip'])->first();
                     /*if (strtotime($cek_hadir_kerja->checktime) <= strtotime(date('Y-m-d')." 09:00:00")){
-                        if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8.5 * 3600)) {*/
+                        if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8 * 3600)) {*/
                             if ($request->has('status')){
                                 if ($request->input('status') == 5){
                                     $input['approve'] = 5;
@@ -189,7 +189,7 @@ class KinerjaController extends ApiController
 
                     if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
                         if ($in && $out) {
-                            if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
+                            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                                 $absen++;
                                 $status = 'hadir';
                             } else {

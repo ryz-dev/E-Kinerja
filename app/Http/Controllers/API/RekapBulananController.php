@@ -93,7 +93,7 @@ class RekapBulananController extends ApiController
                 }
                 if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
                     if ($masuk && $pulang) {
-                        if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
+                        if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                             $kehadiran['status'] = 'hadir';
                         } else {
                             $kehadiran['status'] = 'alpa';
@@ -190,7 +190,7 @@ class RekapBulananController extends ApiController
             }
             if (strtotime($masuk) <= strtotime($tgl . " 09:00:00")) {
                 if ($masuk && $pulang) {
-                    if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
+                    if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                         $status = 'hadir';
                     } else {
                         $status = 'alpa';

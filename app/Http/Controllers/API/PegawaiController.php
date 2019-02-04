@@ -171,7 +171,9 @@ class PegawaiController extends ApiController
         }
 
         $pegawai = $pegawai->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
-        $pegawai = $pegawai->orderBy('jabatan.id_golongan');
+        $pegawai = $pegawai->leftJoin('golongan','jabatan.id_golongan','=','golongan.id');
+        $pegawai = $pegawai->orderBy('golongan.tunjangan','desc');
+        $pegawai = $pegawai->orderBy('pegawai.nama');
 
         if (in_array($user->role()->pluck('id_role')->max(),$this->special_user_id) == false) {
             if ($user->role()->pluck('id_role')->max() != 5) {
@@ -233,7 +235,7 @@ class PegawaiController extends ApiController
 
                 if ($masuk->first() && $keluar->first() ) {
                     if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 09:00:00") ) {
-                        if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8.5 * 3600) ){
+                        if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600) ){
                             return 1;
                         }
                     }
