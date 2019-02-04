@@ -160,7 +160,9 @@ class MonitoringAbsenController extends Controller
         $tanggal_pilihan = $date;
 
         $data = $pegawai->map(function($item,$key) use($jam_masuk,$jam_sekarang,$tanggal_pilihan,$status_hari) {
-            
+            $data['absen_in'] = '';
+            $data['absen_out'] = '';
+
             $raw_absensi = $item['checkinout'];
             $absensi = null;
 
@@ -195,9 +197,13 @@ class MonitoringAbsenController extends Controller
     
                 }
                 elseif (strtotime($tanggal_sekarang)==strtotime($tanggal_pilihan_date)) {
+                    
     
                     if (strtotime($jam_sekarang) < strtotime($tanggal_sekarang.' '.$jam_masuk) && $raw_absensi->count() < 1 ) {
                         $absensi = 'uncount';
+                    }
+                    else{
+                        $absensi = 'hadir';
                     }
     
                     if (strtotime($jam_sekarang) > strtotime($tanggal_sekarang.$jam_masuk) ) {
@@ -227,15 +233,13 @@ class MonitoringAbsenController extends Controller
             else{
                 $absensi = 'libur';
             }
-            
 
-            $data['absen_in'] = date('H:i', strtotime($absen_in));
-            $data['absen_out'] = date('H:i', strtotime($absen_out));
+            $data['absen_in'] = $absen_in?date('H:i', strtotime($absen_in)):'';
+            $data['absen_out'] = $absen_out?date('H:i', strtotime($absen_out)):'';
             $data['absensi'] = $absensi;
             $data['nama'] = $item->nama;
             $data['nip'] = $item->nip;
             $data['foto'] = $item->foto;
-
 
             return $data;
 
