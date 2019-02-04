@@ -41,7 +41,7 @@
 <body border=0>
     <table>
         <tr>
-            <td rowspan=4><img src="{{ asset('assets\images\logo_kab.kolaka.png') }}" alt=""></td>
+            <td rowspan=4><img src="{{ base_path() }}/public/assets/images/logo_kab.kolaka.png" alt=""></td>
         </tr>
         <tr>
             <td colspan="4" style="text-align:center"><h1>REKAP BULANAN E-KINERJA KABUPATEN KOLAKA</h1></td>
