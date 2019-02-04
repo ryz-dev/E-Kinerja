@@ -34,7 +34,9 @@ class RekapBulananController extends ApiController
         }
         
         $pegawai = $pegawai->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
-        $pegawai = $pegawai->orderBy('jabatan.id_golongan');
+        $pegawai = $pegawai->leftJoin('golongan','jabatan.id_golongan','=','golongan.id');
+        $pegawai = $pegawai->orderBy('golongan.tunjangan','desc');
+        $pegawai = $pegawai->orderBy('pegawai.nama');
         
         if (in_array($user->role()->pluck('id_role')->max(),$this->special_user_id) == false) {
             if ($user->role()->pluck('id_role')->max() != 5) {
@@ -124,7 +126,7 @@ class RekapBulananController extends ApiController
                 }
                 if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
                     if ($masuk && $pulang) {
-                        if ((strtotime($pulang) - (strtotime($masuk))) >= (8.5 * 3600)) {
+                        if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                             $kehadiran['status'] = 'hadir';
                         } else {
                             $kehadiran['status'] = 'alpa';
@@ -154,8 +156,6 @@ class RekapBulananController extends ApiController
             }
 
             $data_inout[] = [
-                // 'tgl_prev' => isset($hari_kerja[$key-1]->tanggal) ? $hari_kerja[$key-1]->tanggal : '',
-                // 'tgl_next' => isset($hari_kerja[$key+1]->tanggal) ? $hari_kerja[$key+1]->tanggal : '',
                 // 'tgl' => $hk->tanggal,
                 'tanggal' => $hk->tanggal,
                 'hari' => ucfirst($hk->Hari->nama_hari),
@@ -182,18 +182,6 @@ class RekapBulananController extends ApiController
         $min_date = HariKerja::whereHas('statusHari', function ($query){
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
-
-        // /* Tarik tanggal sebelumnya */
-        // $date_prev = $date->whereDate('tanggal','<',$tgl)
-        // ->whereIdStatusHari(1)
-        // ->orderBy('tanggal','desc')
-        // ->first();
-
-        // /* Tarik tanggal setelahnya */
-        // $date_next = $date->whereDate('tanggal','>',$tgl)
-        // ->whereIdStatusHari(1)
-        // ->orderBy('tanggal','asc')
-        // ->first();
 
         /* Data kinerja */
         $pegawai = Pegawai::where('nip',$nip)->first();
@@ -272,7 +260,6 @@ class RekapBulananController extends ApiController
                 $status = $kinerja->jenis_kinerja;
             }
         }
-
 
         /* Data array */
         $result = [

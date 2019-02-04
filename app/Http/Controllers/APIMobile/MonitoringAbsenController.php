@@ -45,7 +45,8 @@ class MonitoringAbsenController extends Controller
                 ->whereDate('tgl_mulai','<=',$date)
                 ->whereDate('tgl_selesai','>=',$date);
             }
-        ])->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
+        ])->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id')
+        ->leftJoin('golongan','jabatan.id_golongan','=','golongan.id');
         
         try {
             if (in_array($user->role()->pluck('id_role')->max(), $this->special_user) == false) {
@@ -74,7 +75,8 @@ class MonitoringAbsenController extends Controller
                 });
             }
 
-            $pegawai->orderBy('jabatan.id_golongan');
+            $pegawai->orderBy('golongan.tunjangan','desc');
+            $pegawai->orderBy('pegawai.nama');
             $data_absen_pegawai = $this->parseAbsensi($pegawai,$date,$status_hari->id_status_hari);
             $sum = $this->summary($data_absen_pegawai,$raw_date,$status_hari->id_status_hari);
             $total = (int) $data_absen_pegawai->count();
@@ -139,7 +141,9 @@ class MonitoringAbsenController extends Controller
         $tanggal_pilihan = $date;
 
         $data = $pegawai->map(function($item,$key) use($jam_masuk,$jam_sekarang,$tanggal_pilihan,$status_hari) {
-            
+            // $data['absen_in'] = '';
+            // $data['absen_out'] = '';
+
             $raw_absensi = $item['checkinout'];
             $absensi = null;
 
@@ -177,12 +181,13 @@ class MonitoringAbsenController extends Controller
     
                     if (strtotime($jam_sekarang) < strtotime($tanggal_sekarang.' '.$jam_masuk) && $raw_absensi->count() < 1 ) {
                         $absensi = '';
+                    } else {
+                        $absensi = 'hadir';
                     }
     
                     if (strtotime($jam_sekarang) > strtotime($tanggal_sekarang.$jam_masuk) ) {
                         if ($absen_in) {
                             if ($absen_out) {
-                                // $absensi = date('H:i', strtotime($absen_in)).'<span> - </span>'.date('H:i', strtotime($absen_out));
                                 $absensi = 'hadir';
                             }
                             else{
@@ -213,8 +218,8 @@ class MonitoringAbsenController extends Controller
             $data['nip'] = $item->nip;
             $data['foto'] = $item->foto;
             $data['checkinout'] = [
-                'in' => $absen_in,
-                'out' => $absen_out 
+                'in' => $absen_in ? $absen_in : '',
+                'out' => $absen_out ? $absen_out : '' 
             ];
             $data['kinerja'] = $absensi;
 
