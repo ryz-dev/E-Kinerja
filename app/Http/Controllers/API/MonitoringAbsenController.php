@@ -39,7 +39,8 @@ class MonitoringAbsenController extends Controller
                                     ->whereDate('tgl_mulai','<=',$date)
                                     ->whereDate('tgl_selesai','>=',$date);
                                 }
-                            ])->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
+                            ])->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id')
+                            ->leftJoin('golongan','jabatan.id_golongan','=','golongan.id');
         
         try {
             if (in_array($user->role()->pluck('id_role')->max(),$this->special_user) == false) {
@@ -64,7 +65,8 @@ class MonitoringAbsenController extends Controller
                 });
             }
             
-            $pegawai->orderBy('jabatan.id_golongan');
+            $pegawai->orderBy('golongan.tunjangan','desc');
+            $pegawai->orderBy('pegawai.nama');
             $data_absen_pegawai = $this->parseAbsensi($pegawai,$date,$status_hari->id_status_hari);
             $sum = $this->summary($data_absen_pegawai,$raw_date,$status_hari->id_status_hari);
             $total = (int) $data_absen_pegawai->count();
@@ -209,7 +211,6 @@ class MonitoringAbsenController extends Controller
                     if (strtotime($jam_sekarang) > strtotime($tanggal_sekarang.$jam_masuk) ) {
                         if ($absen_in) {
                             if ($absen_out) {
-                                // $absensi = date('H:i', strtotime($absen_in)).'<span> - </span>'.date('H:i', strtotime($absen_out));
                                 $absensi = 'hadir';
                             }
                             else{
