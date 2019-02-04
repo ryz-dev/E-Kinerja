@@ -61,7 +61,7 @@ class JabatanController extends MasterDataController
     }
 
     public function update(Request $request,$id,$json = true){
-        $jabatan = Jabatan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $jabatan = Jabatan::where('uuid',$id)->firstOrFail();
         $this->validate($request,[
             'jabatan' => 'required',
             'id_golongan' => 'required|in:'.$this->getListGolongan(),
@@ -75,18 +75,20 @@ class JabatanController extends MasterDataController
     }
 
     public function delete($id,$json=true){
-        $jabatan = Jabatan::whereId($id)->orWhere('uuid',$id)->firstOrFail();
+        $jabatan = Jabatan::where('uuid',$id)->firstOrFail();
         try {
             $jabatan->delete();
         } catch (QueryException $exception){
             if ($json)
                 return response()->json([
                     'status' => '500',
-                    'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif'
+                    'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif',
+                    'error_message' => $exception->getMessage()
                 ]);
             return [
                 'status' => '500',
-                'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif'
+                'message' => 'Tidak dapat menghapus Jabatan, Jabatan memiliki pegawai aktif',
+                'error_message' => $exception->getMessage()
             ];
         } catch (\Exception $exception){
             if ($json)

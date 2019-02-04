@@ -62,7 +62,7 @@ class GolonganController extends MasterDataController
     }
 
     public function delete($id,$json = true){
-        $golongan = Golongan::whereId($id)->orWhere('uuid',$id)->firstOrFail();
+        $golongan = Golongan::where('uuid',$id)->firstOrFail();
         try {
             $golongan->delete();
         } catch (QueryException $exception){

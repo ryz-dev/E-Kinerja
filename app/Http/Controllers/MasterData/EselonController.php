@@ -53,7 +53,7 @@ class EselonController extends MasterDataController
             'eselon' => 'required',
             'tunjangan' => 'required'
         ]);
-        $eselon = Eselon::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $eselon = Eselon::where('uuid',$id)->firstOrFail();
         $eselon->update($request->input());
         if ($json)
         return response()->json($eselon->toArray());
@@ -61,7 +61,7 @@ class EselonController extends MasterDataController
     }
 
     public function delete($id,$json = true){
-        $eselon = Eselon::whereId($id)->orWhere('uuid',$id)->firstOrFail();
+        $eselon = Eselon::where('uuid',$id)->firstOrFail();
         try {
             $eselon->delete();
         } catch (\Exception $exception){}

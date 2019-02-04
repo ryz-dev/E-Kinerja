@@ -54,7 +54,7 @@ class SkpdController extends MasterDataController
     }
 
     public function delete($id,$json = true){
-        $skpd = Skpd::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $skpd = Skpd::where('uuid',$id)->firstOrFail();
         try {
             $skpd->delete();
         } catch (QueryException $exception){
