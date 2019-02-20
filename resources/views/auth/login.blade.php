@@ -52,7 +52,7 @@
                                     <input type="checkbox" checked name="remeber" {{ old('remember') ? 'checked' : '' }}>
                                     <span class="checkmark"></span>
                                 </label>
-                                <a href="">Lupa kata sandi ?</a>
+                                <!-- <a href="">Lupa kata sandi ?</a> -->
                             </div>
                             <div class="clearfix"></div>
                             <button 
