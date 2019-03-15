@@ -46,9 +46,6 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('penilaian-kinerja', function($user){
             return $user->hasAccess(['penilaian-kinerja']);
         });
-        Gate::define('penilaian-etika', function($user){
-            return $user->hasAccess(['penilaian-etika']);
-        });
         Gate::define('tunjangan-kinerja', function($user){
             return $user->hasAccess(['tunjangan-kinerja']);
         });

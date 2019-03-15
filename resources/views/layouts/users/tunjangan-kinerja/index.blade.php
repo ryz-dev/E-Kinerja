@@ -66,19 +66,6 @@
                                 Pencapaian <span id="pencapaian-kinerja">0</span>%
                             </div>
                         </div>
-                        <div class="box-diagram" id="diagram3">
-                            <div class="persen">
-                                <label class="float-left">ETIKA (
-                                    <x id="persentase-etika">0</x>
-                                    %)</label>
-                                <span class="float-right"><span id="total-etika">0</span>%</span></span>
-                                <div class="clearfix"></div>
-                            </div>
-                            <canvas id="chart-etika" height="30vh" width="40vw"></canvas>
-                            <div class="capaian text-center">
-                                Pencapaian <span id="pencapaian-etika">0</span>%
-                            </div>
-                        </div>
                         <div class="box-diagram" id="diagram4">
                             <div class="chart-container p-2">
                                 <canvas id="chart-tunjangan" height="50vh" width="50vw"></canvas>
@@ -105,7 +92,6 @@
                                 <th scope="col">Hari, Tanggal</th>
                                 <th scope="col">Absen</th>
                                 <th scope="col">Kinerja</th>
-                                {{--<th scope="col">Etika</th>--}}
                                 <th scope="col">Detail</th>
                             </tr>
                             </thead>
@@ -161,38 +147,6 @@
                                     excepturi dolorem doloripsa delectus tempora? Magni, atque totam dicta
                                     accusantium, velit itaque dolores magnam nihil repellendus!</p>
                                 <hr>
-                                <div class="wrap-modal-value table-responsive">
-                                    <h4 class="float-left">Penilaian Etika</h4>
-                                    <span class="badge text-white float-right" id="tanggal_etika">-</span>
-                                    <table>
-                                        <tbody><tr>
-                                            <td>Upacara dan Apel 30(%)</td>
-                                            <td id="upacara">0%</td>
-                                            <td colspan="3" rowspan="3">
-                                                <div class="value-percent">
-                                                    <div class="values">
-                                                        <h2 id="detail-etika-persentase">0%</h2>
-                                                        <div class="clearfix"></div>
-                                                    </div>
-                                                    <div class="ket" id="keterangan_etika">-</div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Perilaku Kerja 30(%)</td>
-                                            <td id="prilaku">0%</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Kegiatan Kebersamaan 40(%)</td>
-                                            <td id="kegiatan_kebersamaan">0%</td>
-                                        </tr>
-
-                                        </tbody></table>
-                                    <h6>Keterangan Penilaian</h6>
-                                    <p id="detail-etika-keterangan"></p>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -204,7 +158,6 @@
         <script>
             var ctx1 = document.getElementById("chart-absen").getContext("2d");
             var ctx2 = document.getElementById("chart-kinerja").getContext("2d");
-            var ctx3 = document.getElementById("chart-etika").getContext("2d");
             var ctx4 = document.getElementById("chart-tunjangan").getContext("2d");
             var data_response;
             var max_index = 0;
@@ -215,15 +168,12 @@
                     .then(function (res) {
                         $('#persentase-absen').html(res.response.persentase.absen);
                         $('#persentase-kinerja').html(res.response.persentase.kinerja);
-                        $('#persentase-etika').html(res.response.persentase.etika);
 
                         $('#pencapaian-absen').html(res.response.pencapaian.absen);
                         $('#pencapaian-kinerja').html(res.response.pencapaian.kinerja);
-                        $('#pencapaian-etika').html(res.response.pencapaian.etika);
 
                         $('#total-absen').html(res.response.total.absen);
                         $('#total-kinerja').html(res.response.total.kinerja);
-                        $('#total-etika').html(res.response.total.etika);
 
                         $('#total').html(res.response.total.total)
                         $('#total-tunjangan').html(res.response.total_tunjangan_diterima)
@@ -248,18 +198,6 @@
                                     backgroundColor: ["#F25857", "#d8dadc"],
                                     borderColor: ["#F25857", "#d8dadc"],
                                     data: [parseInt(res.response.pencapaian.kinerja), 100 - parseInt(res.response.pencapaian.kinerja)]
-                                }
-                            ]
-                        };
-
-                        var dataEtika = {
-                            labels: ["Etika",""],
-                            datasets: [
-                                {
-                                    label: "My First dataset",
-                                    backgroundColor: ["#00B894", "#d8dadc"],
-                                    borderColor: ["#00B894", "#d8dadc"],
-                                    data: [parseInt(res.response.pencapaian.etika), 100 - parseInt(res.response.pencapaian.etika)]
                                 }
                             ]
                         };
@@ -304,15 +242,6 @@
                             }
                         });
 
-                        chart3 = new Chart(ctx3, {
-                            type: "pie",
-                            data: dataEtika,
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: true
-                            }
-                        });
-
                         chart4 = new Chart(ctx4, {
                             type: "pie",
                             data: dataTunjangan,
@@ -327,21 +256,6 @@
                             max_index = res.response.data.length - 1;
                             var data_tunjangan = res.response.data.map(function (val, i) {
                                 color_persentase = '';
-                                if (val.etika){
-                                    if (val.etika.persentase == 100) {
-                                        color_persentase = 'badge badge-blue'
-                                    } else if (val.etika.persentase >= 75) {
-                                        color_persentase = 'badge badge-green'
-                                    } else if (val.etika.persentase >= 45) {
-                                        color_persentase = 'badge badge-orange'
-                                    } else if (val.etika.persentase > 0) {
-                                        color_persentase = 'badge badge-red'
-                                    } else if (val.etika.persentase === 0) {
-                                        color_persentase = 'badge badge-red'
-                                    } else if (val.etika.persentase == '') {
-                                        color_persentase = ''
-                                    }
-                                }
 
                                 if (val.kinerja || val.status == 'Hadir' || val.status == 'Alpa'){
                                     kinerja = ( val.kinerja ? (val.kinerja.jenis_kinerja == 'hadir') ? val.status : capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '');
@@ -386,11 +300,9 @@
                                     '                                <td>\n' +
                                     '                                    <span class="' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '') + '"><i class="fas fa-lg ' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '' ): '') + '"></i></span>\n' +
                                     '                                </td>\n' +
-                                    /*'                                <td>\n' +
-                                    '                                    <div class="' + color_persentase + ' text-white mr-2">' + (val.etika ? val.etika.persentase+'%' : '') + ' </div>\n' +
-                                    '                                </td>\n' +*/
+                                    /*'                                */
                                     '                                <td>\n' +
-                                    '                                    <button data-index="'+i+'" class="btn rounded btn-detail '+(val.kinerja || val.etika ? '' : 'invisible')+'" title="Detail">\n' +
+                                    '                                    <button data-index="'+i+'" class="btn rounded btn-detail '+(val.kinerja ? '' : 'invisible')+'" title="Detail">\n' +
                                     '                                        <i class="fas fa-search-plus"></i>\n' +
                                     '                                    </button>\n' +
                                     '                                </td>\n' +
@@ -484,7 +396,6 @@
                 data = data_response.data[index];
                 kinerja = data.kinerja
                 absen = data.absen
-                etika = data.etika
                 $('#current-index').val(index);
                 $('.modal-overlay').addClass('show');
                 $('#detail-nama').html(data_response.pegawai.nama)
@@ -502,25 +413,6 @@
                 $('#detail-approve').find('i').addClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '') : '')).removeClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'fa-times' : 'fa-check') : '') : ''));
                 $('#detail-kinerja').html(kinerja ? kinerja.rincian_kinerja : '');
                 $('#detail-keterangan-approve').html(kinerja ? kinerja.keterangan_approve : '');
-                $('#detail-etika-persentase').html(etika ? etika.persentase+'%' : '');
-                $('#detail-etika-keterangan').html(etika ? etika.keterangan : '');
-                $('#upacara').html(etika ? etika.mengikuti_upacara + '%' : "-");
-                $('#kegiatan_kebersamaan').html(etika ? etika.kegiatan_kebersamaan + '%' : "-");
-                $('#prilaku').html(etika ? etika.perilaku_kerja + '%' : "-");
-                $('#tanggal_etika').html(data.tanggal_etika);
-                ket = "-";
-                if (etika){
-                    if (etika.persentase < 25){
-                        ket = 'Buruk'
-                    } else if (etika.persentase < 50){
-                        ket = 'Cukup Baik'
-                    } else if (etika.persentase < 75){
-                        ket = 'Baik'
-                    } else if (etika.persentase <= 100){
-                        ket = 'Sangat Baik'
-                    }
-                }
-                $('#keterangan_etika').html(ket);
                 if (i == 0){
                     $('.control-left').addClass('invisible')
                 } else {

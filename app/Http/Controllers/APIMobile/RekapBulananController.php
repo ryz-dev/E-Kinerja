@@ -6,7 +6,6 @@ use App\Models\MasterData\Bulan;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
 use App\Models\Absen\Kinerja;
-use App\Models\Absen\Etika;
 use App\Models\Absen\Checkinout;
 use App\User;
 use Illuminate\Http\Request;
@@ -149,20 +148,16 @@ class RekapBulananController extends ApiController
                 }
             }
 
-//            $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
             $status = ucfirst(str_replace('_', ' ', isset($kinerja->jenis_kinerja) ? $kinerja->jenis_kinerja : ''));
             if ($status == 'Hadir' || $status == '') {
                 $status = ucfirst($kehadiran['status']);
             }
 
             $data_inout[] = [
-                // 'tgl' => $hk->tanggal,
                 'tanggal' => $hk->tanggal,
                 'hari' => ucfirst($hk->Hari->nama_hari),
-                // 'checkinout' => $kehadiran,
                 'status' => $status,
                 'apel' => $apel,
-                // 'persentase' => isset($etika->persentase)?$etika->persentase : 0,
                 'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
             ];
         }
@@ -192,18 +187,7 @@ class RekapBulananController extends ApiController
             ->terbaru()
             ->first();
 
-        /* Data etika */
-        $bulan = date('m',strtotime($tgl));
-        $tahun = date('Y',strtotime($tgl));
-        $etika = Etika::where("nip",$pegawai->nip)
-            ->where("tanggal",'like',$tahun."-".$bulan."%")
-            ->select('persentase', 'mengikuti_upacara', 'perilaku_kerja', 'kegiatan_kebersamaan', 'keterangan')
-            ->first();
-            
-        if ($etika)
-        $etika->tanggal_etika = $tahun.'-'.$bulan;
-            
-            /* Data checkinout */
+        /* Data checkinout */
         $checkinout = Checkinout::where("nip", $pegawai->nip)
             ->whereDate("checktime", $tgl)
             ->get();
@@ -268,7 +252,6 @@ class RekapBulananController extends ApiController
             'nip' => $pegawai->nip,
             'foto' => $pegawai->foto,
             'kinerja' => $kinerja,
-            'etika' => $etika,
             'checkinout' => [
                 'in' => $in,
                 'out' => $out,
