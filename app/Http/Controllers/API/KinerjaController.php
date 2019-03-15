@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Absen\Checkinout;
-use App\Models\Absen\Etika;
 use App\Models\Absen\Kinerja;
 use App\Models\MasterData\Bulan;
 use App\Models\MasterData\FormulaVariable;
@@ -141,7 +140,6 @@ class KinerjaController extends ApiController
 
         $persen_absen = FormulaVariable::where('variable','absen')->first()->persentase_nilai;
         $persen_kinerja =  FormulaVariable::where('variable','kinerja')->first()->persentase_nilai;
-        $persen_etika =  FormulaVariable::where('variable','etika')->first()->persentase_nilai;
 
         $pegawai = auth('web')->user();
         $nip = $pegawai->nip;
@@ -154,17 +152,11 @@ class KinerjaController extends ApiController
             $query->where('status_hari','kerja');
         })->where('bulan',$bulan)->where('tahun',$tahun)->orderBy('tanggal','asc')->get();
         $jumlah_hari = $hari_kerja->count();
-        $jumlah_kinerja = $jumlah_etika = $absen = 0;
-        $data_etika_kinerja = [];
-        $etika = Etika::where('nip', $nip)->where('tanggal','like', $tahun."-".$bulan."%")->first();
-        $jumlah_etika = $etika ? $etika->persentase : 0;
-        if ($etika){
-            $etika->tanggal_etika = ucfirst(Bulan::where('kode',$bulan)->first()->nama_bulan)." ".$tahun;
-        }
+        $jumlah_kinerja = $absen = 0;
+        $data_kinerja = [];
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
                 $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
-//                $etk = Etika::where('nip', $nip)->where('tanggal', '=', $hk->tanggal)->first();
                 $abs = Checkinout::where('nip', $nip)->whereDate('checktime', $hk->tanggal)->orderBy('checktype','asc')->get();
                 $status = '';
                 if ($abs->count() > 0) {
@@ -186,41 +178,53 @@ class KinerjaController extends ApiController
                     } else {
                         $status = 'alpa';
                     }
-
-                    if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
-                        if ($in && $out) {
-                            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
-                                $absen++;
-                                $status = 'hadir';
-                            } else {
-                                $status = 'alpa';
-                            }
+                    $poin = 0;
+                    if ($in && $out){
+                        $status = 'hadir';
+                        if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:00:00")) {
+                                if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
+                                    $poin = 1;
+                                } else {
+                                    $poin = 0.2;
+                                }
+                        } else if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:30:00")) {
+                                if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
+                                    $poin = 0.8;
+                                } else {
+                                    $poin = 0.2;
+                                }
+                        } else if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
+                                if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
+                                    $poin = 0.6;
+                                } else {
+                                    $poin = 0.2;
+                                }
+                        } else if (strtotime($masuk) > strtotime($hk->tanggal . " 09:00:00")) {
+                                if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
+                                    $poin = 0.4;
+                                } else {
+                                    $poin = 0.2;
+                                }
                         }
-                    } else {
-                        $status = 'alpa';
+                        $status = 'hadir';
                     }
-
+                    $absen = (float)$absen + $poin;
                 }
                 if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))){
                     if ($status == ''){
                         $status = 'alpa';
                     }
                 }
-                $data_etika_kinerja[] = [
+                $data_kinerja[] = [
                     'tanggal' => $hk->tanggal,
                     'tanggal_string' => $this->formatDate($hk->tanggal),
                     'tanggal_string2' => $this->formatDate2($hk->tanggal),
-                    'tanggal_etika' => $this->formatDate3($hk->tanggal),
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'kinerja' => $knj->first() ? $knj->first()->toArray() : null,
-                    'etika' => $etika ? $etika->toArray() : null,
                     'absen' => $abs ? $abs->toArray() : null,
                     'status' => ucfirst($status)
                 ];
-                /*$etika[] = $etk ? $etk->toArray() : null;
-                if ($etk) {
-                    $jumlah_etika += $etk->persentase;
-                }*/
+
                 if ($knj->where('approve', 2)->first()) {
                     $jumlah_kinerja++;
                 }
@@ -231,13 +235,10 @@ class KinerjaController extends ApiController
             $persentase = [
                 'absen' => ($absen / $jumlah_hari) * 100,
                 'kinerja' => ($jumlah_kinerja / $jumlah_hari) * 100,
-//                'etika' => ($jumlah_etika / (100 * $jumlah_hari)) * 100
-                'etika' => $jumlah_etika
             ];
             $persentase_total = [
                 'absen' => $persentase['absen'] * $persen_absen / 100,
                 'kinerja' => $persentase['kinerja'] * $persen_kinerja / 100,
-                'etika' => $persentase['etika'] * $persen_etika / 100
             ];
             $total_persentase_tunjangan = 0;
             foreach ($persentase_total AS $key => $value) {
@@ -250,22 +251,19 @@ class KinerjaController extends ApiController
             'pencapaian' => [
                 'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase['absen']) : 0,
                 'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase['kinerja']) : 0,
-                'etika' => $jumlah_hari > 0 ? $this->toDecimal($persentase['etika']) : 0,
             ],
             'persentase' => [
                 'absen' => $persen_absen,
                 'kinerja' => $persen_kinerja,
-                'etika' => $persen_etika,
             ],
             'total' => [
                 'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['absen']) : 0,
                 'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['kinerja']) : 0,
-                'etika' => $jumlah_hari > 0 ?  $this->toDecimal($persentase_total['etika']) : 0,
                 'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
             ],
             'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
             'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
-            'data' => $data_etika_kinerja
+            'data' => $data_kinerja,
         ];
         return $this->ApiSpecResponses($response);
     }

@@ -141,11 +141,9 @@ class PegawaiController extends ApiController
         $persen['etika'] = $formula->where('variable','etika')->first()->persentase_nilai;
         $persen['kinerja'] = $formula->where('variable','kinerja')->first()->persentase_nilai;
         $persen['absen'] = $formula->where('variable','absen')->first()->persentase_nilai;
-
         $pegawai = $this->getDataPegawai($user,$bulan,$tahun,$request->input('id_skpd'));
 
         $data = $this->parseDataRekap($pegawai,$persen,$hari_kerja);
-
         $skpd = Skpd::find($request->id_skpd);
         $namaSkpd = $skpd?$skpd->nama_skpd:'PEMERINTAH KABUPATEN KOLAKA';
         $periode = ucfirst(\App\Models\MasterData\Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan.' '.date('Y', strtotime($periode_rekap)));
@@ -219,7 +217,6 @@ class PegawaiController extends ApiController
             $total = $this->calculateTotalTunjangan($data['persentase_absen'],$data['persentase_kinerja'],$data['persentase_etika'],$tunjangan );
             $data['total_tunjangan'] = $total['tunjangan'];
             $data['total_persentase'] = $total['persentase'];
-
             return $data;
         });
     }
@@ -234,9 +231,29 @@ class PegawaiController extends ApiController
                 $nip = $itemabsen->first()->nip;
 
                 if ($masuk->first() && $keluar->first() ) {
-                    if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 09:00:00") ) {
+                    if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 08:00:00") ) {
                         if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600) ){
                             return 1;
+                        } else {
+                            return 0.2;
+                        }
+                    } else if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 08:30:00") ) {
+                        if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600) ){
+                            return 0.8;
+                        } else {
+                            return 0.2;
+                        }
+                    } else if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 09:00:00") ) {
+                        if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600) ){
+                            return 0.6;
+                        } else {
+                            return 0.2;
+                        }
+                    } else if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d',strtotime($masuk->first()->checktime))." 09:30:00") ) {
+                        if ( (strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600) ){
+                            return 0.4;
+                        } else {
+                            return 0.2;
                         }
                     }
                 }
