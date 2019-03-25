@@ -16,16 +16,17 @@ class CreateSkpPegawaiTable extends Migration
         Schema::create('skp_pegawai', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('uuid');
-            $table->string('nip_pegawai')->unsigned()->nullable();
-            $table->integer('id_skp')->unsigned()->nullable();
+            $table->string('nip_pegawai')->index()->nullable();
+            $table->integer('id_skp')->index()->unsigned()->nullable();
             $table->date('periode');
             $table->boolean('status')->default(0);
             $table->dateTime('tanggal_selesai');
-            $table->string('nip_update')->unsigned();
+            $table->string('nip_update')->index();
 
-            $table->foreign('nip_pegawai')->reference('nip')->on('pegawai');
-            $table->foreign('id_skp')->reference('id')->on('skp');
-            $table->foreign('nip_update')->reference('nip')->on('pegawai');
+            $table->timestamps();
+            $table->foreign('nip_pegawai')->references('nip')->on('pegawai')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_skp')->references('id')->on('skp')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('nip_update')->references('nip')->on('pegawai')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
