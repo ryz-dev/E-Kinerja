@@ -193,7 +193,20 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::post('delete/draft/{id}','KinerjaController@hapusKinerjaTersimpan')->name('api.web.input-kinerja.delete-draft');
         Route::get('{bulan?}/{tahun?}','KinerjaController@tunjanganKinerja')->name('api.web.tunjangan-kinerja.get');
     });
-
+    Route::group(['prefix' => 'skp'],function (){
+        Route::get('skp-task','SkpController@listSkpTask')->name('api.web.skp.list');
+        Route::get('skp-pegawai','SkpController@listSkpPegawai')->name('api.web.skp-pegawai.list');
+        Route::get('skp-task/{id}','SkpController@detailSkpTask')->name('api.web.skp.detail');
+        Route::get('skp-pegawai/{id}','SkpController@detailSkpPegawai')->name('api.web.skp-pegawai.detail');
+        Route::post('skp-task','SkpController@storeSkpTask')->name('api.web.skp.store');
+        Route::post('skp-pegawai','SkpController@storeSkpPegawai')->name('api.web.skp-pegawai.store');
+        Route::post('skp-task/{id}','SkpController@updateSkp')->name('api.web.skp.update');
+        Route::post('skp-pegawai/{id}','SkpController@updateSkpPegawai')->name('api.web.skp-pegawai.update');
+        Route::delete('skp-task/{id}','SkpController@deleteSkp')->name('api.web.skp.delete');
+        Route::delete('skp-pegawai/{id}','SkpController@deleteSkpPegawai')->name('api.web.skp-pegawai.delete');
+        Route::get('getpage-skp-task','SkpController@getPageSkp')->name('api.web.skp.page');
+        Route::get('getpage-skp-pegawai','SkpController@getPageSkpPegawai')->name('api.web.skp-pegawai.page');
+    });
     /* Absen Routing */
     Route::group(['prefix' => 'absensi'],function (){
       Route::get('test', 'CheckinoutController@list')->name('api.web.master-data.absen-list');

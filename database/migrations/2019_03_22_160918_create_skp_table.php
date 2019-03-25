@@ -17,6 +17,7 @@ class CreateSkpTable extends Migration
             $table->increments('id');
             $table->uuid('uuid');
             $table->string('task');
+            $table->timestamps();
         });
     }
 

@@ -15,6 +15,7 @@ class CreateMediaTable extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->increments('id');
+            $table->uuid('uuid');
             $table->integer('id_kinerja')->unsigned()->index();
             $table->string('media');
             $table->timestamps();

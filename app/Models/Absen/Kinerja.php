@@ -3,6 +3,7 @@
 namespace App\Models\Absen;
 
 use App\Models\MasterData\Pegawai;
+use App\Models\Media;
 use Illuminate\Database\Eloquent\Model;
 
 class Kinerja extends Model
@@ -22,6 +23,10 @@ class Kinerja extends Model
 
     public function scopeTerbaru($query){
         return $query->where('approve','<>','5')->orderBy('created_at','desc');
+    }
+
+    public function media(){
+        return $this->hasMany(Media::class,'id_kinerja');
     }
     
 }
