@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
 use App\Models\Absen\Kinerja;
-use App\Models\Absen\Etika;
 use App\Models\Absen\Checkinout;
 use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 use Illuminate\Http\Request;

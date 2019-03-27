@@ -138,7 +138,6 @@ class PegawaiController extends ApiController
         })->where('bulan',$bulan)->where('tahun',$tahun)->orderBy('tanggal','asc')->get();
 
         $formula = FormulaVariable::all();
-        $persen['etika'] = $formula->where('variable','etika')->first()->persentase_nilai;
         $persen['kinerja'] = $formula->where('variable','kinerja')->first()->persentase_nilai;
         $persen['absen'] = $formula->where('variable','absen')->first()->persentase_nilai;
         $pegawai = $this->getDataPegawai($user,$bulan,$tahun,$request->input('id_skpd'));
@@ -183,9 +182,7 @@ class PegawaiController extends ApiController
 
         $pegawai = $pegawai->with(
             [
-                'etika'=>function($query)use($bulan,$tahun){
-                    $query->select('nip','persentase')->whereMonth('tanggal',$bulan)->whereYear('tanggal',$tahun);
-                },
+                
                 'checkinout' => function($query)use($bulan,$tahun){
                     $query->select('nip','checktime','checktype')->whereMonth('checktime',$bulan)->whereYear('checktime',$tahun);
                 },
@@ -205,8 +202,6 @@ class PegawaiController extends ApiController
             $data['jabatan'] = $item->jabatan()->first()->jabatan;
             $data['kelas_jabatan'] = $item->jabatan()->first()->golongan->golongan;
             $data['data_pribadi'] = $item->toArray();
-            $data['etika'] = $item->etika->first()?$item->etika->first()->persentase:0;
-            $data['persentase_etika'] = ($data['etika'] * $persen['etika'])/100;
             $raw_kinerja = $this->parseKinerja($item,$key,$hari_kerja);
             $tambahan_absen = $raw_kinerja->sum('absen_tambahan');
             $raw_absen = $this->parseAbsen($item,$key,$hari_kerja);
@@ -214,7 +209,7 @@ class PegawaiController extends ApiController
             $data['persentase_kinerja'] = ((($data['kinerja']/$hari_kerja->count()) * 100)*$persen['kinerja'])/100;
             $data['absen'] = $raw_absen->count()+$tambahan_absen;
             $data['persentase_absen'] = ((($data['absen'] / $hari_kerja->count()) * 100 ) *$persen['absen'])/100;
-            $total = $this->calculateTotalTunjangan($data['persentase_absen'],$data['persentase_kinerja'],$data['persentase_etika'],$tunjangan );
+            $total = $this->calculateTotalTunjangan($data['persentase_absen'],$data['persentase_kinerja'],$tunjangan );
             $data['total_tunjangan'] = $total['tunjangan'];
             $data['total_persentase'] = $total['persentase'];
             return $data;
@@ -274,8 +269,8 @@ class PegawaiController extends ApiController
         })->filter(function($value,$key){ return $value->filter(function($v,$k){ return $v > 0; }) ; });
     }
 
-    private function calculateTotalTunjangan($absen,$kinerja,$etika,$tunjangan){
-        $jumlah = ($absen+$kinerja+$etika);
+    private function calculateTotalTunjangan($absen,$kinerja,$tunjangan){
+        $jumlah = ($absen+$kinerja);
         return [
             'persentase' => $jumlah,
             'tunjangan' => (floor($jumlah) * $tunjangan) /100

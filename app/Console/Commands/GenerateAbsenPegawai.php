@@ -70,18 +70,11 @@ class GenerateAbsenPegawai extends Command
                         'approve' => random_int(0,2),
                         'keterangan_approve' => str_random(100)
                     ];
-                    $etika = [
-                        'nip' => $p->nip,
-                        'tanggal' => $now_date,
-                        'persentase' => random_int(0,100),
-                        'keterangan' => str_random(100)
-                    ];
                     try {
                         DB::table('checkinout')->insert([
                             $in, $out
                         ]);
                         DB::table('kinerja')->insert($kinerja);
-                        DB::table('etika')->insert($etika);
                     } catch (\Exception $exception){}
                 }
             }

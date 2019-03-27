@@ -1,20 +1,4 @@
 <?php
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-/*
-  Route Admin
-*/
-
 Route::get('/', function(){
     return redirect('/login');
 });
@@ -203,10 +187,6 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('api.web.get-penilaian-kinerja');
         Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('api.web.reply-penilaian-kinerja');
     });
-    Route::group(['prefix' => 'penilaian-etika'], function(){
-        Route::get('/get-pegawai', 'PenilaianEtikaController@getPegawai')->name('api.web.penilaian-etika.get-pegawai');
-        Route::post('', 'PenilaianEtikaController@storePenilaian')->name('api.web.penilaian-etika.store.penilaian');
-    });
     Route::group(['prefix' => 'kinerja'],function (){
         Route::post('','KinerjaController@inputKinerja')->name('api.web.input-kinerja.post');
         Route::get('draft','KinerjaController@getKinerjaTersimpan')->name('api.web.input-kinerja.draft');
@@ -237,9 +217,8 @@ Route::group(['middleware' => 'auth'],function (){
     Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index')->middleware('can:rekap-bulanan');
     Route::get('/input-kinerja','InputKinerjaController@inputKinerja')->name('input-kinerja.index');
     Route::get('/penilaian-kinerja','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index')->middleware('can:penilaian-kinerja');
-    Route::get('/penilaian-etika', 'PenilaianEtikaController@index')->name('penilaian-etika.index')->middleware('can:penilaian-etika');
     Route::get('/tunjangan-kinerja','TunjanganKinerjaController@index')->name('tunjangan-kinerja.index')->middleware('can:tunjangan-kinerja');
-    Route::post('/rekap-bulanan', 'RekapBulananController@downloadRekapBulanan')->name('download.rekap.bulanan')->middleware('can:penilaian-etika');
+    Route::post('/rekap-bulanan', 'RekapBulananController@downloadRekapBulanan')->name('download.rekap.bulanan');
 });
 //
 // Route::get('/', function () {

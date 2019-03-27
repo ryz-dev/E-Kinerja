@@ -170,9 +170,6 @@
                 @can('penilaian-kinerja')
                 <li><a href="{{route('penilaian-kinerja.index')}}" class="{{str_contains(url()->current(),route('penilaian-kinerja.index')) ? 'active' : ''}}"><i class="fas fa-user-check"></i> Penilaian Kinerja</a></li>
                 @endcan
-                @can('penilaian-etika')
-                <li><a href="{{route('penilaian-etika.index')}}" class="{{str_contains(url()->current(),route('penilaian-etika.index')) ? 'active' : ''}}"><i class="far fa-thumbs-up"></i> Penilaian Etika</a></li>
-                @endcan
                 @can('tunjangan-kinerja')
                 <li><a href="{{route('tunjangan-kinerja.index')}}" class="{{str_contains(url()->current(),route('tunjangan-kinerja.index')) ? 'active' : ''}}"><i class="fas fa-chart-pie"></i>Tunjangan Kinerja</a></li>
                 @endcan

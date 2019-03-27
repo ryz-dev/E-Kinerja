@@ -141,6 +141,7 @@ class KinerjaController extends ApiController
         $persen_absen = FormulaVariable::where('variable','absen')->first()->persentase_nilai;
         $persen_kinerja =  FormulaVariable::where('variable','kinerja')->first()->persentase_nilai;
 
+
         $pegawai = auth('web')->user();
         $nip = $pegawai->nip;
 
@@ -154,6 +155,10 @@ class KinerjaController extends ApiController
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $absen = 0;
         $data_kinerja = [];
+
+
+
+
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
                 $knj = Kinerja::where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();

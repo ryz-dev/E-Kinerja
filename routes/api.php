@@ -38,11 +38,6 @@ Route::group(['prefix' => 'v1'], function () {
             Route::get('/{nip}', 'PenilaianKinerjaController@getKinerja')->name('api.mobile.get-penilaian-kinerja');
             Route::post('reply', 'PenilaianKinerjaController@replyKinerja')->name('api.mobile.reply-penilaian-kinerja');
         });
-        Route::group(['prefix' => 'penilaian-etika', 'middleware' => 'can:penilaian-etika'], function () {
-            Route::get('/get-pegawai', 'PenilaianEtikaController@getPegawai')->name('api.mobile.penilaian-etika.get-pegawai');
-            Route::get('/{nip}', 'PenilaianEtikaController@getEtika')->name('api.mobile.get-penilaian-etika');
-            Route::post('reply', 'PenilaianEtikaController@storePenilaian')->name('api.mobile.penilaian-etika.store.penilaian');
-        });
         Route::group(['prefix' => 'kinerja','middleware' => 'can:tunjangan-kinerja'], function () {
             Route::post('reply', 'KinerjaController@inputKinerja')->name('api.mobile.input-kinerja.post');
             Route::get('cek', 'KinerjaController@cekKinerja')->name('api.mobile.cek-kinerja.get');

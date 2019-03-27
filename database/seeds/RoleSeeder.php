@@ -28,7 +28,6 @@ class RoleSeeder extends Seeder
                 'permissions' => json_encode([
                     'monitoring-absen'=> true,
                     'penilaian-kinerja' => true,
-                    'penilaian-etika' => true,
                     'rekap-bulanan' => true,
 
                     'input-kinerja' => false,
@@ -45,7 +44,6 @@ class RoleSeeder extends Seeder
 
                     'input-kinerja' => false,
                     'penilaian-kinerja' => false,
-                    'penilaian-etika' => false,
                     'tunjangan-kinerja' => false,
                 ])
             ],
@@ -57,7 +55,6 @@ class RoleSeeder extends Seeder
                     'monitoring-absen'=> true,
                     'input-kinerja' => true,
                     'penilaian-kinerja' => true,
-                    'penilaian-etika' => true,
                     'rekap-bulanan' => true,
                     'tunjangan-kinerja' => true
                 ])
@@ -70,12 +67,10 @@ class RoleSeeder extends Seeder
                     'monitoring-absen'=> true,
                     'input-kinerja' => true,
                     'penilaian-kinerja' => true,
-                    'penilaian-etika' => true,
                     'rekap-bulanan' => true,
                     'tunjangan-kinerja' => true
                 ])
             ],
-            [
                 'id' => 6,
                 'nama_role' => 'Atasan',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
@@ -83,12 +78,10 @@ class RoleSeeder extends Seeder
                     'monitoring-absen'=> true,
                     'input-kinerja' => true,
                     'penilaian-kinerja' => true,
-                    'penilaian-etika' => true,
                     'tunjangan-kinerja' => true,
                     'rekap-bulanan' => true
                 ])
             ],[
-                'id' => 7,
                 'nama_role' => 'Staf',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
@@ -97,10 +90,8 @@ class RoleSeeder extends Seeder
 
                     'monitoring-absen'=> false,
                     'penilaian-kinerja' => false,
-                    'penilaian-etika' => false,
                     'rekap-bulanan' => false
                 ])
-            ]
 
         ];
 

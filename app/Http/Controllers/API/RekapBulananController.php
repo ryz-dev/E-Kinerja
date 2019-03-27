@@ -7,7 +7,6 @@ use App\Models\MasterData\Bulan;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
 use App\Models\Absen\Kinerja;
-use App\Models\Absen\Etika;
 use App\Models\Absen\Checkinout;
 use App\User;
 use Illuminate\Http\Request;
@@ -110,7 +109,6 @@ class RekapBulananController extends ApiController
                 }
             }
 
-//            $etika = $pegawai->etika()->where('tanggal',$hk->tanggal)->first();
             $status = ucfirst(str_replace('_', ' ', isset($kinerja->jenis_kinerja) ? $kinerja->jenis_kinerja : ''));
             if ($status == 'Hadir' || $status == '') {
                 $status = ucfirst($kehadiran['status']);
@@ -123,7 +121,6 @@ class RekapBulananController extends ApiController
                 'hari' => ucfirst($hk->Hari->nama_hari),
                 'checkinout' => $kehadiran,
                 'status' => $status,
-//                'persentase' => isset($etika->persentase)?$etika->persentase : '',
                 'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
             ];
         }
@@ -156,15 +153,6 @@ class RekapBulananController extends ApiController
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
             ->first();
-
-        /* Data etika */
-        $bulan = date('m', strtotime($tgl));
-        $tahun = date('Y', strtotime($tgl));
-        $etika = Etika::where("nip", $pegawai->nip)
-            ->where("tanggal", 'like', $tahun . "-" . $bulan . "%")
-            ->first();
-        if ($etika)
-            $etika->tanggal_etika = ucfirst(Bulan::where('kode', $bulan)->first()->nama_bulan) . " " . $tahun;
 
         /* Data checkinout */
         $checkinout = Checkinout::where("nip", $pegawai->nip)
@@ -215,7 +203,6 @@ class RekapBulananController extends ApiController
         }
         $result = [
             "kinerja" => $kinerja,
-            "etika" => $etika,
             "checkinout" => $checkinout,
             "tanggal" => $this->formatDate2($tgl),
             "status" => ucwords(str_replace('_',' ',$status))
