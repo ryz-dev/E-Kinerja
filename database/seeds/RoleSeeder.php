@@ -18,7 +18,7 @@ class RoleSeeder extends Seeder
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
                     'master-data'=> true,
-                    
+
                 ])
             ],
             [
@@ -71,6 +71,7 @@ class RoleSeeder extends Seeder
                     'tunjangan-kinerja' => true
                 ])
             ],
+            [
                 'id' => 6,
                 'nama_role' => 'Atasan',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
@@ -81,7 +82,8 @@ class RoleSeeder extends Seeder
                     'tunjangan-kinerja' => true,
                     'rekap-bulanan' => true
                 ])
-            ],[
+            ],
+            [
                 'nama_role' => 'Staf',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([
@@ -92,7 +94,7 @@ class RoleSeeder extends Seeder
                     'penilaian-kinerja' => false,
                     'rekap-bulanan' => false
                 ])
-
+             ]
         ];
 
         try {

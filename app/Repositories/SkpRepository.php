@@ -1,0 +1,31 @@
+<?php
+namespace App\Repositories;
+
+
+class SkpRepository extends BaseRepository
+{
+    public function model()
+    {
+        return 'App\Models\Skp';
+    }
+
+    public function search(array $parameters, $perPage = 10)
+    {
+
+        if (!empty($parameters['task']))
+        {
+            $this->where('task', 'like', '%' . $parameters['task'] . '%');
+        }
+
+
+        return $this->paginate($perPage);
+    }
+
+    public function getPage(array $parameters){
+        if(!empty($parameters['task'])){
+            $this->where('task', 'like', '%' . $parameters['task'] . '%');
+        }
+
+        return $this->count();
+    }
+}
