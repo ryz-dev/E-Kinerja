@@ -2,66 +2,86 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\MasterData\Skpd;
+use App\Repositories\SkpdRepository;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class SkpdController extends ApiController
 {
+    protected $skpd;
+    public function __construct(SkpdRepository $skpd)
+    {
+        $this->skpd = $skpd;
+    }
+
     public function listSkpd(Request $request)
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        try {
-            $skpd = Skpd::orderBy('created_at', 'DESC');
-            if ($request->has('q')) {
-                $skpd = $skpd->where('nama_skpd','like','%'.$request->input('q').'%');
-            }
-            $skpd = $skpd->paginate($this->show_limit);
-            return $this->ApiSpecResponses($skpd);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
-        }
+        $skpd = $this->skpd->search($request->query());
+        return $this->ApiSpecResponses($skpd);
     }
 
     public function detailSkpd($id){
-        try {
-            $skpd = Skpd::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        if ($skpd = $this->skpd->find($id)){
             return $this->ApiSpecResponses($skpd);
-        } catch (\Exception $exception){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
         }
+        return $this->ApiSpecResponses([
+            'message' => 'NOT_FOUND'
+        ], 404);
     }
 
     public function storeSkpd(Request $request){
-        $skpd = new \App\Http\Controllers\MasterData\SkpdController();
-        $data = $skpd->store($request,false);
-        return $this->ApiSpecResponses($data);
+        $validation = Validator::make($request->input(),$this->skpd->required());
+        if ($validation->fails()){
+            return $this->ApiSpecResponses([
+                'required' => $validation->errors()
+            ],422);
+        }
+        $input = $request->input();
+        $input['uuid'] = (string)Str::uuid();
+        if ($skpd = $this->skpd->create($input)){
+            return $this->ApiSpecResponses($data);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'gagal menyimpan skpd'
+        ],500);
     }
 
     public function updateSkpd(Request $request,$id){
-        $skpd = new \App\Http\Controllers\MasterData\SkpdController();
-        $data = $skpd->update($request,$id,false);
-        return $this->ApiSpecResponses($data);
+        $validation = Validator::make($request->input(),$this->skpd->required());
+        if ($validation->fails()){
+            return $this->ApiSpecResponses([
+                'required' => $validation->errors()
+            ],422);
+        }
+        $update = $request->input();
+
+        if ($this->skpd->update($id,$update)){
+            return $this->ApiSpecResponses([
+                'message' => 'berhasil mengupdate skpd'
+            ]);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'Gagal mengupdate data skpd'
+        ], 500);
     }
 
     public function deleteSkpd($id){
-        $skpd = new \App\Http\Controllers\MasterData\SkpdController();
-        $data = $skpd->delete($id,false);
-        return $this->ApiSpecResponses($data);
+        if ($this->skpd->delete($id)){
+            return response()->json([
+                'status' => 200,
+                'message' => 'skpd pegawai berhasil dihapus'
+            ]);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'skpd pegawai gagal dihapus'
+        ],500);
     }
 
     public function getPage(Request $request)
     {
-        if ($request->has('q')) {
-            $data = Skpd::where('nama_skpd','like','%'.$request->input('q').'%')
-                ->count();
-        } else {
-            $data = Skpd::count();
-        }
+        $data = $this->skpd->getPage($request->query());
         $data = ceil($data / $this->show_limit);
         return response()->json([
             'halaman' => $data

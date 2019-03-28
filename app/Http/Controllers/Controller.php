@@ -15,12 +15,12 @@ class Controller extends BaseController
     protected $show_limit_mobile = 20;
     protected $query = null;
 
-    public function ApiSpecResponses($response){
+    public function ApiSpecResponses($response,$status = 200){
         $paging = $this->paging($response);
         $data = [
             'response' => method_exists($response,'total') ? ($response->toArray())['data'] : $response,
             'diagnostic' => [
-                'code' => 200,
+                'code' => $status,
                 'status' => 'OK'
             ]
         ];

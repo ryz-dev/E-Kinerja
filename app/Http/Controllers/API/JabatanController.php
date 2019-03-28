@@ -3,64 +3,86 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\MasterData\Jabatan;
+use App\Repositories\JabatanRepository;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class JabatanController extends ApiController
 {
+    protected $jabatan;
+    public function __construct(JabatanRepository $jabatan)
+    {
+        $this->jabatan = $jabatan;
+    }
+
     public function listJabatan(Request $request)
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        try {
-            $jabatan = Jabatan::with('golongan','atasan')->orderBy('created_at', 'DESC');
-            if ($request->has('q')) {
-                $jabatan = $jabatan->where('jabatan','like','%'.$request->input('q').'%');
-            }
-            $jabatan = $jabatan->paginate($this->show_limit);
-            return $this->ApiSpecResponses($jabatan);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
-        }
+        $jabatan = $this->jabatan->with(['golongan','atasan'])->orderBy('id')->search($request->query(),$this->show_limit);
+        return $this->ApiSpecResponses($jabatan);
     }
 
     public function detailJabatan($id){
-        try {
-            $jabatan = Jabatan::with('golongan','atasan')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        if ($jabatan = $this->jabatan->with(['golongan','atasan'])->find($id)){
             return $this->ApiSpecResponses($jabatan);
-        } catch (\Exception $exception){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
         }
+        return $this->ApiSpecResponses([
+            'message' => 'NOT_FOUND'
+        ], 404);
     }
 
     public function storeJabatan(Request $request){
-        $jabatan = new \App\Http\Controllers\MasterData\JabatanController();
-        $data = $jabatan->store($request,false);
-        return $this->ApiSpecResponses($data);
+        $validation = Validator::make($request->input(),$this->jabatan->required());
+        if ($validation->fails()){
+            return $this->ApiSpecResponses([
+                'required' => $validation->errors()
+            ],422);
+        }
+        $input = $request->input();
+        $input['uuid'] = (string)Str::uuid();
+        if ($jabatan = $this->jabatan->create($input)){
+            return $this->ApiSpecResponses($jabatan);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'gagal menyimpan jabatan'
+        ],500);
     }
 
     public function updateJabatan(Request $request,$id){
-        $jabatan = new \App\Http\Controllers\MasterData\JabatanController();
-        $data = $jabatan->update($request,$id,false);
-        return $this->ApiSpecResponses($data);
+        $validation = Validator::make($request->input(),$this->jabatan->required());
+        if ($validation->fails()){
+            return $this->ApiSpecResponses([
+                'required' => $validation->errors()
+            ],422);
+        }
+        $update = $request->input();
+        if ($this->jabatan->update($id,$update)){
+            return $this->ApiSpecResponses([
+                'message' => 'berhasil mengupdate jabatan'
+            ]);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'Gagal mengupdate data jabatan'
+        ], 500);
     }
 
     public function deleteJabatan($id){
-        $jabatan = new \App\Http\Controllers\MasterData\JabatanController();
-        $data = $jabatan->delete($id,false);
-        return $this->ApiSpecResponses($data);
+        if ($this->jabatan->delete($id)){
+            return response()->json([
+                'status' => 200,
+                'message' => 'jabatan pegawai berhasil dihapus'
+            ]);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'skp pegawai gagal dihapus'
+        ],500);
     }
 
     public function getPage(Request $request)
     {
-        if ($request->has('q')) {
-            $data = Jabatan::where('jabatan','like','%'.$request->input('q').'%')->count();
-        } else {
-            $data = Jabatan::count();
-        }
+        $data = $this->jabatan->getPage($request->query());
         $data = ceil($data / $this->show_limit);
         return response()->json([
             'halaman' => $data

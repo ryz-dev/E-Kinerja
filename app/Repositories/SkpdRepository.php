@@ -2,11 +2,11 @@
 namespace App\Repositories;
 
 
-class SkpRepository extends BaseRepository
+class SkpdRepository extends BaseRepository
 {
     public function model()
     {
-        return 'App\Models\Skp';
+        return 'App\Models\MasterData\Skpd';
     }
 
     public function search(array $parameters, $perPage = 10)
@@ -14,16 +14,15 @@ class SkpRepository extends BaseRepository
 
         if (!empty($parameters['q']))
         {
-            $this->where('task', 'like', '%' . $parameters['q'] . '%');
+            $this->where('nama_skpd', 'like', '%' . $parameters['q'] . '%','or');
         }
-
 
         return $this->paginate($perPage);
     }
 
     public function getPage(array $parameters){
         if(!empty($parameters['q'])){
-            $this->where('task', 'like', '%' . $parameters['task'] . '%');
+            $this->where('nama_skpd', 'like', '%' . $parameters['q'] . '%','or');
         }
 
         return $this->count();
@@ -31,7 +30,7 @@ class SkpRepository extends BaseRepository
 
     public function required(){
         return [
-            'task' => 'required'
+            'nama_skpd' => 'required',
         ];
     }
 }
