@@ -26,8 +26,7 @@ abstract class BaseRepository
 
     public function create(array $attributes)
     {
-        $this->model->create($attributes);
-
+        return $this->model->create($attributes);
     }
 
     public function update($id, array $attributes)

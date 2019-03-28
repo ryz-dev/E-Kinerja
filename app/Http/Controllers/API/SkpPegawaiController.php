@@ -5,46 +5,30 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Skp;
 use App\Models\SkpPegawai;
-use App\Repository\SkpRepository;
+use App\Repositories\SkpPegawaiRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class SkpPegawaiController extends ApiController
 {
-    protected $skp_repository;
-    public function __construct(SkpRepository $skp)
+    protected $skp_pegawai_repository;
+    public function __construct(SkpPegawaiRepository $skp)
     {
-        $this->skp_repository = $skp;
-    }
-
-    public function listSkpTask(Request $request){
-        $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        $q = $request->has('q') ? $request->input('q') : '';
-        $skp = $this->skp_repository->getSkp($q,$this->show_limit);
-        return $this->ApiSpecResponses($skp);
+        $this->skp_pegawai_repository = $skp;
     }
 
     public function listSkpPegawai(Request $request){
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        $skp_pegawai = SkpPegawai::with('pegawai','skpTask','atasanUpdate')->orderBy('id','desc');
+        $skp_pegawai = $this->skp_pegawai_repository->with(['pegawai','skpTask','atasanUpdate'])->orderBy('id','asc');
         if ($request->has('q')){
             $q = $request->input('q');
-            $skp_pegawai = $skp_pegawai->whereHas('pegawai',function($query)use($q){
-                $query->where('nama','like','%'.$q.'%');
-            })
-            ->orWhereHas('skpTask',function($query)use($q){
-                $query->where('task','like','%'.$q.'%');
-            })
-            ->orWhereHas('atasanUpdate',function($query)use($q){
-                $query->where('nama','like','%'.$q.'%');
-            })
-            ->orWhere('nip_pegawai','like','%'.$q.'%')
-            ->orWhere('nip_updtae','like','%'.$q.'%');
+            $skp_pegawai = $skp_pegawai->search(['q' => $q]);
+        } else {
+            $skp_pegawai = $skp_pegawai->paginate($this->show_limit);
         }
-        $skp_pegawai = $skp_pegawai->paginate($this->show_limit);
         return $this->ApiSpecResponses($skp_pegawai);
     }
-
+/*
     public function detailSkpTask($id){
         try {
             $skp = SkpRepository::findOrFail($id);
@@ -225,6 +209,6 @@ class SkpPegawaiController extends ApiController
         return response()->json([
             'halaman' => $data
         ]);
-    }
+    }*/
 
 }

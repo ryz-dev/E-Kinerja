@@ -12,9 +12,9 @@ class SkpRepository extends BaseRepository
     public function search(array $parameters, $perPage = 10)
     {
 
-        if (!empty($parameters['task']))
+        if (!empty($parameters['q']))
         {
-            $this->where('task', 'like', '%' . $parameters['task'] . '%');
+            $this->where('task', 'like', '%' . $parameters['q'] . '%');
         }
 
 

@@ -18,7 +18,7 @@ class SkpController extends ApiController
     public function listSkpTask(Request $request){
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         if ($request->has('q')) {
-            $skp = $this->skp->orderBy('id')->search(['task' => $request->q],$this->show_limit);
+            $skp = $this->skp->orderBy('id')->search(['q' => $request->q],$this->show_limit);
         } else {
             $skp = $this->skp->orderBy('id')->paginate($this->show_limit);
         }
