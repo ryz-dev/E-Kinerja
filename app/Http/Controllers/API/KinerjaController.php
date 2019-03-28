@@ -9,7 +9,6 @@ use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
 use Carbon\Carbon;
-use http\Env\Response;
 use Illuminate\Http\Request;
 
 class KinerjaController extends ApiController
