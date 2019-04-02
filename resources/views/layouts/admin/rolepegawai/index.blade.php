@@ -41,7 +41,7 @@
 <script>
     window.roles = [];
     $(document).ready(function(){
-        getPage();
+        getPage('');
         getRoles();
     });
     var getPage = function (search) {

@@ -18,7 +18,7 @@ class SkpdController extends ApiController
     public function listSkpd(Request $request)
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        $skpd = $this->skpd->search($request->query());
+        $skpd = $this->skpd->search($request->query(),$this->show_limit);
         return $this->ApiSpecResponses($skpd);
     }
 
@@ -41,7 +41,7 @@ class SkpdController extends ApiController
         $input = $request->input();
         $input['uuid'] = (string)Str::uuid();
         if ($skpd = $this->skpd->create($input)){
-            return $this->ApiSpecResponses($data);
+            return $this->ApiSpecResponses($skpd);
         }
         return $this->ApiSpecResponses([
             'message' => 'gagal menyimpan skpd'
@@ -69,8 +69,7 @@ class SkpdController extends ApiController
 
     public function deleteSkpd($id){
         if ($this->skpd->delete($id)){
-            return response()->json([
-                'status' => 200,
+            return $this->ApiSpecResponses([
                 'message' => 'skpd pegawai berhasil dihapus'
             ]);
         }

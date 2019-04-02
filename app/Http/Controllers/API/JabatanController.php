@@ -70,8 +70,7 @@ class JabatanController extends ApiController
 
     public function deleteJabatan($id){
         if ($this->jabatan->delete($id)){
-            return response()->json([
-                'status' => 200,
+            return $this->ApiSpecResponses([
                 'message' => 'jabatan pegawai berhasil dihapus'
             ]);
         }

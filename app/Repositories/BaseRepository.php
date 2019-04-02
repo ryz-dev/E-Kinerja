@@ -112,8 +112,7 @@ abstract class BaseRepository
     }
 
     public function count(){
-        $this->model = $this->model->count();
-        return $this;
+        return $this->model->count();
     }
 
     public function formatDate($date){

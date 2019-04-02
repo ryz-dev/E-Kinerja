@@ -56,8 +56,8 @@
                                     'success'
                                 )
                                 setTimeout(function () {
-                                    location.href = res.response.detail_uri
-                                }, 3000);
+                                    location.href = '{{$skpd->detail_uri}}'
+                                }, 500);
                             },
                             error: function () {
                                 swal(

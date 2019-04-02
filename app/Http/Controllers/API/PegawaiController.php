@@ -75,7 +75,7 @@ class PegawaiController extends ApiController
 
     public function updatePegawai(Request $request, $id)
     {
-        $validation = Validator::make($request->input(),$this->pegawai->required());
+        $validation = Validator::make($request->input(),$this->pegawai->required($id));
         if ($validation->fails()){
             return $this->ApiSpecResponses([
                 'required' => $validation->errors()
@@ -85,7 +85,7 @@ class PegawaiController extends ApiController
         if ($request->hasFile('foto')) {
             $update['foto'] = $this->pegawai->uploadFoto($request->file('foto'));
         }
-        if ($data = $this->pegawai->update($request, $id)){
+        if ($data = $this->pegawai->update($id,$update)){
             return $this->ApiSpecResponses([
                 'message' => 'Berhasil mengupdate pegawai'
             ]);
@@ -104,7 +104,7 @@ class PegawaiController extends ApiController
         }
         return $this->ApiSpecResponses([
             'message' => 'Gagal menghapus pegawai'
-        ]);
+        ],500);
     }
 
     public function updatePassword(Request $request)

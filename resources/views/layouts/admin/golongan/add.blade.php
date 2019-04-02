@@ -65,7 +65,7 @@
                                 )
                                 setTimeout(function () {
                                     location.href = res.response.detail_uri
-                                }, 3000);
+                                }, 500);
                             },
                             error: function () {
                                 swal(
