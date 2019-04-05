@@ -66,6 +66,7 @@ class PegawaiController extends ApiController
             $input['foto'] = $this->pegawai->uploadFoto($request->file('foto'));
         }
         if ($data = $this->pegawai->create($input)) {
+            $this->pegawai->setPassword($data->nip,'secret');
             return $this->ApiSpecResponses($data);
         }
         return $this->ApiSpecResponses([

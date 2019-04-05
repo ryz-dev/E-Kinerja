@@ -37,7 +37,7 @@ class RekapBulananController extends ApiController
         $nip_user = $user->nip;
         $bulan = (int)($bulan ?: date('m'));
         $tahun = ($tahun ?: date('Y'));
-        $data = $this->rekap->getRekap($nip_user,$nip_bawahan,$bulan,$tahun);
+        $data = $this->rekap->getRekap($nip_user,$nip,$bulan,$tahun);
         return $this->ApiSpecResponses($data);
     }
 

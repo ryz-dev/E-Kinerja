@@ -40,6 +40,12 @@ class PegawaiRepository extends BaseRepository
         return $this->paginate($perPage);
     }
 
+    public function setPassword($nip,$password){
+        $this->model->where('nip',$nip)->update([
+            'password' => bcrypt($password)
+        ]);
+    }
+
     public function getPage(array $parameters){
         if (!empty($parameters['deleted'])){
             $this->withTrashed();
@@ -118,6 +124,7 @@ class PegawaiRepository extends BaseRepository
         $data_inout = [];
         foreach ($hari_kerja AS $key => $hk) {
             $kinerja = $pegawai->kinerja()->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru()->first();
+
             $kehadiran['inout'] = $pegawai->checkinout()->where('checktime', 'like', '%' . $hk->tanggal . '%')->orderBy('checktype', 'desc')->get()->toArray();
             $kehadiran['status'] = '';
             if (count($kehadiran['inout']) > 0) {
@@ -146,6 +153,10 @@ class PegawaiRepository extends BaseRepository
                         }
                     }
                 } else {
+                    $kehadiran['status'] = 'alpa';
+                }
+            } else {
+                if (strtotime($hk->tanggal)  <= strtotime(date('Y-m-d'))){
                     $kehadiran['status'] = 'alpa';
                 }
             }

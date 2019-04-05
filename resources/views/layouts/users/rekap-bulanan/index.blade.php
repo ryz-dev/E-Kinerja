@@ -331,7 +331,7 @@
                                     // '<div class="' + color_persentase + ' text-white mr-2">' + (val.persentase) + ' ' + (typeof val.persentase == 'number' ? '%' : '') + '</div>\n' +
                                     // '</td>\n' +
                                     '<td>\n' +
-                                    '<button class="btn rounded btn-detail detailRekap" ' + (val.status == "" && val.checkinout.inout.length == 0 ? "style='display : none'" : "") + ' id="detailRekap" list-index="' + i + '" data-prev="' + val.tgl_prev + '" data-start="' + val.tgl + '" data-next="' + val.tgl_next + '" title="Detail">\n' +
+                                    '<button class="btn rounded btn-detail detailRekap" ' + ((val.status == "" || val.status == 'Alpa') && val.checkinout.inout.length == 0 ? "style='display : none'" : "") + ' id="detailRekap" list-index="' + i + '" data-prev="' + val.tgl_prev + '" data-start="' + val.tgl + '" data-next="' + val.tgl_next + '" title="Detail">\n' +
                                     '<i class="fas fa-search-plus"></i>\n' +
                                     '</button>\n' +
                                     '</td>\n' +
