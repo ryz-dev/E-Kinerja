@@ -35,6 +35,9 @@ class KinerjaController extends ApiController
                 'message' => 'Berhasil menghapus draft'
             ]);
         }
+        return $this->ApiSpecResponses([
+            'message' => 'Gagagl menghapus draft'
+        ]);
     }
 
     public function inputKinerja(Request $request){

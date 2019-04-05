@@ -11,7 +11,7 @@ class KinerjaRepository extends BaseRepository
 {
     public function model()
     {
-        return 'App\Models\MasterData\Kinerja';
+        return 'App\Models\Absen\Kinerja';
     }
 
     public function search(array $parameters, $perPage = 10)
@@ -53,7 +53,7 @@ class KinerjaRepository extends BaseRepository
 
     public function deleteKinerjaTersimpan($id,$nip){
         if ($cek_kinerja = $this->model->where('nip',$nip)->where('jenis_kinerja','hadir')->where('approve','5')->where('tgl_mulai',date('Y-m-d'))->find($id)){
-            return $cek_kinerja->delete();
+            return $cek_kinerja->delete() ? true:false;
         }
         return false;
     }
@@ -77,6 +77,7 @@ class KinerjaRepository extends BaseRepository
                 ];
             }
         }
+        $input['nip'] = $nip;
 //        $cek_kinerja = $this->>model->where('nip',$input['nip'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->whereIn('approve',[0,2])->first();
         $cek_kinerja = $this->model->where('nip',$nip)->where(function ($query)use($input){
             $query->where(function ($query) use ($input){

@@ -24,6 +24,15 @@ class Controller extends BaseController
                 'status' => 'OK'
             ]
         ];
+        if (isset($response['diagnostic'])){
+            $data['diagnostic'] = [
+                'code' => isset($response['diagnostic']['code']) ?$response['diagnostic']['code'] : $status,
+                'status' => isset($response['diagnostic']['status']) ?$response['diagnostic']['status'] : 'OK',
+            ];
+            if (isset($response['diagnostic']['message'])){
+                $data['diagnostic']['message'] = $response['diagnostic']['message'];
+            }
+        }
         if (isset($paging->total)){
             $data = array_merge($data,[
                 'pagination' => $paging
