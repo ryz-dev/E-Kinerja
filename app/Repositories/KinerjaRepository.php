@@ -53,7 +53,7 @@ class KinerjaRepository extends BaseRepository
 
     public function deleteKinerjaTersimpan($id,$nip){
         if ($cek_kinerja = $this->model->where('nip',$nip)->where('jenis_kinerja','hadir')->where('approve','5')->where('tgl_mulai',date('Y-m-d'))->find($id)){
-            return $cek_kinerja->delete() ? true:false;
+            return $cek_kinerja->delete() ? true : false;
         }
         return false;
     }
