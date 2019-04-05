@@ -2,11 +2,11 @@
 namespace App\Repositories;
 
 
-class SkpPegawaiRepository extends BaseRepository
+class RoleRepository extends BaseRepository
 {
     public function model()
     {
-        return 'App\Models\SkpPegawai';
+        return 'App\Models\Role';
     }
 
     public function search(array $parameters, $perPage = 10)

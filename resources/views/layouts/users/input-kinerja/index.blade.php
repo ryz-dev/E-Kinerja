@@ -384,7 +384,7 @@
                             })
                                 .then(function (res) {
                                     swal(
-                                        res.message,
+                                        res.response.message,
                                         '',
                                         'success'
                                     );

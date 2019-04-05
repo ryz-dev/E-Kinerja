@@ -84,6 +84,7 @@ class RoleSeeder extends Seeder
                 ])
             ],
             [
+                'id' => 7,
                 'nama_role' => 'Staf',
                 'uuid' => (string)\Illuminate\Support\Str::uuid(),
                 'permissions' => json_encode([

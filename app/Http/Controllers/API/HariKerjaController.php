@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\StatusHari;
 use App\Http\Controllers\MasterData\MasterDataController;
+use App\Repositories\HariKerjaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\Controller;
@@ -12,19 +13,15 @@ use Illuminate\Support\Str;
 
 class HariKerjaController extends ApiController
 {
+    protected $hari_kerja;
+    public function __construct()
+    {
+        $this->hari_kerja = new HariKerjaRepository();
+    }
+
     public function index(Request $request){
-        /* Ambil kata kunci yang di cari */
-        $this->query = $request->has('q') ? $request->input('q') : $this->query;
-
-        /* Proses query */
-        $hariKerja = HariKerja::with('StatusHari','Bulan','Hari')
-        ->where('tanggal','like','%'.$this->query.'%')
-        ->orWhere('bulan','like','%'.$this->query.'%')
-        ->orWhere('hari','like','%'.$this->query.'%')
-        ->orWhere('id_status_hari','like','%'.$this->query.'%')
-        ->orWhere('tahun','like','%'.$this->query.'%')
-        ->paginate($this->show_limit);
-
+        $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
+        $hariKerja = $this->hari_kerja->with(['StatusHari','Bulan','Hari'])->search($request->query(),$this->show_limit);
         if (!$hariKerja->isEmpty()) {
 
           /* Paging */
@@ -54,16 +51,7 @@ class HariKerjaController extends ApiController
     }
 
     public function getPage(Request $request){
-      /* Ambil kata kunci yang di cari */
-      $this->query = $request->has('q') ? $request->input('q') : $this->query;
-
-      /* Proses query */
-      $data = HariKerja::where('tanggal','like','%'.$this->query.'%')
-      ->orWhere('bulan','like','%'.$this->query.'%')
-      ->orWhere('hari','like','%'.$this->query.'%')
-      ->orWhere('id_status_hari','like','%'.$this->query.'%')
-      ->orWhere('tahun','like','%'.$this->query.'%')
-      ->count();
+      $data = $this->hari_kerja->getPage($request->query());
       $data = ceil($data/$this->show_limit);
       return response()->json([
         'halaman' => $data
@@ -71,24 +59,19 @@ class HariKerjaController extends ApiController
     }
 
     public function delete(Request $request) {
-      try {
-        $item = HariKerja::findOrfail($request->id);
-        $item->delete();
-        /* Diagnostic */
-        return response()->json([
-          'diagnostic'=>[
-            'code'=>200,
-            'status'=>'HTTP_OK'
-          ]
-        ],200);
-      } catch (ModelNotFoundException $e) {
-        /* Diagnostic */
+        if ($this->hari_kerja->delete($request->id)){
+            return response()->json([
+                'diagnostic'=>[
+                    'code'=>200,
+                    'status'=>'HTTP_OK'
+                ]
+            ],200);
+        }
         return response()->json([
           'diagnostic'=>[
             'code'=>503,
             'status'=>'DATA_NOT_FOUND'
           ]
         ],503);
-      }
     }
 }

@@ -137,6 +137,7 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
         Route::group(['prefix' => 'jabatan'],function (){
             Route::get('','JabatanController@listJabatan')->name('api.web.master-data.jabatan');
             Route::get('get-pagination','JabatanController@getpage')->name('api.web.master-data.jabatan.page');
+            Route::get('{id}','JabatanController@detailJabatan')->name('api.web.master-detail.jabatan');
             Route::post('store','JabatanController@storeJabatan')->name('api.web.master-data.jabatan.store');
             Route::post('{id}','JabatanController@updateJabatan')->name('api.web.master-data.jabatan.update');
             Route::post('delete/{id}','JabatanController@deleteJabatan')->name('api.web.master-data.jabatan.delete');

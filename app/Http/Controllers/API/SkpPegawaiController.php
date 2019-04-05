@@ -7,208 +7,89 @@ use App\Models\Skp;
 use App\Models\SkpPegawai;
 use App\Repositories\SkpPegawaiRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class SkpPegawaiController extends ApiController
 {
-    protected $skp_pegawai_repository;
+    protected $skp_pegawai;
     public function __construct(SkpPegawaiRepository $skp)
     {
-        $this->skp_pegawai_repository = $skp;
+        $this->skp_pegawai = $skp;
     }
 
     public function listSkpPegawai(Request $request){
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        $skp_pegawai = $this->skp_pegawai_repository->with(['pegawai','skpTask','atasanUpdate'])->orderBy('id','asc');
-        if ($request->has('q')){
-            $q = $request->input('q');
-            $skp_pegawai = $skp_pegawai->search(['q' => $q]);
-        } else {
-            $skp_pegawai = $skp_pegawai->paginate($this->show_limit);
-        }
+        $skp_pegawai = $this->skp_pegawai->with(['pegawai','skpTask','atasanUpdate'])->orderBy('id','asc')->search($request->query(),$request->input());
         return $this->ApiSpecResponses($skp_pegawai);
-    }
-/*
-    public function detailSkpTask($id){
-        try {
-            $skp = SkpRepository::findOrFail($id);
-        } catch (\Exception $e){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
-        }
-        return $this->ApiSpecResponses($skp);
     }
 
     public function detailSkpPegawai($id){
-        try {
-            $skp_pegawai = SkpPegawai::with('pegawai','skpTask','atasanUpdate')->findOrFail($id);
-        } catch (\Exception $e){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
-        }
-        return $this->ApiSpecResponses($skp_pegawai);
-    }
 
-    public function storeSkpTask(Request $request){
-        $this->validate($request,[
-            'task' => 'required'
-        ]);
-        $input = $request->input();
-        $input['uuid'] = (string)Str::uuid();
-        $skp = Skp::create($input);
-        return $this->ApiSpecResponses($skp);
+        if ($skp_pegawai = $this->skp_pegawai->with(['pegawai','skpTask','atasanUpdate'])->find($id)){
+            return $this->ApiSpecResponses($skp_pegawai);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'NOT_FOUND'
+        ], 404);
     }
 
     public function storeSkpPegawai(Request $request){
-        $this->validate($request,[
-            'nip_pegawai' => 'required',
-            'id_skp' => 'required',
-            'periode' => 'date',
-            'status' => '',
-            'tanggal_selesai' => '',
-            'nip_update' => ''
-        ]);
+        $validation = Validator::make($request->input(),$this->skp_pegawai->required());
+        if ($validation->fails()){
+            return $this->ApiSpecResponses([
+                'required' => $validation->errors()
+            ],422);
+        }
         $input = $request->input();
         $input['uuid'] = (string)Str::uuid();
-        try {
-            $skp_pegawai = SkpPegawai::create($input);
-        } catch (\Exception $exception){
-            return response()->json([
-                'message' => $exception->getMessage()
-            ],500);
+        if ($skp_pegawai = $this->skp_pegawai->create($input)){
+            return $this->ApiSpecResponses($skp_pegawai);
         }
-        return $this->ApiSpecResponses($skp_pegawai);
-    }
-
-    public function updateSkp(Request $request,$id){
-        try {
-            $skp = SkpRepository::findOrFail($id);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
-        }
-        $this->validate($request,[
-            'task' => 'required'
-        ]);
-        $update = $request->input();
-        try {
-            $skp->update($update);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => $exception->getMessage()
-            ], 500);
-        }
-        return $this->ApiSpecResponses($skp);
+        return $this->ApiSpecResponses([
+            'message' => 'gagal menyimpan skp pegawai'
+        ],500);
     }
 
     public function updateSkpPegawai(Request $request,$id){
-        try {
-            $skp_pegawai = SkpPegawai::findOrFail($id);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
+        $validation = Validator::make($request->input(),$this->skp_pegawai->required());
+        if ($validation->fails()){
+            return $this->ApiSpecResponses([
+                'required' => $validation->errors()
+            ],422);
         }
-        $this->validate($request,[
-            'nip_pegawai' => '',
-            'id_skp' => '',
-            'periode' => 'date',
-            'status' => 'required',
-            'tanggal_selesai' => '',
-            'nip_update' => ''
-        ]);
         $update = $request->input();
-        try {
-            $skp_pegawai->update($update);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => $exception->getMessage()
-            ], 500);
-        }
-        return $this->ApiSpecResponses($skp_pegawai);
-    }
 
-    public function deleteSkp($id){
-        try {
-            $skp = SkpRepository::findOrFail($id);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
+        if ($this->skp_pegawai->update($id,$update)){
+            return $this->ApiSpecResponses([
+                'message' => 'berhasil mengupdate skp pegawai'
+            ]);
         }
-        try {
-            $skp->delete($id);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => $exception->getMessage()
-            ], 500);
-        }
-        return response()->json([
-            'status' => 200,
-            'message' => 'skp task berhasil dihapus'
-        ]);
+        return $this->ApiSpecResponses([
+            'message' => 'Gagal mengupdate data skp pegawai'
+        ], 500);
+
     }
 
     public function deleteSkpPegawai($id){
-        try {
-            $skp_pegawai = SkpPegawai::findOrFail($id);
-        }catch (\Exception $exception){
+        if ($this->skp_pegawai->delete($id)){
             return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
+                'status' => 200,
+                'message' => 'skp pegawai berhasil dihapus'
+            ]);
         }
-        try {
-            $skp_pegawai->delete($id);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => $exception->getMessage()
-            ], 500);
-        }
-        return response()->json([
-            'status' => 200,
-            'message' => 'skp pegawai berhasil dihapus'
-        ]);
-    }
-
-    public function getPageSkp(Request $request)
-    {
-        if ($request->has('q')) {
-            $data = SkpRepository::where('task','like','%'.$request->input('q').'%')->count();
-        } else {
-            $data = SkpRepository::count();
-        }
-        $data = ceil($data / $this->show_limit);
-        return response()->json([
-            'halaman' => $data
-        ]);
+        return $this->ApiSpecResponses([
+            'message' => 'skp pegawai gagal dihapus'
+        ],500);
     }
 
     public function getPageSkpPegawai(Request $request)
     {
-        if ($request->has('q')) {
-            $q = $request->input('q');
-            $data = SkpPegawai::whereHas('pegawai',function($query)use($q){
-                    $query->where('nama','like','%'.$q.'%');
-                })
-                ->orWhereHas('skpTask',function($query)use($q){
-                    $query->where('task','like','%'.$q.'%');
-                })
-                ->orWhereHas('atasanUpdate',function($query)use($q){
-                    $query->where('nama','like','%'.$q.'%');
-                })
-                ->orWhere('nip_pegawai','like','%'.$q.'%')
-                ->orWhere('nip_updtae','like','%'.$q.'%')
-                ->count();
-        } else {
-            $data = SkpPegawai::count();
-        }
+        $data = $this->skp_pegawai->getPage($request->query());
         $data = ceil($data / $this->show_limit);
         return response()->json([
             'halaman' => $data
         ]);
-    }*/
+    }
 
 }

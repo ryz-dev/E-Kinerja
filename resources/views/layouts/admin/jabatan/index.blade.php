@@ -101,7 +101,7 @@
                         if (result.value) {
                         $.post(delete_uri)
                             .then(function (res) {
-                                if (res.response.status == '200') {
+                                if (res.diagnostic.code == '200') {
                                     getPage(search);
                                     swal(
                                         'Terhapus!',

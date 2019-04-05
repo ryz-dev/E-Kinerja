@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 
 use App\Repositories\SkpRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class SkpController extends ApiController
@@ -17,64 +18,75 @@ class SkpController extends ApiController
 
     public function listSkpTask(Request $request){
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        if ($request->has('q')) {
-            $skp = $this->skp->orderBy('id')->search(['q' => $request->q],$this->show_limit);
-        } else {
-            $skp = $this->skp->orderBy('id')->paginate($this->show_limit);
-        }
+        $skp = $this->skp->orderBy('id')->search($request->query(),$this->show_limit);
         return $this->ApiSpecResponses($skp);
     }
 
     public function detailSkpTask($id){
-        $skp = $this->skp->find($id);
-        return $this->ApiSpecResponses($skp);
+        if ($skp = $this->skp->find($id)){
+            return $this->ApiSpecResponses($skp);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'NOT_FOUND'
+        ], 404);
     }
 
     public function storeSkpTask(Request $request){
-        $this->validate($request,[
-            'task' => 'required'
-        ]);
+        $validation = Validator::make($request->input(),$this->skp->required());
+        if ($validation->fails()){
+            return $this->ApiSpecResponses([
+                'required' => $validation->errors()
+            ],422);
+        }
         $input = $request->input();
         $input['uuid'] = (string)Str::uuid();
-        $skp = $this->skp->create($input);
-        return $this->ApiSpecResponses($skp);
+        if ($skp = $this->skp->create($input)){
+            return $this->ApiSpecResponses($skp);
+        }
+        return $this->ApiSpecResponses([
+            'message' => 'gagal menyimpan skp'
+        ],500);
     }
 
     public function updateSkp(Request $request,$id){
-        $this->validate($request,[
-            'task' => 'required'
-        ]);
+        $validation = Validator::make($request->input(),$this->skp->required());
+        if ($validation->fails()){
+            return $this->ApiSpecResponses([
+                'required' => $validation->errors()
+            ],422);
+        }
         $update = $request->input();
-        try {
-            $skp = $this->skp->update($id,$update);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => $exception->getMessage()
+
+        if ($this->skp->update($id,$update)){
+            return $this->ApiSpecResponses([
+                'message' => 'berhasil mengupdate skp'
+
             ], 500);
         }
-        return $this->ApiSpecResponses($skp);
+        return $this->ApiSpecResponses([
+            'message' => 'gagal mengupdate skp'
+        ]);
+
     }
 
     public function deleteSkp($id){
 
-        try {
-            $this->skp->delete($id);
-        }catch (\Exception $exception){
-            return response()->json([
-                'message' => $exception->getMessage()
-            ], 500);
+        if ($this->skp->delete($id)){
+            return $this->ApiSpecResponses([
+                'status' => 200,
+                'message' => 'skp task berhasil dihapus'
+            ]);
         }
-        return response()->json([
-            'status' => 200,
-            'message' => 'skp task berhasil dihapus'
-        ]);
+        return $this->ApiSpecResponses([
+            'message' => 'gagal menghapus skp task'
+        ], 500);
     }
 
     public function getPageSkp(Request $request)
     {
         $data = $this->skp->getPage($request->has('q') ? $request->q : []);
         $data = ceil($data / $this->show_limit);
-        return response()->json([
+        return $this->ApiSpecResponses([
             'halaman' => $data
         ]);
     }

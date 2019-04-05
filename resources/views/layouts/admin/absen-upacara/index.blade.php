@@ -37,7 +37,7 @@
 @push('script')
 <script>
     $(document).ready(function(){
-        getPage();
+        getPage('');
     });
     var getPage = function (search) {
         $('#pagination').twbsPagination('destroy');
@@ -82,7 +82,7 @@
             getPage($(this).val());
         }
         else{
-            getPage();
+            getPage('');
         }
     });
 
