@@ -41,7 +41,7 @@
     });
     var getPage = function (search) {
         $('#pagination').twbsPagination('destroy');
-        $.get('{{route('api.web.master-data.absen-upacara.page')}}?q='+search)
+        $.get('{{route('absen-upacara.api.page')}}?q='+search)
             .then(function (res) {
                 $('#pagination').twbsPagination({
                     totalPages: res.page,
@@ -60,7 +60,7 @@
         var row = '';
         var selector = $('.list_mesin');
         $.ajax({
-            url: "{{ route('api.web.master-data.absen-upacara.list') }}?page="+page+(search?'&q='+search:''),
+            url: "{{ route('absen-upacara.api.index') }}?page="+page+(search?'&q='+search:''),
             data: '',
             success: function(res) {
                 var data = res.response.map(function (val) {
@@ -101,7 +101,7 @@
             },
             showLoaderOnConfirm: true,
             preConfirm: (sn) => {
-                $.post('{{ route('api.web.master-data.absen-upacara.store') }}',{SN:sn})
+                $.post('{{ route('absen-upacara.api.store') }}',{SN:sn})
                 .done(res => {
                     swal({title:'Data berhasi tersimpan!',type:'success',showConfirmButton:false});
                     setTimeout(()=>{ location.reload() },1000);
@@ -131,7 +131,7 @@
             },
             showLoaderOnConfirm: true,
             preConfirm: (value) => {
-                $.post('{{ route('api.web.master-data.absen-upacara.update') }}',{SN:value,uuid:uuid})
+                $.post('{{ route('absen-upacara.api.update') }}',{SN:value,uuid:uuid})
                 .done(res => {
                     swal({title:'Data berhasi terupdate!',type:'success',showConfirmButton:false});
                     setTimeout(()=>{ location.reload() },1000);
@@ -156,7 +156,7 @@
             }).then(function(result){
                 if (result.value) {
                     $.ajax({
-                        url:"{{ route('api.web.master-data.absen-upacara.delete') }}",
+                        url:"{{ route('absen-upacara.api.delete') }}",
                         type:'POST',
                         data: formData,
                         success: function(res){

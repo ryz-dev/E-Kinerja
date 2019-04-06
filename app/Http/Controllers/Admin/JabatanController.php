@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Admin;
 
+use App\Models\MasterData\Eselon;
+use App\Models\MasterData\Golongan;
 use App\Models\MasterData\Jabatan;
 use App\Repositories\JabatanRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class JabatanController extends ApiController
+class JabatanController extends AdminController
 {
     protected $jabatan;
     public function __construct(JabatanRepository $jabatan)
@@ -17,14 +20,38 @@ class JabatanController extends ApiController
         $this->jabatan = $jabatan;
     }
 
-    public function listJabatan(Request $request)
+    public function index(Request $request){
+        return view('layouts.admin.jabatan.index');
+    }
+
+    public function show($id){
+        $jabatan = Jabatan::with('atasan','golongan')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        return view('layouts.admin.jabatan.detail',compact('jabatan'));
+    }
+
+    public function add(){
+        $data_option = new \stdClass();
+        $data_option->golongan = Golongan::get();
+        $data_option->jabatan = Jabatan::get();
+        return view('layouts.admin.jabatan.add',compact('data_option'));
+    }
+
+    public function edit($id){
+        $jabatan = Jabatan::with('atasan','golongan')->where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        $data_option = new \stdClass();
+        $data_option->golongan = Golongan::get();
+        $data_option->jabatan = Jabatan::get();
+        return view('layouts.admin.jabatan.edit',compact('jabatan','data_option'));
+    }
+
+    public function list(Request $request)
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         $jabatan = $this->jabatan->with(['golongan','atasan'])->orderBy('id')->search($request->query(),$this->show_limit);
         return $this->ApiSpecResponses($jabatan);
     }
 
-    public function detailJabatan($id){
+    public function detail($id){
         if ($jabatan = $this->jabatan->with(['golongan','atasan'])->find($id)){
             return $this->ApiSpecResponses($jabatan);
         }
@@ -33,7 +60,7 @@ class JabatanController extends ApiController
         ], 404);
     }
 
-    public function storeJabatan(Request $request){
+    public function store(Request $request){
         $validation = Validator::make($request->input(),$this->jabatan->required());
         if ($validation->fails()){
             return $this->ApiSpecResponses([
@@ -50,7 +77,7 @@ class JabatanController extends ApiController
         ],500);
     }
 
-    public function updateJabatan(Request $request,$id){
+    public function update(Request $request,$id){
         $validation = Validator::make($request->input(),$this->jabatan->required());
         if ($validation->fails()){
             return $this->ApiSpecResponses([
@@ -68,7 +95,7 @@ class JabatanController extends ApiController
         ], 500);
     }
 
-    public function deleteJabatan($id){
+    public function delete($id){
         if ($this->jabatan->delete($id)){
             return $this->ApiSpecResponses([
                 'message' => 'jabatan pegawai berhasil dihapus'

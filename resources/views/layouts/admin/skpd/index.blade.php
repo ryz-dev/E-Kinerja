@@ -38,7 +38,7 @@
                 });
                 var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('api.web.master-data.skpd.page')}}?q='+search)
+                    $.get('{{route('skpd.api.page')}}?q='+search)
                         .then(function (res) {
                             if (res.halaman == 0){
                                 if (search != '') {
@@ -66,7 +66,7 @@
                     var selector = $('.list_skpd');
                     $('#preload').show();
                     $.ajax({
-                        url: "{{ route('api.web.master-data.skpd') }}?page="+page+'&q='+search,
+                        url: "{{ route('skpd.api.index') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
                             if (res.response.length > 0) {

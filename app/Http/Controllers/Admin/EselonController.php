@@ -1,22 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\MasterData;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\MasterData\Eselon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class EselonController extends MasterDataController
+class EselonController extends AdminController
 {
     public function index(Request $request){
-        /*$this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        $this->query = $request->has('q') ? $request->input('q') : $this->query;
-        $eselon = new Eselon();
-        if ($this->query){
-            $eselon = $eselon->where('eselon','like','%'.$this->query.'%')
-                ->orWhere('tunjangan','like','%'.$this->query.'%');
-        }
-        $eselon = $eselon->paginate($this->show_limit);*/
         return view('layouts.admin.eselon.index');
     }
 

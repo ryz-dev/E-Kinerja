@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Admin;
 
 use App\Repositories\AbsenUpacaraRepository;
 use Illuminate\Http\Request;
@@ -11,11 +11,14 @@ use Illuminate\Support\Str;
 
 class AbsenUpacaraController extends Controller
 {
-    protected $show_limit = 10;
     protected $absen_upacara;
-    public function __construct()
+    public function __construct(AbsenUpacaraRepository $absen_upacara)
     {
-        $this->absen_upacara = new AbsenUpacaraRepository();
+        $this->absen_upacara = $absen_upacara;
+    }
+
+    public function index(){
+        return view('layouts.admin.absen-upacara.index');
     }
 
     public function list(Request $request){
@@ -45,7 +48,7 @@ class AbsenUpacaraController extends Controller
             return $this->ApiSpecResponses($absen_upacara);
         }
         return $this->ApiSpecResponses([
-            'message' => 'gagal menyimpan jabatan'
+            'message' => 'gagal menyimpan absen upacara'
         ],500);
     }
 

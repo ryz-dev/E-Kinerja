@@ -69,7 +69,7 @@ class Pegawai extends Authenticatable
 
     public function getDeleteUriAttribute()
     {
-        return route('api.web.master-data.pegawai.delete', ['id' => $this->nip]);
+        return route('pegawai.api.delete', ['id' => $this->nip]);
     }
 
     public function getEditUriAttribute()
@@ -79,7 +79,7 @@ class Pegawai extends Authenticatable
 
     public function getUpdateuriAttribute()
     {
-        return route('api.web.master-data.pegawai.update', ['id' => $this->nip]);
+        return route('pegawai.api.update', ['id' => $this->nip]);
     }
 
     public function findForPassport($username)
@@ -89,6 +89,6 @@ class Pegawai extends Authenticatable
 
     public function getUpdatePasswordUriAttribute()
     {
-        return route('api.web.master-data.pegawai.update-password');
+        return route('pegawai.api.update-password');
     }
 }

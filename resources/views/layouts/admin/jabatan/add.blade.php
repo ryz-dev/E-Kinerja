@@ -6,7 +6,7 @@
         </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-jabatan" action="{{route('api.web.master-data.jabatan.store')}}" class="form">
+                <form id="form-store-jabatan" action="{{route('jabatan.api.store')}}" class="form">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">Tambah Jabatan</h2>

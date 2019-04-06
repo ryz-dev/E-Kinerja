@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\APIBackup;
 
 use App\Models\MasterData\Eselon;
 use Illuminate\Http\Request;
@@ -40,21 +40,21 @@ class EselonController extends ApiController
 
     public function storeEselon(Request $request)
     {
-        $eselon = new \App\Http\Controllers\MasterData\EselonController();
+        $eselon = new \App\Http\Controllers\Admin\EselonController();
         $data = $eselon->store($request,false);
         return $this->ApiSpecResponses($data);
     }
 
     public function updateEselon(Request $request,$id)
     {
-        $eselon = new \App\Http\Controllers\MasterData\EselonController();
+        $eselon = new \App\Http\Controllers\Admin\EselonController();
         $data = $eselon->update($request,$id,false);
         return $this->ApiSpecResponses($data);
     }
 
     public function deleteEselon($id)
     {
-        $eselon = new \App\Http\Controllers\MasterData\EselonController();
+        $eselon = new \App\Http\Controllers\Admin\EselonController();
         $data = $eselon->delete($id,false);
         return $this->ApiSpecResponses($data);
     }

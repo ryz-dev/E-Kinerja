@@ -42,10 +42,13 @@ abstract class BaseRepository
 
     }
 
-    public function delete($id)
+    public function delete($id,$force = false)
     {
         if ($model = $this->find($id))
         {
+            if ($force){
+                return $model->forceDelete();
+            }
             return $model->delete();
         }
         else

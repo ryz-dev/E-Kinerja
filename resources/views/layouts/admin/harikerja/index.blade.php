@@ -52,7 +52,7 @@
 
       var getPage = function (getKey) {
         $('#pagination').twbsPagination('destroy');
-        $.get('{{route('page_hari_kerja')}}?q='+getKey)
+        $.get('{{route('hari-kerja.api.page')}}?q='+getKey)
         .then(function (res) {
             if (res.halaman == 0){
                 $('#preload').hide();
@@ -73,7 +73,7 @@
       };
 
       var getData = function (getKey='',page) {
-        var base = "{{ route('list_hari_kerja') }}?q="+getKey+"&page="+page;
+        var base = "{{ route('hari-kerja.api.index') }}?q="+getKey+"&page="+page;
         var row = '';
         var selector = $('.list_hari_kerja');
         $.ajax({
@@ -83,15 +83,15 @@
             $('#preload').show();
           },
           success: function(res) {
-            if (res.diagnostic.status == 'HTTP_OK') {
+            if (res.diagnostic.code == 200) {
               for(i = 0; i < res.response.length; i++) {
                 row += "<tr id='_id_"+res.response[i].id+"'>";
                 row += "<td>"+res.response[i].tanggal+"</td>";
                 row += "<td>"+res.response[i].tahun+"</td>";
-                row += "<td>"+res.response[i].bulan+"</td>";
-                row += "<td>"+res.response[i].hari+"</td>";
-                row += "<td>"+res.response[i].status_hari+"</td>";
-                row += "<td><div class='btn-group mr-2' role='group' aria-label='Button Action'><a href='"+res.response[i].url_edit+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' data-id='"+res.response[i].id+"' class='deleteData btn btn-danger'><i class='fas fa-trash'></i></button></div></td>";
+                row += "<td>"+res.response[i].bulan.nama_bulan+"</td>";
+                row += "<td>"+res.response[i].hari.nama_hari+"</td>";
+                row += "<td>"+res.response[i].status_hari.status_hari+"</td>";
+                row += "<td><div class='btn-group mr-2' role='group' aria-label='Button Action'><a href='{{route('hari_kerja_edit',['id' => ''])}}/"+res.response[i].id+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' data-id='"+res.response[i].id+"' class='deleteData btn btn-danger'><i class='fas fa-trash'></i></button></div></td>";
                 row += "</tr>";
               }
             } else {
@@ -124,7 +124,7 @@
               var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
               var target = $(this).data('id');
               $.ajax({
-                url: '{{ route('delete_hari_kerja') }}',
+                url: '{{ route('hari-kerja.api.delete' , ['id' => '']) }}',
                 type: 'POST',
                 data: {_token: CSRF_TOKEN, id:target},
                 dataType: 'JSON',

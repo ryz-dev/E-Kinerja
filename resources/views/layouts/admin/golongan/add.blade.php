@@ -6,7 +6,7 @@
         </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-golongan" action="{{route('api.web.master-data.golongan.store')}}" class="form">
+                <form id="form-store-golongan" action="{{route('golongan.api.store')}}" class="form">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">Tambah Kelas Jabatan</h2>

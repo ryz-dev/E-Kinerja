@@ -6,7 +6,7 @@
         </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-pegawai" action="{{route('api.web.master-data.pegawai.store')}}" class="form" enctype="multipart/form-data">
+                <form id="form-store-pegawai" action="{{route('pegawai.api.store')}}" class="form" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">Tambah Pegawai</h2>
@@ -104,14 +104,26 @@
                             type: "POST",
                             data: formData,
                             success: function (res) {
-                                swal(
-                                    'Berhasil Menyimpan Data!',
-                                    '',
-                                    'success'
-                                )
-                                setTimeout(function () {
-                                    location.href = res.response.detail_uri
-                                }, 500);
+                                if (res.diagnostic.code == 200) {
+                                    swal(
+                                        'Berhasil Menyimpan Data!',
+                                        '',
+                                        'success'
+                                    )
+                                    setTimeout(function () {
+                                        location.href = res.response.detail_uri
+                                    }, 500);
+                                } else {
+                                    message = 'internal server error'
+                                    if (res.diagnostic.code == 422){
+                                        message = 'missing required parameter';
+                                    }
+                                    swal(
+                                        'Gagal Menyimpan Data!',
+                                        message,
+                                        'error'
+                                    )
+                                }
                             },
                             error: function () {
                                 swal(

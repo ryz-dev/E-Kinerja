@@ -1,24 +1,42 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\MasterData\Golongan;
 use App\Repositories\GolonganRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class GolonganController extends ApiController
+class GolonganController extends AdminController
 {
-
     protected $golongan;
     public function __construct(GolonganRepository $golongan)
     {
         $this->golongan = $golongan;
     }
 
-    public function listGolongan(Request $request)
+    public function index(Request $request){
+        return view('layouts.admin.golongan.index');
+    }
+
+    public function show($id){
+        $golongan = Golongan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        return view('layouts.admin.golongan.detail',compact('golongan'));
+    }
+
+    public function add(){
+        return view('layouts.admin.golongan.add');
+    }
+
+    public function edit($id){
+        $golongan = Golongan::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        return view('layouts.admin.golongan.edit',compact('golongan'));
+    }
+
+
+    public function list(Request $request)
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         $golongan = $this->golongan->orderBy('created_at', 'DESC')->search($request->query(),$this->show_limit);
@@ -26,7 +44,7 @@ class GolonganController extends ApiController
 
     }
 
-    public function detailGolongan($id)
+    public function detail($id)
     {
         if ($golongan = $this->golongan->find($id)){
             return $this->ApiSpecResponses($golongan);
@@ -36,7 +54,7 @@ class GolonganController extends ApiController
         ], 404);
     }
 
-    public function storeGolongan(Request $request)
+    public function store(Request $request)
     {
         $validation = Validator::make($request->input(),$this->golongan->required());
         if ($validation->fails()){
@@ -50,7 +68,7 @@ class GolonganController extends ApiController
         return $this->ApiSpecResponses($data);
     }
 
-    public function updateGolongan(Request $request,$id)
+    public function update(Request $request,$id)
     {
         $validation = Validator::make($request->input(),$this->golongan->required());
         if ($validation->fails()){
@@ -70,7 +88,7 @@ class GolonganController extends ApiController
 
     }
 
-    public function deleteGolongan($id)
+    public function delete($id)
     {
         if ($this->golongan->delete($id)){
             return $this->ApiSpecResponses([

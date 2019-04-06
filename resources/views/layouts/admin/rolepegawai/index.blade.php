@@ -47,7 +47,7 @@
     var getPage = function (search) {
         $("#preload").show();
         $('#pagination').twbsPagination('destroy');
-        $.get('{{route('api.web.master-data.page.role.pegawai')}}?q='+search)
+        $.get('{{route('role-pegawai.api.page')}}?q='+search)
             .then(function (res) {
                 $('#pagination').twbsPagination({
                     totalPages: res.page,
@@ -63,7 +63,7 @@
         var row = '';
         var selector = $('.list_role');
         $.ajax({
-            url: "{{ route('api.web.master-data.list.role') }}?page="+page+(search?'&q='+search:''),
+            url: "{{ route('role-pegawai.api.index') }}?page="+page+(search?'&q='+search:''),
             data: '',
             success: function(res) {
                 var data = res.response.map(function (val) {
@@ -109,7 +109,7 @@
         });
     }
     var getRoles = function(){
-        $.get('{{route('api.web.master-data.role.get')}}')
+        $.get('{{route('role-pegawai.api.roles')}}')
             .then(function(res){
                 if (res.response) {
                     window.roles = res.response;
@@ -132,7 +132,7 @@
                 formData.append('nip',nip);
                 formData.append('role',result.value);
                 $.ajax({
-                    url:"{{ route('api.web.master-data.role.store') }}",
+                    url:"{{ route('role-pegawai.api.store') }}",
                     type:'POST',
                     data: formData,
                     success: function(res){
@@ -175,7 +175,7 @@
             }).then(function(result){
                 if (result.value) {
                     $.ajax({
-                        url:"{{ route('api.web.master-data.role.delete') }}",
+                        url:"{{ route('role-pegawai.api.delete') }}",
                         type:'POST',
                         data: formData,
                         success: function(res){

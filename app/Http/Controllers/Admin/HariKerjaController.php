@@ -1,15 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\MasterData;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\StatusHari;
+use App\Repositories\HariKerjaRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 
-class HariKerjaController extends MasterDataController
+class HariKerjaController extends AdminController
 {
+
+    protected $hari_kerja;
+    public function __construct(HariKerjaRepository $hari_kerja)
+    {
+        $this->hari_kerja = $hari_kerja;
+    }
+
     public function index(Request $request){
       return view('layouts/admin/harikerja/index');
     }
@@ -89,16 +97,6 @@ class HariKerjaController extends MasterDataController
       }
     }
 
-    public function delete($id){
-      $hari_kerja = HariKerja::whereId($id)->orWhere('uuid',$id)->firstOrFail();
-      try {
-          $hari_kerja->delete();
-      } catch (\Exception $exception){}
-      return response()->json([
-          'message' => 'berhasil menghapus data'
-      ]);
-    }
-
     private function getStatusHari(){
       return implode(',',StatusHari::select('id')->pluck('id')->all());
     }
@@ -106,6 +104,39 @@ class HariKerjaController extends MasterDataController
     public function show($id){
       $hari_kerja = HariKerja::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
       return response()->json($hari_kerja->toArray());
+    }
+
+    public function list(Request $request)
+    {
+        $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
+        $golongan = $this->hari_kerja->with(['statusHari','Bulan','Hari'])->orderBy('tanggal', 'asc')->search($request->query(),$this->show_limit);
+        return $this->ApiSpecResponses($golongan);
+
+    }
+
+    public function getPage(Request $request){
+        $data = $this->hari_kerja->getPage($request->query());
+        $data = ceil($data/$this->show_limit);
+        return response()->json([
+            'halaman' => $data
+        ]);
+    }
+
+    public function delete(Request $request) {
+        if ($this->hari_kerja->delete($request->id)){
+            return response()->json([
+                'diagnostic'=>[
+                    'code'=>200,
+                    'status'=>'HTTP_OK'
+                ]
+            ],200);
+        }
+        return response()->json([
+            'diagnostic'=>[
+                'code'=>503,
+                'status'=>'DATA_NOT_FOUND'
+            ]
+        ],503);
     }
 
 }

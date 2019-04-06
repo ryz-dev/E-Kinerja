@@ -26,7 +26,7 @@ class AdminLoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/master-data/pegawai';
+    protected $redirectTo = '/admin/pegawai';
 
     /**
      * Create a new controller instance.

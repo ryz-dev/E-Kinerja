@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers\MasterData;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Absen\Checkinout;
 use App\Models\MasterData\Pegawai;
@@ -10,7 +10,7 @@ use App\Http\Requests\CheckinoutRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class CheckinoutController extends MasterDataController
+class CheckinoutController extends AdminController
 {
     public function index(Request $request){
         $all = Checkinout::paginate(10);

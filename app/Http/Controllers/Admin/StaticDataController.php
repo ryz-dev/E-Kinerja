@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\MasterData;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\MasterData\Agama;
 use App\Models\MasterData\Bulan;
@@ -8,7 +8,7 @@ use App\Models\MasterData\Hari;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class StaticDataController extends MasterDataController
+class StaticDataController extends AdminController
 {
     /*agama*/
     public function getAgama(Request $request){

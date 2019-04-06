@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\APIBackup;
 
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\StatusHari;
-use App\Http\Controllers\MasterData\MasterDataController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Repositories\HariKerjaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

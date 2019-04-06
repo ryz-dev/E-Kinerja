@@ -41,7 +41,7 @@
             });
             var getPage = function (search) {
                 $('#pagination').twbsPagination('destroy');
-                $.get('{{route('api.web.master-data.pegawai.page')}}?q=' + search+'&deleted=1')
+                $.get('{{route('pegawai.api.page')}}?q=' + search+'&deleted=1')
                     .then(function (res) {
                         if (res.halaman == 0) {
                             if (search != '') {
@@ -67,7 +67,7 @@
                 var selector = $('.list_pegawai');
                 $('#preload').show();
                 $.ajax({
-                    url: "{{ route('api.web.master-data.pegawai') }}?page=" + page + '&q=' + search+'&deleted=1',
+                    url: "{{ route('pegawai.api.index') }}?page=" + page + '&q=' + search+'&deleted=1',
                     data: '',
                     success: function (res) {
                         if (res.response.length > 0) {
@@ -116,7 +116,7 @@
                     if (result.value) {
                         $.post(delete_uri)
                             .then(function (res) {
-                                if (res.response.status == '200') {
+                                if (res.diagnostic.code == '200') {
                                     getPage(search);
                                     swal(
                                         'Terhapus!',
@@ -155,7 +155,7 @@
                     cancelButtonText: 'Batalkan'
                 }).then((result) => {
                     if (result.value) {
-                        $.post('{{route('api.web.master-data.pegawai.restore',['nip' => ''])}}/'+nip)
+                        $.post('{{route('pegawai.api.restore',['nip' => ''])}}/'+nip)
                             .then(function () {
                                 getPage(search)
                                 row.fadeOut();

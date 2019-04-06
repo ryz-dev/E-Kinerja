@@ -57,7 +57,7 @@
                 getPage('');
             });
             window.skpd = [];
-            $.get('{{route('api.web.master-data.pegawai.skpd')}}')
+            $.get('{{route('pegawai.api.skpd')}}')
                 .then(function (res) {
                     if (res.response) {
                         window.skpd = res.response;
@@ -65,7 +65,7 @@
                 })
             var getPage = function (search) {
                 $('#pagination').twbsPagination('destroy');
-                $.get('{{route('api.web.master-data.pegawai.page')}}?q=' + search)
+                $.get('{{route('pegawai.api.page')}}?q=' + search)
                     .then(function (res) {
                         if (res.halaman == 0) {
                             if (search != '') {
@@ -91,7 +91,7 @@
                 var selector = $('.list_pegawai');
                 $('#preload').show();
                 $.ajax({
-                    url: "{{ route('api.web.master-data.pegawai') }}?page=" + page + '&q=' + search,
+                    url: "{{ route('pegawai.api.index') }}?page=" + page + '&q=' + search,
                     data: '',
                     success: function (res) {
                         if (res.response.length > 0) {
@@ -213,7 +213,7 @@
                     showCancelButton: true,
                 }).then(function(result){
                     if (result.value) {
-                        window.open("{{route('api.web.master-data.pegawai.download',[
+                        window.open("{{route('pegawai.api.download',[
                             '_token' => csrf_token()
                         ])}}&id_skpd="+result.value, '_blank');
                     }

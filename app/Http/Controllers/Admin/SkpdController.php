@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Admin;
 
+use App\Models\MasterData\Skpd;
 use App\Repositories\SkpdRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class SkpdController extends ApiController
+class SkpdController extends AdminController
 {
     protected $skpd;
     public function __construct(SkpdRepository $skpd)
@@ -15,14 +17,32 @@ class SkpdController extends ApiController
         $this->skpd = $skpd;
     }
 
-    public function listSkpd(Request $request)
+    public function index(){
+        return view('layouts/admin/skpd/index');
+    }
+
+    public function show($id){
+        $skpd = Skpd::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        return view('layouts.admin.skpd.detail',compact('skpd'));
+    }
+
+    public function edit($id){
+        $skpd = Skpd::where('id',$id)->orWhere('uuid',$id)->firstOrFail();
+        return view('layouts.admin.skpd.edit',compact('skpd'));
+    }
+
+    public function add(){
+        return view('layouts.admin.skpd.add');
+    }
+
+    public function list(Request $request)
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         $skpd = $this->skpd->search($request->query(),$this->show_limit);
         return $this->ApiSpecResponses($skpd);
     }
 
-    public function detailSkpd($id){
+    public function detail($id){
         if ($skpd = $this->skpd->find($id)){
             return $this->ApiSpecResponses($skpd);
         }
@@ -31,7 +51,7 @@ class SkpdController extends ApiController
         ], 404);
     }
 
-    public function storeSkpd(Request $request){
+    public function store(Request $request){
         $validation = Validator::make($request->input(),$this->skpd->required());
         if ($validation->fails()){
             return $this->ApiSpecResponses([
@@ -48,7 +68,7 @@ class SkpdController extends ApiController
         ],500);
     }
 
-    public function updateSkpd(Request $request,$id){
+    public function update(Request $request,$id){
         $validation = Validator::make($request->input(),$this->skpd->required());
         if ($validation->fails()){
             return $this->ApiSpecResponses([
@@ -67,7 +87,7 @@ class SkpdController extends ApiController
         ], 500);
     }
 
-    public function deleteSkpd($id){
+    public function delete($id){
         if ($this->skpd->delete($id)){
             return $this->ApiSpecResponses([
                 'message' => 'skpd pegawai berhasil dihapus'

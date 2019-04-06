@@ -80,7 +80,7 @@
 
                 <div class="formChangePassword">
                 <h5 class="mb-3">Ubah Kata Sandi</h5>
-                <form id="change-password-form" action="{{ route('api.web.master-data.pegawai.update-password') }}" method="POST">
+                <form id="change-password-form" action="{{ route('update-password') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="oldPassword">Kata Sandi Lama</label>

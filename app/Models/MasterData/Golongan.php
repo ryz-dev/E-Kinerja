@@ -22,7 +22,7 @@ class Golongan extends Model
     }
 
     public function getDeleteUriAttribute(){
-        return route('api.web.master-data.golongan.delete',['id' => $this->id]);
+        return route('golongan.api.delete',['id' => $this->id]);
     }
 
     public function getEditUriAttribute(){
@@ -30,7 +30,7 @@ class Golongan extends Model
     }
 
     public function getUpdateuriAttribute(){
-        return route('api.web.master-data.golongan.update',['id' => $this->id]);
+        return route('golongan.api.update',['id' => $this->id]);
     }
 
     public function getTunjanganRpAttribute(){

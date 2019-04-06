@@ -6,7 +6,7 @@
         </div>
         <div class="main-content tab-content">
             <div class="container-fluid">
-                <form id="form-store-skpd" action="{{route('api.web.master-data.skpd.store')}}" class="form" enctype="multipart/form-data">
+                <form id="form-store-skpd" action="{{route('skpd.api.store')}}" class="form" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">Tambah SKPD</h2>

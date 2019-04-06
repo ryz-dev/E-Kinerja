@@ -41,7 +41,7 @@
                 });
                 var getPage = function (search) {
                     $('#pagination').twbsPagination('destroy');
-                    $.get('{{route('api.web.master-data.golongan.page')}}?q='+search)
+                    $.get('{{route('golongan.api.page')}}?q='+search)
                         .then(function (res) {
                             if (res.halaman == 0){
                                 $('#preload').hide()
@@ -64,7 +64,7 @@
                     var selector = $('.list_golongan');
                     $('#preload').show();
                     $.ajax({
-                        url: "{{ route('api.web.master-data.golongan') }}?page="+page+'&q='+search,
+                        url: "{{ route('golongan.api.index') }}?page="+page+'&q='+search,
                         data: '',
                         success: function(res) {
                             var data = res.response.map(function (val) {

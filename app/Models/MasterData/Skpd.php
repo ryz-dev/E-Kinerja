@@ -19,7 +19,7 @@ class Skpd extends Model
     }
 
     public function getDeleteUriAttribute(){
-        return route('api.web.master-data.skpd.delete',['id' => $this->id]);
+        return route('skpd.api.delete',['id' => $this->id]);
     }
 
     public function getEditUriAttribute(){
@@ -27,6 +27,6 @@ class Skpd extends Model
     }
 
     public function getUpdateuriAttribute(){
-        return route('api.web.master-data.skpd.update',['id' => $this->id]);
+        return route('skpd.api.update',['id' => $this->id]);
     }
 }
