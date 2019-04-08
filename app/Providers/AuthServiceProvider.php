@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -29,24 +29,25 @@ class AuthServiceProvider extends ServiceProvider
         //
     }
 
-    public function registerEkinerjaPolicies(){
-        
-        Gate::define('master-data', function($user){
+    public function registerEkinerjaPolicies()
+    {
+
+        Gate::define('master-data', function ($user) {
             return $user->hasAccess(['master-data']);
         });
-        Gate::define('monitoring-absen', function($user){
+        Gate::define('monitoring-absen', function ($user) {
             return $user->hasAccess(['monitoring-absen']);
         });
-        Gate::define('rekap-bulanan', function($user){
+        Gate::define('rekap-bulanan', function ($user) {
             return $user->hasAccess(['rekap-bulanan']);
         });
-        Gate::define('input-kinerja', function($user){
+        Gate::define('input-kinerja', function ($user) {
             return $user->hasAccess(['input-kinerja']);
         });
-        Gate::define('penilaian-kinerja', function($user){
+        Gate::define('penilaian-kinerja', function ($user) {
             return $user->hasAccess(['penilaian-kinerja']);
         });
-        Gate::define('tunjangan-kinerja', function($user){
+        Gate::define('tunjangan-kinerja', function ($user) {
             return $user->hasAccess(['tunjangan-kinerja']);
         });
 

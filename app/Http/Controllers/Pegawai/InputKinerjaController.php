@@ -1,17 +1,32 @@
 <?php
 
-namespace App\Http\Controllers\APIBackup;
+namespace App\Http\Controllers\Pegawai;
 
+use App\Http\Controllers\Controller;
 use App\Repositories\KinerjaRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class KinerjaController extends ApiController
+class InputKinerjaController extends Controller
 {
     protected $kinerja;
 
     public function __construct(KinerjaRepository $kinerja)
     {
         $this->kinerja = $kinerja;
+    }
+
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $role = $user->role()->first()->id;
+        $permission = $user->role()->first()->permissions;
+
+        if ($role == 2 || $role == 3) {
+            if ($permission['input-kinerja'] == false)
+                return redirect()->route('monitoring.absen.index');
+        }
+        return view('layouts.users.input-kinerja.index');
     }
 
     public function getKinerjaTersimpan()
@@ -42,11 +57,4 @@ class KinerjaController extends ApiController
         return $this->ApiSpecResponses($this->kinerja->inputKinerja($request->input(), $nip));
     }
 
-    public function tunjanganKinerja($bulan = null, $tahun = null)
-    {
-        $pegawai = auth('web')->user();
-        $nip = $pegawai->nip;
-        $tunjangan = $this->kinerja->getTunjanganKinerja($nip, $bulan, $tahun);
-        return $this->ApiSpecResponses($tunjangan);
-    }
 }

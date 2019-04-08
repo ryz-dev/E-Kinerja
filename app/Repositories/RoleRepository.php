@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 
@@ -28,8 +29,9 @@ class RoleRepository extends BaseRepository
         return $this->paginate($perPage);
     }
 
-    public function getPage(array $parameters){
-        if(!empty($parameters['q'])){
+    public function getPage(array $parameters)
+    {
+        if (!empty($parameters['q'])) {
             $q = $parameters['q'];
             $this->model = $this->model->orWhereHas('pegawai', function ($query) use ($q) {
                 $query->where('nama', 'like', '%' . $q . '%');
@@ -47,7 +49,8 @@ class RoleRepository extends BaseRepository
         return $this->count();
     }
 
-    public function required($id = null){
+    public function required($id = null)
+    {
         if ($id) {
             return [
                 'nip_pegawai' => '',

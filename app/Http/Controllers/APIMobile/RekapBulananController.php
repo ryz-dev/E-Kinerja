@@ -2,56 +2,55 @@
 
 namespace App\Http\Controllers\APIMobile;
 
-use App\Models\MasterData\Bulan;
+use App\Models\Absen\Checkinout;
+use App\Models\Absen\Kinerja;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
-use App\Models\Absen\Kinerja;
-use App\Models\Absen\Checkinout;
-use App\User;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 
 class RekapBulananController extends ApiController
 {
-    private $special_user = ['Bupati','Wakil Bupati','Sekretaris Daerah'];
-    private $special_user_id = [2,3,4];
+    private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
+    private $special_user_id = [2, 3, 4];
 
-    public function getBawahan(Request $request){
+    public function getBawahan(Request $request)
+    {
         $user = auth('api')->user();
         $page = $request->input('page');
         $skpd = $request->has('skpd') ? $request->input('skpd') : null;
-        $search = $request->has('search')? $request->input('search'):'';
+        $search = $request->has('search') ? $request->input('search') : '';
 
-        $pegawai = Pegawai::where('nip','!=',$user->nip);
+        $pegawai = Pegawai::where('nip', '!=', $user->nip);
         if ($skpd > 0) {
-            $pegawai->where('id_skpd',$skpd);
+            $pegawai->where('id_skpd', $skpd);
         }
 
         if ($skpd < 0) {
-            $pegawai->where('id_jabatan',3);
+            $pegawai->where('id_jabatan', 3);
         }
-        
-        $pegawai = $pegawai->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
-        $pegawai = $pegawai->leftJoin('golongan','jabatan.id_golongan','=','golongan.id');
-        $pegawai = $pegawai->orderBy('golongan.tunjangan','desc');
+
+        $pegawai = $pegawai->leftJoin('jabatan', 'pegawai.id_jabatan', '=', 'jabatan.id');
+        $pegawai = $pegawai->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id');
+        $pegawai = $pegawai->orderBy('golongan.tunjangan', 'desc');
         $pegawai = $pegawai->orderBy('pegawai.nama');
-        
-        if (in_array($user->role()->pluck('id_role')->max(),$this->special_user_id) == false) {
+
+        if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
             if ($user->role()->pluck('id_role')->max() != 5) {
-                $pegawai->whereHas('jabatan', function($query) use ($user){
-                    $query->where('id_atasan','=',$user->id_jabatan);
+                $pegawai->whereHas('jabatan', function ($query) use ($user) {
+                    $query->where('id_atasan', '=', $user->id_jabatan);
                 });
             } else {
-                $pegawai->whereHas('jabatan', function($query) use ($user){
+                $pegawai->whereHas('jabatan', function ($query) use ($user) {
                     $query->where('id_skpd', $user->id_skpd);
                 });
             }
         }
 
         if ($search) {
-            $pegawai->where(function($query) use ($search){
-                $query->where('nip','like','%'.$search.'%')->orWhere('nama','like','%'.$search.'%');
+            $pegawai->where(function ($query) use ($search) {
+                $query->where('nip', 'like', '%' . $search . '%')->orWhere('nama', 'like', '%' . $search . '%');
             });
         }
 
@@ -60,9 +59,9 @@ class RekapBulananController extends ApiController
         } else {
             $pegawai = $pegawai->get();
         }
-        
+
         $data = [];
-        foreach($pegawai as $b) {
+        foreach ($pegawai as $b) {
             $data[] = [
                 'uuid' => $b->uuid,
                 'nama' => $b->nama,
@@ -74,21 +73,22 @@ class RekapBulananController extends ApiController
         return $this->ApiSpecResponses($data);
     }
 
-    public function getRekap($nip,$bulan = null,$tahun = null){
+    public function getRekap($nip, $bulan = null, $tahun = null)
+    {
         $user = auth('api')->user();
-        $min_date = HariKerja::whereHas('statusHari', function ($query){
+        $min_date = HariKerja::whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
-        $bulan = (int)($bulan?:date('m'));
-        $tahun = ($tahun?:date('Y'));
-        $hari_kerja = HariKerja::where('bulan',$bulan)->where('tahun',$tahun)->whereHas('statusHari',function ($query){
-            $query->where('status_hari','kerja');
-        })->orderBy('tanggal','asc')->get();
+        $bulan = (int)($bulan ?: date('m'));
+        $tahun = ($tahun ?: date('Y'));
+        $hari_kerja = HariKerja::where('bulan', $bulan)->where('tahun', $tahun)->whereHas('statusHari', function ($query) {
+            $query->where('status_hari', 'kerja');
+        })->orderBy('tanggal', 'asc')->get();
         try {
             if (in_array($user->role()->first()->nama_role, $this->special_user) == false) {
                 if ($user->role()->first()->nama_role == 'Kepala Dinas') {
-                    $pegawai = Pegawai::whereNip($nip)->where('id_skpd',$user->id_skpd)->firstOrFail();
-                } else{
+                    $pegawai = Pegawai::whereNip($nip)->where('id_skpd', $user->id_skpd)->firstOrFail();
+                } else {
                     $pegawai = Pegawai::whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) {
                         $query->where('nip', auth('api')->user()->nip);
                     })->firstOrFail();
@@ -97,13 +97,13 @@ class RekapBulananController extends ApiController
                 $pegawai = Pegawai::whereNip($nip)->firstOrFail();
                 // $pegawai = Pegawai::whereNip($nip)->where('id_jabatan', '>', $user->id_jabatan)->firstOrFail();
             }
-        } catch (\Exception $exception){
+        } catch (Exception $exception) {
             abort('404');
         }
         $data_inout = [];
-        foreach ($hari_kerja AS $key => $hk){
+        foreach ($hari_kerja AS $key => $hk) {
             $apel = false;
-            $kinerja = $pegawai->kinerja()->where('tgl_mulai','<=',$hk->tanggal)->where('tgl_selesai','>=',$hk->tanggal)->terbaru()->first();
+            $kinerja = $pegawai->kinerja()->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru()->first();
             $kehadiran['inout'] = $pegawai->checkinout()->where('checktime', 'like', '%' . $hk->tanggal . '%')->orderBy('checktype', 'desc')->get()->toArray();
             $kehadiran['status'] = '';
             if (count($kehadiran['inout']) > 0) {
@@ -118,7 +118,7 @@ class RekapBulananController extends ApiController
                         }
                     }
                 }
-                if ($masuk){
+                if ($masuk) {
                     $kehadiran['status'] = '';
                 } else {
                     $kehadiran['status'] = 'alpa';
@@ -132,7 +132,7 @@ class RekapBulananController extends ApiController
                         }
                     }
 
-                    if (date('N',strtotime($hk->tanggal)) != 1){
+                    if (date('N', strtotime($hk->tanggal)) != 1) {
                         if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
                             $apel = true;
                         }
@@ -142,8 +142,8 @@ class RekapBulananController extends ApiController
                 }
             }
 
-            if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))){
-                if ($kehadiran['status'] == ''){
+            if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))) {
+                if ($kehadiran['status'] == '') {
                     $kehadiran['status'] = 'alpa';
                 }
             }
@@ -171,19 +171,20 @@ class RekapBulananController extends ApiController
         ]);
     }
 
-    public function getDetailRekap($nip,$tgl) {
+    public function getDetailRekap($nip, $tgl)
+    {
         $date = new HariKerja;
 
-        $min_date = HariKerja::whereHas('statusHari', function ($query){
+        $min_date = HariKerja::whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
 
         /* Data kinerja */
-        $pegawai = Pegawai::where('nip',$nip)->first();
-        $kinerja = Kinerja::where('nip',$pegawai->nip)
-        ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
-        ->whereDate('tgl_mulai','<=',$tgl)
-        ->whereDate('tgl_selesai','>=',$tgl)
+        $pegawai = Pegawai::where('nip', $nip)->first();
+        $kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
+            ->whereDate('tgl_mulai', '<=', $tgl)
+            ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
             ->first();
 
@@ -194,7 +195,7 @@ class RekapBulananController extends ApiController
 
         $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
         $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
-   
+
         $status = '';
         $apel = false;
         if (count($checkinout) > 0) {
@@ -209,7 +210,7 @@ class RekapBulananController extends ApiController
                     }
                 }
             }
-            if ($masuk){
+            if ($masuk) {
                 $status = '';
             } else {
                 $status = 'alpa';
@@ -222,7 +223,7 @@ class RekapBulananController extends ApiController
                         $status = 'alpa';
                     }
                 }
-                if (date('N', strtotime($tgl)) != 1){
+                if (date('N', strtotime($tgl)) != 1) {
                     if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
                         $apel = true;
                     }
@@ -232,15 +233,15 @@ class RekapBulananController extends ApiController
             }
         }
 
-        if (strtotime($tgl) < strtotime(date('Y-m-d'))){
-            if ($status == ''){
+        if (strtotime($tgl) < strtotime(date('Y-m-d'))) {
+            if ($status == '') {
                 $status = 'alpa';
             }
         }
 
         /* Data array */
-        if ($kinerja){
-            if ($kinerja->jenis_kinerja != 'hadir'){
+        if ($kinerja) {
+            if ($kinerja->jenis_kinerja != 'hadir') {
                 $status = $kinerja->jenis_kinerja;
             }
         }

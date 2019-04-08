@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\MasterData\Bulan;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class LoginController extends Controller
 {
@@ -38,15 +40,16 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function username(){
+    public function username()
+    {
         return 'nip';
     }
 
     /**
      * Log the user out of the application.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function logout(Request $request)
     {
@@ -60,28 +63,27 @@ class LoginController extends Controller
     /**
      * The user has been authenticated.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
+     * @param Request $request
+     * @param mixed $user
      * @return mixed
      */
     protected function authenticated(Request $request, $user)
-    {   
-        
-        if(!$user->role()->first()){
+    {
+
+        if (!$user->role()->first()) {
             $this->guard()->logout();
             $request->session()->invalidate();
 
-            return $this->loggedOut($request) ?: redirect('/login')->with('message','Role pegawai belum ditentukan');
-            
-        }
-        else{
-            $jabatan = $user->id_jabatan?$user->jabatan()->first()->jabatan:'Administrator';
-            $tempat_lahir = $user->tempat_lahir?$user->tempat_lahir:'Administrator';
-            $tanggal_lahir = $user->tanggal_lahir?$user->tanggal_lahir:'1990-01-01';
-            $agama = $user->id_agama?$user->agama()->get()->first()->agama:'';
-            $bulan_lahir = ucfirst(\App\Models\MasterData\Bulan::find((int)date('m', strtotime(($user->tanggal_lahir?$user->tanggal_lahir:1))))->nama_bulan);
-    
-            $request->session()->put('user',collect([
+            return $this->loggedOut($request) ?: redirect('/login')->with('message', 'Role pegawai belum ditentukan');
+
+        } else {
+            $jabatan = $user->id_jabatan ? $user->jabatan()->first()->jabatan : 'Administrator';
+            $tempat_lahir = $user->tempat_lahir ? $user->tempat_lahir : 'Administrator';
+            $tanggal_lahir = $user->tanggal_lahir ? $user->tanggal_lahir : '1990-01-01';
+            $agama = $user->id_agama ? $user->agama()->get()->first()->agama : '';
+            $bulan_lahir = ucfirst(Bulan::find((int)date('m', strtotime(($user->tanggal_lahir ? $user->tanggal_lahir : 1))))->nama_bulan);
+
+            $request->session()->put('user', collect([
                 'nama' => $user->nama,
                 'nip' => $user->nip,
                 'foto' => $user->foto,
@@ -93,5 +95,5 @@ class LoginController extends Controller
             ]));
         }
     }
-    
+
 }

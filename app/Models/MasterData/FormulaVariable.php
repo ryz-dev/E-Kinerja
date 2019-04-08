@@ -8,6 +8,6 @@ class FormulaVariable extends Model
 {
     protected $table = 'formula_variable';
     protected $fillable = [
-        'variable','persentase_nilai','keterangan_variable'
+        'variable', 'persentase_nilai', 'keterangan_variable'
     ];
 }

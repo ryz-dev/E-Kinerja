@@ -222,7 +222,7 @@
         var getPage = function (date, skpd, search) {
             $('#pagination').hide();
             $('#pagination').twbsPagination('destroy');
-            $.get('{{route('api.web.monitoring.absen.page')}}?d='+date+'&skpd='+skpd+(search?('&search='+search):''))
+            $.get('{{route('monitoring-absen.api.page')}}?d='+date+'&skpd='+skpd+(search?('&search='+search):''))
                 .then(function (res) {
                     if (res.page == 0){
                         $('.list_pegawai').html('<tr style="text-align: center"><td colspan="100">Data Tidak Ditemukan</td></tr>')
@@ -243,7 +243,7 @@
             var selector = $('.list_pegawai');
             $('#preload').show();
             $.ajax({
-                url: "{{ route('api.web.monitoring.absen') }}?page="+page+'&d='+date+'&skpd='+skpd+(search?('&search='+search):''),
+                url: "{{ route('monitoring-absen.api') }}?page="+page+'&d='+date+'&skpd='+skpd+(search?('&search='+search):''),
                 data: '',
                 success: function(res) {
                     $('.datepicker').val(res.response.today);

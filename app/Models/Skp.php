@@ -8,10 +8,11 @@ class Skp extends Model
 {
     protected $table = 'skp';
     protected $fillable = [
-        'task','uuid'
+        'task', 'uuid'
     ];
 
-    public function skpPegawai(){
-        return $this->hasMany(SkpPegawai::class,'id_skp');
+    public function skpPegawai()
+    {
+        return $this->hasMany(SkpPegawai::class, 'id_skp');
     }
 }

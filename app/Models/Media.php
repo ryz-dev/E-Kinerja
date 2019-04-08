@@ -9,10 +9,11 @@ class Media extends Model
 {
     protected $table = 'media';
     protected $fillable = [
-        'id_kinerja','media','uuid'
+        'id_kinerja', 'media', 'uuid'
     ];
 
-    public function kinerja(){
-        return $this->belongsTo(Kinerja::class,'id_kinerja');
+    public function kinerja()
+    {
+        return $this->belongsTo(Kinerja::class, 'id_kinerja');
     }
 }

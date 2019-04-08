@@ -7,14 +7,16 @@ use App\Models\MasterData\Pegawai;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Psr\Http\Message\ServerRequestInterface;
-use \Laravel\Passport\Http\Controllers\AccessTokenController as ATC;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Passport\Http\Controllers\AccessTokenController as ATC;
 use Lcobucci\JWT\Parser;
+use Psr\Http\Message\ServerRequestInterface;
 
-class LoginPassportController extends ATC {
+class LoginPassportController extends ATC
+{
 
-    public function getLogin(ServerRequestInterface $request) {
+    public function getLogin(ServerRequestInterface $request)
+    {
         // helper format JSON
         $format = new ApiResponseFormat();
 
@@ -50,7 +52,7 @@ class LoginPassportController extends ATC {
 
             //get user and check valid Login
             //change to 'email' if you want
-            $user = Pegawai::with('jabatan','role')->where('nip', '=', $username)->first();
+            $user = Pegawai::with('jabatan', 'role')->where('nip', '=', $username)->first();
             if (!$user) {
                 return response()->json($format->formatResponseWithPages("Username/NIP tidak ditemukan", [], $format->STAT_NOT_FOUND()), $format->STAT_NOT_FOUND());
             } else if (!Hash::check($password, $user->password)) {
@@ -58,7 +60,7 @@ class LoginPassportController extends ATC {
             }
             $user['nama_agama'] = $user->agama->agama;
             $user = $user->toArray();
-            unset($user['remember_token'],$user['detail_uri'],$user['delete_uri'],$user['edit_uri'],$user['update_uri']);
+            unset($user['remember_token'], $user['detail_uri'], $user['delete_uri'], $user['edit_uri'], $user['update_uri']);
 
             //generate token
             $tokenResponse = parent::issueToken($req);
@@ -70,7 +72,7 @@ class LoginPassportController extends ATC {
             $data = json_decode($content, true);
 
             if (isset($data["error"])) {
-                return response()->json($format->formatResponseWithPages($data["error"].",".$data["message"], [], $format->STAT_UNAUTHORIZED()), $format->STAT_UNAUTHORIZED());
+                return response()->json($format->formatResponseWithPages($data["error"] . "," . $data["message"], [], $format->STAT_UNAUTHORIZED()), $format->STAT_UNAUTHORIZED());
             }
 
             //add user to issueToken
@@ -86,7 +88,8 @@ class LoginPassportController extends ATC {
         }
     }
 
-    public function getLogout(Request $request) {
+    public function getLogout(Request $request)
+    {
         try {
             $value = $request->bearerToken();
             $id = (new Parser())->parse($value)->getHeader('jti');
@@ -105,7 +108,8 @@ class LoginPassportController extends ATC {
         }
     }
 
-    public function getRefresh(ServerRequestInterface $request) {
+    public function getRefresh(ServerRequestInterface $request)
+    {
         // helper format JSON
         $format = new ApiResponseFormat();
 
@@ -144,10 +148,10 @@ class LoginPassportController extends ATC {
             $data = json_decode($content, true);
 
             if (isset($data["error"])) {
-                return response()->json($format->formatResponseWithPages($data["error"].",".$data["message"], [], $format->STAT_UNAUTHORIZED()), $format->STAT_UNAUTHORIZED());
+                return response()->json($format->formatResponseWithPages($data["error"] . "," . $data["message"], [], $format->STAT_UNAUTHORIZED()), $format->STAT_UNAUTHORIZED());
             }
             $user = $user->toArray();
-            unset($user['remember_token'],$user['detail_uri'],$user['delete_uri'],$user['edit_uri'],$user['update_uri']);
+            unset($user['remember_token'], $user['detail_uri'], $user['delete_uri'], $user['edit_uri'], $user['update_uri']);
             //add user to issueToken
             $resultLogin = collect($data);
             $resultLogin->put('user', $user);
@@ -155,35 +159,37 @@ class LoginPassportController extends ATC {
             // result Refresh TRUE
             return response()->json($format->formatResponseWithPages("Refresh Token berhasil", $resultLogin, $format->STAT_OK()), $format->STAT_OK());
         } catch (Exception $e) {
-            
+
             //return error message
             return response()->json($format->formatResponseWithPages("Internal Server Error", [], $format->INTERNAL_SERVER_ERROR()), $format->INTERNAL_SERVER_ERROR());
         }
     }
-    
-    public function getStatus() {
+
+    public function getStatus()
+    {
         try {
-            
+
             // helper format JSON
             $format = new ApiResponseFormat();
-            
+
             // result Login TRUE
             return response()->json($format->formatResponseWithPages("Token Aktif", [], $format->STAT_OK()), $format->STAT_OK());
         } catch (Exception $e) {
-            
+
             //return error message
             return response()->json($format->formatResponseWithPages("Internal Server Error", [], $format->INTERNAL_SERVER_ERROR()), $format->INTERNAL_SERVER_ERROR());
         }
     }
-    
-    public function getChangePassword(Request $r){
+
+    public function getChangePassword(Request $r)
+    {
         $r->validate([
             'old_password' => 'required|string',
             'new_password' => 'required|string'
         ]);
 
         $user = auth('api')->user();
-        
+
         if ($r->input('old_password') === $r->input('new_password')) {
             return response()->json([
                 'diagnostic' => [

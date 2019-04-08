@@ -78,7 +78,7 @@
             <!-- start tab hadir -->
             <div class="tab-pane active" id="hadir" role="tabpanel" aria-labelledby="hadir-tab">
                 <div class="container">
-                    <form action="{{route('api.web.input-kinerja.post')}}" class="form-submit-kinerja active-form">
+                    <form action="{{route('input-kinerja.api.post')}}" class="form-submit-kinerja active-form">
                         {{csrf_field()}}
                         <input type="hidden" name="id">
                         <input type="hidden" name="jenis_kinerja" value="hadir">
@@ -123,7 +123,7 @@
             <!-- start tab perjalanan dinas -->
             <div class="tab-pane" id="dinas" role="tabpanel" aria-labelledby="dinas-tab">
                 <div class="container">
-                    <form action="{{route('api.web.input-kinerja.post')}}" class="form-submit-kinerja">
+                    <form action="{{route('input-kinerja.api.post')}}" class="form-submit-kinerja">
                         {{csrf_field()}}
                         <input type="hidden" name="jenis_kinerja" value="perjalanan_dinas">
                         <div class="row">
@@ -180,7 +180,7 @@
             <!-- start tab perjalanan cuti -->
             <div class="tab-pane" id="cuti" role="tabpanel" aria-labelledby="cuti-tab">
                 <div class="container">
-                    <form action="{{route('api.web.input-kinerja.post')}}" class="form-submit-kinerja">
+                    <form action="{{route('input-kinerja.api.post')}}" class="form-submit-kinerja">
                         {{csrf_field()}}
                         <input type="hidden" name="jenis_kinerja" value="cuti">
                         <div class="row">
@@ -237,7 +237,7 @@
             <!-- start tab perjalanan izin -->
             <div class="tab-pane" id="izin" role="tabpanel" aria-labelledby="izin-tab">
                 <div class="container">
-                    <form action="{{route('api.web.input-kinerja.post')}}" class="form-submit-kinerja">
+                    <form action="{{route('input-kinerja.api.post')}}" class="form-submit-kinerja">
                         {{csrf_field()}}
                         <input type="hidden" name="jenis_kinerja" value="izin">
                         <div class="row">
@@ -294,7 +294,7 @@
             <!-- start tab sakit -->
             <div class="tab-pane" id="sakit" role="tabpanel" aria-labelledby="sakit-tab">
                 <div class="container">
-                    <form action="{{route('api.web.input-kinerja.post')}}" class="form-submit-kinerja">
+                    <form action="{{route('input-kinerja.api.post')}}" class="form-submit-kinerja">
                         {{csrf_field()}}
                         <input type="hidden" name="jenis_kinerja" value="sakit">
                         <div class="row">
@@ -351,7 +351,7 @@
                 $(this).addClass('active').siblings().removeClass('active')
             })
             var getDraft = function() {
-                $.get('{{route('api.web.input-kinerja.draft')}}', {
+                $.get('{{route('input-kinerja.api.draft')}}', {
                     '_token': '{{csrf_token()}}'
                 })
                     .then(function (res) {
@@ -379,7 +379,7 @@
                         cancelButtonText: 'Batalkan'
                     }).then((result) => {
                         if (result.value) {
-                            $.post('{{route('api.web.input-kinerja.delete-draft',['id' => ''])}}/' + id, {
+                            $.post('{{route('input-kinerja.api.delete-draft',['id' => ''])}}/' + id, {
                                 '_token': '{{csrf_token()}}'
                             })
                                 .then(function (res) {

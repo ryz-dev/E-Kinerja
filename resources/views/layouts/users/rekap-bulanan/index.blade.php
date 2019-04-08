@@ -174,7 +174,7 @@
             $("input[name='d_id_skpd']").val($("#skpd").val());
 
             var getBawahan = function (skpd) {
-                $.get('{{route('api.web.rekap-bulanan.get-bawahan')}}'+(skpd ? '?skpd='+skpd : ''))
+                $.get('{{route('rekap-bulanan.api.bawahan')}}'+(skpd ? '?skpd='+skpd : ''))
                     .then(function (res) {
                         if (res.response.length > 0) {
                             var data = res.response.map(function (val, i) {
@@ -292,7 +292,7 @@
             })
             var getRekap = function (nip, bulan, tahun) {
                 $('#preload').show();
-                $.get('{{route('api.web.rekap-bulanan',['nip' => ''])}}/' + nip + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
+                $.get('{{route('rekap-bulanan.api.rekap',['nip' => ''])}}/' + nip + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
                     .then(function (res) {
                         console.log(res);
                         if (res.response.rekap_bulanan.length > 0) {
@@ -407,7 +407,7 @@
             // Fungsi yang bertugas melakukan hit
             var detailRekap = function (nip, date) {
                 $('#preload').show();
-                $.get('{{route('api.web.rekap-detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + date)
+                $.get('{{route('rekap-bulanan.api.detail',['nip' => '','tanggal' => ''])}}/' + nip + '/' + date)
                     .then((res) => {
                         $('#preload').hide();
                         index = parseInt($('[name=modal_data_index]').val());

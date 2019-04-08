@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 
@@ -12,30 +13,31 @@ class GolonganRepository extends BaseRepository
     public function search(array $parameters, $perPage = 10)
     {
 
-        if (!empty($parameters['q']))
-        {
-            $this->where('golongan', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('kriteria', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('tunjangan', 'like', '%' . $parameters['q'] . '%','or');
+        if (!empty($parameters['q'])) {
+            $this->where('golongan', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('kriteria', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('tunjangan', 'like', '%' . $parameters['q'] . '%', 'or');
         }
 
         return $this->paginate($perPage);
     }
 
-    public function getPage(array $parameters){
-        if(!empty($parameters['q'])){
-            $this->where('golongan', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('kriteria', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('tunjangan', 'like', '%' . $parameters['q'] . '%','or');
+    public function getPage(array $parameters)
+    {
+        if (!empty($parameters['q'])) {
+            $this->where('golongan', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('kriteria', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('tunjangan', 'like', '%' . $parameters['q'] . '%', 'or');
         }
 
         return $this->count();
     }
 
-    public function required(){
+    public function required()
+    {
         return [
-                'golongan' => 'required',
-                'tunjangan' => 'required'
-            ];
+            'golongan' => 'required',
+            'tunjangan' => 'required'
+        ];
     }
 }

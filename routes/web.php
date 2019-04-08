@@ -2,7 +2,46 @@
 Route::get('/', function(){
     return redirect('/login');
 });
-
+Route::group(['middleware' => 'auth','namespace' => 'Pegawai'],function (){
+    Route::group(['prefix' => 'monitoring-absen','middleware' => 'can:monitoring-absen'],function (){
+        Route::group(['prefix' => 'api'],function (){
+            Route::get('','MonitoringAbsenController@dataAbsensi')->name('monitoring-absen.api');
+            Route::get('page','MonitoringAbsenController@getPage')->name('monitoring-absen.api.page');
+        });
+        Route::get('', 'MonitoringAbsenController@index')->name('monitoring.absen.index');
+    });
+    Route::group(['prefix' => 'rekap-bulanan','middleware' => 'can:rekap-bulanan'],function (){
+        Route::group(['prefix' => 'api'],function (){
+            Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('rekap-bulanan.api.bawahan');
+            Route::get('/{nip}/{tanggal}','RekapBulananController@getDetailRekap')->name('rekap-bulanan.api.detail');
+            Route::get('/{nip}/{bulan?}/{tahun?}','RekapBulananController@getRekap')->name('rekap-bulanan.api.rekap');
+        });
+        Route::get('','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index');
+        Route::post('', 'RekapBulananController@downloadRekapBulanan')->name('download.rekap.bulanan');
+    });
+    Route::group(['prefix' => 'input-kinerja'],function (){
+        Route::group(['prefix' => 'api'],function (){
+            Route::post('','InputKinerjaController@inputKinerja')->name('input-kinerja.api.post');
+            Route::get('draft','InputKinerjaController@getKinerjaTersimpan')->name('input-kinerja.api.draft');
+            Route::post('delete/draft/{id}','InputKinerjaController@hapusKinerjaTersimpan')->name('input-kinerja.api.delete-draft');
+        });
+        Route::get('','InputKinerjaController@index')->name('input-kinerja.index');
+    });
+    Route::group(['prefix' => 'penilaian-kinerja','middleware' => 'can:penilaian-kinerja'],function (){
+        Route::group(['prefix' => 'api'],function (){
+            Route::get('/get-bawahan','PenilaianKinerjaController@getBawahan')->name('penilaian-kinerja.api.bawahan');
+            Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('penilaian-kinerja.api.kinerja');
+            Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('penilaian-kinerja.api.reply');
+        });
+        Route::get('','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index');
+    });
+    Route::group(['prefix' => 'tunjangan-kinerja','middleware' => 'can:tunjangan-kinerja'],function(){
+        Route::group(['prefix' => 'api'],function (){
+            Route::get('{bulan?}/{tahun?}','TunjanganKinerjaController@tunjanganKinerja')->name('tunjangan-kinerja.api');
+        });
+        Route::get('','TunjanganKinerjaController@index')->name('tunjangan-kinerja.index');
+    });
+});
 Route::group(['prefix'=>'admin'], function(){
     Route::get('',function() {
         return redirect()->route('admin-login.index');
@@ -161,26 +200,6 @@ Route::post('update-password','Admin/PegawaiController@updatePassword')->name('u
 
 //API-WEB
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
-    Route::group(['prefix'=> 'monitoring-absen'], function(){
-        Route::get('','MonitoringAbsenController@dataAbsensi')->name('api.web.monitoring.absen');
-        Route::get('getpage','MonitoringAbsenController@getPage')->name('api.web.monitoring.absen.page');
-    });
-    Route::group(['prefix' => 'rekap-bulanan'],function (){
-        Route::get('/get-bawahan','RekapBulananController@getBawahan')->name('api.web.rekap-bulanan.get-bawahan');
-        Route::get('/{nip}/{tanggal}','RekapBulananController@getDetailRekap')->name('api.web.rekap-detail');
-        Route::get('/{nip}/{bulan?}/{tahun?}','RekapBulananController@getRekap')->name('api.web.rekap-bulanan');
-    });
-    Route::group(['prefix' => 'penilaian-kinerja'],function (){
-        Route::get('/get-bawahan','PenilaianKinerjaController@getBawahan')->name('api.web.get-bawahan-kinerja');
-        Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('api.web.get-penilaian-kinerja');
-        Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('api.web.reply-penilaian-kinerja');
-    });
-    Route::group(['prefix' => 'kinerja'],function (){
-        Route::post('','KinerjaController@inputKinerja')->name('api.web.input-kinerja.post');
-        Route::get('draft','KinerjaController@getKinerjaTersimpan')->name('api.web.input-kinerja.draft');
-        Route::post('delete/draft/{id}','KinerjaController@hapusKinerjaTersimpan')->name('api.web.input-kinerja.delete-draft');
-        Route::get('{bulan?}/{tahun?}','KinerjaController@tunjanganKinerja')->name('api.web.tunjangan-kinerja.get');
-    });
     Route::group(['prefix' => 'skp'],function (){
         Route::get('','SkpController@listSkpTask')->name('api.web.skp.list');
         Route::get('{id}','SkpController@detailSkpTask')->name('api.web.skp.detail');
@@ -209,21 +228,4 @@ Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
   Route User
 */
 
-
 Auth::routes();
-Route::get('/',function (){
-    return redirect('login');
-});
-Route::get('/home', 'HomeController@index')->name('home');
-Route::group(['middleware' => 'auth'],function (){
-    Route::get('/monitoring-absen', 'MonitoringAbsenController@index')->name('monitoring.absen.index')->middleware('can:monitoring-absen');
-    Route::get('/rekap-bulanan','RekapBulananController@rekapBulanan')->name('rekap-bulanan.index')->middleware('can:rekap-bulanan');
-    Route::get('/input-kinerja','InputKinerjaController@inputKinerja')->name('input-kinerja.index');
-    Route::get('/penilaian-kinerja','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index')->middleware('can:penilaian-kinerja');
-    Route::get('/tunjangan-kinerja','TunjanganKinerjaController@index')->name('tunjangan-kinerja.index')->middleware('can:tunjangan-kinerja');
-    Route::post('/rekap-bulanan', 'RekapBulananController@downloadRekapBulanan')->name('download.rekap.bulanan');
-});
-//
-// Route::get('/', function () {
-//     return view('welcome');
-// });

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 
@@ -17,58 +18,61 @@ class KinerjaRepository extends BaseRepository
     public function search(array $parameters, $perPage = 10)
     {
 
-        if (!empty($parameters['q']))
-        {
-            $this->where('nip', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('tgl_mulai', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('tgl_selesai', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('jenis_kinerja', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('rincian_kinerja', 'like', '%' . $parameters['q'] . '%','or');
-            $this->model = $this->model->orWhereHas('pegawai',function($query)use($parameters){
-                $query->where('nama',$parameters['q']);
+        if (!empty($parameters['q'])) {
+            $this->where('nip', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('tgl_mulai', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('tgl_selesai', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('jenis_kinerja', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('rincian_kinerja', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->model = $this->model->orWhereHas('pegawai', function ($query) use ($parameters) {
+                $query->where('nama', $parameters['q']);
             });
         }
 
         return $this->paginate($perPage);
     }
 
-    public function getPage(array $parameters){
-        if(!empty($parameters['q'])){
-            $this->where('nip', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('tgl_mulai', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('tgl_selesai', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('jenis_kinerja', 'like', '%' . $parameters['q'] . '%','or');
-            $this->where('rincian_kinerja', 'like', '%' . $parameters['q'] . '%','or');
-            $this->model = $this->model->orWhereHas('pegawai',function($query)use($parameters){
-                $query->where('nama',$parameters['q']);
+    public function getPage(array $parameters)
+    {
+        if (!empty($parameters['q'])) {
+            $this->where('nip', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('tgl_mulai', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('tgl_selesai', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('jenis_kinerja', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->where('rincian_kinerja', 'like', '%' . $parameters['q'] . '%', 'or');
+            $this->model = $this->model->orWhereHas('pegawai', function ($query) use ($parameters) {
+                $query->where('nama', $parameters['q']);
             });
         }
 
         return $this->count();
     }
 
-    public function getKinerjaTersimpan($nip){
-        return $this->model->where('nip',$nip)->where('tgl_mulai',date('Y-m-d'))->where('jenis_kinerja','hadir')->where('approve','5')->first();
+    public function getKinerjaTersimpan($nip)
+    {
+        return $this->model->where('nip', $nip)->where('tgl_mulai', date('Y-m-d'))->where('jenis_kinerja', 'hadir')->where('approve', '5')->first();
     }
 
-    public function deleteKinerjaTersimpan($id,$nip){
-        if ($cek_kinerja = $this->model->where('nip',$nip)->where('jenis_kinerja','hadir')->where('approve','5')->where('tgl_mulai',date('Y-m-d'))->find($id)){
+    public function deleteKinerjaTersimpan($id, $nip)
+    {
+        if ($cek_kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja', 'hadir')->where('approve', '5')->where('tgl_mulai', date('Y-m-d'))->find($id)) {
             return $cek_kinerja->delete() ? true : false;
         }
         return false;
     }
 
-    public function inputKinerja(array $input,$nip){
-        if (in_array($input['jenis_kinerja'],['hadir','sakit'])){
+    public function inputKinerja(array $input, $nip)
+    {
+        if (in_array($input['jenis_kinerja'], ['hadir', 'sakit'])) {
             $input['tgl_mulai'] = date('Y-m-d');
             $input['tgl_selesai'] = date('Y-m-d');
         } else {
-            $tgl_mulai = explode('/',$input['tgl_mulai']);
-            $tgl_selesai = explode('/',$input['tgl_selesai']);
+            $tgl_mulai = explode('/', $input['tgl_mulai']);
+            $tgl_selesai = explode('/', $input['tgl_selesai']);
 
-            $input['tgl_mulai'] = $tgl_mulai[2].'-'.$tgl_mulai[0].'-'.$tgl_mulai[1];
-            $input['tgl_selesai'] = $tgl_selesai[2].'-'.$tgl_selesai[0].'-'.$tgl_selesai[1];
-            if (strtotime($input['tgl_mulai']) > strtotime($input['tgl_selesai'])){
+            $input['tgl_mulai'] = $tgl_mulai[2] . '-' . $tgl_mulai[0] . '-' . $tgl_mulai[1];
+            $input['tgl_selesai'] = $tgl_selesai[2] . '-' . $tgl_selesai[0] . '-' . $tgl_selesai[1];
+            if (strtotime($input['tgl_mulai']) > strtotime($input['tgl_selesai'])) {
                 return [
                     'diagnostic' => [
                         'code' => '403',
@@ -79,32 +83,32 @@ class KinerjaRepository extends BaseRepository
         }
         $input['nip'] = $nip;
 //        $cek_kinerja = $this->>model->where('nip',$input['nip'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->whereIn('approve',[0,2])->first();
-        $cek_kinerja = $this->model->where('nip',$nip)->where(function ($query)use($input){
-            $query->where(function ($query) use ($input){
-                $query->where('tgl_mulai','<=',$input['tgl_mulai']);
-                $query->where('tgl_selesai','>=',$input['tgl_mulai']);
+        $cek_kinerja = $this->model->where('nip', $nip)->where(function ($query) use ($input) {
+            $query->where(function ($query) use ($input) {
+                $query->where('tgl_mulai', '<=', $input['tgl_mulai']);
+                $query->where('tgl_selesai', '>=', $input['tgl_mulai']);
             });
-            $query->orWhere(function ($query)use($input){
-                $query->where('tgl_mulai','<=',$input['tgl_selesai']);
-                $query->where('tgl_selesai','>=',$input['tgl_selesai']);
+            $query->orWhere(function ($query) use ($input) {
+                $query->where('tgl_mulai', '<=', $input['tgl_selesai']);
+                $query->where('tgl_selesai', '>=', $input['tgl_selesai']);
             });
-        })->whereIn('approve',[0,2])->first();
-        if (!$cek_kinerja){
+        })->whereIn('approve', [0, 2])->first();
+        if (!$cek_kinerja) {
             $input['approve'] = 0;
-            if ($input['jenis_kinerja'] == 'hadir'){
-                $cek_hari_kerja = HariKerja::whereDate('tanggal',date('Y-m-d'))->first();
-                if ($cek_hari_kerja){
-                    $cek_hadir_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','0')->where('nip',$nip)->first();
-                    $cek_pulang_kerja = Checkinout::whereDate('checktime',date('Y-m-d'))->where('checktype','1')->where('nip',$nip)->first();
+            if ($input['jenis_kinerja'] == 'hadir') {
+                $cek_hari_kerja = HariKerja::whereDate('tanggal', date('Y-m-d'))->first();
+                if ($cek_hari_kerja) {
+                    $cek_hadir_kerja = Checkinout::whereDate('checktime', date('Y-m-d'))->where('checktype', '0')->where('nip', $nip)->first();
+                    $cek_pulang_kerja = Checkinout::whereDate('checktime', date('Y-m-d'))->where('checktype', '1')->where('nip', $nip)->first();
                     /*if (strtotime($cek_hadir_kerja->checktime) <= strtotime(date('Y-m-d')." 09:00:00")){
                         if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8 * 3600)) {*/
-                    if (isset($input['status'])){
-                        if ($input['status'] == 5){
+                    if (isset($input['status'])) {
+                        if ($input['status'] == 5) {
                             $input['approve'] = 5;
                         }
                     }
-                    if (isset($input['id'])){
-                        $kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja','hadir')->findOrFail($input['id']);
+                    if (isset($input['id'])) {
+                        $kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja', 'hadir')->findOrFail($input['id']);
                         $kinerja->update([
                             'rincian_kinerja' => $input['rincian_kinerja'],
                             'approve' => $input['approve']
@@ -131,17 +135,17 @@ class KinerjaRepository extends BaseRepository
                     ]
                 ];
             } else {
-                $cek_kinerja = $this->model->where('nip',$nip)->where(function ($query)use($input){
-                    $query->where(function ($query) use ($input){
-                        $query->where('tgl_mulai','<=',$input['tgl_mulai']);
-                        $query->where('tgl_selesai','>=',$input['tgl_mulai']);
+                $cek_kinerja = $this->model->where('nip', $nip)->where(function ($query) use ($input) {
+                    $query->where(function ($query) use ($input) {
+                        $query->where('tgl_mulai', '<=', $input['tgl_mulai']);
+                        $query->where('tgl_selesai', '>=', $input['tgl_mulai']);
                     });
-                    $query->orWhere(function ($query)use($input){
-                        $query->where('tgl_mulai','<=',$input['tgl_selesai']);
-                        $query->where('tgl_selesai','>=',$input['tgl_selesai']);
+                    $query->orWhere(function ($query) use ($input) {
+                        $query->where('tgl_mulai', '<=', $input['tgl_selesai']);
+                        $query->where('tgl_selesai', '>=', $input['tgl_selesai']);
                     });
-                })->whereIn('approve',[5])->first();
-                if ($cek_kinerja){
+                })->whereIn('approve', [5])->first();
+                if ($cek_kinerja) {
                     return [
                         'diagnostic' => [
                             'code' => '403',
@@ -162,27 +166,28 @@ class KinerjaRepository extends BaseRepository
         }
     }
 
-    public function getTunjanganKinerja($nip,$bulan = null,$tahun = null,$detail = false){
+    public function getTunjanganKinerja($nip, $bulan = null, $tahun = null, $detail = false)
+    {
         $bulan = (int)($bulan ? $bulan : date('m'));
         $tahun = $tahun ? $tahun : date('Y');
 
-        $persen_absen = FormulaVariable::select('persentase_nilai')->where('variable','absen')->first()->persentase_nilai;
-        $persen_kinerja =  FormulaVariable::select('persentase_nilai')->where('variable','kinerja')->first()->persentase_nilai;
+        $persen_absen = FormulaVariable::select('persentase_nilai')->where('variable', 'absen')->first()->persentase_nilai;
+        $persen_kinerja = FormulaVariable::select('persentase_nilai')->where('variable', 'kinerja')->first()->persentase_nilai;
 
 
-        $pegawai = Pegawai::select('nip','id_jabatan')->with(['jabatan' => function($query){
-            $query->select('id','id_golongan');
-            $query->with(['golongan' => function($query){
-                $query->select('id','tunjangan');
+        $pegawai = Pegawai::select('nip', 'id_jabatan')->with(['jabatan' => function ($query) {
+            $query->select('id', 'id_golongan');
+            $query->with(['golongan' => function ($query) {
+                $query->select('id', 'tunjangan');
             }]);
-        }])->where('nip',$nip)->first();
+        }])->where('nip', $nip)->first();
         $nip = $pegawai->nip;
         $jumlah_tunjangan = $pegawai->jabatan->golongan->tunjangan;
 
 
-        $hari_kerja = HariKerja::select('tanggal')->whereHas('statusHari',function ($query){
-            $query->where('status_hari','kerja');
-        })->where('bulan',$bulan)->where('tahun',$tahun)->orderBy('tanggal','asc')->get();
+        $hari_kerja = HariKerja::select('tanggal')->whereHas('statusHari', function ($query) {
+            $query->where('status_hari', 'kerja');
+        })->where('bulan', $bulan)->where('tahun', $tahun)->orderBy('tanggal', 'asc')->get();
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $absen = 0;
         $data_kinerja = [];
@@ -190,7 +195,7 @@ class KinerjaRepository extends BaseRepository
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
                 $knj = $this->model->where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
-                $abs = Checkinout::select('checktime','checktype')->where('nip', $nip)->whereDate('checktime', $hk->tanggal)->orderBy('checktype','asc')->get();
+                $abs = Checkinout::select('checktime', 'checktype')->where('nip', $nip)->whereDate('checktime', $hk->tanggal)->orderBy('checktype', 'asc')->get();
                 $status = '';
                 if ($abs->count() > 0) {
                     $in = false;
@@ -206,20 +211,20 @@ class KinerjaRepository extends BaseRepository
                             $pulang = $a->checktime;
                         }
                     }
-                    if ($in){
+                    if ($in) {
                         $status = '';
                     } else {
                         $status = 'alpa';
                     }
                     $poin = 0;
-                    if ($in && $out){
-                        $poin = $this->poinAbsen($masuk,$pulang);
+                    if ($in && $out) {
+                        $poin = $this->poinAbsen($masuk, $pulang);
                         $status = 'hadir';
                     }
                     $absen = (float)$absen + $poin;
                 }
-                if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))){
-                    if ($status == ''){
+                if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))) {
+                    if ($status == '') {
                         $status = 'alpa';
                     }
                 }
@@ -274,15 +279,16 @@ class KinerjaRepository extends BaseRepository
             'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
             'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
         ];
-        if ($detail){
-            $response = array_merge($response,[
+        if ($detail) {
+            $response = array_merge($response, [
                 'data' => $data_kinerja
             ]);
         }
         return $response;
     }
 
-    private function poinAbsen($masuk,$pulang){
+    private function poinAbsen($masuk, $pulang)
+    {
         if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:00:00")) {
             if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                 return 1;
@@ -303,7 +309,13 @@ class KinerjaRepository extends BaseRepository
         return 0.2;
     }
 
-    public function required(){
+    private function toDecimal($number)
+    {
+        return number_format((float)$number, 2, ',', '.');
+    }
+
+    public function required()
+    {
         return [
             'nip' => 'required',
             'tgl_mulai' => 'required|date',
@@ -313,12 +325,9 @@ class KinerjaRepository extends BaseRepository
         ];
     }
 
-    private function getListNip(){
-        return implode(',',Pegawai::select('nip')->get()->pluck('nip')->all());
-    }
-
-    private function toDecimal($number){
-        return number_format((float)$number,2,',','.');
+    private function getListNip()
+    {
+        return implode(',', Pegawai::select('nip')->get()->pluck('nip')->all());
     }
 
 }

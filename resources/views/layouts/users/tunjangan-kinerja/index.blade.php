@@ -164,7 +164,7 @@
             var chart = chart2 = chart3 = chart4 = null;
             var loadData = function (bulan, tahun) {
                 $('#preload').show();
-                $.get('{{route('api.web.tunjangan-kinerja.get')}}' + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
+                $.get('{{route('tunjangan-kinerja.api')}}' + (bulan ? '/' + bulan : '') + (tahun ? '/' + tahun : ''))
                     .then(function (res) {
                         $('#persentase-absen').html(res.response.persentase.absen);
                         $('#persentase-kinerja').html(res.response.persentase.kinerja);

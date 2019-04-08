@@ -131,7 +131,7 @@
           }
 
           var getBawahan = function () {
-            $.get('{{route('api.web.get-bawahan-kinerja')}}'+'?date='+setDate)
+            $.get('{{route('penilaian-kinerja.api.bawahan')}}'+'?date='+setDate)
               .then(function (res) {
                   storePegawai = res;
                   loadData(res.response);
@@ -140,7 +140,7 @@
 
           var getKinerja = function (nip) {
               $('#preload').show();
-              $.get('{{route('api.web.get-penilaian-kinerja',['nip' => ''])}}/' + nip +'?date='+setDate)
+              $.get('{{route('penilaian-kinerja.api.kinerja',['nip' => ''])}}/' + nip +'?date='+setDate)
                   .then(function (res) {
                     if (res.response.now != null) {
                       $('#id').val(res.response.now.id);
@@ -250,7 +250,7 @@
             $("#formReply").serialize();
             $.ajax({
                type: "POST",
-               url: "{{route('api.web.reply-penilaian-kinerja')}}",
+               url: "{{route('penilaian-kinerja.api.reply')}}",
                data: 'type='+$(this).data('action')+'&'+$("#formReply").serialize(),
                success: function(data,xhr) {
                  if (xhr == 'success') {

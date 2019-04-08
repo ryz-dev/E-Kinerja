@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\APIBackup;
 
 use App\Models\MasterData\Eselon;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
+use Illuminate\Http\Request;
 
 class EselonController extends ApiController
 {
@@ -41,21 +41,21 @@ class EselonController extends ApiController
     public function storeEselon(Request $request)
     {
         $eselon = new \App\Http\Controllers\Admin\EselonController();
-        $data = $eselon->store($request,false);
+        $data = $eselon->store($request, false);
         return $this->ApiSpecResponses($data);
     }
 
-    public function updateEselon(Request $request,$id)
+    public function updateEselon(Request $request, $id)
     {
         $eselon = new \App\Http\Controllers\Admin\EselonController();
-        $data = $eselon->update($request,$id,false);
+        $data = $eselon->update($request, $id, false);
         return $this->ApiSpecResponses($data);
     }
 
     public function deleteEselon($id)
     {
         $eselon = new \App\Http\Controllers\Admin\EselonController();
-        $data = $eselon->delete($id,false);
+        $data = $eselon->delete($id, false);
         return $this->ApiSpecResponses($data);
     }
 

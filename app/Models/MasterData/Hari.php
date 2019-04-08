@@ -8,10 +8,11 @@ class Hari extends Model
 {
     protected $table = 'hari';
     protected $fillable = [
-        'nama_hari','uuid'
+        'nama_hari', 'uuid'
     ];
 
-    public function hariKerja(){
-        return $this->hasMany(HariKerja::class,'hari');
+    public function hariKerja()
+    {
+        return $this->hasMany(HariKerja::class, 'hari');
     }
 }

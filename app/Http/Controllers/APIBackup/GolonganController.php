@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\APIBackup;
 
-use App\Models\MasterData\Golongan;
 use App\Repositories\GolonganRepository;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -13,6 +11,7 @@ class GolonganController extends ApiController
 {
 
     protected $golongan;
+
     public function __construct(GolonganRepository $golongan)
     {
         $this->golongan = $golongan;
@@ -21,14 +20,14 @@ class GolonganController extends ApiController
     public function listGolongan(Request $request)
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
-        $golongan = $this->golongan->orderBy('created_at', 'DESC')->search($request->query(),$this->show_limit);
+        $golongan = $this->golongan->orderBy('created_at', 'DESC')->search($request->query(), $this->show_limit);
         return $this->ApiSpecResponses($golongan);
 
     }
 
     public function detailGolongan($id)
     {
-        if ($golongan = $this->golongan->find($id)){
+        if ($golongan = $this->golongan->find($id)) {
             return $this->ApiSpecResponses($golongan);
         }
         return $this->ApiSpecResponses([
@@ -38,11 +37,11 @@ class GolonganController extends ApiController
 
     public function storeGolongan(Request $request)
     {
-        $validation = Validator::make($request->input(),$this->golongan->required());
-        if ($validation->fails()){
+        $validation = Validator::make($request->input(), $this->golongan->required());
+        if ($validation->fails()) {
             return $this->ApiSpecResponses([
                 'required' => $validation->errors()
-            ],422);
+            ], 422);
         }
         $input = $request->input();
         $input['uuid'] = (string)Str::uuid();
@@ -50,29 +49,29 @@ class GolonganController extends ApiController
         return $this->ApiSpecResponses($data);
     }
 
-    public function updateGolongan(Request $request,$id)
+    public function updateGolongan(Request $request, $id)
     {
-        $validation = Validator::make($request->input(),$this->golongan->required());
-        if ($validation->fails()){
+        $validation = Validator::make($request->input(), $this->golongan->required());
+        if ($validation->fails()) {
             return $this->ApiSpecResponses([
                 'required' => $validation->errors()
-            ],422);
+            ], 422);
         }
         $update = $request->input();
-        if ($this->golongan->update($id,$update)){
+        if ($this->golongan->update($id, $update)) {
             return $this->ApiSpecResponses([
                 'message' => 'berhasil mengupdate golongan'
             ]);
         }
         return $this->ApiSpecResponses([
             'message' => 'Gagal mengupdate data golongan'
-        ],500);
+        ], 500);
 
     }
 
     public function deleteGolongan($id)
     {
-        if ($this->golongan->delete($id)){
+        if ($this->golongan->delete($id)) {
             return $this->ApiSpecResponses([
                 'message' => 'skp pegawai berhasil dihapus'
             ]);

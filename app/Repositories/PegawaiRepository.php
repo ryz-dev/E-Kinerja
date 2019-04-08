@@ -1,23 +1,28 @@
 <?php
+
 namespace App\Repositories;
 
 
 use App\Models\Absen\Checkinout;
 use App\Models\Absen\Kinerja;
 use App\Models\MasterData\Agama;
+use App\Models\MasterData\Bulan;
 use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Jabatan;
 use App\Models\MasterData\Pegawai;
 use App\Models\MasterData\Skpd;
-use App\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use PDF;
 
 class PegawaiRepository extends BaseRepository
 {
     private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
-    private $special_user_id = [2,3,4];
+    private $special_user_id = [2, 3, 4];
+
     public function model()
     {
         return 'App\Models\MasterData\Pegawai';
@@ -25,86 +30,91 @@ class PegawaiRepository extends BaseRepository
 
     public function search(array $parameters, $perPage = 10)
     {
-        if (!empty($parameters['deleted'])){
+        if (!empty($parameters['deleted'])) {
             $this->withTrashed();
             $this->whereNotNull('deleted_at');
         }
         if (!empty($parameters['q'])) {
-            $this->model = $this->model->where(function($query)use($parameters){
+            $this->model = $this->model->where(function ($query) use ($parameters) {
                 $query->where('nama', 'like', '%' . $parameters['q'] . '%');
                 $query->orWhere('nip', 'like', '%' . $parameters['q'] . '%');
                 $query->orWhere('tanggal_lahir', 'like', '%' . $parameters['q'] . '%');
                 $query->orWhere('jns_kel', 'like', '%' . $parameters['q'] . '%');
                 $query->orWhere('tempat_lahir', 'like', '%' . $parameters['q'] . '%');
-                $query->orWhereHas('jabatan',function($query)use($parameters){
-                    $query->where('jabatan','like','%'.$parameters['q'].'%');
+                $query->orWhereHas('jabatan', function ($query) use ($parameters) {
+                    $query->where('jabatan', 'like', '%' . $parameters['q'] . '%');
                 });
             });
         }
         return $this->paginate($perPage);
     }
 
-    public function setPassword($nip,$password){
-        $this->model->where('nip',$nip)->update([
+    public function setPassword($nip, $password)
+    {
+        $this->model->where('nip', $nip)->update([
             'password' => bcrypt($password)
         ]);
     }
 
-    public function getPage(array $parameters){
-        if (!empty($parameters['deleted'])){
+    public function getPage(array $parameters)
+    {
+        if (!empty($parameters['deleted'])) {
             $this->withTrashed();
             $this->whereNotNull('deleted_at');
         }
         if (!empty($parameters['q'])) {
-            $this->model = $this->model->where(function($query)use($parameters){
+            $this->model = $this->model->where(function ($query) use ($parameters) {
                 $query->where('nama', 'like', '%' . $parameters['q'] . '%');
                 $query->orWhere('nip', 'like', '%' . $parameters['q'] . '%');
                 $query->orWhere('tanggal_lahir', 'like', '%' . $parameters['q'] . '%');
                 $query->orWhere('jns_kel', 'like', '%' . $parameters['q'] . '%');
                 $query->orWhere('tempat_lahir', 'like', '%' . $parameters['q'] . '%');
-                $query->orWhereHas('jabatan',function($query)use($parameters){
-                    $query->where('jabatan','like','%'.$parameters['q'].'%');
+                $query->orWhereHas('jabatan', function ($query) use ($parameters) {
+                    $query->where('jabatan', 'like', '%' . $parameters['q'] . '%');
                 });
             });
         }
         return $this->count();
     }
 
-    public function updatePassword($nip,$password){
+    public function updatePassword($nip, $password)
+    {
         $pegawai = $this->model->whereNip($nip)->first();
         $pegawai->password = bcrypt($password);
         return $pegawai->save();
     }
 
-    public function getBawahan($nip,$skpd = null){
+    public function getBawahan($nip, $skpd = null)
+    {
         $skpd = $skpd ? $skpd : null;
-        $user = Pegawai::with('role')->where('nip',$nip)->first();
-        $pegawai = $this->model->where('nip','!=',$user->nip);
+        $user = Pegawai::with('role')->where('nip', $nip)->first();
+        $pegawai = $this->model->where('nip', '!=', $user->nip);
         if ($skpd > 0) {
-            $pegawai->where('id_skpd',$skpd);
+            $pegawai->where('id_skpd', $skpd);
         }
 
         if ($skpd < 0) {
-            $pegawai->where('id_jabatan',3);
+            $pegawai->where('id_jabatan', 3);
         }
 
-        $pegawai = $pegawai->leftJoin('jabatan','pegawai.id_jabatan','=','jabatan.id');
-        $pegawai = $pegawai->leftJoin('golongan','jabatan.id_golongan','=','golongan.id');
-        $pegawai = $pegawai->orderBy('golongan.tunjangan','desc');
+        $pegawai = $pegawai->leftJoin('jabatan', 'pegawai.id_jabatan', '=', 'jabatan.id');
+        $pegawai = $pegawai->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id');
+        $pegawai = $pegawai->orderBy('golongan.tunjangan', 'desc');
         $pegawai = $pegawai->orderBy('pegawai.nama');
 
-        if (in_array($user->role()->pluck('id_role')->max(),$this->special_user_id) == false) {
+        if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
             if ($user->role()->pluck('id_role')->max() != 5) {
-                $pegawai->whereHas('jabatan', function($query) use ($user){
-                    $query->where('id_atasan','=',$user->id_jabatan);
+                $pegawai->whereHas('jabatan', function ($query) use ($user) {
+                    $query->where('id_atasan', '=', $user->id_jabatan);
                 });
             }
         }
         return $pegawai->get();
     }
 
-    public function getRekap($nip_user,$nip,$bulan = null,$tahun = null){
-        $user = $this->model->with('role')->where('nip',$nip_user)->first();
+    public function getRekap($nip_user, $nip, $bulan = null, $tahun = null)
+    {
+        $user = $this->model->with('role')->where('nip', $nip_user)->first();
         $bulan = (int)($bulan ?: date('m'));
         $tahun = ($tahun ?: date('Y'));
         $hari_kerja = HariKerja::where('bulan', $bulan)->where('tahun', $tahun)->whereHas('statusHari', function ($query) {
@@ -113,16 +123,16 @@ class PegawaiRepository extends BaseRepository
         try {
             if (in_array($user->role()->first()->nama_role, $this->special_user) == false) {
                 if ($user->role()->first()->nama_role == 'Kepala Dinas') {
-                    $pegawai = $this->model->whereNip($nip)->where('id_skpd',$user->id_skpd)->firstOrFail();
-                } else{
-                    $pegawai = $this->model->whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query)use($nip_user) {
+                    $pegawai = $this->model->whereNip($nip)->where('id_skpd', $user->id_skpd)->firstOrFail();
+                } else {
+                    $pegawai = $this->model->whereNip($nip)->whereHas('jabatan.atasan.pegawai', function ($query) use ($nip_user) {
                         $query->where('nip', $nip_user);
                     })->firstOrFail();
                 }
             } else {
                 $pegawai = $this->model->whereNip($nip)->firstOrFail();
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             abort('404');
         }
         $data_inout = [];
@@ -143,7 +153,7 @@ class PegawaiRepository extends BaseRepository
                         }
                     }
                 }
-                if ($masuk){
+                if ($masuk) {
                     $kehadiran['status'] = '';
                 } else {
                     $kehadiran['status'] = 'alpa';
@@ -160,13 +170,13 @@ class PegawaiRepository extends BaseRepository
                     $kehadiran['status'] = 'alpa';
                 }
             } else {
-                if (strtotime($hk->tanggal)  <= strtotime(date('Y-m-d'))){
+                if (strtotime($hk->tanggal) <= strtotime(date('Y-m-d'))) {
                     $kehadiran['status'] = 'alpa';
                 }
             }
 
-            if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))){
-                if ($kehadiran['status'] == ''){
+            if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))) {
+                if ($kehadiran['status'] == '') {
                     $kehadiran['status'] = 'alpa';
                 }
             }
@@ -192,7 +202,8 @@ class PegawaiRepository extends BaseRepository
         ];
     }
 
-    public function getDetailRekap($nip,$tgl){
+    public function getDetailRekap($nip, $tgl)
+    {
         $date = new HariKerja;
 
         /* Tarik tanggal sebelumnya */
@@ -232,7 +243,7 @@ class PegawaiRepository extends BaseRepository
                     }
                 }
             }
-            if ($masuk){
+            if ($masuk) {
                 $status = '';
             } else {
                 $status = 'alpa';
@@ -250,15 +261,15 @@ class PegawaiRepository extends BaseRepository
             }
         }
 
-        if (strtotime($tgl) < strtotime(date('Y-m-d'))){
-            if ($status == ''){
+        if (strtotime($tgl) < strtotime(date('Y-m-d'))) {
+            if ($status == '') {
                 $status = 'alpa';
             }
         }
 
         /* Data array */
-        if ($kinerja){
-            if ($kinerja->jenis_kinerja != 'hadir'){
+        if ($kinerja) {
+            if ($kinerja->jenis_kinerja != 'hadir') {
                 $status = $kinerja->jenis_kinerja;
             }
         }
@@ -266,7 +277,7 @@ class PegawaiRepository extends BaseRepository
             "kinerja" => $kinerja,
             "checkinout" => $checkinout,
             "tanggal" => $this->formatDate2($tgl),
-            "status" => ucwords(str_replace('_',' ',$status))
+            "status" => ucwords(str_replace('_', ' ', $status))
         ];
 
         return [array_merge($result, [
@@ -275,21 +286,24 @@ class PegawaiRepository extends BaseRepository
         ])];
     }
 
-    public function storeRole($nip,$role){
+    public function storeRole($nip, $role)
+    {
         $pegawai = $this->model->find($nip);
-        $data = $pegawai->role()->attach($role,['uuid'=>(string)\Illuminate\Support\Str::uuid()]);
+        $data = $pegawai->role()->attach($role, ['uuid' => (string)Str::uuid()]);
         return $data;
     }
 
-    public function deleteRole($nip){
+    public function deleteRole($nip)
+    {
         $pegawai = $this->model->find($nip);
         $data = $pegawai->role()->detach();
         return $data;
     }
 
-    public function required($nip = null){
+    public function required($nip = null)
+    {
         return [
-            'nip' => 'required|unique:pegawai,nip'.($nip ? ','.$nip.',nip' : ''),
+            'nip' => 'required|unique:pegawai,nip' . ($nip ? ',' . $nip . ',nip' : ''),
             'foto' => 'image',
             'nama' => 'required',
             'tanggal_lahir' => 'required|date',
@@ -303,12 +317,6 @@ class PegawaiRepository extends BaseRepository
         ];
     }
 
-    public function uploadFoto($file)
-    {
-        /*todo : handle untuk upload foto*/
-        return str_replace('public/', '', $file->store('public/upload'));
-    }
-
     private function getListAgama()
     {
         return implode(',', Agama::select('id')->pluck('id')->all());
@@ -317,6 +325,12 @@ class PegawaiRepository extends BaseRepository
     private function getListJabatan()
     {
         return implode(',', Jabatan::select('id')->pluck('id')->all());
+    }
+
+    public function uploadFoto($file)
+    {
+        /*todo : handle untuk upload foto*/
+        return str_replace('public/', '', $file->store('public/upload'));
     }
 
     public function downloadRekapBulanan(Request $request)
@@ -338,13 +352,14 @@ class PegawaiRepository extends BaseRepository
         $data = $this->parseDataRekap($pegawai, $persen, $hari_kerja);
         $skpd = Skpd::find($request->id_skpd);
         $namaSkpd = $skpd ? $skpd->nama_skpd : 'PEMERINTAH KABUPATEN KOLAKA';
-        $periode = ucfirst(\App\Models\MasterData\Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan . ' ' . date('Y', strtotime($periode_rekap)));
-        $tanggal_cetak = date('d') . ' ' . ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan) . ' ' . date('Y');
-        $pdf = \PDF::loadView('pdf.rekap-bulanan', compact('data', 'namaSkpd', 'periode', 'tanggal_cetak'));
+        $periode = ucfirst(Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan . ' ' . date('Y', strtotime($periode_rekap)));
+        $tanggal_cetak = date('d') . ' ' . ucfirst(Bulan::find((int)date('m'))->nama_bulan) . ' ' . date('Y');
+        $pdf = PDF::loadView('pdf.rekap-bulanan', compact('data', 'namaSkpd', 'periode', 'tanggal_cetak'));
         $pdf->setPaper('legal', 'landscape');
 
         return $pdf->stream('rekap_bulanan.pdf');
     }
+
     private function getDataPegawai($user, $bulan, $tahun, $id_skpd)
     {
         $pegawai = Pegawai::where('nip', '!=', '')->whereNotNull('id_jabatan');
@@ -406,6 +421,24 @@ class PegawaiRepository extends BaseRepository
         });
     }
 
+    private function parseKinerja($item, $key, $hari_kerja)
+    {
+        return $item->kinerja->map(function ($itemkinerja, $keykinerja) use ($key, $hari_kerja) {
+            $kinerja = $absen_tambahan = 0;
+            if ($itemkinerja->wherein('tgl_mulai', $hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2) {
+                $kinerja = 1;
+            }
+            if ($itemkinerja->wherein('tgl_mulai', $hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2 && $itemkinerja->jenis_kinerja <> 'hadir') {
+                $absen_tambahan = 1;
+            }
+            return collect(['kinerja' => $kinerja, 'absen_tambahan' => $absen_tambahan]);
+        })->filter(function ($value, $key) {
+            return $value->filter(function ($v, $k) {
+                return $v > 0;
+            });
+        });
+    }
+
     private function parseAbsen($item, $key, $hari_kerja)
     {
         return $item->checkinout->groupBy(function ($itemcheckiout, $keycheckiout) {
@@ -446,24 +479,6 @@ class PegawaiRepository extends BaseRepository
             }
         })->filter(function ($value, $key) {
             return $value > 0;
-        });
-    }
-
-    private function parseKinerja($item, $key, $hari_kerja)
-    {
-        return $item->kinerja->map(function ($itemkinerja, $keykinerja) use ($key, $hari_kerja) {
-            $kinerja = $absen_tambahan = 0;
-            if ($itemkinerja->wherein('tgl_mulai', $hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2) {
-                $kinerja = 1;
-            }
-            if ($itemkinerja->wherein('tgl_mulai', $hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2 && $itemkinerja->jenis_kinerja <> 'hadir') {
-                $absen_tambahan = 1;
-            }
-            return collect(['kinerja' => $kinerja, 'absen_tambahan' => $absen_tambahan]);
-        })->filter(function ($value, $key) {
-            return $value->filter(function ($v, $k) {
-                return $v > 0;
-            });
         });
     }
 

@@ -8,15 +8,17 @@ use App\Models\MasterData\Jabatan;
 use App\Models\MasterData\Pegawai;
 use App\Models\MasterData\Skpd;
 use App\Repositories\PegawaiRepository;
-use Illuminate\Database\QueryException;
+use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use stdClass;
 
 class PegawaiController extends AdminController
 {
     protected $pegawai;
+
     public function __construct(PegawaiRepository $pegawai)
     {
         $this->pegawai = $pegawai;
@@ -36,7 +38,7 @@ class PegawaiController extends AdminController
     public function edit($id)
     {
         $pegawai = Pegawai::with('jabatan', 'agama', 'skpd')->where('nip', $id)->orWhere('uuid', $id)->firstOrFail();
-        $data_option = new \stdClass();
+        $data_option = new stdClass();
         $data_option->agama = Agama::get();
         $data_option->jabatan = Jabatan::get();
         $data_option->skpd = Skpd::get();
@@ -45,7 +47,7 @@ class PegawaiController extends AdminController
 
     public function add()
     {
-        $data_option = new \stdClass();
+        $data_option = new stdClass();
         $data_option->agama = Agama::get();
         $data_option->jabatan = Jabatan::get();
         $data_option->skpd = Skpd::get();
@@ -54,11 +56,11 @@ class PegawaiController extends AdminController
 
     public function store(Request $request)
     {
-        $validation = Validator::make($request->input(),$this->pegawai->required());
-        if ($validation->fails()){
+        $validation = Validator::make($request->input(), $this->pegawai->required());
+        if ($validation->fails()) {
             return $this->ApiSpecResponses([
                 'required' => $validation->errors()
-            ],422);
+            ], 422);
         }
         $input = $request->input();
         $input['uuid'] = (string)Str::uuid();
@@ -66,7 +68,7 @@ class PegawaiController extends AdminController
             $input['foto'] = $this->pegawai->uploadFoto($request->file('foto'));
         }
         if ($data = $this->pegawai->create($input)) {
-            $this->pegawai->setPassword($data->nip,'secret');
+            $this->pegawai->setPassword($data->nip, 'secret');
             return $this->ApiSpecResponses($data);
         }
         return $this->ApiSpecResponses([
@@ -94,17 +96,17 @@ class PegawaiController extends AdminController
 
     public function update(Request $request, $id)
     {
-        $validation = Validator::make($request->input(),$this->pegawai->required($id));
-        if ($validation->fails()){
+        $validation = Validator::make($request->input(), $this->pegawai->required($id));
+        if ($validation->fails()) {
             return $this->ApiSpecResponses([
                 'required' => $validation->errors()
-            ],422);
+            ], 422);
         }
         $update = $request->input();
         if ($request->hasFile('foto')) {
             $update['foto'] = $this->pegawai->uploadFoto($request->file('foto'));
         }
-        if ($data = $this->pegawai->update($id,$update)){
+        if ($data = $this->pegawai->update($id, $update)) {
             return $this->ApiSpecResponses([
                 'message' => 'Berhasil mengupdate pegawai'
             ]);
@@ -116,18 +118,18 @@ class PegawaiController extends AdminController
 
     public function delete($id)
     {
-        if ($this->pegawai->delete($id)){
+        if ($this->pegawai->delete($id)) {
             return $this->ApiSpecResponses([
                 'message' => 'Berhasil menghapus pegawai'
             ]);
-        } else if ($this->pegawai->withTrashed()->delete($id,true)){
+        } else if ($this->pegawai->withTrashed()->delete($id, true)) {
             return $this->ApiSpecResponses([
                 'message' => 'Berhasil menghapus pegawai'
             ]);
         }
         return $this->ApiSpecResponses([
             'message' => 'Gagal menghapus pegawai'
-        ],500);
+        ], 500);
     }
 
     public function getPage(Request $request)
@@ -156,7 +158,8 @@ class PegawaiController extends AdminController
         return redirect()->back();
     }
 
-    public function downloadRekapBulanan(Request $request){
+    public function downloadRekapBulanan(Request $request)
+    {
         return $this->pegawai->downloadRekapBulanan($request);
     }
 
@@ -170,8 +173,8 @@ class PegawaiController extends AdminController
             ], 500);
         }
 
-        if (\Hash::check($request->input('oldPassword'), $user->password)) {
-            if ($this->pegawai->updatePassword($user->nip,$request->input('newPassword'))){
+        if (Hash::check($request->input('oldPassword'), $user->password)) {
+            if ($this->pegawai->updatePassword($user->nip, $request->input('newPassword'))) {
                 return $this->ApiSpecResponses([
                     'message' => 'berhasil mengubah kata sandi'
                 ]);
@@ -184,6 +187,6 @@ class PegawaiController extends AdminController
 
     public function restorePegawai($nip)
     {
-        $this->pegawai->withTrashed()->where('nip',$nip)->restore();
+        $this->pegawai->withTrashed()->where('nip', $nip)->restore();
     }
 }

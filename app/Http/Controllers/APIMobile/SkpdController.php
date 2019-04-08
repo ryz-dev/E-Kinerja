@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\APIMobile;
+
 use App\Models\MasterData\Skpd;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
+use Illuminate\Http\Request;
 
 class SkpdController extends ApiController
 {
@@ -16,7 +16,7 @@ class SkpdController extends ApiController
         try {
             $skpd = Skpd::orderBy('created_at', 'DESC');
             if ($request->has('q')) {
-                $skpd = $skpd->where('nama_skpd','like','%'.$request->input('q').'%');
+                $skpd = $skpd->where('nama_skpd', 'like', '%' . $request->input('q') . '%');
             }
 
             if ($page) {
@@ -25,7 +25,7 @@ class SkpdController extends ApiController
                 $skpd = $skpd->get();
             }
             $data = [];
-            
+
             if ($user->role()->first()->nama_role == 'Bupati') {
                 $data[] = [
                     'id' => -1,
@@ -35,7 +35,7 @@ class SkpdController extends ApiController
                 ];
             }
 
-            foreach($skpd as $s){
+            foreach ($skpd as $s) {
                 $data[] = [
                     'id' => $s->id,
                     'uuid' => $s->uuid,

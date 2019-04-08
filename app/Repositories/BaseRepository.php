@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 abstract class BaseRepository
@@ -12,12 +13,8 @@ abstract class BaseRepository
     }
 
     abstract public function model();
-    abstract public function search(array $parameters);
 
-    public function find($id)
-    {
-        return $this->model->find($id);
-    }
+    abstract public function search(array $parameters);
 
     public function get()
     {
@@ -31,28 +28,27 @@ abstract class BaseRepository
 
     public function update($id, array $attributes)
     {
-        if ($model = $this->find($id))
-        {
+        if ($model = $this->find($id)) {
             return $model->update($attributes) !== false;
-        }
-        else
-        {
+        } else {
             return false;
         }
 
     }
 
-    public function delete($id,$force = false)
+    public function find($id)
     {
-        if ($model = $this->find($id))
-        {
-            if ($force){
+        return $this->model->find($id);
+    }
+
+    public function delete($id, $force = false)
+    {
+        if ($model = $this->find($id)) {
+            if ($force) {
                 return $model->forceDelete();
             }
             return $model->delete();
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -99,42 +95,49 @@ abstract class BaseRepository
         return $this;
     }
 
-    public function withTrashed(){
+    public function withTrashed()
+    {
         $this->model = $this->model->withTrashed();
         return $this;
     }
 
-    public function whereNotNull($param){
+    public function whereNotNull($param)
+    {
         $this->model = $this->model->whereNotNull($param);
         return $this;
     }
 
-    public function restore(){
+    public function restore()
+    {
         $this->model = $this->model->restore();
         return $this;
     }
 
-    public function count(){
+    public function count()
+    {
         return $this->model->count();
     }
 
-    public function formatDate($date){
-        return date('d/m/Y',strtotime($date));
+    public function formatDate($date)
+    {
+        return date('d/m/Y', strtotime($date));
     }
 
-    public function formatDate2($date){
-        $d = date('d',strtotime($date));
-        $bulan = (int)date('m',strtotime($date));
-        $m = ucfirst(Bulan::where('id',$bulan)->first()->nama_bulan);
-        $y = date('Y',strtotime($date));
-        return $d." ".$m." ".$y;
+    public function formatDate2($date)
+    {
+        $d = date('d', strtotime($date));
+        $bulan = (int)date('m', strtotime($date));
+        $m = ucfirst(Bulan::where('id', $bulan)->first()->nama_bulan);
+        $y = date('Y', strtotime($date));
+        return $d . " " . $m . " " . $y;
     }
 
-    public function formatDate3($date){
-        $bulan = (int)date('m',strtotime($date));
-        $m = ucfirst(Bulan::where('id',$bulan)->first()->nama_bulan);
-        $y = date('Y',strtotime($date));
-        return $m." ".$y;
+    public function formatDate3($date)
+    {
+        $bulan = (int)date('m', strtotime($date));
+        $m = ucfirst(Bulan::where('id', $bulan)->first()->nama_bulan);
+        $y = date('Y', strtotime($date));
+        return $m . " " . $y;
     }
 
 }

@@ -4,8 +4,8 @@ namespace App\Models\MasterData;
 
 use App\Models\Absen\Kinerja;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
 class Pegawai extends Authenticatable
@@ -14,13 +14,13 @@ class Pegawai extends Authenticatable
     use Notifiable;
     use HasApiTokens;
 
+    public $incrementing = false;
     protected $table = 'pegawai';
     protected $primaryKey = 'nip';
-    public $incrementing = false;
     protected $fillable = [
-        'status_upacara','nip','nama','tanggal_lahir','id_agama','id_jabatan','jns_kel','tempat_lahir','foto','uuid','id_skpd','password','userid'
+        'status_upacara', 'nip', 'nama', 'tanggal_lahir', 'id_agama', 'id_jabatan', 'jns_kel', 'tempat_lahir', 'foto', 'uuid', 'id_skpd', 'password', 'userid'
     ];
-    protected $appends = ['detail_uri','delete_uri','edit_uri','update_uri','update_password_uri'];
+    protected $appends = ['detail_uri', 'delete_uri', 'edit_uri', 'update_uri', 'update_password_uri'];
     protected $hidden = ['password'];
 
     public function agama()
