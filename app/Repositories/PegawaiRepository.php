@@ -410,7 +410,6 @@ class PegawaiRepository extends BaseRepository
         $pegawai = $pegawai->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id');
         $pegawai = $pegawai->orderBy('golongan.tunjangan', 'desc');
         $pegawai = $pegawai->orderBy('pegawai.nama');
-
         if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
             if ($user->role()->pluck('id_role')->max() != 5) {
                 $pegawai->whereHas('jabatan', function ($query) use ($user) {
