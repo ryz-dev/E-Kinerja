@@ -43,17 +43,20 @@ Route::group(['middleware' => 'auth'],function (){
             Route::get('','TunjanganKinerjaController@index')->name('tunjangan-kinerja.index');
         });
     });
-    Route::group(['prefix'=>'admin'], function(){
-        Route::get('',function() {
-            return redirect()->route('admin-login.index');
+    Route::post('update-password','Admin/PegawaiController@updatePassword')->name('update-password');
+});
+Route::group(['prefix'=>'admin'], function(){
+    Route::get('',function() {
+        return redirect()->route('admin-login.index');
+    });
+    Route::group(['namespace' => 'Auth'],function (){
+        Route::get('', function(){
+            return redirect()->route('admin-login-index');
         });
-        Route::group(['namespace' => 'Auth'],function (){
-            Route::get('', function(){
-                return redirect()->route('admin-login-index');
-            });
-            Route::get('/login', 'AdminLoginController@showLoginForm')->name('admin-login-index');
-            Route::post('login', 'AdminLoginController@login')->name('admin-login');
-        });
+        Route::get('/login', 'AdminLoginController@showLoginForm')->name('admin-login-index');
+        Route::post('login', 'AdminLoginController@login')->name('admin-login');
+    });
+    Route::group(['middleware' => 'Auth'],function (){
         Route::group(['middleware' => 'can:master-data','namespace' => 'Admin'],function (){
             Route::group(['prefix' => 'pegawai'],function (){
                 Route::group(['prefix' => 'api'],function (){
@@ -196,8 +199,6 @@ Route::group(['middleware' => 'auth'],function (){
             });
         });
     });
-    Route::post('update-password','Admin/PegawaiController@updatePassword')->name('update-password');
-
 });
 //API-WEB
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
