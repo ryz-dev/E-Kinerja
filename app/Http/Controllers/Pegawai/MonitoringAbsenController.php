@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
+use App\Models\MasterData\Pegawai;
 use App\Models\MasterData\Skpd;
 use App\Repositories\PegawaiRepository;
 use Auth;

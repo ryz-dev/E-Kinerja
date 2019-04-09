@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
+use App\Models\SkpPegawai;
 use App\Repositories\KinerjaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,12 +22,12 @@ class InputKinerjaController extends Controller
         $user = Auth::user();
         $role = $user->role()->first()->id;
         $permission = $user->role()->first()->permissions;
-
+        $skp_pegawai = SkpPegawai::with('skpTask')->whereMonth('periode',date('m'))->where('nip_pegawai',$user->nip)->get();
         if ($role == 2 || $role == 3) {
             if ($permission['input-kinerja'] == false)
                 return redirect()->route('monitoring.absen.index');
         }
-        return view('layouts.users.input-kinerja.index');
+        return view('layouts.users.input-kinerja.index',compact('skp_pegawai'));
     }
 
     public function getKinerjaTersimpan()

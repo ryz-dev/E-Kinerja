@@ -7,6 +7,7 @@ use App\Models\Absen\Checkinout;
 use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
+use Illuminate\Support\Str;
 
 class KinerjaRepository extends BaseRepository
 {
@@ -50,7 +51,7 @@ class KinerjaRepository extends BaseRepository
 
     public function getKinerjaTersimpan($nip)
     {
-        return $this->model->where('nip', $nip)->where('tgl_mulai', date('Y-m-d'))->where('jenis_kinerja', 'hadir')->where('approve', '5')->first();
+        return $this->model->with('skp_pegawai')->where('nip', $nip)->where('tgl_mulai', date('Y-m-d'))->where('jenis_kinerja', 'hadir')->where('approve', '5')->first();
     }
 
     public function deleteKinerjaTersimpan($id, $nip)
@@ -115,6 +116,19 @@ class KinerjaRepository extends BaseRepository
                         ]);
                     } else {
                         $kinerja = $this->model->create($input);
+                    }
+                    if ($kinerja)
+                        $kinerja->skp_pegawai()->detach();
+                    if (isset($input['skp_pegawai'])) {
+                        if (count($input['skp_pegawai'] > 0)) {
+                            foreach ($input['skp_pegawai'] AS $key => $value) {
+                                if (!$kinerja->whereHas('skp_pegawai',function($query)use($key){
+                                    $query->where('id_skp',$key);
+                                })->first()) {
+                                    $kinerja->skp_pegawai()->attach($key, ['uuid' => (string)Str::uuid()]);
+                                }
+                            }
+                        }
                     }
                     return $kinerja;
                     /*}
