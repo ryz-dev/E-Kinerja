@@ -22,12 +22,13 @@ class InputKinerjaController extends Controller
         $user = Auth::user();
         $role = $user->role()->first()->id;
         $permission = $user->role()->first()->permissions;
-        $skp_pegawai = SkpPegawai::with('skpTask')->whereMonth('periode',date('m'))->where('nip_pegawai',$user->nip)->get();
+        $skp_pegawai = SkpPegawai::with('skpTask')->where('status','0')->whereMonth('periode',date('m'))->where('nip_pegawai',$user->nip)->get();
+        $skp_selesai = SkpPegawai::with('skpTask')->where('status','1')->whereMonth('periode',date('m'))->where('nip_pegawai',$user->nip)->get();
         if ($role == 2 || $role == 3) {
             if ($permission['input-kinerja'] == false)
                 return redirect()->route('monitoring.absen.index');
         }
-        return view('layouts.users.input-kinerja.index',compact('skp_pegawai'));
+        return view('layouts.users.input-kinerja.index',compact('skp_pegawai','skp_selesai'));
     }
 
     public function getKinerjaTersimpan()

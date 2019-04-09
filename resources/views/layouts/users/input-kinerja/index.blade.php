@@ -92,6 +92,18 @@
                                         <span class="checkmark checkmark-blue"></span> -->
                                     </label>
                                 </div>
+                                @if (!$skp_selesai->isEmpty())
+                                <div class="col-md-12 mb-1">
+                                    <label class="text-secondary" style="font-size: 1.2em">SKP Selesai</label>
+                                    @foreach($skp_selesai As $ss)
+                                        <label class="container-check">
+                                            <p>{{$ss->skpTask->task}}</p>
+                                            <input type="checkbox" name="skp_selesai[{{$ss->id}}]" checked readonly onclick="return false">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                                @endif
                                 <div class="col-md-12 mb-1">
                                     <label class="text-secondary" style="font-size: 1.2em">List SKP</label>
                                     <div class="wrap-progress">
@@ -455,9 +467,10 @@
                 persentaseSkp();
             })
             function persentaseSkp(){
+                skp_selesai = $('[name*=skp_selesai]').length;
                 skp = $('[name*=skp_pegawai]').length
                 skp_checked = $('[name*=skp_pegawai]:checked').length
-                persentase = skp_checked/skp * 100;
+                persentase = (skp_checked+skp_selesai)/(skp+skp_selesai) * 100;
                 $('.wrap-progress').find('label').html(persentase+'%')
                 $('.wrap-progress').find('.progress-bar').css({width : persentase+'%'})
             }
