@@ -158,32 +158,75 @@
                 <img src="{{ asset('assets/images/logo_ekinerja.png') }}" width="120">
             </div>
             <ul>
+                <li class="{{str_contains(url()->current(),route('sasaran-kerja.index')) ? 'active' : ''}}">
+                    <a href="{{ route('sasaran-kerja.index') }}">
+                        <i class="material-icons">work</i>
+                        <span>Sasaran Kerja</span>
+                    </a>
+                </li>
                 @can('monitoring-absen')
-                <li><a href="{{route('monitoring.absen.index')}}" class="{{str_contains(url()->current(),route('monitoring.absen.index')) ? 'active' : ''}}"><i class="far fa-calendar-alt"></i> Monitoring Absen</a></li>
+                <li class="{{str_contains(url()->current(),route('monitoring.absen.index')) ? 'active' : ''}}">
+                    <a href="{{route('monitoring.absen.index')}}">
+                        <i class="material-icons">recent_actors</i> 
+                        <span>Monitoring Absen</span>
+                    </a>
+                </li>
                 @endcan
                 @can('rekap-bulanan')
-                <li><a href="{{route('rekap-bulanan.index')}}" class="{{str_contains(url()->current(),route('rekap-bulanan.index')) ? 'active' : ''}}"><i class="fas fa-file-signature"></i> Rekap Bulanan</a></li>
+                <li class="{{str_contains(url()->current(),route('rekap-bulanan.index')) ? 'active' : ''}}">
+                    <a href="{{route('rekap-bulanan.index')}}" >
+                        <i class="material-icons">library_books</i>
+                        <span>Rekap Bulanan</span>
+                    </a>
+                </li>
                 @endcan
                 @can('input-kinerja')
-                <li><a href="{{route('input-kinerja.index')}}" class="{{str_contains(url()->current(),route('input-kinerja.index')) ? 'active' : ''}}"><i class="far fa-file-alt"></i> Input Kinerja</a></li>
+                <li class="{{str_contains(url()->current(),route('input-kinerja.index')) ? 'active' : ''}}">
+                    <a href="{{route('input-kinerja.index')}}" >
+                        <i class="material-icons">assignment</i>
+                        <span>Input Kinerja</span>
+                    </a>
+                </li>
                 @endcan
                 @can('penilaian-kinerja')
-                <li><a href="{{route('penilaian-kinerja.index')}}" class="{{str_contains(url()->current(),route('penilaian-kinerja.index')) ? 'active' : ''}}"><i class="fas fa-user-check"></i> Penilaian Kinerja</a></li>
+                <li class="{{str_contains(url()->current(),route('penilaian-kinerja.index')) ? 'active' : ''}}">
+                    <a href="{{route('penilaian-kinerja.index')}}" >
+                        <i class="material-icons">how_to_reg</i>
+                        <span>Penilaian Kinerja</span>
+                    </a>
+                </li>
                 @endcan
                 @can('tunjangan-kinerja')
-                <li><a href="{{route('tunjangan-kinerja.index')}}" class="{{str_contains(url()->current(),route('tunjangan-kinerja.index')) ? 'active' : ''}}"><i class="fas fa-chart-pie"></i>Tunjangan Kinerja</a></li>
+                <li class="{{str_contains(url()->current(),route('tunjangan-kinerja.index')) ? 'active' : ''}}">
+                    <a href="{{route('tunjangan-kinerja.index')}}" >
+                        <i class="material-icons">insert_chart</i>
+                        <span>Tunjangan Kinerja</span>
+                    </a>
+                </li>
                 @endcan
             </ul>
-            <div class="toggleSwitch">
-                @can('master-data')
+            <ul class="wrapToggle">
+                <li>
+                    @can('master-data')
                     <label class="mr-2">
                         <a href="{{route('pegawai.index')}}">Masuk Panel Admin <i class="fas fa-cogs"></i> </a> 
                     </label>
-                @endcan
-                <label class="mr-2">Mode Malam</label>
-                <label class="switch">
-                    <input id="toggle-switch" type="checkbox" checked>
-                    <span class="slider round"></span>
-                </label>
-            </div>
+                    @endcan
+                </li>
+                <li>
+                    <a href="panduan-monitoring-absen.html">
+                        Panduan Pengguna
+                        <i class="material-icons">help_outline</i>
+                    </a>
+                </li>
+                <li>
+                    <div class="toggleSwitch">
+                        <label class="mr-2">Mode Malam</label>
+                        <label class="switch">
+                            <input id="toggle-switch" type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </li>
+            </ul>
         </div>
