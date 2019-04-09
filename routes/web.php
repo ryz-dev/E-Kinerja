@@ -197,7 +197,6 @@ Route::group(['middleware' => 'auth'],function (){
         });
     });
     Route::post('update-password','Admin/PegawaiController@updatePassword')->name('update-password');
-
 });
 //API-WEB
 Route::group(['prefix' => 'api-web','namespace' => 'API'],function (){
