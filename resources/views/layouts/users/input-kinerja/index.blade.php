@@ -259,12 +259,14 @@
                                 <div class="row">
                                     <div class="col-md-6 date-group">
                                         <label class="mb-2 mt-4">Tgl. Mulai</label>
+                                        <br>
                                         <input name="tgl_mulai" class="datepicker" autocomplete="off" id="datepicker"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
                                     </div>
                                     <div class="col-md-6 date-group">
                                         <label class="mb-2 mt-4">Tgl. Berakhir</label>
+                                        <br>
                                         <input name="tgl_selesai" class="datepicker" autocomplete="off" id="datepicker1"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
@@ -316,12 +318,14 @@
                                 <div class="row">
                                     <div class="col-md-6 date-group">
                                         <label class="mb-2 mt-4">Tgl. Mulai</label>
+                                        <br>
                                         <input name="tgl_mulai" class="datepicker" autocomplete="off" id="datepicker"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
                                     </div>
                                     <div class="col-md-6 date-group">
                                         <label class="mb-2 mt-4">Tgl. Berakhir</label>
+                                        <br>
                                         <input name="tgl_selesai" class="datepicker" autocomplete="off" id="datepicker1"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
@@ -470,10 +474,13 @@
                 persentaseSkp();
             })
             function persentaseSkp(){
-                skp_selesai = $('[name*=skp_selesai]').length;
-                skp = $('[name*=skp_pegawai]').length
-                skp_checked = $('[name*=skp_pegawai]:checked').length
-                persentase = (skp_checked+skp_selesai)/(skp+skp_selesai) * 100;
+                skp_selesai = $('[name*=skp_selesai]').length ? $('[name*=skp_selesai]').length : 0;
+                skp = $('[name*=skp_pegawai]').length ? $('[name*=skp_pegawai]').length : 0
+                skp_checked = $('[name*=skp_pegawai]:checked').length ? $('[name*=skp_pegawai]:checked').length : 0
+                persentase = 0;
+                if (skp+skp_selesai > 0) {
+                    persentase = (skp_checked + skp_selesai) / (skp + skp_selesai) * 100;
+                }
                 $('.wrap-progress').find('label').html(persentase+'%')
                 $('.wrap-progress').find('.progress-bar').css({width : persentase+'%'})
             }

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class PenilainKinerjaController extends Controller
+class PenilaianKinerjaController extends Controller
 {
     public function penilaianKinerja()
     {
@@ -36,7 +36,8 @@ class PenilainKinerjaController extends Controller
             'id' => 'required',
             'nip' => ['numeric', 'required', Rule::in(Pegawai::pluck('nip')->toArray())],
             'type' => ['numeric', 'required', Rule::in([1, 2])],
-            'keterangan_approve' => ['required']
+            'keterangan_approve' => ['required'],
+            'rate' => 'required'
         ]);
         try {
             return $this->ApiSpecResponses(PegawaiRepository::replyKinerjaPenilaianKinerja($r->input()));

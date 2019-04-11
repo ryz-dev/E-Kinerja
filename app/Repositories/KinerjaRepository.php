@@ -109,6 +109,7 @@ class KinerjaRepository extends BaseRepository
                             $input['approve'] = 5;
                         }
                     }*/
+                    $input['nilai_kinerja'] = 0;
                     if (isset($input['id'])) {
                         $kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja', 'hadir')->findOrFail($input['id']);
                         $kinerja->update([

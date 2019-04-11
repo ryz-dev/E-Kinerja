@@ -13,6 +13,7 @@ use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Jabatan;
 use App\Models\MasterData\Pegawai;
 use App\Models\MasterData\Skpd;
+use App\Models\SkpPegawai;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -737,11 +738,13 @@ class PegawaiRepository extends BaseRepository
     static function getKinerjaPenilaianKinerja($nip,$date){
         $pegawai = Pegawai::where('nip', $nip)->first();
         $old_kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->with('skp_pegawai.skpTask','media')
             ->where('approve', 0)
             ->whereMonth('tgl_mulai', date('m'))
             ->whereDate('tgl_mulai', '<', date('Y-m-d'))
             ->get();
         $kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->with('skp_pegawai.skpTask','media')
             ->whereDate('tgl_mulai', '<=', $date? $date : date('Y-m-d'))
             ->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'))
             ->terbaru()
@@ -753,15 +756,30 @@ class PegawaiRepository extends BaseRepository
     }
 
     static function replyKinerjaPenilaianKinerja(array $param){
-        try {
-            $kinerja = Kinerja::find($param['id']);
-            $kinerja->keterangan_approve = $param['keterangan_approve'];
-            $kinerja->approve = $param['type'];
-            $kinerja->save();
-            return ['status' => 'HTTP_OK'];
-        } catch (Exception $e) {
-            throw new ModelNotFoundException('Kinerja Tidak Ditemukan');
+//        try {
+        $kinerja = Kinerja::with('skp_pegawai')->find($param['id']);
+        $kinerja->keterangan_approve = $param['keterangan_approve'];
+        $kinerja->approve = $param['type'];
+        $kinerja->nilai_kinerja = $param['rate'];
+        $kinerja->save();
+        SkpPegawai::whereHas('kinerja',function ($q)use($param){
+            $q->where('kinerja.id',$param['id']);
+        })->update([
+            'status' => 0
+        ]);
+        if (isset($param['skp_pegawai'])){
+            foreach ($param['skp_pegawai'] AS $key => $value) {
+                SkpPegawai::whereHas('kinerja',function ($q)use($param){
+                    $q->where('kinerja.id',$param['id']);
+                })->where('skp_pegawai.id',$key)->update([
+                    'status' => 1
+                ]);
+            }
         }
+        return ['status' => 'HTTP_OK'];
+//        } catch (Exception $e) {
+//            throw new ModelNotFoundException('Kinerja Tidak Ditemukan');
+//        }
     }
 
 }

@@ -11,7 +11,7 @@ class Kinerja extends Model
 {
     protected $table = 'kinerja';
     protected $fillable = [
-        'nip', 'tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve'
+        'nip', 'tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve','nilai_kinerja'
     ];
 
     public function pegawai()
