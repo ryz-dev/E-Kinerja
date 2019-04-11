@@ -48,6 +48,10 @@ class Pegawai extends Authenticatable
         return $this->hasMany(Kinerja::class, 'nip', 'nip');
     }
 
+    public function skp(){
+        return $this->hasMany('App\Models\SkpPegawai','nip_pegawai','nip');
+    }
+
     public function hasAccess(array $permissions)
     {
         foreach ($this->role as $role) {
@@ -56,6 +60,7 @@ class Pegawai extends Authenticatable
             }
         }
     }
+
 
     public function skpd()
     {

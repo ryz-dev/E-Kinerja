@@ -31,9 +31,15 @@ class PegawaiRepository extends BaseRepository
 {
     private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
     private $special_user_id = [2, 3, 4];
-    private $jam_masuk = '09:00:59';
-    private $jam_masuk_upacara = '07.30.59';
-    private $status_hari = true;
+    public $pegawai;
+
+    public function __construct($nip = null){
+        parent::__construct();
+
+        if ($nip) {
+            $this->pegawai = $this->model::where('nip',$nip)->orWhere('uuid',$nip)->first();
+        }
+    }
 
     public function model()
     {
@@ -123,7 +129,7 @@ class PegawaiRepository extends BaseRepository
     public function getBawahan($nip, $skpd = null)
     {
         $skpd = $skpd ? $skpd : null;
-        $user = Pegawai::with('role')->where('nip', $nip)->first();
+        $user = $this->model::with('role')->where('nip', $nip)->first();
         $pegawai = $this->model->where('nip', '!=', $user->nip);
         if ($skpd > 0) {
             $pegawai->where('id_skpd', $skpd);
@@ -526,260 +532,16 @@ class PegawaiRepository extends BaseRepository
         ];
     }
 
-    public function dataAbsensi($nip,$skpd,$raw_date,$search,$show,$page)
+    public function getBawahanLangsung()
     {
-        $date = Carbon::parse($raw_date);
-        $user = Pegawai::where('nip',$nip)->first();
-        $status_hari = $this->getStatusHariKerja($date);
-        $pegawai = Pegawai::with(['checkinout' => function ($query) use ($date) {
-            $query->select('nip', 'checktype', 'checktime', 'sn')
-                ->whereDate('checktime', '=', $date);
-            // $query->select(\DB::raw('DISTINCT(checktype),nip, date(checktime),checktime'))
-            //       ->whereDate('checktime','=',$date);
-        },
-            'kinerja' => function ($query) use ($date) {
-                $query->select('nip', 'jenis_kinerja')->where('approve', 2)
-                    ->whereDate('tgl_mulai', '<=', $date)
-                    ->whereDate('tgl_selesai', '>=', $date);
-            }
-        ])->leftJoin('jabatan', 'pegawai.id_jabatan', '=', 'jabatan.id')
-            ->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id');
-
-        try {
-            if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
-                if ($user->role()->pluck('id_role')->max() != 5) {
-                    $pegawai->whereHas('jabatan', function ($query) use ($user) {
-                        $query->where('id_atasan', '=', $user->id_jabatan);
-                    });
-                }
-            }
-
-            if ($skpd > 0) {
-                $pegawai->where('id_skpd', $skpd);
-            }
-
-            if ($skpd < 0) {
-                $pegawai->where('id_jabatan', 3);
-            }
-
-            if ($search) {
-                $pegawai->where(function ($query) use ($search) {
-                    $query->where('nip', 'like', '%' . $search . '%')->orWhere('nama', 'like', '%' . $search . '%');
-                });
-            }
-
-            $pegawai->orderBy('golongan.tunjangan', 'desc');
-            $pegawai->orderBy('pegawai.nama');
-            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari);
-            $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
-            $total = (int)$data_absen_pegawai->count();
-
-            $data_absen_pegawai = $this->paginateMonitoringAbsen($data_absen_pegawai, $show, $page);
-
-            return
-                [
-                    'pegawai' => $data_absen_pegawai,
-                    'dayBefore' => Carbon::parse($date)->addDays(-1)->format('m/d/Y'),
-                    'dayAfter' => Carbon::parse($date)->addDays(1)->format('m/d/Y'),
-                    'today' => Carbon::parse($date)->format('m/d/Y'),
-                    'current_date' => Carbon::now()->format('m/d/Y'),
-                    'dateString' => ucfirst(Hari::find(date('N', strtotime($date)))->nama_hari) . ' , ' . date('d', strtotime($date)) . ' ' . ucfirst(Bulan::find((int)date('m', strtotime($date)))->nama_bulan) . ' ' . date('Y', strtotime($date)),
-                    'jam_masuk_timestamp' => Carbon::parse($raw_date . ' ' . $this->jam_masuk)->toDateTimeString(),
-                    'jam_masuk_upacara_timestamp' => Carbon::parse($raw_date . ' ' . $this->jam_masuk_upacara)->toDateTimeString(),
-                    'summary' => $sum,
-                    'status_hari' => $status_hari
-                ];
-        } catch (Exception $e) {
-            throw new NotFoundHttpException('Not Found');
-        }
+        $atasan = $this->pegawai;
+        return $this->model->where('nip','<>','')
+                           ->whereHas('jabatan', function($query) use($atasan){
+                            $query->where('id_atasan',$atasan->id_jabatan);
+                           })->get();
     }
 
-    private function getStatusHariKerja($date)
-    {
-        return DB::table('hari_kerja')->where('tanggal', date('Y-m-d', strtotime($date)))->first();
+    public static function dataPegawai($pegawai){
+        return app()->make(self::model())->where('nip',$pegawai)->orWhere('uuid', $pegawai)->first();
     }
-
-    private function parseAbsensi($pegawai, $date, $status_hari)
-    {
-        $pegawai = $pegawai->get();
-
-        $jam_masuk = $this->jam_masuk;
-        $jam_sekarang = date('Y-m-d H:i:s');
-        $tanggal_pilihan = $date;
-
-        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari) {
-            $data['absen_in'] = '';
-            $data['absen_out'] = '';
-
-            $raw_absensi = $item['checkinout'];
-            $absensi = null;
-
-            $tanggal_sekarang = date('Y-m-d', strtotime($jam_sekarang));
-            $tanggal_pilihan_date = date('Y-m-d', strtotime($tanggal_pilihan));
-
-            $absen_in = $raw_absensi->contains('checktype', 0) ? $raw_absensi->where('checktype', 0)->min()->checktime : false;
-            $absen_out = $raw_absensi->contains('checktype', 1) ? $raw_absensi->where('checktype', 1)->max()->checktime : false;
-
-            if ($status_hari == 1) {
-                if (strtotime($tanggal_sekarang) > strtotime($tanggal_pilihan_date)) {
-                    if ($absen_in && $absen_out) {
-                        if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . ' ' . $jam_masuk)) {
-                            if ((strtotime($absen_out) - strtotime($absen_in)) >= (8 * 3600)) {
-                                $absensi = 'hadir';
-                            } else {
-                                $absensi = 'alpa';
-                            }
-                        } else {
-                            $absensi = 'alpa';
-                        }
-                    } else {
-                        if ($item['kinerja']->count()) {
-                            $absensi = $item['kinerja']->first()->jenis_kinerja;
-                        } else {
-                            $absensi = 'alpa';
-                        }
-                    }
-
-                } elseif (strtotime($tanggal_sekarang) == strtotime($tanggal_pilihan_date)) {
-
-
-                    if (strtotime($jam_sekarang) < strtotime($tanggal_sekarang . ' ' . $jam_masuk) && $raw_absensi->count() < 1) {
-                        $absensi = 'uncount';
-                    } else {
-                        $absensi = 'hadir';
-                    }
-
-                    if (strtotime($jam_sekarang) > strtotime($tanggal_sekarang . $jam_masuk)) {
-                        if ($absen_in) {
-                            if ($absen_out) {
-                                $absensi = 'hadir';
-                            } else {
-                                // $absensi = date('H:i', strtotime($absen_in)).'<span> - </span>';
-                                $absensi = 'hadir';
-                            }
-                        } else {
-                            if ($item['kinerja']->count()) {
-                                $absensi = $item['kinerja']->first()->jenis_kinerja;
-                            } else {
-                                $absensi = 'alpa';
-                            }
-                        }
-                    }
-                } else {
-                    $absensi = 'uncount';
-                }
-            } else {
-                $absensi = 'libur';
-            }
-
-            $data['absen_in'] = $absen_in ? date('H:i', strtotime($absen_in)) : '';
-            $data['absen_out'] = $absen_out ? date('H:i', strtotime($absen_out)) : '';
-            $data['absensi'] = $absensi;
-            $data['nama'] = $item->nama;
-            $data['nip'] = $item->nip;
-            $data['foto'] = $item->foto;
-
-            return $data;
-
-        });
-
-        return $data;
-
-
-    }
-
-    private function summary($pegawai, $date, $status_hari)
-    {
-        if ($status_hari == 1 && strtotime(date('Y-m-d')) >= strtotime($date)) {
-            $hadir = (int)$pegawai->where('absensi', 'hadir')->count();
-            $cuti = (int)$pegawai->where('absensi', 'cuti')->count();
-            $perjalanan_dinas = (int)$pegawai->where('absensi', 'perjalanan_dinas')->count();
-            $izin = (int)$pegawai->where('absensi', 'izin')->count();
-            $sakit = (int)$pegawai->where('absensi', 'sakit')->count();
-            $alpha = (int)$pegawai->where('absensi', 'alpa')->count();
-        } else {
-            $hadir = 0;
-            $cuti = 0;
-            $perjalanan_dinas = 0;
-            $izin = 0;
-            $sakit = 0;
-            $alpha = 0;
-        }
-
-        return [
-            'hadir' => $hadir,
-            'cuti' => $cuti,
-            'perjalanan_dinas' => $perjalanan_dinas,
-            'izin' => $izin,
-            'sakit' => $sakit,
-            'alpha' => $alpha,
-        ];
-    }
-
-    private function paginateMonitoringAbsen($items, $perPage = 6, $page = null, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, $options);
-    }
-
-    static function getBawahanPenilaianKinerja($nip,$date){
-        $user = Pegawai::where('nip',$nip)->first();
-        $pegawai = Pegawai::wherehas('jabatan', function ($query) use ($user) {
-            $query->where('id_atasan', '=', $user->id_jabatan);
-        })->with(['kinerja' => function ($query) use ($date) {
-            $query->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'));
-            $query->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'));
-            $query->terbaru();
-        }])->get();
-        return $pegawai;
-    }
-
-    static function getKinerjaPenilaianKinerja($nip,$date){
-        $pegawai = Pegawai::where('nip', $nip)->first();
-        $old_kinerja = Kinerja::where('nip', $pegawai->nip)
-            ->with('skp_pegawai.skpTask','media')
-            ->where('approve', 0)
-            ->whereMonth('tgl_mulai', date('m'))
-            ->whereDate('tgl_mulai', '<', date('Y-m-d'))
-            ->get();
-        $kinerja = Kinerja::where('nip', $pegawai->nip)
-            ->with('skp_pegawai.skpTask','media')
-            ->whereDate('tgl_mulai', '<=', $date? $date : date('Y-m-d'))
-            ->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'))
-            ->terbaru()
-            ->first();
-        return [
-            'now' => $kinerja,
-            'old' => $old_kinerja->pluck('tgl_mulai')->toArray()
-        ];
-    }
-
-    static function replyKinerjaPenilaianKinerja(array $param){
-//        try {
-        $kinerja = Kinerja::with('skp_pegawai')->find($param['id']);
-        $kinerja->keterangan_approve = $param['keterangan_approve'];
-        $kinerja->approve = $param['type'];
-        $kinerja->nilai_kinerja = $param['rate'];
-        $kinerja->save();
-        SkpPegawai::whereHas('kinerja',function ($q)use($param){
-            $q->where('kinerja.id',$param['id']);
-        })->update([
-            'status' => 0
-        ]);
-        if (isset($param['skp_pegawai'])){
-            foreach ($param['skp_pegawai'] AS $key => $value) {
-                SkpPegawai::whereHas('kinerja',function ($q)use($param){
-                    $q->where('kinerja.id',$param['id']);
-                })->where('skp_pegawai.id',$key)->update([
-                    'status' => 1
-                ]);
-            }
-        }
-        return ['status' => 'HTTP_OK'];
-//        } catch (Exception $e) {
-//            throw new ModelNotFoundException('Kinerja Tidak Ditemukan');
-//        }
-    }
-
 }
