@@ -22,6 +22,15 @@ class PegawaiRepository extends BaseRepository
 {
     private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
     private $special_user_id = [2, 3, 4];
+    public $pegawai;
+
+    public function __construct($nip = null){
+        parent::__construct();
+
+        if ($nip) {
+            $this->pegawai = $this->model::where('nip',$nip)->orWhere('uuid',$nip)->first();
+        }
+    }
 
     public function model()
     {
@@ -87,7 +96,7 @@ class PegawaiRepository extends BaseRepository
     public function getBawahan($nip, $skpd = null)
     {
         $skpd = $skpd ? $skpd : null;
-        $user = Pegawai::with('role')->where('nip', $nip)->first();
+        $user = $this->model::with('role')->where('nip', $nip)->first();
         $pegawai = $this->model->where('nip', '!=', $user->nip);
         if ($skpd > 0) {
             $pegawai->where('id_skpd', $skpd);
@@ -489,5 +498,18 @@ class PegawaiRepository extends BaseRepository
             'persentase' => $jumlah,
             'tunjangan' => (floor($jumlah) * $tunjangan) / 100
         ];
+    }
+
+    public function getBawahanLangsung()
+    {
+        $atasan = $this->pegawai;
+        return $this->model->where('nip','<>','')
+                           ->whereHas('jabatan', function($query) use($atasan){
+                            $query->where('id_atasan',$atasan->id_jabatan);
+                           })->get();
+    }
+
+    public static function dataPegawai($pegawai){
+        return app()->make(self::model())->where('nip',$pegawai)->orWhere('uuid', $pegawai)->first();
     }
 }

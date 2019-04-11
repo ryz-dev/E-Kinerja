@@ -107,6 +107,18 @@ abstract class BaseRepository
         return $this;
     }
 
+    public function whereMonth($column,$operator,$value = null,$boolean = 'and')
+    {
+        $this->model = $this->model->whereMonth($column, $operator, $value, $boolean);
+        return $this;
+    }
+
+    public function whereYear($column,$operator,$value = null,$boolean = 'and')
+    {
+        $this->model = $this->model->whereYear($column, $operator, $value, $boolean);
+        return $this;
+    }
+
     public function restore()
     {
         $this->model = $this->model->restore();

@@ -24,7 +24,7 @@ class SkpPegawai extends Model
 
     public function skpTask()
     {
-        return $this->belongsTo(Skp::class, 'id_skp');
+        return $this->belongsTo(Skp::class, 'id_skp','id');
     }
 
 }
