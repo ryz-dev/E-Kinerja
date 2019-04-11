@@ -14,7 +14,7 @@ class AlterKinerjaTableNilaiKinerja extends Migration
     public function up()
     {
         Schema::table('kinerja',function (Blueprint $table){
-            $table->integer('nilai_kinerja')->after('approve');
+            $table->integer('nilai_kinerja')->default(0)->after('approve');
         });
     }
 

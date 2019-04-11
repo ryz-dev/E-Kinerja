@@ -84,6 +84,7 @@ class KinerjaRepository extends BaseRepository
             }
         }
         $input['nip'] = $nip;
+        $input['nilai_kinerja'] = 0;
 //        $cek_kinerja = $this->>model->where('nip',$input['nip'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->whereIn('approve',[0,2])->first();
         $cek_kinerja = $this->model->where('nip', $nip)->where(function ($query) use ($input) {
             $query->where(function ($query) use ($input) {
@@ -109,7 +110,6 @@ class KinerjaRepository extends BaseRepository
                             $input['approve'] = 5;
                         }
                     }*/
-                    $input['nilai_kinerja'] = 0;
                     if (isset($input['id'])) {
                         $kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja', 'hadir')->findOrFail($input['id']);
                         $kinerja->update([
