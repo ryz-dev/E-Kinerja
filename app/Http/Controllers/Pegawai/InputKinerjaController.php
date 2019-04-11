@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
+use App\Models\Absen\Kinerja;
 use App\Models\SkpPegawai;
 use App\Repositories\KinerjaRepository;
 use Illuminate\Http\Request;
@@ -56,7 +57,13 @@ class InputKinerjaController extends Controller
     public function inputKinerja(Request $request)
     {
         $nip = auth('web')->user()->nip;
-        return $this->ApiSpecResponses($this->kinerja->inputKinerja($request->input(), $nip));
+        $kinerja = $this->kinerja->inputKinerja($request->input(), $nip);
+
+        if ($kinerja instanceof Kinerja) {
+            if ($request->hasFile('doc'))
+                $this->kinerja->uploadFile($request->file('doc'),$kinerja->id);
+        }
+        return $this->ApiSpecResponses($kinerja);
     }
 
 }

@@ -7,6 +7,7 @@ use App\Models\Absen\Checkinout;
 use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
+use App\Models\Media;
 use Illuminate\Support\Str;
 
 class KinerjaRepository extends BaseRepository
@@ -103,11 +104,11 @@ class KinerjaRepository extends BaseRepository
                     $cek_pulang_kerja = Checkinout::whereDate('checktime', date('Y-m-d'))->where('checktype', '1')->where('nip', $nip)->first();
                     /*if (strtotime($cek_hadir_kerja->checktime) <= strtotime(date('Y-m-d')." 09:00:00")){
                         if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8 * 3600)) {*/
-                    if (isset($input['status'])) {
+                    /*if (isset($input['status'])) {
                         if ($input['status'] == 5) {
                             $input['approve'] = 5;
                         }
-                    }
+                    }*/
                     if (isset($input['id'])) {
                         $kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja', 'hadir')->findOrFail($input['id']);
                         $kinerja->update([
@@ -342,6 +343,20 @@ class KinerjaRepository extends BaseRepository
     private function getListNip()
     {
         return implode(',', Pegawai::select('nip')->get()->pluck('nip')->all());
+    }
+
+    public function uploadFile(array $files,$id_kinerja){
+        foreach ($files AS $key => $file){
+
+            $name = $file->getClientOriginalName().'-kinerja'.$id_kinerja.'.'.$file->getClientOriginalExtension();
+            if ($file->move(public_path('doc'),$name))
+                Media::create([
+                    'id_kinerja' => $id_kinerja,
+                    'media' => url('doc/'.$name),
+                    'nama_media' => $name,
+                    'uuid' => (string)Str::uuid()
+                ]);
+        }
     }
 
 }

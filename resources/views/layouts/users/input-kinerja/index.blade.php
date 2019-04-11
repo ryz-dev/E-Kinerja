@@ -82,6 +82,7 @@
                         {{csrf_field()}}
                         <input type="hidden" name="id">
                         <input type="hidden" name="jenis_kinerja" value="hadir">
+{{--                        <input type="hidden" name="status">--}}
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="input-group hadir">
@@ -136,28 +137,30 @@
                                 </div>
 
                                 <div class="col-md-12 mb-3">
-                                    <form action="/file-upload" class="dropzone">
-                                        <div class="dz-message" data-dz-message>
-                                            <i class="material-icons">cloud_upload</i>
-                                            <span class="ml-3">Upload Dokumen</span>
-                                            <div class="fallback">
-                                                <input name="file" type="file" multiple />
+{{--                                    <form action="/file-upload" class="dropzone">--}}
+                                        <div class="dropzone">
+                                            <div class="dz-message " data-dz-message>
+                                                <i class="material-icons">cloud_upload</i>
+                                                <span class="ml-3">Upload Dokumen</span>
+                                                <div class="fallback">
+                                                    <input name="doc[]" type="file" multiple />
+                                                </div>
                                             </div>
                                         </div>
-                                    </form>
+{{--                                    </form>--}}
                                 </div>
 
                                 <div class="col-md-12">
-                                    <!-- <textarea class="rincianKinerja" rows="3" placeholder="Rincian Kinerja"></textarea> -->
-                                    <div class="rincianKinerja" contenteditable="true">
+                                    <textarea class="rincianKinerja" name="rincian_kinerja" rows="3" placeholder="Rincian Kinerja"></textarea>
+                                    {{--<div class="rincianKinerja" contenteditable="true">
                                         <span>Rincian Kinerja</span>
                                         <p id="rincian-kinerja">
                                             Kinerja Di Sini!!
                                         </p>
                                         <input type="hidden" name="rincian_kinerja" required>
-                                    </div>
+                                    </div>--}}
                                     <a style="color: white; display: none" id="hapus-kinerja" class="btn btn-warning mt-3">Hapus</a>
-                                    <button type="submit" data-status="5" class="btn btn-custom mt-3">Simpan</button>
+{{--                                    <button type="submit" data-status="5" class="btn btn-custom mt-3">Simpan</button>--}}
                                     <button type="submit" data-status="0"  class="btn btn-success float-right mt-3">Kirim</button>
                                 </div>
                             </div>
@@ -411,58 +414,58 @@
             $('[type=submit]').on('click',function () {
                 $(this).addClass('active').siblings().removeClass('active')
             })
-            var getDraft = function() {
-                $.get('{{route('input-kinerja.api.draft')}}', {
-                    '_token': '{{csrf_token()}}'
-                })
-                    .then(function (res) {
-                        data = res.response;
-                        $('#hadir').find('[name=id]').val(data.id)
-                        $('#hadir').find('[name=rincian_kinerja]').val(data.rincian_kinerja)
-                        $('#hadir').find('#rincian-kinerja').text(data.rincian_kinerja)
-                        res.response.skp_pegawai.forEach(function(val){
-                            $('[name="skp_pegawai['+val.id+']"]').attr('checked',true);
-                        })
-                        persentaseSkp();
-                        $('#hapus-kinerja').show();
-                    }, function (err) {
-                        $('#hadir').find('[name=id]').val('')
-                        $('#hadir').find('[name=rincian_kinerja]').val('')
-                        $('#hadir').find('#rincian-kinerja').text('')
-                        $('#hapus-kinerja').hide();
-                    })
-            }
-            getDraft();
-            $('#hapus-kinerja').on('click',function (e) {
-                e.preventDefault();
-                id = $('#hadir').find('[name=id]').val()
-                if (id){
-                    swal({
-                        title: 'Ingin Menghapus Draft Kinerja?',
-                        text: "",
-                        type: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Iya, hapus draft!',
-                        cancelButtonText: 'Batalkan'
-                    }).then((result) => {
-                        if (result.value) {
-                            $.post('{{route('input-kinerja.api.delete-draft',['id' => ''])}}/' + id, {
-                                '_token': '{{csrf_token()}}'
-                            })
-                                .then(function (res) {
-                                    swal(
-                                        res.response.message,
-                                        '',
-                                        'success'
-                                    );
-                                    getDraft()
-                                }, function (err) {
-                                    console.log(err)
-                                })
-                        }
-                    })
-                }
-            })
+            {{--var getDraft = function() {--}}
+            {{--    $.get('{{route('input-kinerja.api.draft')}}', {--}}
+            {{--        '_token': '{{csrf_token()}}'--}}
+            {{--    })--}}
+            {{--        .then(function (res) {--}}
+            {{--            data = res.response;--}}
+            {{--            $('#hadir').find('[name=id]').val(data.id)--}}
+            {{--            $('#hadir').find('[name=rincian_kinerja]').val(data.rincian_kinerja)--}}
+            {{--            $('#hadir').find('#rincian-kinerja').text(data.rincian_kinerja)--}}
+            {{--            res.response.skp_pegawai.forEach(function(val){--}}
+            {{--                $('[name="skp_pegawai['+val.id+']"]').attr('checked',true);--}}
+            {{--            })--}}
+            {{--            persentaseSkp();--}}
+            {{--            $('#hapus-kinerja').show();--}}
+            {{--        }, function (err) {--}}
+            {{--            $('#hadir').find('[name=id]').val('')--}}
+            {{--            $('#hadir').find('[name=rincian_kinerja]').val('')--}}
+            {{--            $('#hadir').find('#rincian-kinerja').text('')--}}
+            {{--            $('#hapus-kinerja').hide();--}}
+            {{--        })--}}
+            {{--}--}}
+            // getDraft();
+            {{--$('#hapus-kinerja').on('click',function (e) {--}}
+            {{--    e.preventDefault();--}}
+            {{--    id = $('#hadir').find('[name=id]').val()--}}
+            {{--    if (id){--}}
+            {{--        swal({--}}
+            {{--            title: 'Ingin Menghapus Draft Kinerja?',--}}
+            {{--            text: "",--}}
+            {{--            type: 'warning',--}}
+            {{--            showCancelButton: true,--}}
+            {{--            confirmButtonText: 'Iya, hapus draft!',--}}
+            {{--            cancelButtonText: 'Batalkan'--}}
+            {{--        }).then((result) => {--}}
+            {{--            if (result.value) {--}}
+            {{--                $.post('{{route('input-kinerja.api.delete-draft',['id' => ''])}}/' + id, {--}}
+            {{--                    '_token': '{{csrf_token()}}'--}}
+            {{--                })--}}
+            {{--                    .then(function (res) {--}}
+            {{--                        swal(--}}
+            {{--                            res.response.message,--}}
+            {{--                            '',--}}
+            {{--                            'success'--}}
+            {{--                        );--}}
+            {{--                        // getDraft()--}}
+            {{--                    }, function (err) {--}}
+            {{--                        console.log(err)--}}
+            {{--                    })--}}
+            {{--            }--}}
+            {{--        })--}}
+            {{--    }--}}
+            {{--})--}}
             $('[name*=skp_pegawai]').on('click',function () {
                 persentaseSkp();
             })
@@ -477,19 +480,20 @@
             persentaseSkp();
             $(document).on('submit', '.form-submit-kinerja.active-form', function (e) {
                 e.preventDefault();
-                text = $('#rincian-kinerja').text();
-                $('#hadir').find('[name=rincian_kinerja]').val(text);
-                var data = $(e.target);
-                var action = this.action
-                var that = this;
-                var status = $('[type=submit].active').data('status');
-                if (status == 5){
-                    info = 'simpan'
-                    info2 = 'Menyimpan'
-                } else {
+                // text = $('#rincian-kinerja').text();
+                // $('#hadir').find('[name=rincian_kinerja]').val(text);
+                var action = this.action;
+                // var status = $('[type=submit].active').data('status');
+                // $('[name=status]').val(status);
+                // if (status == 5){
+                //     info = 'simpan'
+                //     info2 = 'Menyimpan'
+                // } else {
                     info = 'kirim'
                     info2 = 'Mengirim'
-                }
+                // }
+                var formData = new FormData($(this)[0]);
+
                 swal({
                     title: 'Ingin '+info2+' Data Kinerja?',
                     text: "",
@@ -500,8 +504,11 @@
                 }).then((result) => {
                     if (result.value) {
                         $('.loading').show();
-                        $.post(action, data.serialize()+(status ? '&status='+status : ''))
-                            .then(function (res) {
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            data: formData,
+                            success: function (res) {
                                 $('.loading').hide();
                                 if (res.diagnostic.code == 200) {
                                     swal(
@@ -509,7 +516,7 @@
                                         '',
                                         'success'
                                     );
-                                    getDraft()
+                                    // getDraft()
                                 } else {
                                     swal(
                                         'Gagal '+info2+' Data!',
@@ -517,14 +524,19 @@
                                         'warning'
                                     );
                                 }
-                            }, function (err) {
+                            },
+                            error: function () {
                                 swal(
                                     'Gagal '+info2+' Data!',
                                     '',
                                     'warning'
                                 );
                                 $('.loading').hide();
-                            })
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false
+                        });
                     }
                 })
             })

@@ -9,7 +9,7 @@ class Media extends Model
 {
     protected $table = 'media';
     protected $fillable = [
-        'id_kinerja', 'media', 'uuid'
+        'id_kinerja', 'media', 'uuid','nama_media'
     ];
 
     public function kinerja()
