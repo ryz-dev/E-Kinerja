@@ -7,6 +7,8 @@ use App\Models\Absen\Checkinout;
 use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
+use App\Models\Media;
+use Illuminate\Support\Str;
 
 class KinerjaRepository extends BaseRepository
 {
@@ -50,7 +52,7 @@ class KinerjaRepository extends BaseRepository
 
     public function getKinerjaTersimpan($nip)
     {
-        return $this->model->where('nip', $nip)->where('tgl_mulai', date('Y-m-d'))->where('jenis_kinerja', 'hadir')->where('approve', '5')->first();
+        return $this->model->with('skp_pegawai')->where('nip', $nip)->where('tgl_mulai', date('Y-m-d'))->where('jenis_kinerja', 'hadir')->where('approve', '5')->first();
     }
 
     public function deleteKinerjaTersimpan($id, $nip)
@@ -82,6 +84,7 @@ class KinerjaRepository extends BaseRepository
             }
         }
         $input['nip'] = $nip;
+        $input['nilai_kinerja'] = 0;
 //        $cek_kinerja = $this->>model->where('nip',$input['nip'])->where('tgl_mulai','<=',$input['tgl_mulai'])->where('tgl_selesai','>=',$input['tgl_selesai'])->whereIn('approve',[0,2])->first();
         $cek_kinerja = $this->model->where('nip', $nip)->where(function ($query) use ($input) {
             $query->where(function ($query) use ($input) {
@@ -102,11 +105,11 @@ class KinerjaRepository extends BaseRepository
                     $cek_pulang_kerja = Checkinout::whereDate('checktime', date('Y-m-d'))->where('checktype', '1')->where('nip', $nip)->first();
                     /*if (strtotime($cek_hadir_kerja->checktime) <= strtotime(date('Y-m-d')." 09:00:00")){
                         if ((strtotime($cek_pulang_kerja->checktime) - strtotime($cek_hadir_kerja->checktime)) >= (8 * 3600)) {*/
-                    if (isset($input['status'])) {
+                    /*if (isset($input['status'])) {
                         if ($input['status'] == 5) {
                             $input['approve'] = 5;
                         }
-                    }
+                    }*/
                     if (isset($input['id'])) {
                         $kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja', 'hadir')->findOrFail($input['id']);
                         $kinerja->update([
@@ -115,6 +118,19 @@ class KinerjaRepository extends BaseRepository
                         ]);
                     } else {
                         $kinerja = $this->model->create($input);
+                    }
+                    if ($kinerja)
+                        $kinerja->skp_pegawai()->detach();
+                    if (isset($input['skp_pegawai'])) {
+                        if (count($input['skp_pegawai'] > 0)) {
+                            foreach ($input['skp_pegawai'] AS $key => $value) {
+                                if (!$kinerja->whereHas('skp_pegawai',function($query)use($key){
+                                    $query->where('id_skp',$key);
+                                })->first()) {
+                                    $kinerja->skp_pegawai()->attach($key, ['uuid' => (string)Str::uuid()]);
+                                }
+                            }
+                        }
                     }
                     return $kinerja;
                     /*}
@@ -328,6 +344,20 @@ class KinerjaRepository extends BaseRepository
     private function getListNip()
     {
         return implode(',', Pegawai::select('nip')->get()->pluck('nip')->all());
+    }
+
+    public function uploadFile(array $files,$id_kinerja){
+        foreach ($files AS $key => $file){
+
+            $name = $file->getClientOriginalName().'-kinerja'.$id_kinerja.'.'.$file->getClientOriginalExtension();
+            if ($file->move(public_path('doc'),$name))
+                Media::create([
+                    'id_kinerja' => $id_kinerja,
+                    'media' => url('doc/'.$name),
+                    'nama_media' => $name,
+                    'uuid' => (string)Str::uuid()
+                ]);
+        }
     }
 
 }

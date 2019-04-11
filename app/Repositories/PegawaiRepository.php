@@ -8,15 +8,24 @@ use App\Models\Absen\Kinerja;
 use App\Models\MasterData\Agama;
 use App\Models\MasterData\Bulan;
 use App\Models\MasterData\FormulaVariable;
+use App\Models\MasterData\Hari;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Jabatan;
 use App\Models\MasterData\Pegawai;
 use App\Models\MasterData\Skpd;
+use App\Models\SkpPegawai;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PDF;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PegawaiRepository extends BaseRepository
 {
@@ -86,6 +95,30 @@ class PegawaiRepository extends BaseRepository
         return $this->count();
     }
 
+    public function getPageMonitoringAbsen($nip,$skpd,$search){
+        $user = Pegawai::where('nip',$nip)->first();
+
+        $data = Pegawai::where('nip', '<>', '');
+
+        if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
+            if ($user->role()->pluck('id_role')->max() != 5) {
+                $data->whereHas('jabatan', function ($query) use ($user) {
+                    $query->where('id_atasan', '=', $user->id_jabatan);
+                });
+            }
+        }
+
+        if ($skpd > 0) {
+            $data = $data->where('id_skpd', $skpd);
+        }
+
+        if ($search) {
+            $data->where('nip', 'like', '%' . $search . '%')->orWhere('nama', 'like', '%' . $search . '%');
+        }
+        return $data->count();
+
+    }
+
     public function updatePassword($nip, $password)
     {
         $pegawai = $this->model->whereNip($nip)->first();
@@ -101,16 +134,13 @@ class PegawaiRepository extends BaseRepository
         if ($skpd > 0) {
             $pegawai->where('id_skpd', $skpd);
         }
-
         if ($skpd < 0) {
             $pegawai->where('id_jabatan', 3);
         }
-
         $pegawai = $pegawai->leftJoin('jabatan', 'pegawai.id_jabatan', '=', 'jabatan.id');
         $pegawai = $pegawai->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id');
         $pegawai = $pegawai->orderBy('golongan.tunjangan', 'desc');
         $pegawai = $pegawai->orderBy('pegawai.nama');
-
         if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
             if ($user->role()->pluck('id_role')->max() != 5) {
                 $pegawai->whereHas('jabatan', function ($query) use ($user) {
@@ -342,13 +372,12 @@ class PegawaiRepository extends BaseRepository
         return str_replace('public/', '', $file->store('public/upload'));
     }
 
-    public function downloadRekapBulanan(Request $request)
+    public function downloadRekapBulanan($nip,$skpd,$d_id_skpd,$periode_rekap,$download = false)
     {
         // dd($request);
-        $periode_rekap = $request->input('periode_rekap') ? $request->input('periode_rekap') : date('Y-m-d');
         $bulan = (int)($periode_rekap ? date('m', strtotime($periode_rekap)) : date('m'));
         $tahun = (int)($periode_rekap ? date('Y', strtotime($periode_rekap)) : date('Y'));
-        $user = Auth::user();
+        $user = Pegawai::where('nip',$nip)->first();
         $hari_kerja = HariKerja::whereHas('statusHari', function ($query) use ($bulan, $tahun) {
             $query->where('status_hari', 'kerja');
         })->where('bulan', $bulan)->where('tahun', $tahun)->orderBy('tanggal', 'asc')->get();
@@ -356,16 +385,20 @@ class PegawaiRepository extends BaseRepository
         $formula = FormulaVariable::all();
         $persen['kinerja'] = $formula->where('variable', 'kinerja')->first()->persentase_nilai;
         $persen['absen'] = $formula->where('variable', 'absen')->first()->persentase_nilai;
-        $pegawai = $this->getDataPegawai($user, $bulan, $tahun, $request->input('id_skpd'));
+
+        $pegawai = $this->getDataPegawai($user, $bulan, $tahun, $d_id_skpd);
 
         $data = $this->parseDataRekap($pegawai, $persen, $hari_kerja);
-        $skpd = Skpd::find($request->id_skpd);
+
+        $skpd = Skpd::where('id', $skpd)->first();
         $namaSkpd = $skpd ? $skpd->nama_skpd : 'PEMERINTAH KABUPATEN KOLAKA';
         $periode = ucfirst(Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan . ' ' . date('Y', strtotime($periode_rekap)));
         $tanggal_cetak = date('d') . ' ' . ucfirst(Bulan::find((int)date('m'))->nama_bulan) . ' ' . date('Y');
         $pdf = PDF::loadView('pdf.rekap-bulanan', compact('data', 'namaSkpd', 'periode', 'tanggal_cetak'));
         $pdf->setPaper('legal', 'landscape');
-
+        if ($download){
+            return $pdf->download('rekap_bulanan.pdf');
+        }
         return $pdf->stream('rekap_bulanan.pdf');
     }
 
@@ -384,7 +417,6 @@ class PegawaiRepository extends BaseRepository
         $pegawai = $pegawai->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id');
         $pegawai = $pegawai->orderBy('golongan.tunjangan', 'desc');
         $pegawai = $pegawai->orderBy('pegawai.nama');
-
         if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
             if ($user->role()->pluck('id_role')->max() != 5) {
                 $pegawai->whereHas('jabatan', function ($query) use ($user) {

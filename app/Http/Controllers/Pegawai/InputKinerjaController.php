@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
+use App\Models\Absen\Kinerja;
+use App\Models\SkpPegawai;
 use App\Repositories\KinerjaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,12 +23,13 @@ class InputKinerjaController extends Controller
         $user = Auth::user();
         $role = $user->role()->first()->id;
         $permission = $user->role()->first()->permissions;
-
+        $skp_pegawai = SkpPegawai::with('skpTask')->where('status','0')->whereMonth('periode',date('m'))->where('nip_pegawai',$user->nip)->get();
+        $skp_selesai = SkpPegawai::with('skpTask')->where('status','1')->whereMonth('periode',date('m'))->where('nip_pegawai',$user->nip)->get();
         if ($role == 2 || $role == 3) {
             if ($permission['input-kinerja'] == false)
                 return redirect()->route('monitoring.absen.index');
         }
-        return view('layouts.users.input-kinerja.index');
+        return view('layouts.users.input-kinerja.index',compact('skp_pegawai','skp_selesai'));
     }
 
     public function getKinerjaTersimpan()
@@ -54,7 +57,13 @@ class InputKinerjaController extends Controller
     public function inputKinerja(Request $request)
     {
         $nip = auth('web')->user()->nip;
-        return $this->ApiSpecResponses($this->kinerja->inputKinerja($request->input(), $nip));
+        $kinerja = $this->kinerja->inputKinerja($request->input(), $nip);
+
+        if ($kinerja instanceof Kinerja) {
+            if ($request->hasFile('doc'))
+                $this->kinerja->uploadFile($request->file('doc'),$kinerja->id);
+        }
+        return $this->ApiSpecResponses($kinerja);
     }
 
 }

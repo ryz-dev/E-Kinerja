@@ -160,7 +160,10 @@ class PegawaiController extends AdminController
 
     public function downloadRekapBulanan(Request $request)
     {
-        return $this->pegawai->downloadRekapBulanan($request);
+        $periode_rekap = $request->has('periode_rekqp') ? $request->periode_rekap : date('Y-m-d');
+        $nip = Pegawai::where('id_jabatan',3)->first()->nip;
+        $skpd = $request->has('id_skpd') ? $request->input('id_skpd') : 1;
+        return $this->pegawai->downloadRekapBulanan($nip,1,$skpd,$periode_rekap);
     }
 
     public function updatePassword(Request $request)

@@ -82,101 +82,37 @@
                         {{csrf_field()}}
                         <input type="hidden" name="id">
                         <input type="hidden" name="jenis_kinerja" value="hadir">
-{{--                        <input type="hidden" name="status">--}}
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="input-group hadir">
                                     <!-- <input class="ml-2 mt-2" type="radio"> -->
-                                    <h5 class="mb-4 font-weight-bold">Hadir</h5>
-                                    <label class="wrap-radio">
-                                        <!-- <input type="radio" name="radio" />
-                                        <span class="checkmark checkmark-blue"></span> -->
+                                    <h5>Hadir</h5> <label class="wrap-radio">
+                                        <input type="radio" name="radio" checked>
+                                        <span class="checkmark checkmark-blue"></span>
                                     </label>
                                 </div>
-                                @if (!$skp_selesai->isEmpty())
-                                <div class="col-md-12 mb-1">
-                                    <label class="text-secondary" style="font-size: 1.2em">SKP Selesai</label>
-                                    @foreach($skp_selesai As $ss)
-                                        <label class="container-check">
-                                            <p>{{$ss->skpTask->task}}</p>
-                                            <input type="checkbox" name="skp_selesai[{{$ss->id}}]" checked readonly onclick="return false">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                                @endif
-                                <div class="col-md-12 mb-1">
-                                    <label class="text-secondary" style="font-size: 1.2em">List SKP</label>
-                                    <div class="wrap-progress">
-                                        <label>0%</label>
-                                        <div class="progress" style="height: 8px;">
-                                            <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 mb-1">
-                                    @foreach($skp_pegawai As $sp)
-                                    <label class="container-check">
-                                        <p>{{$sp->skpTask->task}}</p>
-                                        <input type="checkbox" name="skp_pegawai[{{$sp->id}}]" {{$sp->status ? 'checked' : ''}}>
-                                        <span class="checkmark"></span>
-                                    </label>
-                                    @endforeach
-                                </div>
-
-                                <div class="col-md-12 mt-4">
-                                    <label class="text-secondary" style="font-size: 1.2em">Upload Dokumen</label>
-{{--                                    <div class="uploads mb-3">--}}
-{{--                                        <img src="/assets/images/icons/word.svg">--}}
-{{--                                        <label>Lorem ipsum dolor sit amet consectetur adipisicing</label>--}}
-{{--                                        <button>--}}
-{{--                                            <i class="material-icons">delete</i>--}}
-{{--                                            Hapus--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
-                                </div>
-
-                                <div class="col-md-12 mb-3">
-{{--                                    <form action="/file-upload" class="dropzone">--}}
-                                        <div class="dropzone">
-                                            <div class="dz-message " data-dz-message>
-                                                <i class="material-icons">cloud_upload</i>
-                                                <span class="ml-3">Upload Dokumen</span>
-                                                <div class="fallback">
-                                                    <input name="doc[]" type="file" multiple />
-                                                </div>
-                                            </div>
-                                        </div>
-{{--                                    </form>--}}
-                                </div>
-
-                                <div class="col-md-12">
-                                    <textarea class="rincianKinerja" name="rincian_kinerja" rows="3" placeholder="Rincian Kinerja"></textarea>
-                                    {{--<div class="rincianKinerja" contenteditable="true">
-                                        <span>Rincian Kinerja</span>
-                                        <p id="rincian-kinerja">
-                                            Kinerja Di Sini!!
-                                        </p>
-                                        <input type="hidden" name="rincian_kinerja" required>
-                                    </div>--}}
-                                    <a style="color: white; display: none" id="hapus-kinerja" class="btn btn-warning mt-3">Hapus</a>
-{{--                                    <button type="submit" data-status="5" class="btn btn-custom mt-3">Simpan</button>--}}
-                                    <button type="submit" data-status="0"  class="btn btn-success float-right mt-3">Kirim</button>
-                                </div>
+                                <h6 class="mb-2 mt-4">Rincian Kinerja Harian</h6>
+                                <textarea name="rincian_kinerja" autofocus rows="10" class="form-control"
+                                          required></textarea>
+                                <a style="color: white; display: none" id="hapus-kinerja" class="btn btn-warning mt-3">Hapus</a>
+                                <button type="submit" data-status="5" class="btn btn-custom mt-3">Simpan</button>
+                                <button type="submit" data-status="0"  class="btn btn-success float-right mt-3">Kirim</button>
                             </div>
-                            <div class="col-md-4 time-desc">
+                            <div class="col-md-4">
                                 <div class="description">
                                     <h6>Input Kinerja</h6>
-                                    <p>
-                                        Lakukan Penginputan Kinerja Harian sebelum jam pulang
-                                        Kantor. Nantinya Data ini akan dijadikan acuan untuk
-                                        laporan Kinerja Anda.
-                                    </p>
+                                    <p>Lakukan Penginputan Kinerja Harian sebelum jam pulang Kantor. Nantinya Data ini
+                                        akan
+                                        dijadikan acuan untuk laporan Kinerja Anda.</p>
                                 </div>
-                                <div class="clock-side"><span>17:10</span></div>
+                                <div class="clock-side">
+                                    <span class="clock">--:--</span>
+                                </div>
                                 <div class="day-side">
-                                    <small>Selasa, 23 September 2018</small>
+                                    <small>{{ucfirst(\App\Models\MasterData\Hari::find(date('N'))->nama_hari)}}
+                                        , {{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</small>
                                 </div>
+
                             </div>
                         </div>
                     </form>
@@ -259,14 +195,12 @@
                                 <div class="row">
                                     <div class="col-md-6 date-group">
                                         <label class="mb-2 mt-4">Tgl. Mulai</label>
-                                        <br>
                                         <input name="tgl_mulai" class="datepicker" autocomplete="off" id="datepicker"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
                                     </div>
                                     <div class="col-md-6 date-group">
                                         <label class="mb-2 mt-4">Tgl. Berakhir</label>
-                                        <br>
                                         <input name="tgl_selesai" class="datepicker" autocomplete="off" id="datepicker1"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
@@ -318,14 +252,12 @@
                                 <div class="row">
                                     <div class="col-md-6 date-group">
                                         <label class="mb-2 mt-4">Tgl. Mulai</label>
-                                        <br>
                                         <input name="tgl_mulai" class="datepicker" autocomplete="off" id="datepicker"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
                                     </div>
                                     <div class="col-md-6 date-group">
                                         <label class="mb-2 mt-4">Tgl. Berakhir</label>
-                                        <br>
                                         <input name="tgl_selesai" class="datepicker" autocomplete="off" id="datepicker1"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
@@ -418,89 +350,65 @@
             $('[type=submit]').on('click',function () {
                 $(this).addClass('active').siblings().removeClass('active')
             })
-            {{--var getDraft = function() {--}}
-            {{--    $.get('{{route('input-kinerja.api.draft')}}', {--}}
-            {{--        '_token': '{{csrf_token()}}'--}}
-            {{--    })--}}
-            {{--        .then(function (res) {--}}
-            {{--            data = res.response;--}}
-            {{--            $('#hadir').find('[name=id]').val(data.id)--}}
-            {{--            $('#hadir').find('[name=rincian_kinerja]').val(data.rincian_kinerja)--}}
-            {{--            $('#hadir').find('#rincian-kinerja').text(data.rincian_kinerja)--}}
-            {{--            res.response.skp_pegawai.forEach(function(val){--}}
-            {{--                $('[name="skp_pegawai['+val.id+']"]').attr('checked',true);--}}
-            {{--            })--}}
-            {{--            persentaseSkp();--}}
-            {{--            $('#hapus-kinerja').show();--}}
-            {{--        }, function (err) {--}}
-            {{--            $('#hadir').find('[name=id]').val('')--}}
-            {{--            $('#hadir').find('[name=rincian_kinerja]').val('')--}}
-            {{--            $('#hadir').find('#rincian-kinerja').text('')--}}
-            {{--            $('#hapus-kinerja').hide();--}}
-            {{--        })--}}
-            {{--}--}}
-            // getDraft();
-            {{--$('#hapus-kinerja').on('click',function (e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    id = $('#hadir').find('[name=id]').val()--}}
-            {{--    if (id){--}}
-            {{--        swal({--}}
-            {{--            title: 'Ingin Menghapus Draft Kinerja?',--}}
-            {{--            text: "",--}}
-            {{--            type: 'warning',--}}
-            {{--            showCancelButton: true,--}}
-            {{--            confirmButtonText: 'Iya, hapus draft!',--}}
-            {{--            cancelButtonText: 'Batalkan'--}}
-            {{--        }).then((result) => {--}}
-            {{--            if (result.value) {--}}
-            {{--                $.post('{{route('input-kinerja.api.delete-draft',['id' => ''])}}/' + id, {--}}
-            {{--                    '_token': '{{csrf_token()}}'--}}
-            {{--                })--}}
-            {{--                    .then(function (res) {--}}
-            {{--                        swal(--}}
-            {{--                            res.response.message,--}}
-            {{--                            '',--}}
-            {{--                            'success'--}}
-            {{--                        );--}}
-            {{--                        // getDraft()--}}
-            {{--                    }, function (err) {--}}
-            {{--                        console.log(err)--}}
-            {{--                    })--}}
-            {{--            }--}}
-            {{--        })--}}
-            {{--    }--}}
-            {{--})--}}
-            $('[name*=skp_pegawai]').on('click',function () {
-                persentaseSkp();
-            })
-            function persentaseSkp(){
-                skp_selesai = $('[name*=skp_selesai]').length ? $('[name*=skp_selesai]').length : 0;
-                skp = $('[name*=skp_pegawai]').length ? $('[name*=skp_pegawai]').length : 0
-                skp_checked = $('[name*=skp_pegawai]:checked').length ? $('[name*=skp_pegawai]:checked').length : 0
-                persentase = 0;
-                if (skp+skp_selesai > 0) {
-                    persentase = (skp_checked + skp_selesai) / (skp + skp_selesai) * 100;
-                }
-                $('.wrap-progress').find('label').html(persentase+'%')
-                $('.wrap-progress').find('.progress-bar').css({width : persentase+'%'})
+            var getDraft = function() {
+                $.get('{{route('input-kinerja.api.draft')}}', {
+                    '_token': '{{csrf_token()}}'
+                })
+                    .then(function (res) {
+                        data = res.response;
+                        $('#hadir').find('[name=id]').val(data.id)
+                        $('#hadir').find('[name=rincian_kinerja]').val(data.rincian_kinerja)
+                        $('#hapus-kinerja').show();
+                    }, function (err) {
+                        $('#hadir').find('[name=id]').val('')
+                        $('#hadir').find('[name=rincian_kinerja]').val('')
+                        $('#hapus-kinerja').hide();
+                    })
             }
-            persentaseSkp();
+            getDraft();
+            $('#hapus-kinerja').on('click',function (e) {
+                e.preventDefault();
+                id = $('#hadir').find('[name=id]').val()
+                if (id){
+                    swal({
+                        title: 'Ingin Menghapus Draft Kinerja?',
+                        text: "",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Iya, hapus draft!',
+                        cancelButtonText: 'Batalkan'
+                    }).then((result) => {
+                        if (result.value) {
+                            $.post('{{route('input-kinerja.api.delete-draft',['id' => ''])}}/' + id, {
+                                '_token': '{{csrf_token()}}'
+                            })
+                                .then(function (res) {
+                                    swal(
+                                        res.response.message,
+                                        '',
+                                        'success'
+                                    );
+                                    getDraft()
+                                }, function (err) {
+                                    console.log(err)
+                                })
+                        }
+                    })
+                }
+            })
             $(document).on('submit', '.form-submit-kinerja.active-form', function (e) {
                 e.preventDefault();
-                // text = $('#rincian-kinerja').text();
-                // $('#hadir').find('[name=rincian_kinerja]').val(text);
-                var action = this.action;
-                // var status = $('[type=submit].active').data('status');
-                // $('[name=status]').val(status);
-                // if (status == 5){
-                //     info = 'simpan'
-                //     info2 = 'Menyimpan'
-                // } else {
+                var data = $(e.target);
+                var action = this.action
+                var that = this;
+                var status = $('[type=submit].active').data('status');
+                if (status == 5){
+                    info = 'simpan'
+                    info2 = 'Menyimpan'
+                } else {
                     info = 'kirim'
                     info2 = 'Mengirim'
-                // }
-                var formData = new FormData($(this)[0]);
-
+                }
                 swal({
                     title: 'Ingin '+info2+' Data Kinerja?',
                     text: "",
@@ -511,11 +419,8 @@
                 }).then((result) => {
                     if (result.value) {
                         $('.loading').show();
-                        $.ajax({
-                            url: action,
-                            type: "POST",
-                            data: formData,
-                            success: function (res) {
+                        $.post(action, data.serialize()+(status ? '&status='+status : ''))
+                            .then(function (res) {
                                 $('.loading').hide();
                                 if (res.diagnostic.code == 200) {
                                     swal(
@@ -523,7 +428,7 @@
                                         '',
                                         'success'
                                     );
-                                    // getDraft()
+                                    getDraft()
                                 } else {
                                     swal(
                                         'Gagal '+info2+' Data!',
@@ -531,19 +436,14 @@
                                         'warning'
                                     );
                                 }
-                            },
-                            error: function () {
+                            }, function (err) {
                                 swal(
                                     'Gagal '+info2+' Data!',
                                     '',
                                     'warning'
                                 );
                                 $('.loading').hide();
-                            },
-                            cache: false,
-                            contentType: false,
-                            processData: false
-                        });
+                            })
                     }
                 })
             })

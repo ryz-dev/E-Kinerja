@@ -158,12 +158,12 @@
                 <img src="{{ asset('assets/images/logo_ekinerja.png') }}" width="120">
             </div>
             <ul>
-                <li class="{{str_contains(url()->current(),route('sasaran-kerja.index')) ? 'active' : ''}}">
-                    <a href="{{ route('sasaran-kerja.index') }}">
-                        <i class="material-icons">work</i>
-                        <span>Sasaran Kerja</span>
-                    </a>
-                </li>
+{{--                <li class="{{str_contains(url()->current(),route('sasaran-kerja.index')) ? 'active' : ''}}">--}}
+{{--                    <a href="{{ route('sasaran-kerja.index') }}">--}}
+{{--                        <i class="material-icons">work</i>--}}
+{{--                        <span>Sasaran Kerja</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
                 @can('monitoring-absen')
                 <li class="{{str_contains(url()->current(),route('monitoring.absen.index')) ? 'active' : ''}}">
                     <a href="{{route('monitoring.absen.index')}}">

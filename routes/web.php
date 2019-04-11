@@ -34,7 +34,7 @@ Route::group(['middleware' => 'auth'],function (){
                 Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('penilaian-kinerja.api.kinerja');
                 Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('penilaian-kinerja.api.reply');
             });
-            Route::get('','PenilainKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index');
+            Route::get('','PenilaianKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index');
         });
         Route::group(['prefix' => 'tunjangan-kinerja','middleware' => 'can:tunjangan-kinerja'],function(){
             Route::group(['prefix' => 'api'],function (){
@@ -65,7 +65,7 @@ Route::group(['prefix'=>'admin'], function(){
         Route::get('/login', 'AdminLoginController@showLoginForm')->name('admin-login-index');
         Route::post('login', 'AdminLoginController@login')->name('admin-login');
     });
-    Route::group(['middleware' => 'Auth'],function (){
+    Route::group(['middleware' => 'auth'],function (){
         Route::group(['middleware' => 'can:master-data','namespace' => 'Admin'],function (){
             Route::group(['prefix' => 'pegawai'],function (){
                 Route::group(['prefix' => 'api'],function (){

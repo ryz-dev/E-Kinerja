@@ -4,13 +4,14 @@ namespace App\Models\Absen;
 
 use App\Models\MasterData\Pegawai;
 use App\Models\Media;
+use App\Models\SkpPegawai;
 use Illuminate\Database\Eloquent\Model;
 
 class Kinerja extends Model
 {
     protected $table = 'kinerja';
     protected $fillable = [
-        'nip', 'tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve'
+        'nip', 'tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve','nilai_kinerja'
     ];
 
     public function pegawai()
@@ -31,6 +32,10 @@ class Kinerja extends Model
     public function media()
     {
         return $this->hasMany(Media::class, 'id_kinerja');
+    }
+
+    public function skp_pegawai(){
+        return $this->belongsToMany(SkpPegawai::class,'skp_kinerja','id_kinerja','id_skp_pegawai');
     }
 
 }
