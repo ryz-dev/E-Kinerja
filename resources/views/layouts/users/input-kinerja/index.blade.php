@@ -201,13 +201,13 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 date-group">
-                                        <label class="mb-2 mt-4">Tgl. Mulai</label>
+                                        <label>Tgl. Mulai</label>
                                         <br>
                                         <input name="tgl_mulai" class="datepicker" autocomplete="off" required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
                                     </div>
                                     <div class="col-md-6 date-group">
-                                        <label class="mb-2 mt-4">Tgl. Berakhir</label>
+                                        <label>Tgl. Berakhir</label>
                                         <br>
                                         <input name="tgl_selesai" class="datepicker" autocomplete="off" required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
@@ -258,14 +258,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 date-group">
-                                        <label class="mb-2 mt-4">Tgl. Mulai</label>
+                                        <label>Tgl. Mulai</label>
                                         <br>
                                         <input name="tgl_mulai" class="datepicker" autocomplete="off" id="datepicker"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
                                     </div>
                                     <div class="col-md-6 date-group">
-                                        <label class="mb-2 mt-4">Tgl. Berakhir</label>
+                                        <label>Tgl. Berakhir</label>
                                         <br>
                                         <input name="tgl_selesai" class="datepicker" autocomplete="off" id="datepicker1"
                                                required/>
@@ -317,14 +317,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 date-group">
-                                        <label class="mb-2 mt-4">Tgl. Mulai</label>
+                                        <label>Tgl. Mulai</label>
                                         <br>
                                         <input name="tgl_mulai" class="datepicker" autocomplete="off" id="datepicker"
                                                required/>
                                         <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
                                     </div>
                                     <div class="col-md-6 date-group">
-                                        <label class="mb-2 mt-4">Tgl. Berakhir</label>
+                                        <label>Tgl. Berakhir</label>
                                         <br>
                                         <input name="tgl_selesai" class="datepicker" autocomplete="off" id="datepicker1"
                                                required/>
