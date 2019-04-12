@@ -10,14 +10,27 @@ class SkpPegawaiRepository extends BaseRepository
 {
     protected $pegawai;
     protected $sasaranKerja;
+    protected $periode;
 
-    public function __construct($pegawai = null){
+    public function __construct($pegawai = null, $periode = null){
         parent::__construct();
 
         if ($pegawai != null) {
             $pegawai = PegawaiRepository::dataPegawai($pegawai);
-            $sasaranKerja = $this->model->where('nip_pegawai', $pegawai->nip);
-            $this->sasaranKerja = $sasaranKerja->count() > 0?$sasaranKerja:null;
+            $sasaranKerja = $this->where('nip_pegawai', $pegawai->nip);
+            
+            if ($periode != null) {
+                if (strtotime($periode) == false) {
+                    $periode = date('Y-m-d', $periode);
+                }
+                $this->periode = $periode;
+                
+
+                $sasaranKerja = $sasaranKerja
+                    ->whereMonth('periode','=', month($periode))
+                    ->whereYear('periode','=', year($periode));
+            }
+            $this->sasaranKerja = $sasaranKerja->count() > 0?$sasaranKerja->get():null;
             $this->pegawai = $pegawai;
         }
 
@@ -94,6 +107,45 @@ class SkpPegawaiRepository extends BaseRepository
         ];
     }
 
+
+    public function sasaranKerjaAtasan(){
+        $sasaranKerjaAtasan = new SkpPegawaiRepository($this->getAtasan()->nip, $this->periode);
+        
+        
+        if ($sasaranKerjaAtasan->count()) {
+            $sasaranKerjaAtasan = $sasaranKerjaAtasan
+                ->get()
+                ->map(function($value, $key){
+                    $data['id'] = $value->id;
+                    $data['id_skp'] = $value->id_skp;
+                    $data['task'] = $value->skpTask->task;
+                    return $data;
+                });
+        }
+        else{
+            $sasaranKerjaAtasan = null;
+        }
+        return $sasaranKerjaAtasan;
+    }
+
+    public function sasaranKerja(){
+        $sasaranKerja = $this->sasaranKerja;
+
+        if ($sasaranKerja->count()) {
+            $sasaranKerja = $sasaranKerja
+                ->map(function($value, $key){
+                    $data['id_skp_pegawai'] = $value->id;
+                    $data['id_skp'] = $value->id_skp;
+                    $data['task'] = $value->skpTask->task;
+                    return $data;
+                });
+        }
+        else{
+            $sasaranKerja = null;
+        }
+        return $sasaranKerja;
+    }
+
     public function getIndexData($date = null){
         if ($date == null) {
             $date = date('Y-m-d');
@@ -119,35 +171,13 @@ class SkpPegawaiRepository extends BaseRepository
         return $result;
     }
 
-    public function getAddSasaranKerjaData($periode){
-        $periode = date('Y-m-d', $periode);
-        
-        $sasaranKerjaAtasan = new SkpPegawaiRepository($this->getAtasan()->nip);
-        
-        if ($sasaranKerjaAtasan->sasaranKerja) {
-            $sasaranKerjaAtasan = $sasaranKerjaAtasan
-                ->model
-                ->whereMonth('periode','=', month($periode))
-                ->whereYear('periode','=', year($periode))
-                ->get()
-                ->map(function($value, $key){
-                    $data['id'] = $value->id;
-                    $data['id_skp'] = $value->id_skp;
-                    $data['task'] = $value->skpTask->task;
-                    return $data;
-                });
-        }
-        else{
-            $sasaranKerjaAtasan = null;
-        }
-        
-        $sasaranKerja = $this->sasaranKerja;
 
+    public function sasaranKerjaData(){
         return [
-            'sasaranKerjaAtasan' => $sasaranKerjaAtasan,
+            'sasaranKerjaAtasan' => $this->sasaranKerjaAtasan($this->periode),
             'dataPegawai' => $this->pegawai,
-            'sasaranKerja' => $this,
-            'periode' => namaBulan((int)month($periode)).' '.year($periode)
+            'sasaranKerja' => $this->sasaranKerja(),
+            'periode' => namaBulan((int)month($this->periode)).' '.year($this->periode)
         ];
     }
 
