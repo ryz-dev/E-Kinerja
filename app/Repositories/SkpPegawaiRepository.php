@@ -27,8 +27,7 @@ class SkpPegawaiRepository extends BaseRepository
                 
 
                 $sasaranKerja = $sasaranKerja
-                    ->whereMonth('periode','=', month($periode))
-                    ->whereYear('periode','=', year($periode));
+                        ->wherePeriode($periode);
             }
             $this->sasaranKerja = $sasaranKerja->count() > 0?$sasaranKerja->get():null;
             $this->pegawai = $pegawai;
@@ -81,6 +80,11 @@ class SkpPegawaiRepository extends BaseRepository
         return $this->count();
     }
 
+    public function wherePeriode($date){
+        $this->whereMonth('periode','=', month($date))->whereYear('periode','=', year($date));
+        return $this;
+    }
+
     public function getAtasan(){
         return \Auth::user();
     }
@@ -131,7 +135,7 @@ class SkpPegawaiRepository extends BaseRepository
     public function sasaranKerja(){
         $sasaranKerja = $this->sasaranKerja;
 
-        if ($sasaranKerja->count()) {
+        if ($sasaranKerja) {
             $sasaranKerja = $sasaranKerja
                 ->map(function($value, $key){
                     $data['id_skp_pegawai'] = $value->id;
@@ -151,9 +155,8 @@ class SkpPegawaiRepository extends BaseRepository
             $date = date('Y-m-d');
         }
         
-        $atasan = $this->getAtasan();
-        $bawahan = new PegawaiRepository($atasan->nip);
-        $result = $bawahan->getBawahanLangsung()->map(function($value, $key) use ($date) {
+        $pegawai = new PegawaiRepository(\Auth::user()->nip);
+        $result = $pegawai->getBawahanLangsung()->map(function($value, $key) use ($date) {
             $skp = $value->skp()->whereMonth('periode', date('m', strtotime($date)))
                             ->whereYear('periode', date('Y', strtotime($date)))
                             ->count();

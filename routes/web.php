@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth'],function (){
 
             Route::get('', 'SasaranKerjaController@index')->name('sasaran-kerja.index');
             Route::get('/add/', 'SasaranKerjaController@add')->name('sasaran-kerja.add');
+            Route::get('/edit/', 'SasaranKerjaController@edit')->name('sasaran-kerja.edit');
             Route::post('/store/', 'SasaranKerjaController@store')->name('sasaran-kerja.store');
         });
     });

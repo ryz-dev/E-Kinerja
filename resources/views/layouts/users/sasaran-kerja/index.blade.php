@@ -82,7 +82,7 @@
 
     var actionButton = function(flag, uuid, periode){
         if (flag) {
-            return "<div class='flex'><a href='{{ route('sasaran-kerja.add') }}/"+uuid+"'>" +
+            return "<div class='flex'><a href='{{ route('sasaran-kerja.edit') }}/?uuid="+uuid+"&periode="+periode+"'>" +
                     '<button class="btn-style warning mr-2">' +
                         '<i class="material-icons">edit</i> Edit '+
                     '</button>' +

@@ -53,6 +53,19 @@
                         </button>
                     </div>
                     <div class="skp-desc parent-sasaran mt-3" id="sasaran">
+                        @foreach ($sasaran_kerja['sasaranKerja'] as $item => $task)
+                            <div class="child-skp">
+                                <textarea style="border: none" class="form-control values-skp" name="skp[]" readonly>{{ $task['task'] }}</textarea>
+                                <div class="flex">
+                                    <div class="btn-style gray warning btn-edit-skp" style="border:none;">
+                                    <i class="material-icons">edit</i>
+                                    </div>
+                                    <div class="btn-style gray danger btn-delete-skp" style="border:none;">
+                                        <i class="material-icons">delete</i>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                         <!-- Add SKP -->
                         <div class="modal-add-skp" id="modal-add-skp">
                         <div class="container">
@@ -81,8 +94,7 @@
                         @if($sasaran_kerja['sasaranKerjaAtasan'])
                           @foreach ($sasaran_kerja['sasaranKerjaAtasan'] as $item => $task)
                           <div class="child-skp">
-                              <input type="hidden" name="id_skpDistribusi[]" value="{{ $task['id_skp'] }}">
-                              <textarea name="skpDistribusi[]" style="border:none;" class="form-control values-skp" readonly>{{ $task['task'] }}</textarea>
+                              <input name="skpDistribusi[]" type="text" style="border:none;" class="form-control values-skp" value="{{ $task['task'] }}" disabled/>
                               <!-- display none here -->
                               <div class="flex">
                                   <div class="btn-style gray warning btn-edit-skp" style="border:none;">
@@ -133,7 +145,8 @@
   })
 
   $(document).ready(function() {
-
+    autosize($("input[name='skp[]']"));
+    
     $(tambahSkp).on('click', function(e) {
       e.preventDefault()
       addSkp()
