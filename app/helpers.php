@@ -18,3 +18,22 @@ if (!function_exists('namaBulan')) {
         return $nama[(int) $int];
     }
 }
+if (!function_exists('namaBulan')) {
+    function formatDate2($date)
+    {
+        $d = date('d', strtotime($date));
+        $bulan = (int)date('m', strtotime($date));
+        $m = namaBulan($bulan);
+        $y = date('Y', strtotime($date));
+        return $d . " " . $m . " " . $y;
+    }
+}
+if (!function_exists('namaBulan')) {
+    function formatDate3($date)
+    {
+        $bulan = (int)date('m', strtotime($date));
+        $m = namaBulan($bulan);
+        $y = date('Y', strtotime($date));
+        return $m . " " . $y;
+    }
+}

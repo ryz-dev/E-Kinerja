@@ -8,37 +8,32 @@ use App\Models\Absen\Kinerja;
 use App\Models\MasterData\Agama;
 use App\Models\MasterData\Bulan;
 use App\Models\MasterData\FormulaVariable;
-use App\Models\MasterData\Hari;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Jabatan;
 use App\Models\MasterData\Pegawai;
 use App\Models\MasterData\Skpd;
-use App\Models\SkpPegawai;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PDF;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PegawaiRepository extends BaseRepository
 {
+    public $pegawai;
     private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
     private $special_user_id = [2, 3, 4];
-    public $pegawai;
 
-    public function __construct($nip = null){
+    public function __construct($nip = null)
+    {
         parent::__construct();
 
         if ($nip) {
-            $this->pegawai = $this->model::where('nip',$nip)->orWhere('uuid',$nip)->first();
+            $this->pegawai = $this->model::where('nip', $nip)->orWhere('uuid', $nip)->first();
         }
+    }
+
+    public static function dataPegawai($pegawai)
+    {
+        return app()->make(self::model())->where('nip', $pegawai)->orWhere('uuid', $pegawai)->first();
     }
 
     public function model()
@@ -95,8 +90,9 @@ class PegawaiRepository extends BaseRepository
         return $this->count();
     }
 
-    public function getPageMonitoringAbsen($nip,$skpd,$search){
-        $user = Pegawai::where('nip',$nip)->first();
+    public function getPageMonitoringAbsen($nip, $skpd, $search)
+    {
+        $user = Pegawai::where('nip', $nip)->first();
 
         $data = Pegawai::where('nip', '<>', '');
 
@@ -372,12 +368,12 @@ class PegawaiRepository extends BaseRepository
         return str_replace('public/', '', $file->store('public/upload'));
     }
 
-    public function downloadRekapBulanan($nip,$skpd,$d_id_skpd,$periode_rekap,$download = false)
+    public function downloadRekapBulanan($nip, $skpd, $d_id_skpd, $periode_rekap, $download = false)
     {
         // dd($request);
         $bulan = (int)($periode_rekap ? date('m', strtotime($periode_rekap)) : date('m'));
         $tahun = (int)($periode_rekap ? date('Y', strtotime($periode_rekap)) : date('Y'));
-        $user = Pegawai::where('nip',$nip)->first();
+        $user = Pegawai::where('nip', $nip)->first();
         $hari_kerja = HariKerja::whereHas('statusHari', function ($query) use ($bulan, $tahun) {
             $query->where('status_hari', 'kerja');
         })->where('bulan', $bulan)->where('tahun', $tahun)->orderBy('tanggal', 'asc')->get();
@@ -396,7 +392,7 @@ class PegawaiRepository extends BaseRepository
         $tanggal_cetak = date('d') . ' ' . ucfirst(Bulan::find((int)date('m'))->nama_bulan) . ' ' . date('Y');
         $pdf = PDF::loadView('pdf.rekap-bulanan', compact('data', 'namaSkpd', 'periode', 'tanggal_cetak'));
         $pdf->setPaper('legal', 'landscape');
-        if ($download){
+        if ($download) {
             return $pdf->download('rekap_bulanan.pdf');
         }
         return $pdf->stream('rekap_bulanan.pdf');
@@ -535,13 +531,9 @@ class PegawaiRepository extends BaseRepository
     public function getBawahanLangsung()
     {
         $atasan = $this->pegawai;
-        return $this->model->where('nip','<>','')
-                           ->whereHas('jabatan', function($query) use($atasan){
-                            $query->where('id_atasan',$atasan->id_jabatan);
-                           })->get();
-    }
-
-    public static function dataPegawai($pegawai){
-        return app()->make(self::model())->where('nip',$pegawai)->orWhere('uuid', $pegawai)->first();
+        return $this->model->where('nip', '<>', '')
+            ->whereHas('jabatan', function ($query) use ($atasan) {
+                $query->where('id_atasan', $atasan->id_jabatan);
+            })->get();
     }
 }

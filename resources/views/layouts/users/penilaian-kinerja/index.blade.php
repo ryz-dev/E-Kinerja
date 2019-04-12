@@ -96,7 +96,7 @@
                         <h6 class="mt-4">Nilai Kinerja</h6>
                         <div class="btn-slider">
                             <div class="slidecontainer">
-                                <input type="range" class="slider" min="0" step="1" max="10" id="rate" name="rate"
+                                <input type="range" class="slider" min="0" step="1" max="10" id="rate" name="nilai_kinerja"
                                        value="0" oninput="$('[name=thisRate]').val(rate.value)">
                             </div>
                         </div>
@@ -210,7 +210,7 @@
                             $('#ket_kinerja').html(res.response.now.rincian_kinerja);
                             $('textarea').val(res.response.now.keterangan_approve);
                             $('[name=thisRate]').html(res.response.now.nilai_kinerja)
-                            $('[name=rate]').val(res.response.now.nilai_kinerja)
+                            $('[name=nilai_kinerja]').val(res.response.now.nilai_kinerja)
                             if (res.response.now.jenis_kinerja == 'hadir') {
                                 $('#list-skp').show();
                                 $('#skp-holder').hide();

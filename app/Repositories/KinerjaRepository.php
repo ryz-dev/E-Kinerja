@@ -4,10 +4,13 @@ namespace App\Repositories;
 
 
 use App\Models\Absen\Checkinout;
+use App\Models\Absen\Kinerja;
 use App\Models\MasterData\FormulaVariable;
 use App\Models\MasterData\HariKerja;
 use App\Models\MasterData\Pegawai;
 use App\Models\Media;
+use App\Models\SkpPegawai;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class KinerjaRepository extends BaseRepository
@@ -358,6 +361,66 @@ class KinerjaRepository extends BaseRepository
                     'uuid' => (string)Str::uuid()
                 ]);
         }
+    }
+
+    static function getBawahanPenilaianKinerja($nip,$date){
+        $user = Pegawai::where('nip',$nip)->first();
+        $pegawai = Pegawai::wherehas('jabatan', function ($query) use ($user) {
+            $query->where('id_atasan', '=', $user->id_jabatan);
+        })->with(['kinerja' => function ($query) use ($date) {
+            $query->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'));
+            $query->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'));
+            $query->terbaru();
+        }])->get();
+        return $pegawai;
+    }
+
+    static function getKinerjaPenilaianKinerja($nip,$date){
+        $pegawai = Pegawai::where('nip', $nip)->first();
+        $old_kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->with('skp_pegawai.skpTask','media')
+            ->where('approve', 0)
+            ->whereMonth('tgl_mulai', date('m'))
+            ->whereDate('tgl_mulai', '<', date('Y-m-d'))
+            ->get();
+        $kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->with('skp_pegawai.skpTask','media')
+            ->whereDate('tgl_mulai', '<=', $date? $date : date('Y-m-d'))
+            ->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'))
+            ->terbaru()
+            ->first();
+        return [
+            'now' => $kinerja,
+            'old' => $old_kinerja->pluck('tgl_mulai')->toArray()
+        ];
+    }
+
+    static function replyKinerjaPenilaianKinerja(array $param){
+//        try {
+        $kinerja = Kinerja::with('skp_pegawai')->find($param['id']);
+        $kinerja->keterangan_approve = $param['keterangan_approve'];
+        $kinerja->approve = $param['type'];
+        $kinerja->nilai_kinerja = $param['nilai_kinerja'];
+        $kinerja->save();
+        SkpPegawai::whereHas('kinerja',function ($q)use($param){
+            $q->where('kinerja.id',$param['id']);
+        })->update([
+            'status' => 0
+        ]);
+        if (isset($param['skp_pegawai'])){
+            foreach ($param['skp_pegawai'] AS $key => $value) {
+                SkpPegawai::whereHas('kinerja',function ($q)use($param){
+                    $q->where('kinerja.id',$param['id']);
+                })->where('id',$key)->update([
+                    'status' => 1,
+                    'nip_update' => Auth::user()->nip
+                ]);
+            }
+        }
+        return ['status' => 'HTTP_OK'];
+//        } catch (Exception $e) {
+//            throw new ModelNotFoundException('Kinerja Tidak Ditemukan');
+//        }
     }
 
 }
