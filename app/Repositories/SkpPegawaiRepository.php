@@ -80,12 +80,14 @@ class SkpPegawaiRepository extends BaseRepository
         return $this->count();
     }
 
-    public function wherePeriode($date){
+    public function wherePeriode($date)
+    {
         $this->whereMonth('periode','=', month($date))->whereYear('periode','=', year($date));
         return $this;
     }
 
-    public function getAtasan(){
+    public function getAtasan()
+    {
         return \Auth::user();
     }
 
@@ -111,8 +113,8 @@ class SkpPegawaiRepository extends BaseRepository
         ];
     }
 
-
-    public function sasaranKerjaAtasan(){
+    public function sasaranKerjaAtasan()
+    {
         $sasaranKerjaAtasan = new SkpPegawaiRepository($this->getAtasan()->nip, $this->periode);
         
         
@@ -132,7 +134,8 @@ class SkpPegawaiRepository extends BaseRepository
         return $sasaranKerjaAtasan;
     }
 
-    public function sasaranKerja(){
+    public function sasaranKerja()
+    {
         $sasaranKerja = $this->sasaranKerja;
 
         if ($sasaranKerja) {
@@ -150,7 +153,8 @@ class SkpPegawaiRepository extends BaseRepository
         return $sasaranKerja;
     }
 
-    public function getIndexData($date = null){
+    public function getIndexData($date = null)
+    {
         if ($date == null) {
             $date = date('Y-m-d');
         }
@@ -174,8 +178,8 @@ class SkpPegawaiRepository extends BaseRepository
         return $result;
     }
 
-
-    public function sasaranKerjaData(){
+    public function sasaranKerjaData()
+    {
         return [
             'sasaranKerjaAtasan' => $this->sasaranKerjaAtasan($this->periode),
             'dataPegawai' => $this->pegawai,
@@ -184,7 +188,8 @@ class SkpPegawaiRepository extends BaseRepository
         ];
     }
 
-    public function store($data){
+    public function store($data)
+    {
         $new_skp =  $this->saveNewSkp($data['skp']);
         $skp_pegawai = array();
         
@@ -203,7 +208,8 @@ class SkpPegawaiRepository extends BaseRepository
         return false;
     }
 
-    private function saveNewSkp($skp){
+    private function saveNewSkp($skp)
+    {
         $skp_id = array();
 
         foreach ($skp as $key => $task) {
