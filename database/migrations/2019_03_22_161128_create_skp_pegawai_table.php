@@ -37,11 +37,11 @@ class CreateSkpPegawaiTable extends Migration
      */
     public function down()
     {
+        Schema::table('skp_pegawai', function (Blueprint $table) {
+            $table->dropForeign('skp_pegawai_nip_pegawai_foreign');
+            $table->dropForeign('skp_pegawai_id_skp_foreign');
+            $table->dropForeign('skp_pegawai_nip_update_foreign');
+        });
         Schema::dropIfExists('skp_pegawai');
-        // Schema::table('skp_pegawai', function (Blueprint $table) {
-        //     $table->dropForeign('skp_pegawai_nip_pegawai_foreign');
-        //     $table->dropForeign('skp_pegawai_id_skp_foreign');
-        //     $table->dropForeign('skp_pegawai_nip_update_foreign');
-        // });
     }
 }

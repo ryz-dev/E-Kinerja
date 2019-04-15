@@ -104,7 +104,7 @@
                                 row += "<td>" + val.nama + "</td>";
                                 row += "<td>" + (val.jabatan ? val.jabatan.jabatan : '') + "</td>";
                                 row += "<td>" + (val.skpd ? val.skpd.nama_skpd : '') + "</td>";
-                                row += "<td>" + val.jns_kel + "</td>";
+                                row += "<td>" + (val.jns_kel  ? val.jns_kel : '') + "</td>";
                                 row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='" + val.edit_uri + "' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='" + val.delete_uri + "' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
                                 row += "</tr>";
                                 return row;

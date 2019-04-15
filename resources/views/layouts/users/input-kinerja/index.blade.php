@@ -481,7 +481,7 @@
                 if (skp+skp_selesai > 0) {
                     persentase = (skp_checked + skp_selesai) / (skp + skp_selesai) * 100;
                 }
-                $('.wrap-progress').find('label').html(persentase+'%')
+                $('.wrap-progress').find('label').html(Math.floor(persentase)+'%')
                 $('.wrap-progress').find('.progress-bar').css({width : persentase+'%'})
             }
             persentaseSkp();
