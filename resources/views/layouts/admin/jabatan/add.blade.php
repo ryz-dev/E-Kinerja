@@ -28,7 +28,7 @@
                                 <select class="select2 form-control" name="id_atasan" id="jabatan">
                                     <option value="">Pilih Atasan</option>
                                     @foreach($data_option->jabatan AS $jb)
-                                        <option value="{{$jb->id}}">{{$jb->jabatan}}</option>
+                                        <option value="{{$jb->id}}">{{$jb->jabatan}} - {{ $jb->keterangan }}</option>
                                     @endforeach
                                 </select>
                             </div>
