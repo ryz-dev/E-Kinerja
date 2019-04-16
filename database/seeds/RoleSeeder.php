@@ -56,7 +56,8 @@ class RoleSeeder extends Seeder
                     'input-kinerja' => true,
                     'penilaian-kinerja' => true,
                     'rekap-bulanan' => true,
-                    'tunjangan-kinerja' => true
+                    'tunjangan-kinerja' => true,
+                    'sasaran-kerja' => true
                 ])
             ],
             [
@@ -68,7 +69,8 @@ class RoleSeeder extends Seeder
                     'input-kinerja' => true,
                     'penilaian-kinerja' => true,
                     'rekap-bulanan' => true,
-                    'tunjangan-kinerja' => true
+                    'tunjangan-kinerja' => true,
+                    'sasaran-kerja' => true
                 ])
             ],
             [
@@ -80,7 +82,8 @@ class RoleSeeder extends Seeder
                     'input-kinerja' => true,
                     'penilaian-kinerja' => true,
                     'tunjangan-kinerja' => true,
-                    'rekap-bulanan' => true
+                    'rekap-bulanan' => true,
+                    'sasaran-kerja' => true
                 ])
             ],
             [
