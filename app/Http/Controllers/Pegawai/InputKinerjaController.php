@@ -58,12 +58,11 @@ class InputKinerjaController extends Controller
     {
         $nip = auth('web')->user()->nip;
         $kinerja = $this->kinerja->inputKinerja($request->input(), $nip);
-
-        if ($kinerja instanceof Kinerja) {
+        if ($kinerja['data'] instanceof Kinerja) {
             if ($request->hasFile('doc'))
-                $this->kinerja->uploadFile($request->file('doc'),$kinerja->id);
+                $this->kinerja->uploadFile($request->file('doc'), $kinerja['data']->id);
         }
-        return $this->ApiSpecResponses($kinerja);
+        return apiResponse($kinerja['data'],$kinerja['diagnostic']);
     }
 
 }

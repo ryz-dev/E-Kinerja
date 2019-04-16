@@ -21,7 +21,6 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PDF;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PegawaiRepository extends BaseRepository
 {
@@ -131,7 +130,7 @@ class PegawaiRepository extends BaseRepository
         return $pegawai->save();
     }
 
-    public function getBawahan($nip, $skpd = null)
+    public function getBawahan($nip, $skpd = null,$search = null,$page = null,$show_limit = null)
     {
         $skpd = $skpd ? $skpd : null;
         $user = $this->model::with('role')->where('nip', $nip)->first();
@@ -153,10 +152,20 @@ class PegawaiRepository extends BaseRepository
                 });
             }
         }
-        return $pegawai->get();
+        if ($search) {
+            $pegawai->where(function ($query) use ($search) {
+                $query->where('nip', 'like', '%' . $search . '%')->orWhere('nama', 'like', '%' . $search . '%');
+            });
+        }
+        if ($page) {
+            $pegawai = $pegawai->paginate($show_limit);
+        } else {
+            $pegawai = $pegawai->get();
+        }
+        return $pegawai;
     }
 
-    public function getRekap($nip_user, $nip, $bulan = null, $tahun = null)
+    public function getRekap($nip_user, $nip, $bulan = null, $tahun = null,$is_mobile = false)
     {
         $user = $this->model->with('role')->where('nip', $nip_user)->first();
         $bulan = (int)($bulan ?: date('m'));
@@ -181,6 +190,7 @@ class PegawaiRepository extends BaseRepository
         }
         $data_inout = [];
         foreach ($hari_kerja AS $key => $hk) {
+            $apel = false;
             $kinerja = $pegawai->kinerja()->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru()->first();
 
             $kehadiran['inout'] = $pegawai->checkinout()->where('checktime', 'like', '%' . $hk->tanggal . '%')->orderBy('checktype', 'desc')->get()->toArray();
@@ -210,6 +220,11 @@ class PegawaiRepository extends BaseRepository
                             $kehadiran['status'] = 'alpa';
                         }
                     }
+                    if (date('N', strtotime($hk->tanggal)) != 1) {
+                        if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
+                            $apel = true;
+                        }
+                    }
                 } else {
                     $kehadiran['status'] = 'alpa';
                 }
@@ -229,24 +244,49 @@ class PegawaiRepository extends BaseRepository
             if ($status == 'Hadir' || $status == '') {
                 $status = ucfirst($kehadiran['status']);
             }
-            $data_inout[] = [
-                'tgl_prev' => isset($hari_kerja[$key - 1]->tanggal) ? $hari_kerja[$key - 1]->tanggal : '',
-                'tgl_next' => isset($hari_kerja[$key + 1]->tanggal) ? $hari_kerja[$key + 1]->tanggal : '',
-                'tgl' => $hk->tanggal,
-                'tanggal' => $this->formatDate($hk->tanggal),
-                'hari' => ucfirst($hk->Hari->nama_hari),
-                'checkinout' => $kehadiran,
-                'status' => $status,
-                'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
+            if (!$is_mobile) {
+                $data_inout[] = [
+                    'tgl_prev' => isset($hari_kerja[$key - 1]->tanggal) ? $hari_kerja[$key - 1]->tanggal : '',
+                    'tgl_next' => isset($hari_kerja[$key + 1]->tanggal) ? $hari_kerja[$key + 1]->tanggal : '',
+                    'tgl' => $hk->tanggal,
+                    'tanggal' => formatDate($hk->tanggal),
+                    'hari' => ucfirst($hk->Hari->nama_hari),
+                    'checkinout' => $kehadiran,
+                    'status' => $status,
+                    'apel' => $apel,
+                    'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
+                ];
+            } else {
+                $data_inout[] = [
+                    'tanggal' => $hk->tanggal,
+                    'hari' => ucfirst($hk->Hari->nama_hari),
+                    'status' => $status,
+                    'apel' => $apel,
+                    'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
+                ];
+            }
+        }
+        if (!$is_mobile) {
+            return [
+                'tanggal_sekarang' => $this->formatDate(date('Y-m-d')),
+                'rekap_bulanan' => $data_inout
+            ];
+        } else {
+            $min_date = HariKerja::whereHas('statusHari', function ($query) {
+                $query->where('status_hari', 'kerja');
+            })->select('tanggal')->orderBy('tanggal')->first();
+            return [
+                'uuid' => $pegawai->uuid,
+                'nama' => $pegawai->nama,
+                'nip' => $pegawai->nip,
+                'foto' => $pegawai->foto,
+                'rekap_bulanan' => $data_inout,
+                'min_date' => $min_date->tanggal
             ];
         }
-        return [
-            'tanggal_sekarang' => $this->formatDate(date('Y-m-d')),
-            'rekap_bulanan' => $data_inout
-        ];
     }
 
-    public function getDetailRekap($nip, $tgl)
+    public function getDetailRekap($nip, $tgl,$is_mobile = false)
     {
         $date = new HariKerja;
 
@@ -275,6 +315,9 @@ class PegawaiRepository extends BaseRepository
             ->whereDate("checktime", $tgl)
             ->get();
         $status = '';
+        $apel = false;
+        $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
+        $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
         if (count($checkinout) > 0) {
             $masuk = $pulang = null;
             foreach ($checkinout->toArray() AS $kh) {
@@ -300,6 +343,11 @@ class PegawaiRepository extends BaseRepository
                         $status = 'alpa';
                     }
                 }
+                if (date('N', strtotime($tgl)) != 1) {
+                    if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
+                        $apel = true;
+                    }
+                }
             } else {
                 $status = 'alpa';
             }
@@ -317,17 +365,36 @@ class PegawaiRepository extends BaseRepository
                 $status = $kinerja->jenis_kinerja;
             }
         }
-        $result = [
-            "kinerja" => $kinerja,
-            "checkinout" => $checkinout,
-            "tanggal" => $this->formatDate2($tgl),
-            "status" => ucwords(str_replace('_', ' ', $status))
-        ];
+        if (!$is_mobile) {
+            $result = [
+                "kinerja" => $kinerja,
+                "checkinout" => $checkinout,
+                "tanggal" => formatDate2($tgl),
+                "status" => ucwords(str_replace('_', ' ', $status))
+            ];
 
-        return [array_merge($result, [
-            'prev' => isset($date_prev->tanggal) == false ? '' : $date_prev->tanggal,
-            'next' => isset($date_next->tanggal) == false ? '' : $date_next->tanggal
-        ])];
+            return [array_merge($result, [
+                'prev' => isset($date_prev->tanggal) == false ? '' : $date_prev->tanggal,
+                'next' => isset($date_next->tanggal) == false ? '' : $date_next->tanggal
+            ])];
+        } else {
+            $min_date = HariKerja::whereHas('statusHari', function ($query) {
+                $query->where('status_hari', 'kerja');
+            })->select('tanggal')->orderBy('tanggal')->first();
+            return [
+                'uuid' => $pegawai->uuid,
+                'nama' => $pegawai->nama,
+                'nip' => $pegawai->nip,
+                'foto' => $pegawai->foto,
+                'kinerja' => $kinerja,
+                'checkinout' => [
+                    'in' => $in,
+                    'out' => $out,
+                ],
+                'apel' => $apel,
+                'min_date' => $min_date->tanggal
+            ];
+        }
     }
 
     public function storeRole($nip, $role)
@@ -546,10 +613,10 @@ class PegawaiRepository extends BaseRepository
             })->get();
     }
 
-    public function dataAbsensi($nip,$skpd,$raw_date,$search,$show,$page)
+    public function dataAbsensi($nip, $skpd, $raw_date, $search, $show, $page, $is_mobile = false)
     {
         $date = Carbon::parse($raw_date);
-        $user = Pegawai::where('nip',$nip)->first();
+        $user = Pegawai::where('nip', $nip)->first();
         $status_hari = $this->getStatusHariKerja($date);
         $pegawai = Pegawai::with(['checkinout' => function ($query) use ($date) {
             $query->select('nip', 'checktype', 'checktime', 'sn')
@@ -590,27 +657,49 @@ class PegawaiRepository extends BaseRepository
 
             $pegawai->orderBy('golongan.tunjangan', 'desc');
             $pegawai->orderBy('pegawai.nama');
-            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari);
+            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari,$is_mobile);
             $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
             $total = (int)$data_absen_pegawai->count();
 
             $data_absen_pegawai = $this->paginateMonitoringAbsen($data_absen_pegawai, $show, $page);
-
-            return
-                [
-                    'pegawai' => $data_absen_pegawai,
-                    'dayBefore' => Carbon::parse($date)->addDays(-1)->format('m/d/Y'),
-                    'dayAfter' => Carbon::parse($date)->addDays(1)->format('m/d/Y'),
-                    'today' => Carbon::parse($date)->format('m/d/Y'),
-                    'current_date' => Carbon::now()->format('m/d/Y'),
-                    'dateString' => ucfirst(Hari::find(date('N', strtotime($date)))->nama_hari) . ' , ' . date('d', strtotime($date)) . ' ' . ucfirst(Bulan::find((int)date('m', strtotime($date)))->nama_bulan) . ' ' . date('Y', strtotime($date)),
-                    'jam_masuk_timestamp' => Carbon::parse($raw_date . ' ' . $this->jam_masuk)->toDateTimeString(),
-                    'jam_masuk_upacara_timestamp' => Carbon::parse($raw_date . ' ' . $this->jam_masuk_upacara)->toDateTimeString(),
-                    'summary' => $sum,
-                    'status_hari' => $status_hari
+            if (!$is_mobile) {
+                return
+                    [
+                        'data' => [
+                            'pegawai' => $data_absen_pegawai,
+                            'dayBefore' => Carbon::parse($date)->addDays(-1)->format('m/d/Y'),
+                            'dayAfter' => Carbon::parse($date)->addDays(1)->format('m/d/Y'),
+                            'today' => Carbon::parse($date)->format('m/d/Y'),
+                            'current_date' => Carbon::now()->format('m/d/Y'),
+                            'dateString' => ucfirst(Hari::find(date('N', strtotime($date)))->nama_hari) . ' , ' . date('d', strtotime($date)) . ' ' . ucfirst(Bulan::find((int)date('m', strtotime($date)))->nama_bulan) . ' ' . date('Y', strtotime($date)),
+                            'jam_masuk_timestamp' => Carbon::parse($raw_date . ' ' . $this->jam_masuk)->toDateTimeString(),
+                            'jam_masuk_upacara_timestamp' => Carbon::parse($raw_date . ' ' . $this->jam_masuk_upacara)->toDateTimeString(),
+                            'summary' => $sum,
+                            'status_hari' => $status_hari
+                        ],
+                        'diagnostic' => ''
+                    ];
+            } else {
+                $min_date = HariKerja::whereHas('statusHari', function ($query) {
+                    $query->where('status_hari', 'kerja');
+                })->select('tanggal')->orderBy('tanggal')->first();
+                return [
+                    'data' => [
+                        'pegawai' => $data_absen_pegawai,
+                        'min_date' => $min_date->tanggal,
+                        'summary' => $sum
+                    ],
+                    'diagnostic' => ''
                 ];
+            }
         } catch (Exception $e) {
-            throw new NotFoundHttpException('Not Found');
+            return [
+                'data' => '',
+                'diagnostic' => [
+                    'code' => 404,
+                    'message' => 'Not Found'
+                ]
+            ];
         }
     }
 
@@ -619,7 +708,7 @@ class PegawaiRepository extends BaseRepository
         return DB::table('hari_kerja')->where('tanggal', date('Y-m-d', strtotime($date)))->first();
     }
 
-    private function parseAbsensi($pegawai, $date, $status_hari)
+    private function parseAbsensi($pegawai, $date, $status_hari,$is_mobile)
     {
         $pegawai = $pegawai->get();
 
@@ -627,9 +716,7 @@ class PegawaiRepository extends BaseRepository
         $jam_sekarang = date('Y-m-d H:i:s');
         $tanggal_pilihan = $date;
 
-        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari) {
-            $data['absen_in'] = '';
-            $data['absen_out'] = '';
+        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari,$is_mobile) {
 
             $raw_absensi = $item['checkinout'];
             $absensi = null;
@@ -691,13 +778,24 @@ class PegawaiRepository extends BaseRepository
             } else {
                 $absensi = 'libur';
             }
-
-            $data['absen_in'] = $absen_in ? date('H:i', strtotime($absen_in)) : '';
-            $data['absen_out'] = $absen_out ? date('H:i', strtotime($absen_out)) : '';
-            $data['absensi'] = $absensi;
-            $data['nama'] = $item->nama;
-            $data['nip'] = $item->nip;
-            $data['foto'] = $item->foto;
+            if (!$is_mobile){
+                $data['absen_in'] = $absen_in ? date('H:i', strtotime($absen_in)) : '';
+                $data['absen_out'] = $absen_out ? date('H:i', strtotime($absen_out)) : '';
+                $data['absensi'] = $absensi;
+                $data['nama'] = $item->nama;
+                $data['nip'] = $item->nip;
+                $data['foto'] = $item->foto;
+            } else {
+                $data['uuid'] = $item->uuid;
+                $data['nama'] = $item->nama;
+                $data['nip'] = $item->nip;
+                $data['foto'] = $item->foto;
+                $data['checkinout'] = [
+                    'in' => $absen_in ? $absen_in : '',
+                    'out' => $absen_out ? $absen_out : ''
+                ];
+                $data['kinerja'] = $absensi;
+            }
 
             return $data;
 
