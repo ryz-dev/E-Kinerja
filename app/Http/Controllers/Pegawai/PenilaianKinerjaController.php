@@ -22,13 +22,13 @@ class PenilaianKinerjaController extends Controller
     {
         $nip = auth('web')->user()->nip;
         $date = $r->has('date') ? $r->date : null;
-        return $this->ApiSpecResponses(KinerjaRepository::getBawahanPenilaianKinerja($nip,$date));
+        return apiResponse(KinerjaRepository::getBawahanPenilaianKinerja($nip,$date));
     }
 
     public function getKinerja($nip, Request $r)
     {
         $date = $r->has('date') ? $r->date : null;
-        return $this->ApiSpecResponses(KinerjaRepository::getKinerjaPenilaianKinerja($nip,$date));
+        return apiResponse(KinerjaRepository::getKinerjaPenilaianKinerja($nip,$date));
     }
 
     public function replyKinerja(Request $r)
@@ -41,7 +41,7 @@ class PenilaianKinerjaController extends Controller
             'nilai_kinerja' => 'required'
         ]);
         try {
-            return $this->ApiSpecResponses(KinerjaRepository::replyKinerjaPenilaianKinerja($r->input()));
+            return apiResponse(KinerjaRepository::replyKinerjaPenilaianKinerja($r->input()));
         } catch (Exception $e) {
             return $this->ApiSpecResponses($e);
         }

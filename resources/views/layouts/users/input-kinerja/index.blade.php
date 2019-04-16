@@ -118,7 +118,7 @@
                                     @foreach($skp_pegawai As $sp)
                                     <label class="container-check">
                                         <p>{{$sp->skpTask->task}}</p>
-                                        <input type="checkbox" name="skp_pegawai[{{$sp->id}}]" {{$sp->status ? 'checked' : ''}}>
+                                        <input type="checkbox" name="skp_pegawai[{{$sp->id}}]" value="1" {{$sp->status ? 'checked' : ''}}>
                                         <span class="checkmark"></span>
                                     </label>
                                     @endforeach

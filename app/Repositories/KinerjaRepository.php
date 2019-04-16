@@ -15,6 +15,89 @@ use Illuminate\Support\Str;
 
 class KinerjaRepository extends BaseRepository
 {
+    static function getBawahanPenilaianKinerja($nip, $date, $search = '')
+    {
+        $user = Pegawai::where('nip', $nip)->first();
+        $pegawai = Pegawai::where(function ($query) use ($search) {
+            if ($search !== '') {
+                $query->where('nip', 'like', '%' . $search . '%')->orWhere('nama', 'like', '%' . $search . '%');
+            }
+        })->wherehas('jabatan', function ($query) use ($user) {
+            $query->where('id_atasan', '=', $user->id_jabatan);
+        })->with(['kinerja' => function ($query) use ($date) {
+            $query->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'));
+            $query->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'));
+            $query->terbaru();
+        }])->get();
+        return $pegawai;
+    }
+
+    static function getKinerjaPenilaianKinerja($nip, $date)
+    {
+        $pegawai = Pegawai::where('nip', $nip)->first();
+        $old_kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->with(['skp_pegawai' => function($query){
+                $query->select('skp_pegawai.id','id_skp','nip_pegawai','periode','status','nip_update');
+                $query->with(['skpTask' => function($query){
+                    $query->select('id','task');
+                }]);
+            },'media' => function($query){
+                $query->select('media','nama_media','id_kinerja');
+            }])
+            ->where('approve', 0)
+            ->whereMonth('tgl_mulai', date('m'))
+            ->whereDate('tgl_mulai', '<', date('Y-m-d'))
+            ->get();
+        $kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->with(['skp_pegawai' => function($query){
+                $query->select('skp_pegawai.id','id_skp','nip_pegawai','periode','status','nip_update');
+                $query->with(['skpTask' => function($query){
+                    $query->select('id','task');
+                }]);
+            },'media' => function($query){
+                $query->select('media','nama_media','id_kinerja');
+            }])
+            ->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'))
+            ->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'))
+            ->terbaru()
+            ->first();
+        return [
+            'now' => $kinerja,
+            'old' => $old_kinerja->pluck('tgl_mulai')->toArray()
+        ];
+    }
+
+    static function replyKinerjaPenilaianKinerja(array $param)
+    {
+//        try {
+        $kinerja = Kinerja::with('skp_pegawai')->find($param['id']);
+        $kinerja->keterangan_approve = $param['keterangan_approve'];
+        $kinerja->approve = $param['type'];
+        $kinerja->nilai_kinerja = $param['nilai_kinerja'];
+        $kinerja->save();
+        SkpPegawai::whereHas('kinerja', function ($q) use ($param) {
+            $q->where('kinerja.id', $param['id']);
+        })->update([
+            'status' => 0
+        ]);
+        if (isset($param['skp_pegawai'])) {
+            foreach ($param['skp_pegawai'] AS $key => $value) {
+                if ($value) {
+                    SkpPegawai::whereHas('kinerja', function ($q) use ($param) {
+                        $q->where('kinerja.id', $param['id']);
+                    })->where('id', $key)->update([
+                        'status' => 1,
+                        'nip_update' => Auth::user()->nip
+                    ]);
+                }
+            }
+        }
+        return ['status' => 'HTTP_OK'];
+//        } catch (Exception $e) {
+//            throw new ModelNotFoundException('Kinerja Tidak Ditemukan');
+//        }
+    }
+
     public function model()
     {
         return 'App\Models\Absen\Kinerja';
@@ -79,6 +162,7 @@ class KinerjaRepository extends BaseRepository
             $input['tgl_selesai'] = $tgl_selesai[2] . '-' . $tgl_selesai[0] . '-' . $tgl_selesai[1];
             if (strtotime($input['tgl_mulai']) > strtotime($input['tgl_selesai'])) {
                 return [
+                    'data' => '',
                     'diagnostic' => [
                         'code' => '403',
                         'message' => 'gagal menambah kinerja, tanggal berakhir lebih kecil dari tanggal mulai'
@@ -127,15 +211,21 @@ class KinerjaRepository extends BaseRepository
                     if (isset($input['skp_pegawai'])) {
                         if (count($input['skp_pegawai'] > 0)) {
                             foreach ($input['skp_pegawai'] AS $key => $value) {
-                                if (!$kinerja->whereHas('skp_pegawai',function($query)use($key){
-                                    $query->where('id_skp',$key);
-                                })->first()) {
-                                    $kinerja->skp_pegawai()->attach($key, ['uuid' => (string)Str::uuid()]);
+                                if ($value) {
+                                    if (!$kinerja->whereHas('skp_pegawai', function ($query) use ($key) {
+                                        $query->where('id_skp', $key);
+                                    })->first()) {
+                                        $kinerja->skp_pegawai()->attach($key, ['uuid' => (string)Str::uuid()]);
+                                    }
                                 }
                             }
+                            $kinerja->load('skp_pegawai');
                         }
                     }
-                    return $kinerja;
+                    return [
+                        'data' => $kinerja,
+                        'diagnostic' => '',
+                    ];
                     /*}
                 } else {
                     return response()->json([
@@ -148,6 +238,7 @@ class KinerjaRepository extends BaseRepository
                 }
 
                 return [
+                    'data' => '',
                     'diagnostic' => [
                         'code' => '403',
                         'message' => 'gagal menambah kinerja, bukan hari kerja'
@@ -166,6 +257,7 @@ class KinerjaRepository extends BaseRepository
                 })->whereIn('approve', [5])->first();
                 if ($cek_kinerja) {
                     return [
+                        'data' => '',
                         'diagnostic' => [
                             'code' => '403',
                             'message' => 'gagal menambahkan kinerja, sdh ada kinerja yang disimpan untuk hari ini'
@@ -173,10 +265,14 @@ class KinerjaRepository extends BaseRepository
                     ];
                 }
                 $kinerja = $this->model->create($input);
-                return $kinerja;
+                return [
+                    'data' => $kinerja,
+                    'diagnostic' => '',
+                ];
             }
         } else {
             return [
+                'data' => '',
                 'diagnostic' => [
                     'code' => '403',
                     'message' => 'gagal menambahkan kinerja, sdh ada kinerja pada hari yang sama untuk user ini'
@@ -203,6 +299,9 @@ class KinerjaRepository extends BaseRepository
         $nip = $pegawai->nip;
         $jumlah_tunjangan = $pegawai->jabatan->golongan->tunjangan;
 
+        $min_date = HariKerja::whereHas('statusHari', function ($query) {
+            $query->where('status_hari', 'kerja');
+        })->select('tanggal')->orderBy('tanggal')->first();
 
         $hari_kerja = HariKerja::select('tanggal')->whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
@@ -297,6 +396,7 @@ class KinerjaRepository extends BaseRepository
             ],
             'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
             'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
+            'min_date' => $min_date->tanggal
         ];
         if ($detail) {
             $response = array_merge($response, [
@@ -304,6 +404,63 @@ class KinerjaRepository extends BaseRepository
             ]);
         }
         return $response;
+    }
+
+    public function getDetailKinerja($tgl){
+        $min_date = HariKerja::whereHas('statusHari', function ($query) {
+            $query->where('status_hari', 'kerja');
+        })->select('tanggal')->orderBy('tanggal')->first();
+
+        /* Data kinerja */
+        $pegawai = auth('api')->user();
+        $kinerja = Kinerja::where('nip', $pegawai->nip)
+            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
+            ->whereDate('tgl_mulai', '<=', $tgl)
+            ->whereDate('tgl_selesai', '>=', $tgl)
+            ->terbaru()
+            ->first();
+
+
+        $bulan = date('m', strtotime($tgl));
+        $tahun = date('Y', strtotime($tgl));
+
+
+        /* Data checkinout */
+        $checkinout = Checkinout::where("nip", $pegawai->nip)
+            ->whereDate("checktime", $tgl)
+            ->get();
+
+        $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
+        $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
+
+        /* Data array */
+        $result = [
+            'uuid' => $pegawai->uuid,
+            'nama' => $pegawai->nama,
+            'nip' => $pegawai->nip,
+            'foto' => $pegawai->foto,
+            'kinerja' => $kinerja,
+            'checkinout' => [
+                'in' => $in,
+                'out' => $out,
+            ],
+            'min_date' => $min_date->tanggal
+        ];
+        return $result;
+    }
+
+    public function cekKinerja($nip){
+        $cek_kinerja = Kinerja::where('nip', $nip)->where(function ($query) {
+            $query->where(function ($query) {
+                $query->where('tgl_mulai', '<=', date('Y-m-d'));
+                $query->where('tgl_selesai', '>=', date('Y-m-d'));
+            });
+            $query->orWhere(function ($query) {
+                $query->where('tgl_mulai', '<=', date('Y-m-d'));
+                $query->where('tgl_selesai', '>=', date('Y-m-d'));
+            });
+        })->whereIn('approve', [0, 2])->first();
+        return $cek_kinerja;
     }
 
     private function poinAbsen($masuk, $pulang)
@@ -344,83 +501,24 @@ class KinerjaRepository extends BaseRepository
         ];
     }
 
-    private function getListNip()
+    public function uploadFile(array $files, $id_kinerja)
     {
-        return implode(',', Pegawai::select('nip')->get()->pluck('nip')->all());
-    }
+        foreach ($files AS $key => $file) {
 
-    public function uploadFile(array $files,$id_kinerja){
-        foreach ($files AS $key => $file){
-
-            $name = $file->getClientOriginalName().'-kinerja'.$id_kinerja.'.'.$file->getClientOriginalExtension();
-            if ($file->move(public_path('doc'),$name))
+            $name = $file->getClientOriginalName() . '-kinerja' . $id_kinerja . '.' . $file->getClientOriginalExtension();
+            if ($file->move(public_path('doc'), $name))
                 Media::create([
                     'id_kinerja' => $id_kinerja,
-                    'media' => url('doc/'.$name),
+                    'media' => url('doc/' . $name),
                     'nama_media' => $name,
                     'uuid' => (string)Str::uuid()
                 ]);
         }
     }
 
-    static function getBawahanPenilaianKinerja($nip,$date){
-        $user = Pegawai::where('nip',$nip)->first();
-        $pegawai = Pegawai::wherehas('jabatan', function ($query) use ($user) {
-            $query->where('id_atasan', '=', $user->id_jabatan);
-        })->with(['kinerja' => function ($query) use ($date) {
-            $query->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'));
-            $query->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'));
-            $query->terbaru();
-        }])->get();
-        return $pegawai;
-    }
-
-    static function getKinerjaPenilaianKinerja($nip,$date){
-        $pegawai = Pegawai::where('nip', $nip)->first();
-        $old_kinerja = Kinerja::where('nip', $pegawai->nip)
-            ->with('skp_pegawai.skpTask','media')
-            ->where('approve', 0)
-            ->whereMonth('tgl_mulai', date('m'))
-            ->whereDate('tgl_mulai', '<', date('Y-m-d'))
-            ->get();
-        $kinerja = Kinerja::where('nip', $pegawai->nip)
-            ->with('skp_pegawai.skpTask','media')
-            ->whereDate('tgl_mulai', '<=', $date? $date : date('Y-m-d'))
-            ->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'))
-            ->terbaru()
-            ->first();
-        return [
-            'now' => $kinerja,
-            'old' => $old_kinerja->pluck('tgl_mulai')->toArray()
-        ];
-    }
-
-    static function replyKinerjaPenilaianKinerja(array $param){
-//        try {
-        $kinerja = Kinerja::with('skp_pegawai')->find($param['id']);
-        $kinerja->keterangan_approve = $param['keterangan_approve'];
-        $kinerja->approve = $param['type'];
-        $kinerja->nilai_kinerja = $param['nilai_kinerja'];
-        $kinerja->save();
-        SkpPegawai::whereHas('kinerja',function ($q)use($param){
-            $q->where('kinerja.id',$param['id']);
-        })->update([
-            'status' => 0
-        ]);
-        if (isset($param['skp_pegawai'])){
-            foreach ($param['skp_pegawai'] AS $key => $value) {
-                SkpPegawai::whereHas('kinerja',function ($q)use($param){
-                    $q->where('kinerja.id',$param['id']);
-                })->where('id',$key)->update([
-                    'status' => 1,
-                    'nip_update' => Auth::user()->nip
-                ]);
-            }
-        }
-        return ['status' => 'HTTP_OK'];
-//        } catch (Exception $e) {
-//            throw new ModelNotFoundException('Kinerja Tidak Ditemukan');
-//        }
+    private function getListNip()
+    {
+        return implode(',', Pegawai::select('nip')->get()->pluck('nip')->all());
     }
 
 }

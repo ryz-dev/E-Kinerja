@@ -41,6 +41,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::group(['prefix' => 'kinerja','middleware' => 'can:tunjangan-kinerja'], function () {
             Route::post('reply', 'KinerjaController@inputKinerja')->name('api.mobile.input-kinerja.post');
             Route::get('cek', 'KinerjaController@cekKinerja')->name('api.mobile.cek-kinerja.get');
+            Route::get('skp', 'KinerjaController@listSkp')->name('api.mobile.skp-kinerja.get');
             Route::get('draft','KinerjaController@getKinerjaTersimpan')->name('api.web.input-kinerja.draft');
             Route::post('delete/draft/{id}','KinerjaController@hapusKinerjaTersimpan')->name('api.web.input-kinerja.delete-draft');
             Route::get('/{tgl?}', 'KinerjaController@detailKinerja')->name('api.mobile.detail-kinerja.get');

@@ -44,14 +44,8 @@ class MonitoringAbsenController extends Controller
         $search = $request->has('search') ? $request->input('search') : '';
         $nip = auth('web')->user()->nip;
         $pegawai = new PegawaiRepository();
-        try {
-            $data = $pegawai->dataAbsensi($nip, $skpd, $date, $search, $this->show_limit, $page);
-            return $this->ApiSpecResponses($data);
-        } catch (\Exception $exception){
-            return response()->json([
-                'message' => 'NOT_FOUND'
-            ], 404);
-        }
+        $data = $pegawai->dataAbsensi($nip, $skpd, $date, $search, $this->show_limit, $page);
+        return apiResponse($data['data'],$data['diagnostic']);
     }
 
     public function getPage(Request $request)
