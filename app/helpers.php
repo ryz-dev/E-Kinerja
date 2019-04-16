@@ -3,11 +3,13 @@
 if (!function_exists('month')) {
     function month($date){
         return (int)date('m', strtotime($date));
+    }
 }
 
 if (!function_exists('year')) {
     function year($date){
         return (int)date('Y', strtotime($date));
+    }
 }
 
 if (!function_exists('namaBulan')) {
@@ -17,12 +19,15 @@ if (!function_exists('namaBulan')) {
         return $nama[(int)$int];
     }
 }
+
 if (!function_exists('formatDate')) {
     function formatDate($date)
     {
         return date('d/m/Y', strtotime($date));
     }
-}if (!function_exists('formatDate2')) {
+}
+
+if (!function_exists('formatDate2')) {
     function formatDate2($date)
     {
         $d = date('d', strtotime($date));
@@ -32,6 +37,7 @@ if (!function_exists('formatDate')) {
         return $d . " " . $m . " " . $y;
     }
 }
+
 if (!function_exists('formatDate3')) {
     function formatDate3($date)
     {
@@ -41,6 +47,7 @@ if (!function_exists('formatDate3')) {
         return $m . " " . $y;
     }
 }
+
 if (!function_exists('apiReponse')) {
     function apiResponse($response, $diagnostic = [], $status = 200)
     {
@@ -63,22 +70,29 @@ if (!function_exists('apiReponse')) {
         return response()->json($data, 200);
     }
 }
-if (!function_exists('paging')) {
-    function paging($raw)
-    {
-        $object = new stdClass;
-        if (method_exists($raw, 'total'))
-            $object->total = $raw->total();
-        if (method_exists($raw, 'perPage'))
-            $object->per_page = $raw->perPage();
-        if (method_exists($raw, 'currentPage'))
-            $object->current_page = $raw->currentPage();
-        if (method_exists($raw, 'lastPage'))
-            $object->last_page = $raw->lastPage();
-        if (method_exists($raw, 'firstItem'))
-            $object->from = $raw->firstItem();
-        if (method_exists($raw, 'lastItem'))
-            $object->to = $raw->lastItem();
-        return $object;
-    }
-}
+
+// if (!function_exists('paging')) {
+//     function paging($raw)
+//     {
+//         $object = new stdClass;
+//         if (method_exists($raw, 'total'))
+//             $object->total = $raw->total();
+
+//         if (method_exists($raw, 'perPage'))
+//             $object->per_page = $raw->perPage();
+
+//         if (method_exists($raw, 'currentPage'))
+//             $object->current_page = $raw->currentPage();
+
+//         if (method_exists($raw, 'lastPage'))
+//             $object->last_page = $raw->lastPage();
+
+//         if (method_exists($raw, 'firstItem'))
+//             $object->from = $raw->firstItem();
+
+//         if (method_exists($raw, 'lastItem'))
+//             $object->to = $raw->lastItem();
+
+//         return $object;
+//     }
+// }
