@@ -1,27 +1,13 @@
 <?php
 
 if (!function_exists('month')) {
-<<<<<<< HEAD
     function month($date){
         return (int)date('m', strtotime($date));
-=======
-    function month($date)
-    {
-        return date('m', strtotime($date));
->>>>>>> c4541c7e588da8e762e8866369bc82e8f612d593
-    }
 }
 
 if (!function_exists('year')) {
-<<<<<<< HEAD
     function year($date){
         return (int)date('Y', strtotime($date));
-=======
-    function year($date)
-    {
-        return date('Y', strtotime($date));
->>>>>>> c4541c7e588da8e762e8866369bc82e8f612d593
-    }
 }
 
 if (!function_exists('namaBulan')) {
