@@ -17,17 +17,20 @@ class SkpPegawaiRepository extends BaseRepository
 
         if ($pegawai != null) {
             $pegawai = PegawaiRepository::dataPegawai($pegawai);
-            $sasaranKerja = $this->where('nip_pegawai', $pegawai->nip);
-            
+            $sasaranKerja = $this->model->where('nip_pegawai', $pegawai->nip);
             if ($periode != null) {
+
                 if (strtotime($periode) == false) {
                     $periode = date('Y-m-d', $periode);
                 }
+                else{
+                    $periode = date('Y-m-d', strtotime($periode));
+                }
                 $this->periode = $periode;
                 
-
+                
                 $sasaranKerja = $sasaranKerja
-                        ->wherePeriode($periode);
+                ->wherePeriode($periode);
             }
             $this->sasaranKerja = $sasaranKerja->count() > 0?$sasaranKerja->get():null;
             $this->pegawai = $pegawai;
@@ -82,7 +85,7 @@ class SkpPegawaiRepository extends BaseRepository
 
     public function wherePeriode($date)
     {
-        $this->whereMonth('periode','=', month($date))->whereYear('periode','=', year($date));
+        $this->whereMonth('periode','=', (int)month($date))->whereYear('periode','=', (int)year($date));
         return $this;
     }
 
@@ -116,22 +119,35 @@ class SkpPegawaiRepository extends BaseRepository
     public function sasaranKerjaAtasan()
     {
         $sasaranKerjaAtasan = new SkpPegawaiRepository($this->getAtasan()->nip, $this->periode);
+        $sasaranKerja = $this->sasaranKerja();
         
+        $daftarSasaranKinerja = $this->model
+                                    ->where('nip_pegawai','!=', $sasaranKerjaAtasan->pegawai->nip)
+                                    ->whereMonth('periode', '=', month($this->periode))
+                                    ->whereYear('periode', '=', year($this->periode))->get();
         
         if ($sasaranKerjaAtasan->count()) {
             $sasaranKerjaAtasan = $sasaranKerjaAtasan
-                ->get()
-                ->map(function($value, $key){
-                    $data['id'] = $value->id;
-                    $data['id_skp'] = $value->id_skp;
-                    $data['task'] = $value->skpTask->task;
-                    return $data;
+                ->sasaranKerja
+                ->map(function($value, $key) use($daftarSasaranKinerja) {
+                    if (!$daftarSasaranKinerja->whereIn('id_skp', $value->id_skp)->count()) {
+                        // dd($value);
+                        $data['id'] = $value->id;
+                        $data['id_skp'] = $value->id_skp;
+                        $data['task'] = $value->skpTask->task;
+                        return collect($data);
+                    }
+          
+                })->reject(function($name){
+                    return empty($name);
                 });
         }
         else{
             $sasaranKerjaAtasan = null;
         }
+
         return $sasaranKerjaAtasan;
+        
     }
 
     public function sasaranKerja()
@@ -141,10 +157,10 @@ class SkpPegawaiRepository extends BaseRepository
         if ($sasaranKerja) {
             $sasaranKerja = $sasaranKerja
                 ->map(function($value, $key){
-                    $data['id_skp_pegawai'] = $value->id;
+                    $data['id'] = $value->id;
                     $data['id_skp'] = $value->id_skp;
                     $data['task'] = $value->skpTask->task;
-                    return $data;
+                    return (object)$data;
                 });
         }
         else{
@@ -188,41 +204,94 @@ class SkpPegawaiRepository extends BaseRepository
         ];
     }
 
-    public function store($data)
+    public function save($data)
     {
-        $new_skp =  $this->saveNewSkp($data['skp']);
-        $skp_pegawai = array();
         
-        foreach ($new_skp as $key => $value) {
-            $skp_pegawai[$key]['uuid'] = (string) Str::uuid();
-            $skp_pegawai[$key]['nip_pegawai'] = $data['nip'];
-            $skp_pegawai[$key]['periode'] = \Carbon\Carbon::parse($data['periode']);
-            $skp_pegawai[$key]['id_skp'] = $value;
-            $skp_pegawai[$key]['created_at'] = \Carbon\Carbon::now();
-        }
-
-        if ($this->model::insert($skp_pegawai)) {
+        if ($this->saveSkpPegawai($data)) {
             return true;
         }
 
         return false;
     }
 
-    private function saveNewSkp($skp)
-    {
-        $skp_id = array();
+    private function saveSkpPegawai($data){
+        $newSkp =  $this->saveSkp($data);
+        $skp_pegawai = array();
 
-        foreach ($skp as $key => $task) {
-            $id = \DB::table('skp')->insertGetId(
-                [
-                    'uuid' => (string) Str::uuid(), 
-                    'task' => $task,
-                    'created_at' => \Carbon\Carbon::now()
-                ]
-            );
-            $skp_id[] = $id;
+        if (count($newSkp)) {
+            foreach ($newSkp as $key => $value) {
+                $skp_pegawai[$key]['uuid'] = (string) Str::uuid();
+                $skp_pegawai[$key]['nip_pegawai'] = $this->pegawai->nip;
+                $skp_pegawai[$key]['periode'] = \Carbon\Carbon::parse($this->periode);
+                $skp_pegawai[$key]['id_skp'] = $value;
+                $skp_pegawai[$key]['created_at'] = \Carbon\Carbon::now();
+            }
+    
+            if ($this->model->insert($skp_pegawai)) {
+                return true;
+            }
+            else{
+                return false;
+            }
         }
 
-        return $skp_id;
+        return true;
+    }
+
+    private function saveSkp($data)
+    {
+        $skp = $data['skp']?$data['skp']:[];
+        $skpDistribusi = $data['id_skpDistribusi']?$data['id_skpDistribusi']:[];
+        $skp_id = array();
+
+        if ($skp) {
+            foreach ($skp as $key => $task) {
+                $id = \DB::table('skp')->insertGetId(
+                    [
+                        'uuid' => (string) Str::uuid(), 
+                        'task' => $task,
+                        'created_at' => \Carbon\Carbon::now()
+                    ]
+                );
+                $skp_id[] = $id;
+            }
+        }
+
+        // dd($skpDistribusi);
+
+        return array_merge($skp_id, $skpDistribusi);
+    }
+
+    public function edit($data){
+        $this->handleOldSkp($data['skpPegawai_id'], $data['skp_id'], $data['oldSkp']);
+        if ($this->save($data)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function deleteSkp($skp){
+        $skp->map(function($value, $key){
+            $jumlah = $this->model->where('id_skp', $value->id_skp)->count();
+            if ($jumlah < 2 ) {
+                \DB::table('skp')->where('id', $value->id_skp)->delete();
+            }
+
+            $this->model->where('id', $value->id)->delete();
+        });
+    }
+
+    private function handleOldSkp($skpPegawai, $skp, $task){
+        // get deleted items
+        $deletedSkp = $this->sasaranKerja->pluck('id')->diff($skpPegawai);
+
+        // delete items
+        $this->deleteSkp($this->sasaranKerja->whereIn('id', $deletedSkp));
+
+        // update task
+        foreach ($skp as $key => $value) {
+            \DB::table('skp')->where('id', $value)->update(['task' => $task[$key]]);
+        }
     }
 }

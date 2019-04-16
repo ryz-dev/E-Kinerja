@@ -25,7 +25,7 @@ class CreateSkpPegawaiTable extends Migration
 
             $table->timestamps();
             $table->foreign('nip_pegawai')->references('nip')->on('pegawai')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('id_skp')->references('id')->on('skp')->onUpdate('cascade')->onDelete('restrict');
+            // $table->foreign('id_skp')->references('id')->on('skp')->onUpdate('restrict')->onDelete('restrict');
             $table->foreign('nip_update')->references('nip')->on('pegawai')->onUpdate('cascade')->onDelete('cascade');
         });
     }
@@ -39,7 +39,7 @@ class CreateSkpPegawaiTable extends Migration
     {
         Schema::table('skp_pegawai', function (Blueprint $table) {
             $table->dropForeign('skp_pegawai_nip_pegawai_foreign');
-            $table->dropForeign('skp_pegawai_id_skp_foreign');
+            // $table->dropForeign('skp_pegawai_id_skp_foreign');
             $table->dropForeign('skp_pegawai_nip_update_foreign');
         });
         Schema::dropIfExists('skp_pegawai');

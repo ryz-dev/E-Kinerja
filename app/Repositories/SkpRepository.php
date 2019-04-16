@@ -36,4 +36,9 @@ class SkpRepository extends BaseRepository
             'task' => 'required'
         ];
     }
+
+    public static function skp(){
+        return app()->make(self::model());
+    }
+
 }
