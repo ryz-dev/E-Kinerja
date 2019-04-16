@@ -36,26 +36,26 @@ class KinerjaRepository extends BaseRepository
     {
         $pegawai = Pegawai::where('nip', $nip)->first();
         $old_kinerja = Kinerja::where('nip', $pegawai->nip)
-            ->with(['skp_pegawai' => function($query){
-                $query->select('skp_pegawai.id','id_skp','nip_pegawai','periode','status','nip_update');
-                $query->with(['skpTask' => function($query){
-                    $query->select('id','task');
+            ->with(['skp_pegawai' => function ($query) {
+                $query->select('skp_pegawai.id', 'id_skp', 'nip_pegawai', 'periode', 'status', 'nip_update');
+                $query->with(['skpTask' => function ($query) {
+                    $query->select('id', 'task');
                 }]);
-            },'media' => function($query){
-                $query->select('media','nama_media','id_kinerja');
+            }, 'media' => function ($query) {
+                $query->select('media', 'nama_media', 'id_kinerja');
             }])
             ->where('approve', 0)
             ->whereMonth('tgl_mulai', date('m'))
             ->whereDate('tgl_mulai', '<', date('Y-m-d'))
             ->get();
         $kinerja = Kinerja::where('nip', $pegawai->nip)
-            ->with(['skp_pegawai' => function($query){
-                $query->select('skp_pegawai.id','id_skp','nip_pegawai','periode','status','nip_update');
-                $query->with(['skpTask' => function($query){
-                    $query->select('id','task');
+            ->with(['skp_pegawai' => function ($query) {
+                $query->select('skp_pegawai.id', 'id_skp', 'nip_pegawai', 'periode', 'status', 'nip_update');
+                $query->with(['skpTask' => function ($query) {
+                    $query->select('id', 'task');
                 }]);
-            },'media' => function($query){
-                $query->select('media','nama_media','id_kinerja');
+            }, 'media' => function ($query) {
+                $query->select('media', 'nama_media', 'id_kinerja');
             }])
             ->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'))
             ->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'))
@@ -75,21 +75,28 @@ class KinerjaRepository extends BaseRepository
         $kinerja->approve = $param['type'];
         $kinerja->nilai_kinerja = $param['nilai_kinerja'];
         $kinerja->save();
-        SkpPegawai::whereHas('kinerja', function ($q) use ($param) {
-            $q->where('kinerja.id', $param['id']);
-        })->update([
-            'status' => 0
-        ]);
+
+        $kinerja->skp_pegawai()->pluck('skp_pegawai.id')->diff(isset($param['skp_pegawai'])?$param['skp_pegawai'] : [])->map(function ($id) use ($param) {
+            if ($update = SkpPegawai::whereHas('kinerja', function ($q) use ($param) {
+                $q->where('kinerja.id', $param['id']);
+            })->where('id', $id)->where('status', 1)->first()) {
+                $update->update([
+                    'status' => 0,
+                    'tanggal_selesai' => null,
+                    'nip_update' => null
+                ]);
+            }
+        });
         if (isset($param['skp_pegawai'])) {
-            foreach ($param['skp_pegawai'] AS $key => $value) {
-                if ($value) {
-                    SkpPegawai::whereHas('kinerja', function ($q) use ($param) {
-                        $q->where('kinerja.id', $param['id']);
-                    })->where('id', $key)->update([
+            foreach ($param['skp_pegawai'] AS $id) {
+                if ($update = SkpPegawai::whereHas('kinerja', function ($q) use ($param) {
+                    $q->where('kinerja.id', $param['id']);
+                })->where('id', $id)->where('status', 0)->first())
+                    $update->update([
                         'status' => 1,
+                        'tanggal_selesai' => date('Y-m-d H:i:s'),
                         'nip_update' => Auth::user()->nip
                     ]);
-                }
             }
         }
         return ['status' => 'HTTP_OK'];
@@ -206,8 +213,7 @@ class KinerjaRepository extends BaseRepository
                     } else {
                         $kinerja = $this->model->create($input);
                     }
-                    if ($kinerja)
-                        $kinerja->skp_pegawai()->detach();
+
                     if (isset($input['skp_pegawai'])) {
                         if (count($input['skp_pegawai'] > 0)) {
                             foreach ($input['skp_pegawai'] AS $key => $value) {
@@ -406,7 +412,35 @@ class KinerjaRepository extends BaseRepository
         return $response;
     }
 
-    public function getDetailKinerja($tgl){
+    private function poinAbsen($masuk, $pulang)
+    {
+        if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:00:00")) {
+            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
+                return 1;
+            }
+        } else if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:30:00")) {
+            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
+                return 0.8;
+            }
+        } else if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
+            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
+                return 0.6;
+            }
+        } else if (strtotime($masuk) > strtotime($hk->tanggal . " 09:00:00")) {
+            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
+                return 0.4;
+            }
+        }
+        return 0.2;
+    }
+
+    private function toDecimal($number)
+    {
+        return number_format((float)$number, 2, ',', '.');
+    }
+
+    public function getDetailKinerja($tgl)
+    {
         $min_date = HariKerja::whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
@@ -449,7 +483,8 @@ class KinerjaRepository extends BaseRepository
         return $result;
     }
 
-    public function cekKinerja($nip){
+    public function cekKinerja($nip)
+    {
         $cek_kinerja = Kinerja::where('nip', $nip)->where(function ($query) {
             $query->where(function ($query) {
                 $query->where('tgl_mulai', '<=', date('Y-m-d'));
@@ -461,33 +496,6 @@ class KinerjaRepository extends BaseRepository
             });
         })->whereIn('approve', [0, 2])->first();
         return $cek_kinerja;
-    }
-
-    private function poinAbsen($masuk, $pulang)
-    {
-        if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:00:00")) {
-            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
-                return 1;
-            }
-        } else if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:30:00")) {
-            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
-                return 0.8;
-            }
-        } else if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
-            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
-                return 0.6;
-            }
-        } else if (strtotime($masuk) > strtotime($hk->tanggal . " 09:00:00")) {
-            if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
-                return 0.4;
-            }
-        }
-        return 0.2;
-    }
-
-    private function toDecimal($number)
-    {
-        return number_format((float)$number, 2, ',', '.');
     }
 
     public function required()
