@@ -2,13 +2,13 @@
 
 if (!function_exists('month')) {
     function month($date){
-        return date('m', strtotime($date));
+        return (int)date('m', strtotime($date));
     }
 }
 
 if (!function_exists('year')) {
     function year($date){
-        return date('Y', strtotime($date));
+        return (int)date('Y', strtotime($date));
     }
 }
 
