@@ -192,7 +192,7 @@
                 if (skp > 0) {
                     persentase = skp_checked / skp * 100;
                 }
-                $('.wrap-progress').find('label').html(persentase + '%');
+                $('.wrap-progress').find('label').html(Math.floor(persentase) + '%');
                 $('.wrap-progress').find('.progress-bar').css({width: persentase + '%'})
             }
 
@@ -220,7 +220,7 @@
                                     skp = res.response.now.skp_pegawai.map(function (val) {
                                         return '<label class="container-check">\n' +
                                             '                          <p>' + val.skp_task.task + '</p>\n' +
-                                            '                          <input type="checkbox" name="skp_pegawai[' + val.id + ']" value="1" ' + (val.status > 0 ? 'checked' : '') + '>\n' +
+                                            '                          <input type="checkbox" name="skp_pegawai[]" value="' + val.id + '" ' + (val.status > 0 ? 'checked' : '') + '>\n' +
                                             '                          <span class="checkmark"></span>\n' +
                                             '                      </label>'
                                     });
