@@ -1,17 +1,13 @@
 <?php
 
 if (!function_exists('month')) {
-    function month($date)
-    {
-        return date('m', strtotime($date));
-    }
+    function month($date){
+        return (int)date('m', strtotime($date));
 }
 
 if (!function_exists('year')) {
-    function year($date)
-    {
-        return date('Y', strtotime($date));
-    }
+    function year($date){
+        return (int)date('Y', strtotime($date));
 }
 
 if (!function_exists('namaBulan')) {
