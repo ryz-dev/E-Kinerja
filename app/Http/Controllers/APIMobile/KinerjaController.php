@@ -22,7 +22,7 @@ class KinerjaController extends ApiController
     public function listSkp()
     {
         $nip = Auth::user()->nip;
-        $skp_pegawai = SkpPegawai::select('id', 'periode', 'id_skp')->with(['skpTask' => function ($query) {
+        $skp_pegawai = SkpPegawai::select('id', 'periode', 'id_skp','status')->with(['skpTask' => function ($query) {
             $query->select('id', 'task');
         }])->where('nip_pegawai', $nip)->whereMonth('periode', month(date('Y-m-d')))->whereYear('periode', year(date('Y-m-d')))->get();
         return apiResponse($skp_pegawai);
