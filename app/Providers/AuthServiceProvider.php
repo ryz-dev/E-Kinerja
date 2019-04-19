@@ -50,6 +50,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('tunjangan-kinerja', function ($user) {
             return $user->hasAccess(['tunjangan-kinerja']);
         });
+        Gate::define('sasaran-kerja', function ($user) {
+            return $user->hasAccess(['sasaran-kerja']);
+        });
 
     }
 }

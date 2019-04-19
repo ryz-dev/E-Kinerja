@@ -42,7 +42,7 @@ Route::group(['middleware' => 'auth'],function (){
             });
             Route::get('','TunjanganKinerjaController@index')->name('tunjangan-kinerja.index');
         });
-        Route::group(['prefix' => 'sasaran-kerja'], function(){
+        Route::group(['prefix' => 'sasaran-kerja', 'middleware' => 'can:sasaran-kerja'], function(){
             Route::group(['prefix'=> 'api'], function(){
                 Route::get('', 'SasaranKerjaController@sasaranKerja')->name('sasaran-kerja.api.index');
             });
@@ -51,6 +51,7 @@ Route::group(['middleware' => 'auth'],function (){
             Route::get('/add/', 'SasaranKerjaController@add')->name('sasaran-kerja.add');
             Route::get('/edit/', 'SasaranKerjaController@edit')->name('sasaran-kerja.edit');
             Route::post('/store/', 'SasaranKerjaController@store')->name('sasaran-kerja.store');
+            Route::post('/update/', 'SasaranKerjaController@update')->name('sasaran-kerja.update');
         });
     });
     Route::post('update-password','Admin/PegawaiController@updatePassword')->name('update-password');
