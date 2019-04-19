@@ -51,7 +51,7 @@ if (!function_exists('formatDate3')) {
 if (!function_exists('apiReponse')) {
     function apiResponse($response, $diagnostic = [], $status = 200)
     {
-        $paging = paging($response);
+        $paging = pagingHelper($response);
         $data = [
             'response' => method_exists($response, 'total') ? ($response->toArray())['data'] : $response,
             'diagnostic' => [
@@ -71,28 +71,28 @@ if (!function_exists('apiReponse')) {
     }
 }
 
-// if (!function_exists('paging')) {
-//     function paging($raw)
-//     {
-//         $object = new stdClass;
-//         if (method_exists($raw, 'total'))
-//             $object->total = $raw->total();
+ if (!function_exists('pagingHelper')) {
+     function pagingHelper($raw)
+     {
+         $object = new stdClass;
+         if (method_exists($raw, 'total'))
+             $object->total = $raw->total();
 
-//         if (method_exists($raw, 'perPage'))
-//             $object->per_page = $raw->perPage();
+         if (method_exists($raw, 'perPage'))
+             $object->per_page = $raw->perPage();
 
-//         if (method_exists($raw, 'currentPage'))
-//             $object->current_page = $raw->currentPage();
+         if (method_exists($raw, 'currentPage'))
+             $object->current_page = $raw->currentPage();
 
-//         if (method_exists($raw, 'lastPage'))
-//             $object->last_page = $raw->lastPage();
+         if (method_exists($raw, 'lastPage'))
+             $object->last_page = $raw->lastPage();
 
-//         if (method_exists($raw, 'firstItem'))
-//             $object->from = $raw->firstItem();
+         if (method_exists($raw, 'firstItem'))
+             $object->from = $raw->firstItem();
 
-//         if (method_exists($raw, 'lastItem'))
-//             $object->to = $raw->lastItem();
+         if (method_exists($raw, 'lastItem'))
+             $object->to = $raw->lastItem();
 
-//         return $object;
-//     }
-// }
+         return $object;
+     }
+ }
