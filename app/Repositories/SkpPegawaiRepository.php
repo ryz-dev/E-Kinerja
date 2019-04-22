@@ -27,8 +27,8 @@ class SkpPegawaiRepository extends BaseRepository
                     $periode = date('Y-m-d', strtotime($periode));
                 }
                 $this->periode = $periode;
-                
-                
+
+
                 $sasaranKerja = $sasaranKerja
                 ->wherePeriode($periode);
             }
@@ -120,12 +120,12 @@ class SkpPegawaiRepository extends BaseRepository
     {
         $sasaranKerjaAtasan = new SkpPegawaiRepository($this->getAtasan()->nip, $this->periode);
         $sasaranKerja = $this->sasaranKerja();
-        
+
         $daftarSasaranKinerja = $this->model
                                     ->where('nip_pegawai','!=', $sasaranKerjaAtasan->pegawai->nip)
                                     ->whereMonth('periode', '=', month($this->periode))
                                     ->whereYear('periode', '=', year($this->periode))->get();
-        
+
         if ($sasaranKerjaAtasan->count()) {
             $sasaranKerjaAtasan = $sasaranKerjaAtasan
                 ->sasaranKerja
@@ -137,7 +137,7 @@ class SkpPegawaiRepository extends BaseRepository
                         $data['task'] = $value->skpTask->task;
                         return collect($data);
                     }
-          
+
                 })->reject(function($name){
                     return empty($name);
                 });
@@ -147,7 +147,7 @@ class SkpPegawaiRepository extends BaseRepository
         }
 
         return $sasaranKerjaAtasan;
-        
+
     }
 
     public function sasaranKerja()
@@ -174,7 +174,7 @@ class SkpPegawaiRepository extends BaseRepository
         if ($date == null) {
             $date = date('Y-m-d');
         }
-        
+
         $pegawai = new PegawaiRepository(\Auth::user()->nip);
         $result = $pegawai->getBawahanLangsung()->map(function($value, $key) use ($date) {
             $skp = $value->skp()->whereMonth('periode', date('m', strtotime($date)))
@@ -206,7 +206,7 @@ class SkpPegawaiRepository extends BaseRepository
 
     public function save($data)
     {
-        
+
         if ($this->saveSkpPegawai($data)) {
             return true;
         }
@@ -226,7 +226,7 @@ class SkpPegawaiRepository extends BaseRepository
                 $skp_pegawai[$key]['id_skp'] = $value;
                 $skp_pegawai[$key]['created_at'] = \Carbon\Carbon::now();
             }
-    
+
             if ($this->model->insert($skp_pegawai)) {
                 return true;
             }
@@ -248,7 +248,7 @@ class SkpPegawaiRepository extends BaseRepository
             foreach ($skp as $key => $task) {
                 $id = \DB::table('skp')->insertGetId(
                     [
-                        'uuid' => (string) Str::uuid(), 
+                        'uuid' => (string) Str::uuid(),
                         'task' => $task,
                         'created_at' => \Carbon\Carbon::now()
                     ]
@@ -278,7 +278,7 @@ class SkpPegawaiRepository extends BaseRepository
                 if ($jumlah < 2 ) {
                     \DB::table('skp')->where('id', $value->id_skp)->delete();
                 }
-    
+
                 return $this->model->where('id', $value->id)->delete();
             });
         }
@@ -288,7 +288,7 @@ class SkpPegawaiRepository extends BaseRepository
                 if ($jumlah < 2 ) {
                     \DB::table('skp')->where('id', $value->id_skp)->delete();
                 }
-    
+
                 return $this->model->where('id', $value->id)->delete();
             });
         }
@@ -308,9 +308,11 @@ class SkpPegawaiRepository extends BaseRepository
         $this->deleteSkp($this->sasaranKerja->whereIn('id', $deletedSkp));
 
         // update task
-        foreach ($skp as $key => $value) {
-            \DB::table('skp')->where('id', $value)->update(['task' => $task[$key]]);
+        if (count($skp)) {
+            foreach ($skp as $key => $value) {
+                \DB::table('skp')->where('id', $value)->update(['task' => $task[$key]]);
+            }
         }
     }
-    
+
 }
