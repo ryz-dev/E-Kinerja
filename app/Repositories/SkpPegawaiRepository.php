@@ -271,15 +271,33 @@ class SkpPegawaiRepository extends BaseRepository
         return false;
     }
 
-    private function deleteSkp($skp){
-        $skp->map(function($value, $key){
-            $jumlah = $this->model->where('id_skp', $value->id_skp)->count();
-            if ($jumlah < 2 ) {
-                \DB::table('skp')->where('id', $value->id_skp)->delete();
-            }
+    public function deleteSkp($skp = null){
+        if ($skp == null) {
+            $res = $this->sasaranKerja->map(function($value, $key){
+                $jumlah = $this->model->where('id_skp', $value->id_skp)->count();
+                if ($jumlah < 2 ) {
+                    \DB::table('skp')->where('id', $value->id_skp)->delete();
+                }
+    
+                return $this->model->where('id', $value->id)->delete();
+            });
+        }
+        else{
+            $res = $skp->map(function($value, $key){
+                $jumlah = $this->model->where('id_skp', $value->id_skp)->count();
+                if ($jumlah < 2 ) {
+                    \DB::table('skp')->where('id', $value->id_skp)->delete();
+                }
+    
+                return $this->model->where('id', $value->id)->delete();
+            });
+        }
 
-            $this->model->where('id', $value->id)->delete();
-        });
+        if ($res->count()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function handleOldSkp($skpPegawai, $skp, $task){
@@ -294,4 +312,5 @@ class SkpPegawaiRepository extends BaseRepository
             \DB::table('skp')->where('id', $value)->update(['task' => $task[$key]]);
         }
     }
+    
 }

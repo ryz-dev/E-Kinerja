@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth'],function (){
         Route::group(['prefix' => 'sasaran-kerja', 'middleware' => 'can:sasaran-kerja'], function(){
             Route::group(['prefix'=> 'api'], function(){
                 Route::get('', 'SasaranKerjaController@sasaranKerja')->name('sasaran-kerja.api.index');
+                Route::post('/delete', 'SasaranKerjaController@destroy')->name('sasaran-kerja.api.delete');
             });
 
             Route::get('', 'SasaranKerjaController@index')->name('sasaran-kerja.index');

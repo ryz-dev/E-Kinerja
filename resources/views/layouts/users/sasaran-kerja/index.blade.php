@@ -87,10 +87,10 @@
                         '<i class="material-icons">edit</i> Edit '+
                     '</button>' +
                 '</a>' +
-                '<button class="btn-style danger">' +
+                "<a href='#' onclick=hapus('"+uuid+"','"+periode+"')><button class='btn-style danger'>" +
                 '    <i class="material-icons">delete</i> ' +
                 '    Hapus' +
-                '</button></div>' ;
+                '</button></a></div>' ;
         }
         else{
             return '<div class="add-skp">' +
@@ -130,6 +130,46 @@
             },
             complete: function () {
                 $('#preload').hide();
+            }
+        });
+    }
+
+    var hapus = function (pegawai, periode){
+        console.log('sgfddgdf');
+        var formData = new FormData();
+        formData.append('uuid', pegawai);
+        formData.append('periode', periode);
+        swal({
+            title: 'Yakin menghapus data?',
+            type:'warning',
+            showCancelButton: true,
+            cancelButtonText: 'Batalkan',
+            confirmButtonText: 'Ya, hapus data'
+        }).then(function(result){
+            if (result.value) {
+                $.ajax({
+                    url:"{{ route('sasaran-kerja.api.delete') }}",
+                    type:'POST',
+                    data: formData,
+                    success: function(res){
+                        console.log(res);
+                        if (res.response) {
+                            swal('Berhasil Menghapus Data!','','success');
+                            setTimeout(function(){
+                                location.href = "{{ route('sasaran-kerja.index') }}"
+                            },1000);
+                        }
+                        else{
+                            swal('Gagal Menghapus Data!',res.diagnostic.message,'error')
+                        }
+                    },
+                    error: function () {
+                        swal('Gagal menghapus Data!','','error')
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
             }
         });
     }

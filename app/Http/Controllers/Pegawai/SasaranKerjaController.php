@@ -60,4 +60,9 @@ class SasaranKerjaController extends Controller
         }
     }
 
+    public function destroy(Request $r){
+        $sasaran_kerja= new SkpPegawaiRepository($r['uuid'], $r['periode']);
+        return $this->ApiSpecResponses($sasaran_kerja->deleteSkp());
+    }
+
 }
