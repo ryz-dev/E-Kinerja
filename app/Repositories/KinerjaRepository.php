@@ -215,15 +215,17 @@ class KinerjaRepository extends BaseRepository
                     }
 
                     if (isset($input['skp_pegawai'])) {
-                        if (count($input['skp_pegawai']) > 0) {
-                            foreach ($input['skp_pegawai'] AS $id) {
-                                if (!$kinerja->whereHas('skp_pegawai', function ($query) use ($id) {
-                                    $query->where('id_skp', $id);
-                                })->first()) {
-                                    $kinerja->skp_pegawai()->attach($id, ['uuid' => (string)Str::uuid()]);
+                        if (is_array($input['skp_pegawai'])){
+                            if (count($input['skp_pegawai']) > 0) {
+                                foreach ($input['skp_pegawai'] AS $id) {
+                                    if (!$kinerja->whereHas('skp_pegawai', function ($query) use ($id) {
+                                        $query->where('id_skp', $id);
+                                    })->first()) {
+                                        $kinerja->skp_pegawai()->attach($id, ['uuid' => (string)Str::uuid()]);
+                                    }
                                 }
+                                $kinerja->load('skp_pegawai');
                             }
-                            $kinerja->load('skp_pegawai');
                         }
                     }
                     return [
