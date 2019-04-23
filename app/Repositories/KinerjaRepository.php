@@ -340,7 +340,7 @@ class KinerjaRepository extends BaseRepository
                     }
                     $poin = 0;
                     if ($in && $out) {
-                        $poin = $this->poinAbsen($masuk, $pulang);
+                        $poin = $this->poinAbsen($masuk, $pulang,$hk->tanggal);
                         $status = 'hadir';
                     }
                     $absen = (float)$absen + $poin;
@@ -399,7 +399,7 @@ class KinerjaRepository extends BaseRepository
                 'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
             ],
             'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
-            'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
+            'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan/1000000) : 0,
             'min_date' => $min_date->tanggal
         ];
         if ($detail) {
@@ -410,21 +410,21 @@ class KinerjaRepository extends BaseRepository
         return $response;
     }
 
-    private function poinAbsen($masuk, $pulang)
+    private function poinAbsen($masuk, $pulang,$tanggal)
     {
-        if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:00:00")) {
+        if (strtotime($masuk) <= strtotime($tanggal . " 08:00:00")) {
             if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                 return 1;
             }
-        } else if (strtotime($masuk) <= strtotime($hk->tanggal . " 08:30:00")) {
+        } else if (strtotime($masuk) <= strtotime($tanggal . " 08:30:00")) {
             if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                 return 0.8;
             }
-        } else if (strtotime($masuk) <= strtotime($hk->tanggal . " 09:00:00")) {
+        } else if (strtotime($masuk) <= strtotime($tanggal . " 09:00:00")) {
             if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                 return 0.6;
             }
-        } else if (strtotime($masuk) > strtotime($hk->tanggal . " 09:00:00")) {
+        } else if (strtotime($masuk) > strtotime($tanggal . " 09:00:00")) {
             if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
                 return 0.4;
             }
@@ -512,10 +512,10 @@ class KinerjaRepository extends BaseRepository
         foreach ($files AS $key => $file) {
 
             $name = $file->getClientOriginalName() . '-kinerja' . $id_kinerja . '.' . $file->getClientOriginalExtension();
-            if ($file->move(public_path('doc'), $name))
+            if ($file->storeAs('public/doc', $name))
                 Media::create([
                     'id_kinerja' => $id_kinerja,
-                    'media' => url('doc/' . $name),
+                    'media' => url('storage/doc/' . $name),
                     'nama_media' => $name,
                     'uuid' => (string)Str::uuid()
                 ]);

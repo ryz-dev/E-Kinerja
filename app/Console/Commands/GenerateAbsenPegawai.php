@@ -75,7 +75,7 @@ class GenerateAbsenPegawai extends Command
                         DB::table('checkinout')->insert([
                             $in, $out
                         ]);
-                        DB::table('kinerja')->insert($kinerja);
+//                        DB::table('kinerja')->insert($kinerja);
                     } catch (Exception $exception) {
                     }
                 }
