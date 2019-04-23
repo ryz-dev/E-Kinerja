@@ -215,7 +215,7 @@ class KinerjaRepository extends BaseRepository
                     }
 
                     if (isset($input['skp_pegawai'])) {
-                        if (count($input['skp_pegawai'] > 0)) {
+                        if (count($input['skp_pegawai']) > 0) {
                             foreach ($input['skp_pegawai'] AS $id) {
                                 if (!$kinerja->whereHas('skp_pegawai', function ($query) use ($id) {
                                     $query->where('id_skp', $id);
