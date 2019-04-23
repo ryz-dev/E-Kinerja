@@ -34,6 +34,7 @@ class SkpPegawaiRepository extends BaseRepository
             }
             $this->sasaranKerja = $sasaranKerja->count() > 0?$sasaranKerja->get():null;
             $this->pegawai = $pegawai;
+
         }
 
         return $this;
@@ -126,12 +127,11 @@ class SkpPegawaiRepository extends BaseRepository
                                     ->whereMonth('periode', '=', month($this->periode))
                                     ->whereYear('periode', '=', year($this->periode))->get();
 
-        if ($sasaranKerjaAtasan->count()) {
+        if ($sasaranKerjaAtasan->sasaranKerja) {
             $sasaranKerjaAtasan = $sasaranKerjaAtasan
                 ->sasaranKerja
                 ->map(function($value, $key) use($daftarSasaranKinerja) {
                     if (!$daftarSasaranKinerja->whereIn('id_skp', $value->id_skp)->count()) {
-                        // dd($value);
                         $data['id'] = $value->id;
                         $data['id_skp'] = $value->id_skp;
                         $data['task'] = $value->skpTask->task;
@@ -257,8 +257,6 @@ class SkpPegawaiRepository extends BaseRepository
             }
         }
 
-        // dd($skpDistribusi);
-
         return array_merge($skp_id, $skpDistribusi);
     }
 
@@ -308,7 +306,7 @@ class SkpPegawaiRepository extends BaseRepository
         $this->deleteSkp($this->sasaranKerja->whereIn('id', $deletedSkp));
 
         // update task
-        if (count($skp)) {
+        if ($skp) {
             foreach ($skp as $key => $value) {
                 \DB::table('skp')->where('id', $value)->update(['task' => $task[$key]]);
             }
