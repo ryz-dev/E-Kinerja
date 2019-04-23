@@ -22,12 +22,15 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="col-md-12 mt-3 control-date-btn">
-                            <div class="date-group float-left">
-                                <span class="icon-date"><i class="fas fa-calendar-alt"></i></span>
+                            <div class="date-group">
+                                <h5>{{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</h5>
+                            </div>
+                            <div class="date-group">
+                                <span class="icon-date"><i class="material-icons">event</i></span>
                                 <input id="date-rekap" class="datepicker" placeholder="Pilih Bulan"/>
                             </div>
 
-                            <div class="float-right">
+                            <div class="btn-control-group">
                                 <button class="btn btn-rounded active" id="bulan-sebelumnya" data-value="-1"><i
                                         class="fas fa-angle-left"></i></button>
                                 <button class="btn btn-rounded active" id="bulan-selanjutnya" data-value="1"><i
@@ -39,18 +42,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 diagram-container">
                         <div class="box-diagram" id="diagram1">
-                            <div class="persen">
-                                <label class="float-left">ABSEN (
+                            <div>
+                                <label class="float-right">ABSEN (
                                     <x id="persentase-absen">0</x>
                                     %)</label>
-                                <span class="float-right"><span id="total-absen">0</span>%</span>
-                                <div class="clearfix"></div>
                             </div>
-                            <canvas id="chart-absen" height="30vh" width="40vw"></canvas>
-                            <div class="capaian text-center">
-                                Pencapaian <span id="pencapaian-absen">0</span>%
+                            <div class="subContainer">
+                                <div>
+                                    <canvas id="chart-absen" height="30vh" width="40vw"></canvas>
+                                </div>
+                                <div class="capaian text-center">
+                                    <h2><span id="total-absen">0</span>%</h2>
+                                    Pencapaian <span id="pencapaian-absen">0</span>%
+                                </div>
                             </div>
                         </div>
                         <div class="box-diagram" id="diagram2">
@@ -58,30 +64,33 @@
                                 <label class="float-left">KINERJA (
                                     <x id="persentase-kinerja">0</x>
                                     %)</label>
-                                <span class="float-right"><span id="total-kinerja">0</span>%</span>
-                                <div class="clearfix"></div>
                             </div>
-                            <canvas id="chart-kinerja" height="30vh" width="40vw"></canvas>
-                            <div class="capaian text-center">
-                                Pencapaian <span id="pencapaian-kinerja">0</span>%
-                            </div>
-                        </div>
-                        <div class="box-diagram" id="diagram4">
-                            <div class="chart-container p-2">
-                                <canvas id="chart-tunjangan" height="50vh" width="50vw"></canvas>
-                            </div>
-                            <div class="container-desc">
-                                <label>TUNJANGAN</label>
-                                <br>
-                                <span>Rp <span id="total-tunjangan"></span></span>
+                            <div class="subContainer">
+                                <div>
+                                    <canvas id="chart-kinerja" height="30vh" width="40vw"></canvas>
+                                </div>
                                 <div class="capaian text-center">
-                                    Pencapaian
-                                    <x id="total">0</x>
-                                    %
+                                    <h2><span id="total-kinerja">0</span>%</h2>
+                                    <span>Pencapaian <span id="pencapaian-kinerja">0</span>%</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="clearfix"></div>
+                        <div class="box-diagram" id="diagram4">
+                            <div class="persen">
+                                <label class="float-right">TUNJANGAN </label>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="subContainer">
+                                <div>
+                                    <canvas id="chart-tunjangan" height="50vh" width="50vw"></canvas>
+                                </div>
+                                <div class="capaian text-center">
+                                    <h2><sup>Rp.</sup><span id="total-tunjangan"></span> jt</h2>
+                                    <span>Pencapaian <x id="total">0</x>
+                                    %</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
