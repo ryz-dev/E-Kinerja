@@ -362,8 +362,8 @@ class KinerjaRepository extends BaseRepository
                     ];
                 }
 
-                if ($knj->where('approve', 2)->first()) {
-                    $jumlah_kinerja++;
+                if ($row_kinerja = $knj->where('approve', 2)->first()) {
+                    $jumlah_kinerja += $row_kinerja->nilai_kinerja;
                 }
                 if ($knj->where('jenis_kinerja', '<>', 'hadir')->where('approve', 2)->first()) {
                     $absen++;
@@ -371,7 +371,7 @@ class KinerjaRepository extends BaseRepository
             }
             $persentase = [
                 'absen' => ($absen / $jumlah_hari) * 100,
-                'kinerja' => ($jumlah_kinerja / $jumlah_hari) * 100,
+                'kinerja' => ($jumlah_kinerja / ($jumlah_hari*10)) * 100,
             ];
             $persentase_total = [
                 'absen' => $persentase['absen'] * $persen_absen / 100,

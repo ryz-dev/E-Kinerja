@@ -80,7 +80,7 @@ class PegawaiController extends AdminController
     {
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         $pegawai = $this->pegawai->with(['jabatan', 'agama', 'skpd'])->orderBy('created_at', 'DESC');
-        $pegawai = $pegawai->search($request->query());
+        $pegawai = $pegawai->search($request->query(),$this->show_limit);
         return $this->ApiSpecResponses($pegawai);
     }
 
