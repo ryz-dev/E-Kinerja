@@ -61,7 +61,7 @@
                         </div>
                         <div class="box-diagram" id="diagram2">
                             <div class="persen">
-                                <label class="float-left">KINERJA (
+                                <label class="float-right">KINERJA (
                                     <x id="persentase-kinerja">0</x>
                                     %)</label>
                             </div>

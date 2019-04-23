@@ -295,7 +295,6 @@ class KinerjaRepository extends BaseRepository
         $persen_absen = FormulaVariable::select('persentase_nilai')->where('variable', 'absen')->first()->persentase_nilai;
         $persen_kinerja = FormulaVariable::select('persentase_nilai')->where('variable', 'kinerja')->first()->persentase_nilai;
 
-
         $pegawai = Pegawai::select('nip', 'id_jabatan')->with(['jabatan' => function ($query) {
             $query->select('id', 'id_golongan');
             $query->with(['golongan' => function ($query) {
@@ -303,6 +302,9 @@ class KinerjaRepository extends BaseRepository
             }]);
         }])->where('nip', $nip)->first();
         $nip = $pegawai->nip;
+        $pegawai->setAppends([]);
+        $pegawai->jabatan->setAppends([]);
+        $pegawai->jabatan->golongan->setAppends([]);
         $jumlah_tunjangan = $pegawai->jabatan->golongan->tunjangan;
 
         $min_date = HariKerja::whereHas('statusHari', function ($query) {
