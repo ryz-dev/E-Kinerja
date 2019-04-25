@@ -513,16 +513,25 @@ class KinerjaRepository extends BaseRepository
 
     public function uploadFile(array $files, $id_kinerja)
     {
+        $success = true;
         foreach ($files AS $key => $file) {
-
-            $name = $file->getClientOriginalName() . '-kinerja' . $id_kinerja . '.' . $file->getClientOriginalExtension();
-            if ($file->storeAs('public/doc', $name))
-                Media::create([
-                    'id_kinerja' => $id_kinerja,
-                    'media' => url('storage/doc/' . $name),
-                    'nama_media' => $name,
-                    'uuid' => (string)Str::uuid()
-                ]);
+            try {
+                $name = $file->getClientOriginalName() . '-kinerja' . $id_kinerja . '.' . $file->getClientOriginalExtension();
+                if ($file->storeAs('public/doc', $name)) {
+                    Media::create([
+                        'id_kinerja' => $id_kinerja,
+                        'media' => url('storage/doc/' . $name),
+                        'nama_media' => $name,
+                        'uuid' => (string)Str::uuid()
+                    ]);
+                }
+            } catch (\Exception $exception){
+                $success = false;
+            }
+        }
+        if (!$success){
+            Kinerja::where('id',$id_kinerja)->delete();
+            abort(500,'Gagal Menambah Kinerja, dokumen gagal diupload');
         }
     }
 
