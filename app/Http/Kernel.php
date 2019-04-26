@@ -54,7 +54,6 @@ class Kernel extends HttpKernel
             ShareErrorsFromSession::class,
 //            \App\Http\Middleware\VerifyCsrfToken::class,
             SubstituteBindings::class,
-            \App\Http\Middleware\HttpsProtocol::class,
         ],
 
         'api' => [
