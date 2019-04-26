@@ -60,7 +60,7 @@ class LoginPassportController extends ATC
             }
             $user['nama_agama'] = $user->agama->agama;
             $user = $user->toArray();
-            unset($user['remember_token'], $user['detail_uri'], $user['delete_uri'], $user['edit_uri'], $user['update_uri']);
+            unset($user['remember_token'], $user['detail_uri'], $user['delete_uri'], $user['edit_uri'], $user['update_uri'],$user['update_password_uri']);
 
             //generate token
             $tokenResponse = parent::issueToken($req);
@@ -130,7 +130,6 @@ class LoginPassportController extends ATC
 
         // custom parsedBody
         $req = $request->withParsedBody($additionalData);
-
         // execute
         try {
 
@@ -142,7 +141,6 @@ class LoginPassportController extends ATC
 
             //convert response to json string
             $content = $tokenResponse->getContent();
-
             //convert json to array
             $data = json_decode($content, true);
 
@@ -158,7 +156,6 @@ class LoginPassportController extends ATC
             // result Refresh TRUE
             return response()->json($format->formatResponseWithPages("Refresh Token berhasil", $resultLogin, $format->STAT_OK()), $format->STAT_OK());
         } catch (Exception $e) {
-
             //return error message
             return response()->json($format->formatResponseWithPages("Internal Server Error", [], $format->INTERNAL_SERVER_ERROR()), $format->INTERNAL_SERVER_ERROR());
         }
