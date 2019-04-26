@@ -60,7 +60,7 @@ class LoginPassportController extends ATC
             }
             $user['nama_agama'] = $user->agama->agama;
             $user = $user->toArray();
-            unset($user['remember_token'], $user['detail_uri'], $user['delete_uri'], $user['edit_uri'], $user['update_uri']);
+            unset($user['remember_token'], $user['detail_uri'], $user['delete_uri'], $user['edit_uri'], $user['update_uri'],$user['update_password_uri']);
 
             //generate token
             $tokenResponse = parent::issueToken($req);
