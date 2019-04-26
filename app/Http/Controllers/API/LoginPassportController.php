@@ -115,7 +115,6 @@ class LoginPassportController extends ATC
 
         // get data from header
         $refresh = $request->getHeader("refreshtoken");
-
         if (($refresh[0] == "") || ($refresh[0] == null)) {
             return response()->json($format->formatResponseWithPages("Refresh Token Harus Diisi", [], $format->STAT_REQUIRED()), $format->STAT_REQUIRED());
         }
