@@ -42,6 +42,8 @@ class PegawaiRepository extends BaseRepository
     public static function dataPegawai($pegawai)
     {
         return app()->make(self::model())->where('nip', $pegawai)->orWhere('uuid', $pegawai)->first();
+//        $self = new self();
+//        return app()->make($self->model())->where('nip', $pegawai)->orWhere('uuid', $pegawai)->first();
     }
 
     public function model()
