@@ -15,7 +15,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 
 
-class MonitoringAbsenController extends Controller
+class MonitoringAbsenController extends ApiController
 {
     private $jam_masuk = '09:00:59';
 
@@ -28,7 +28,11 @@ class MonitoringAbsenController extends Controller
         $raw_date = $request->input('d');
         $search = $request->has('search') ? $request->input('search') : '';
         $page = $request->input('page');
-        $res = $pegawai->dataAbsensi($nip,$skpd,$raw_date,$search,$this->show_limit_mobile,$page,true);
+        try {
+            $res = $pegawai->dataAbsensi($nip, $skpd, $raw_date, $search, $this->show_limit_mobile, $page, true);
+        } catch (\Exception $exception){
+            return $this->error500($exception->getMessage());
+        }
         return apiResponse($res['data'],$res['diagnostic']);
     }
 }

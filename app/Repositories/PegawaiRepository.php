@@ -167,7 +167,7 @@ class PegawaiRepository extends BaseRepository
 
     public function getRekap($nip_user, $nip, $bulan = null, $tahun = null,$is_mobile = false)
     {
-        $user = $this->model->with('role')->where('nip', $nip_user)->first();
+        $user = $this->model->with('role')->where('nip', $nip_user)->firstOrFail();
         $bulan = (int)($bulan ?: date('m'));
         $tahun = ($tahun ?: date('Y'));
         $hari_kerja = HariKerja::where('bulan', $bulan)->where('tahun', $tahun)->whereHas('statusHari', function ($query) {
@@ -303,7 +303,7 @@ class PegawaiRepository extends BaseRepository
             ->first();
 
         /* Data kinerja */
-        $pegawai = $this->model->where('nip', $nip)->first();
+        $pegawai = $this->model->where('nip', $nip)->firstOrFail();
         $kinerja = Kinerja::where('nip', $pegawai->nip)
             ->whereDate('tgl_mulai', '<=', $tgl)
             ->whereDate('tgl_selesai', '>=', $tgl)
@@ -660,8 +660,9 @@ class PegawaiRepository extends BaseRepository
             $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari,$is_mobile);
             $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
             $total = (int)$data_absen_pegawai->count();
-
-            $data_absen_pegawai = $this->paginateMonitoringAbsen($data_absen_pegawai, $show, $page);
+            if ($page) {
+                $data_absen_pegawai = $this->paginateMonitoringAbsen($data_absen_pegawai, $show, $page);
+            }
             if (!$is_mobile) {
                 return
                     [

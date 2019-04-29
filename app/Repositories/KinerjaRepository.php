@@ -11,6 +11,7 @@ use App\Models\MasterData\Pegawai;
 use App\Models\Media;
 use App\Models\SkpPegawai;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class KinerjaRepository extends BaseRepository
@@ -213,18 +214,37 @@ class KinerjaRepository extends BaseRepository
                     } else {
                         $kinerja = $this->model->create($input);
                     }
-
+                    Log::info(json_encode($input)."1");
+                    Log::info(isset($input['skp_pegawai']) ? 'true' : 'false');
                     if (isset($input['skp_pegawai'])) {
                         if (is_array($input['skp_pegawai'])){
                             if (count($input['skp_pegawai']) > 0) {
+                                $cek = true;
                                 foreach ($input['skp_pegawai'] AS $id) {
                                     if (!$kinerja->whereHas('skp_pegawai', function ($query) use ($id) {
                                         $query->where('id_skp', $id);
                                     })->first()) {
-                                        $kinerja->skp_pegawai()->attach($id, ['uuid' => (string)Str::uuid()]);
+                                        try {
+                                            $kinerja->skp_pegawai()->attach($id, ['uuid' => (string)Str::uuid()]);
+                                        } catch (\Exception $exception){
+                                            $cek = false;
+                                            break;
+                                        }
                                     }
                                 }
-                                $kinerja->load('skp_pegawai');
+                                if (!$cek){
+                                    $kinerja->delete();
+                                    return [
+                                        'data' => '',
+                                        'diagnostic' => [
+                                            'code' => 403,
+                                            'status' => 'ERROR',
+                                            'message' => 'skp_pegawai tidak valid'
+                                        ]
+                                    ];
+                                } else {
+                                    $kinerja->load('skp_pegawai');
+                                }
                             }
                         }
                     }
@@ -287,7 +307,7 @@ class KinerjaRepository extends BaseRepository
         }
     }
 
-    public function getTunjanganKinerja($nip, $bulan = null, $tahun = null, $detail = false)
+    public function getTunjanganKinerja($nip, $bulan = null, $tahun = null,$is_mobile = false, $detail = false)
     {
         $bulan = (int)($bulan ? $bulan : date('m'));
         $tahun = $tahun ? $tahun : date('Y');
@@ -406,6 +426,9 @@ class KinerjaRepository extends BaseRepository
             'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan/1000000) : 0,
             'min_date' => $min_date->tanggal
         ];
+        if ($is_mobile){
+            unset($response['pegawai']);
+        }
         if ($detail) {
             $response = array_merge($response, [
                 'data' => $data_kinerja
@@ -500,15 +523,26 @@ class KinerjaRepository extends BaseRepository
         return $cek_kinerja;
     }
 
-    public function required()
+    public function required($jenis_kinerja = '')
     {
-        return [
-            'nip' => 'required',
-            'tgl_mulai' => 'required|date',
-            'tgl_selesai' => 'required|date',
+        if (in_array($jenis_kinerja,['perjalanan_dinas','cuti','izin'])){
+            $req = [
+                'tgl_mulai' => 'required|date',
+                'tgl_selesai' => 'required|date'
+            ];
+        } else {
+            $req = [
+                'tgl_mulai' => 'date',
+                'tgl_selesai' => 'date'
+            ];
+        }
+        return array_merge([
+            'nip' => '',
             'jenis_kinerja' => 'required|in:hadir,perjalanan_dinas,cuti,izin,sakit',
-            'rincian_kinerja' => ''
-        ];
+            'rincian_kinerja' => 'required',
+            'skp_pegawai' => 'array',
+            'doc' => 'array'
+        ],$req);
     }
 
     public function uploadFile(array $files, $id_kinerja)
