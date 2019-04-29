@@ -107,11 +107,11 @@ class KinerjaController extends ApiController
     {
         $kinerja = new KinerjaRepository();
         $nip = Auth::user()->nip;
-        try {
+//        try {
             $tunjangan = $kinerja->getTunjanganKinerja($nip, $bulan, $tahun,true,true);
-        } catch (\Exception $exception){
-            return $this->error500($exception->getMessage());
-        }
+//        } catch (\Exception $exception){
+//            return $this->error500($exception->getMessage());
+//        }
         return apiResponse($tunjangan);
     }
 

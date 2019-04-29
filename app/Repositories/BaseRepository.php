@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Models\MasterData\Bulan;
+
 abstract class BaseRepository
 {
 
