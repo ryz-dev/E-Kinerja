@@ -283,15 +283,15 @@ class PegawaiRepository extends BaseRepository
                         $nilai_kinerja = $kinerja->nilai_kinerja;
                     }
                 }
+                if ($is_upacara && $wajib_upacara){
+                    $apel = $upacara;
+                }
                 $data_inout[] = [
                     'tanggal' => $hk->tanggal,
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'status' => $status,
                     'apel' => $apel,
-                    'is_upacara' => $is_upacara,
-                    'wajib_upacara' => $wajib_upacara,
-                    'upacara' => $upacara,
-//                    'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
+//                      'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
                     'nilai_kinerja' => $nilai_kinerja
                 ];
             }
@@ -427,6 +427,9 @@ class PegawaiRepository extends BaseRepository
             $min_date = HariKerja::whereHas('statusHari', function ($query) {
                 $query->where('status_hari', 'kerja');
             })->select('tanggal')->orderBy('tanggal')->first();
+            if ($is_upacara && $wajib_upacara){
+                $apel = $upacara;
+            }
             return [
                 'uuid' => $pegawai->uuid,
                 'nama' => $pegawai->nama,
@@ -438,9 +441,6 @@ class PegawaiRepository extends BaseRepository
                     'out' => $out,
                 ],
                 'apel' => $apel,
-                'is_upacara' => $is_upacara,
-                'wajib_upacara' => $wajib_upacara,
-                'upacara' => $upacara,
                 'min_date' => $min_date->tanggal
             ];
         }
