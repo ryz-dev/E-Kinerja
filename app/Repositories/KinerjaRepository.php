@@ -381,13 +381,21 @@ class KinerjaRepository extends BaseRepository
                                 $nilai_kinerja = $dk->nilai_kinerja;
                             }
                         }
+                        $dabsen = [
+                            'in' => '',
+                            'out' => '',
+                        ];
+                        if ($abs){
+                            $dabsen['in'] = ($abs->where('checktype',0)->first() ? $abs->where('checktype',0)->first()->checktime : '');
+                            $dabsen['out'] = ($abs->where('checktype',1)->first() ? $abs->where('checktype',1)->first()->checktime : '');
+                        }
                         $data_kinerja[] = [
                             'tanggal' => $hk->tanggal,
 //                            'tanggal_string' => $this->formatDate($hk->tanggal),
 //                            'tanggal_string2' => $this->formatDate2($hk->tanggal),
                             'hari' => ucfirst($hk->Hari->nama_hari),
                             'kinerja' => $nilai_kinerja,
-                            'absen' => $abs ? $abs->toArray() : null,
+//                            'absen' => $dabsen,
                             'status' => ucfirst($status)
                         ];
                     } else {
