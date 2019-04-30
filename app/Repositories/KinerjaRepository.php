@@ -374,15 +374,33 @@ class KinerjaRepository extends BaseRepository
                     }
                 }
                 if ($detail) {
-                    $data_kinerja[] = [
-                        'tanggal' => $hk->tanggal,
-                        'tanggal_string' => $this->formatDate($hk->tanggal),
-                        'tanggal_string2' => $this->formatDate2($hk->tanggal),
-                        'hari' => ucfirst($hk->Hari->nama_hari),
-                        'kinerja' => $knj->first() ? $knj->first()->toArray() : null,
-                        'absen' => $abs ? $abs->toArray() : null,
-                        'status' => ucfirst($status)
-                    ];
+                    if ($is_mobile) {
+                        $nilai_kinerja = null;
+                        if ($dk = $knj->first()){
+                            if ($dk->approve == 2){
+                                $nilai_kinerja = $dk->nilai_kinerja;
+                            }
+                        }
+                        $data_kinerja[] = [
+                            'tanggal' => $hk->tanggal,
+//                            'tanggal_string' => $this->formatDate($hk->tanggal),
+//                            'tanggal_string2' => $this->formatDate2($hk->tanggal),
+                            'hari' => ucfirst($hk->Hari->nama_hari),
+                            'kinerja' => $nilai_kinerja,
+                            'absen' => $abs ? $abs->toArray() : null,
+                            'status' => ucfirst($status)
+                        ];
+                    } else {
+                        $data_kinerja[] = [
+                            'tanggal' => $hk->tanggal,
+                            'tanggal_string' => $this->formatDate($hk->tanggal),
+                            'tanggal_string2' => $this->formatDate2($hk->tanggal),
+                            'hari' => ucfirst($hk->Hari->nama_hari),
+                            'kinerja' => $knj->first() ? $knj->first()->toArray() : null,
+                            'absen' => $abs ? $abs->toArray() : null,
+                            'status' => ucfirst($status)
+                        ];
+                    }
                 }
 
                 if ($row_kinerja = $knj->where('approve', 2)->first()) {

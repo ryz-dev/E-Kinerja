@@ -259,12 +259,19 @@ class PegawaiRepository extends BaseRepository
                     'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
                 ];
             } else {
+                $nilai_kinerja = null;
+                if (isset($kinerja->approve)) {
+                    if ($kinerja->approve == 2) {
+                        $nilai_kinerja = $kinerja->nilai_kinerja;
+                    }
+                }
                 $data_inout[] = [
                     'tanggal' => $hk->tanggal,
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'status' => $status,
                     'apel' => $apel,
-                    'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
+//                    'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
+                    'nilai_kinerja' => $nilai_kinerja
                 ];
             }
         }
