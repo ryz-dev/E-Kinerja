@@ -271,9 +271,6 @@ class PegawaiRepository extends BaseRepository
                     'checkinout' => $kehadiran,
                     'status' => $status,
                     'apel' => $apel,
-                    'is_upacara' => $is_upacara,
-                    'wajib_upacara' => $wajib_upacara,
-                    'upacara' => $upacara,
                     'approve' => isset($kinerja->approve) ? $kinerja->approve : ''
                 ];
             } else {
@@ -765,8 +762,9 @@ class PegawaiRepository extends BaseRepository
         $jam_masuk = $this->jam_masuk;
         $jam_sekarang = date('Y-m-d H:i:s');
         $tanggal_pilihan = $date;
+        $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
 
-        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari, $is_mobile) {
+        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari, $is_mobile,$mesin_upacara) {
 
             $raw_absensi = $item['checkinout'];
             $absensi = null;
@@ -789,6 +787,12 @@ class PegawaiRepository extends BaseRepository
                             if (date('N', strtotime($tanggal_pilihan_date)) != 1) {
                                 if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . " 07:30:00")) {
                                     $apel = true;
+                                }
+                            } else {
+                                if ($item->status_upacara) {
+                                    if ($absen_upacara = Checkinout::where('nip', $item->nip)->where('checktype', 0)->whereDate('checktime', $tanggal_pilihan_date)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                                        $apel = true;
+                                    }
                                 }
                             }
                         } else {
@@ -822,6 +826,12 @@ class PegawaiRepository extends BaseRepository
                             if (date('N', strtotime($tanggal_pilihan_date)) != 1) {
                                 if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . " 07:30:00")) {
                                     $apel = true;
+                                }
+                            } else {
+                                if ($item->status_upacara) {
+                                    if ($absen_upacara = Checkinout::where('nip', $item->nip)->where('checktype', 0)->whereDate('checktime', $tanggal_pilihan_date)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                                        $apel = true;
+                                    }
                                 }
                             }
                         } else {
