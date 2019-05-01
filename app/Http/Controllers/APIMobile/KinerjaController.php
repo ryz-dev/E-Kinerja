@@ -9,6 +9,8 @@ use App\Repositories\KinerjaRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class KinerjaController extends ApiController
 {
@@ -80,9 +82,18 @@ class KinerjaController extends ApiController
 
     public function inputKinerja(Request $request)
     {
+        $jenis_kinerja = $request->has('jenis_kinerja') ? $request->jenis_kinerja : '';
+        $validation = Validator::make($request->input(),$this->kinerja->required($jenis_kinerja));
+        if ($validation->fails()){
+            return $this->error422($validation->errors());
+        }
         $input = $request->all();
         $nip = Auth::user()->nip;
-        $res = $this->kinerja->inputKinerja($input, $nip);
+        try {
+            $res = $this->kinerja->inputKinerja($input, $nip);
+        } catch (\Exception $exception){
+            return $this->error500($exception->getMessage());
+        }
         if ($res['data'] instanceof Kinerja) {
             if ($request->hasFile('doc')) {
                 $this->kinerja->uploadFile($request->file('doc'), $res['data']->id);
@@ -96,7 +107,11 @@ class KinerjaController extends ApiController
     {
         $kinerja = new KinerjaRepository();
         $nip = Auth::user()->nip;
-        $tunjangan = $kinerja->getTunjanganKinerja($nip, $bulan, $tahun,false,true);
+//        try {
+            $tunjangan = $kinerja->getTunjanganKinerja($nip, $bulan, $tahun,true,true);
+//        } catch (\Exception $exception){
+//            return $this->error500($exception->getMessage());
+//        }
         return apiResponse($tunjangan);
     }
 
@@ -115,8 +130,7 @@ class KinerjaController extends ApiController
         $false = false;
         if ($cek_kinerja) {
             return apiResponse($true);
-        } else {
-            return apiResponse($false);
         }
+        return apiResponse($false);
     }
 }
