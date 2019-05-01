@@ -96,7 +96,7 @@ class KinerjaController extends ApiController
     {
         $kinerja = new KinerjaRepository();
         $nip = Auth::user()->nip;
-        $tunjangan = $kinerja->getTunjanganKinerja($nip, $bulan, $tahun);
+        $tunjangan = $kinerja->getTunjanganKinerja($nip, $bulan, $tahun,false,true);
         return apiResponse($tunjangan);
     }
 

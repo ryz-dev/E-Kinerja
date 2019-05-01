@@ -287,7 +287,7 @@ class KinerjaRepository extends BaseRepository
         }
     }
 
-    public function getTunjanganKinerja($nip, $bulan = null, $tahun = null, $detail = false)
+    public function getTunjanganKinerja($nip, $bulan = null, $tahun = null, $detail = false,$is_mobile = false)
     {
         $bulan = (int)($bulan ? $bulan : date('m'));
         $tahun = $tahun ? $tahun : date('Y');
@@ -387,25 +387,49 @@ class KinerjaRepository extends BaseRepository
             }
             $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan) / 100;
         }
-        $response = [
-            'pegawai' => $pegawai,
-            'pencapaian' => [
-                'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase['absen']) : 0,
-                'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase['kinerja']) : 0,
-            ],
-            'persentase' => [
-                'absen' => $persen_absen,
-                'kinerja' => $persen_kinerja,
-            ],
-            'total' => [
-                'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['absen']) : 0,
-                'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['kinerja']) : 0,
-                'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
-            ],
-            'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
-            'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan/1000000) : 0,
-            'min_date' => $min_date->tanggal
-        ];
+        if (!$is_mobile) {
+            $response = [
+                'pegawai' => $pegawai,
+                'pencapaian' => [
+                    'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase['absen']) : 0,
+                    'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase['kinerja']) : 0,
+                ],
+                'persentase' => [
+                    'absen' => $persen_absen,
+                    'kinerja' => $persen_kinerja,
+                ],
+                'total' => [
+                    'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['absen']) : 0,
+                    'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['kinerja']) : 0,
+                    'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
+                ],
+                'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
+                'total_tunjangan_diterima_juta' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan / 1000000) : 0,
+                'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
+                'min_date' => $min_date->tanggal
+            ];
+        } else {
+            $response = [
+                'pegawai' => $pegawai,
+                'pencapaian' => [
+                    'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase['absen']) : 0,
+                    'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase['kinerja']) : 0,
+                ],
+                'persentase' => [
+                    'absen' => $persen_absen,
+                    'kinerja' => $persen_kinerja,
+                ],
+                'total' => [
+                    'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['absen']) : 0,
+                    'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['kinerja']) : 0,
+                    'total' => $jumlah_hari > 0 ? $this->toFloat($total_persentase_tunjangan) : 0
+                ],
+                'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
+//                'total_tunjangan_diterima_juta' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan / 1000000) : 0,
+                'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
+                'min_date' => $min_date->tanggal
+            ];
+        }
         if ($detail) {
             $response = array_merge($response, [
                 'data' => $data_kinerja
@@ -538,6 +562,11 @@ class KinerjaRepository extends BaseRepository
     private function getListNip()
     {
         return implode(',', Pegawai::select('nip')->get()->pluck('nip')->all());
+    }
+
+    private function toFloat($number)
+    {
+        return (float)number_format((float)$number, 2, '.', ',');
     }
 
 }
