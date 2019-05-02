@@ -18,7 +18,7 @@ class TunjanganKinerjaController extends Controller
         $kinerja = new KinerjaRepository();
         $pegawai = auth('web')->user();
         $nip = $pegawai->nip;
-        $tunjangan = $kinerja->getTunjanganKinerja($nip, $bulan, $tahun);
+        $tunjangan = $kinerja->getTunjanganKinerja($nip, $bulan, $tahun,false,true);
         return $this->ApiSpecResponses($tunjangan);
     }
 }

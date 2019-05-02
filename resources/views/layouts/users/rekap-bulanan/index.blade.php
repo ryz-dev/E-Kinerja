@@ -321,9 +321,10 @@
                                 } else if (val.persentase == '') {
                                     color_persentase = ''
                                 }
+                                let apel = '<img src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
                                 return '<tr rekap-index="' + i + '" rekap-status="' + val.status + '">\n' +
                                     '<td>' + val.hari + ', ' + val.tanggal + '</td>\n' +
-                                    '<td>' + val.status + '</td>\n' +
+                                    '<td>' + val.status + ( val.status != 'Alpa' ? (val.apel ? apel : '') : '') + '</td>\n' +
                                     '<td>\n' +
                                     '<span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
                                     '</td>\n' +

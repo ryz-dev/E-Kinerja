@@ -336,9 +336,9 @@ class KinerjaRepository extends BaseRepository
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $absen = 0;
         $data_kinerja = [];
-
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
+                $apel = false;
                 $knj = $this->model->where('nip', $nip)->where('tgl_mulai', '<=', $hk->tanggal)->where('tgl_selesai', '>=', $hk->tanggal)->terbaru();
                 $abs = Checkinout::select('checktime', 'checktype')->where('nip', $nip)->whereDate('checktime', $hk->tanggal)->orderBy('checktype', 'asc')->get();
                 $status = '';
@@ -371,6 +371,13 @@ class KinerjaRepository extends BaseRepository
                 if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))) {
                     if ($status == '') {
                         $status = 'alpa';
+                    }
+                }
+                if ($status != 'alpa'){
+                    if (date('N', strtotime($hk->tanggal)) != 1) {
+                        if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
+                            $apel = true;
+                        }
                     }
                 }
                 if ($detail) {
@@ -406,7 +413,8 @@ class KinerjaRepository extends BaseRepository
                             'hari' => ucfirst($hk->Hari->nama_hari),
                             'kinerja' => $knj->first() ? $knj->first()->toArray() : null,
                             'absen' => $abs ? $abs->toArray() : null,
-                            'status' => ucfirst($status)
+                            'status' => ucfirst($status),
+                            'apel' => $apel
                         ];
                     }
                 }
@@ -520,8 +528,15 @@ class KinerjaRepository extends BaseRepository
 
         /* Data kinerja */
         $pegawai = auth('api')->user();
-        $kinerja = Kinerja::where('nip', $pegawai->nip)
-            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
+        $kinerja = Kinerja::with(['skp_pegawai' => function($query){
+            $query->select('skp_pegawai.id','id_skp');
+            $query->with(['skpTask' => function($query){
+                $query->select('task','id');
+            }]);
+        },'media' => function($query){
+            $query->select('id_kinerja','media','nama_media');
+        }])->where('nip', $pegawai->nip)
+            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve','id')
             ->whereDate('tgl_mulai', '<=', $tgl)
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()

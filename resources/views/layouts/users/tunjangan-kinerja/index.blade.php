@@ -278,9 +278,10 @@
                                             }
                                         }
                                     }
+                                    let apel = '<img style="background-color: white;border-radius: 5px;" src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
                                     if (kinerja == 'Hadir' || val.status == 'Hadir'){
                                         if (val.absen){
-                                            badge_kinerja = '<div class="badge badge-primary text-white mr-2">' + masuk[1] + ' - ' + pulang[1] + '</div>';
+                                            badge_kinerja = '<div class="badge badge-primary text-white mr-2">' + masuk[1] + ' - ' + pulang[1] + (val.apel ? '&nbsp&nbsp'+apel : '') +' </div>';
                                         }
                                     } else if (kinerja == "Perjalanan Dinas"){
                                         badge_kinerja = '<div class="badge badge-green text-white mr-2">'+kinerja+'</div>'
@@ -305,7 +306,7 @@
                                 }
                                 var row = '<tr class="data-tunjangan" data-index="' + i + '">\n' +
                                     '                                <td>' + val.hari + ', ' + val.tanggal_string + '</td>\n' +
-                                    '                                <td>' +(typeof badge_kinerja != 'undefined' ? badge_kinerja : '')+ '</td>\n' +
+                                    '                                <td>' +(typeof badge_kinerja != 'undefined' ? badge_kinerja : '') + '</td>\n' +
                                     '                                <td>\n' +
                                     '                                    <span class="' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '') + '"><i class="fas fa-lg ' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '' ): '') + '"></i></span>\n' +
                                     '                                </td>\n' +

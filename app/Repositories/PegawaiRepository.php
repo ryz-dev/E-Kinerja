@@ -237,11 +237,7 @@ class PegawaiRepository extends BaseRepository
                             $kehadiran['status'] = 'alpa';
                         }
                     }
-                    if (date('N', strtotime($hk->tanggal)) != 1) {
-                        if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
-                            $apel = true;
-                        }
-                    }
+
                 } else {
                     $kehadiran['status'] = 'alpa';
                 }
@@ -254,6 +250,14 @@ class PegawaiRepository extends BaseRepository
             if (strtotime($hk->tanggal) < strtotime(date('Y-m-d'))) {
                 if ($kehadiran['status'] == '') {
                     $kehadiran['status'] = 'alpa';
+                }
+            }
+
+            if ($kehadiran['status'] != ''){
+                if (date('N', strtotime($hk->tanggal)) != 1) {
+                    if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
+                        $apel = true;
+                    }
                 }
             }
 
@@ -331,7 +335,14 @@ class PegawaiRepository extends BaseRepository
 
         /* Data kinerja */
         $pegawai = $this->model->where('nip', $nip)->firstOrFail();
-        $kinerja = Kinerja::where('nip', $pegawai->nip)
+        $kinerja = Kinerja::with(['skp_pegawai' => function($query){
+            $query->select('skp_pegawai.id','id_skp');
+            $query->with(['skpTask' => function($query){
+                $query->select('task','id');
+            }]);
+        },'media' => function($query){
+            $query->select('id_kinerja','media','nama_media');
+        }])->where('nip', $pegawai->nip)
             ->whereDate('tgl_mulai', '<=', $tgl)
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
@@ -386,11 +397,7 @@ class PegawaiRepository extends BaseRepository
                         $status = 'alpa';
                     }
                 }
-                if (date('N', strtotime($tgl)) != 1) {
-                    if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
-                        $apel = true;
-                    }
-                }
+
             } else {
                 $status = 'alpa';
             }
@@ -399,6 +406,14 @@ class PegawaiRepository extends BaseRepository
         if (strtotime($tgl) < strtotime(date('Y-m-d'))) {
             if ($status == '') {
                 $status = 'alpa';
+            }
+        }
+
+        if ($status != 'alpa') {
+            if (date('N', strtotime($tgl)) != 1) {
+                if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
+                    $apel = true;
+                }
             }
         }
 
@@ -424,8 +439,10 @@ class PegawaiRepository extends BaseRepository
             $min_date = HariKerja::whereHas('statusHari', function ($query) {
                 $query->where('status_hari', 'kerja');
             })->select('tanggal')->orderBy('tanggal')->first();
-            if ($is_upacara && $wajib_upacara){
-                $apel = $upacara;
+            if ($status != 'alpa') {
+                if ($is_upacara && $wajib_upacara) {
+                    $apel = $upacara;
+                }
             }
             return [
                 'uuid' => $pegawai->uuid,

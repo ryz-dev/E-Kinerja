@@ -173,7 +173,7 @@
                                         laporan Kinerja Anda.
                                     </p>
                                 </div>
-                                <div class="clock-side"><span>17:10</span></div>
+                                <div class="clock-side clock"><span>--:--</span></div>
                                 <div class="day-side">
                                     <small>Selasa, 23 September 2018</small>
                                 </div>
