@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 /*Route::middleware('auth:api')->get('/v1', function (Request $request) {
      return $request->user()->load('role');
  });*/
-Route::group(['preifx' => 'v2'],function (){
+Route::group(['prefix' => 'v2'],function (){
     Route::post('/login', 'Api\LoginPassportController@getLogin');
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/status', 'Api\LoginPassportController@getStatus');
