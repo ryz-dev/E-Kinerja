@@ -31,7 +31,8 @@
                             </div>
                             <select id="skpd" class="custom-select select-custome">
                                 @foreach ($skpd as $key => $item)
-                                    <option value="{{ $key }}" style="{{$key == -1 ? 'font-weight: bold;font-style: unset;' : ''}}">{{ $item }}</option>
+                                    <option value="{{ $key }}"
+                                            style="{{$key == -1 ? 'font-weight: bold;font-style: unset;' : ''}}">{{ $item }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -68,7 +69,8 @@
                             <div class="col-md-3 col-6 btnDownloads">
                                 <input type="hidden" name="periode_rekap" value="">
                                 <input type="hidden" name="d_id_skpd" value="">
-                                <button class="btn btn-primary"> <img src="assets/images/icons/pdf.svg"> Download</button>
+                                <button class="btn btn-primary"><img src="assets/images/icons/pdf.svg"> Download
+                                </button>
                             </div>
                         </form>
 
@@ -144,19 +146,58 @@
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="desc-detail">
-                                    <h4 id="kinerja">Hadir</h4>
+                                    <div class="title-detail">
+                                        <h4 id="kinerja">Hadir</h4>
+                                    </div>
                                     <small>Jam Masuk - Jam Pulang</small>
                                     <br>
                                     <label><span id='checkin'></span> - <span id='checkout'></span></label>
                                     <hr>
-                                    <h4>Penilaian Kinerja</h4>
-                                    <span class="check-list float-right"><i id="kinerja_status"
-                                                                            class="fas fa-lg"></i></span>
-                                    <h6>Rincian Kinerja</h6>
-                                    <p id='kinerja_rinci'></p>
-                                    <h6>Keterangan Penilaian</h6>
-                                    <p id='kinerja_ket'></p>
-                                    <hr>
+                                    <div class="title-values">
+                                        <h4>Penilaian Kinerja</h4>
+                                        <span style="" class="check-list">
+{{--                                            <i class="material-icons">check</i>--}}
+                                        </span>
+                                        <div class="value-kinerja">
+                                            <h2 id="nilai_kinerja"></h2>
+                                        </div>
+                                    </div>
+                                    {{--<span class="check-list float-right"><i id="kinerja_status"
+                                                                            class="fas fa-lg"></i></span>--}}
+                                    <div class="row style-modal-content">
+                                        <div class="col-md-12 mb-1" id="skp-progress">
+                                            <label class="text-secondary" style="font-size: 1.2em">List SKP</label>
+                                            <div class="wrap-progress">
+                                                <label>0%</label>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar" role="progressbar" style="width: 0%"
+                                                         aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mb-1" id="skp-pegawai">
+
+                                        </div>
+
+                                        <div class="col-md-12 mt-2" id="media-pegawai">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6 class="mb-2 mt-4">Rincian Kinerja Harian</h6>
+                                            <div class="desc-kinerja">
+                                                <p id='kinerja_rinci'></p>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <h6 class="mb-2 mt-4">Keterangan Penilaian</h6>
+                                            <div class="desc-kinerja">
+                                                <p id='kinerja_ket'></p>
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -174,7 +215,7 @@
             $("input[name='d_id_skpd']").val($("#skpd").val());
 
             var getBawahan = function (skpd) {
-                $.get('{{route('rekap-bulanan.api.bawahan')}}'+(skpd ? '?skpd='+skpd : ''))
+                $.get('{{route('rekap-bulanan.api.bawahan')}}' + (skpd ? '?skpd=' + skpd : ''))
                     .then(function (res) {
                         if (res.response.length > 0) {
                             var data = res.response.map(function (val, i) {
@@ -260,7 +301,7 @@
                             break;
                     }
                     var nip = $('#detail-nip').html();
-                    $("input[name='periode_rekap']").val('01/'+bulan+'/'+tahun);
+                    $("input[name='periode_rekap']").val('01/' + bulan + '/' + tahun);
                     getRekap(nip, bulan, tahun)
                 }
             })
@@ -324,7 +365,7 @@
                                 let apel = '<img src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
                                 return '<tr rekap-index="' + i + '" rekap-status="' + val.status + '">\n' +
                                     '<td>' + val.hari + ', ' + val.tanggal + '</td>\n' +
-                                    '<td>' + val.status + ( val.status != 'Alpa' ? (val.apel ? apel : '') : '') + '</td>\n' +
+                                    '<td>' + val.status + (val.status != 'Alpa' ? (val.apel ? apel : '') : '') + '</td>\n' +
                                     '<td>\n' +
                                     '<span class="' + color + '"><i class="fas fa-lg ' + approve + '"></i></span>\n' +
                                     '</td>\n' +
@@ -389,7 +430,7 @@
             $(document).on('click', '.controlLeft', function () {
                 var nip = $('#detail-nip').html();
                 var rk = rekapDetail;
-                $('[name=modal_data_index]').val(parseInt($('[name=modal_data_index]').val()) -1);
+                $('[name=modal_data_index]').val(parseInt($('[name=modal_data_index]').val()) - 1);
                 if (rk.prev != '') {
                     detailRekap(nip, rk.prev); //memanggil detailRekap
                 }
@@ -399,7 +440,7 @@
             $(document).on('click', '.controlRight', function () {
                 var nip = $('#detail-nip').html();
                 var rk = rekapDetail;
-                $('[name=modal_data_index]').val(parseInt($('[name=modal_data_index]').val()) +1);
+                $('[name=modal_data_index]').val(parseInt($('[name=modal_data_index]').val()) + 1);
                 if (rk.next != '') {
                     detailRekap(nip, rk.next); //memanggil detailRekap
                 }
@@ -427,33 +468,86 @@
                         rekapDetail = res.response; //return ke rekapDetail
                         var kinerja = res.response.kinerja ? res.response.kinerja : null;
                         var chekinout = res.response.checkinout;
-
+                        let apel = '<img src="assets/images/icons/upacara.svg" class="iconUpacara">'
                         // Tampilkan ke view
+                        $('.value-kinerja').hide();
+                        $('.wrap-progress').find('label').html('0%')
+                        $('.progress-bar').css({'width': '0%'})
+                        $('#skp-pegawai').html("")
+                        $('#media-pegawai').html("")
+                        $('#skp-progress').hide();
+                        $('#kinerja_rinci').html("");
+                        $('#kinerja_ket').html("");
 
-                        $('#kinerja').html(rekapDetail.status);
+                        $('#kinerja').html(rekapDetail.status).after((rekapDetail.apel ? apel : ''));
                         $('#mdlNama').html($('#detail-nama').html());
                         $('#mdlNip').html($('#detail-nip').html());
                         $('#user-modal').attr('style', $('#detail-img').attr('style'));
                         $('#detailDate').html(res.response.tanggal);
                         $('#checkin').html(chekinout[0] ? chekinout[0].absen_time : '--:--');
                         $('#checkout').html(chekinout[1] ? chekinout[1].absen_time : '--:--');
+                        $('#nilai_kinerja').html(kinerja.approve == 2 ? kinerja.nilai_kinerja : '')
                         $('#kinerja_rinci').html(kinerja.rincian_kinerja);
                         $('#kinerja_ket').html(kinerja.keterangan_approve);
-                        if (kinerja.approve == 2) {
-                            $('#kinerja_status').addClass('fa-check');
+
+                        if (kinerja) {
+                            if (kinerja.approve == 2) {
+                                // $('#kinerja_status').addClass('fa-check');
+                                $('.value-kinerja').show();
+                            }
+                            if (kinerja.skp_pegawai.length > 0) {
+                                $('#skp-progress').show();
+                                var jumlah_skp = kinerja.skp_pegawai.length;
+                                var jumlah_selesai = 0;
+                                kinerja.skp_pegawai.forEach(function (val) {
+                                    if (val.status) {
+                                        jumlah_selesai++;
+                                    }
+                                })
+                                var persentase = (jumlah_selesai / jumlah_skp) * 100;
+                                $('.wrap-progress').find('label').html(persentase + '%')
+                                $('.progress-bar').css({'width': persentase + '%'})
+                                var skp = kinerja.skp_pegawai.map(function (val, index) {
+                                    let checked = val.status ? 'checked ' : '';
+                                    return '<label class="container-check">\n' +
+                                        '<p>' + val.skp_task.task + '</p>\n' +
+                                        '<input type="checkbox" ' + checked + 'readonly onclick="return false">\n' +
+                                        '<span class="checkmark"></span>\n' +
+                                        '</label>'
+                                })
+                                $('#skp-pegawai').html(skp.join(''))
+                            }
+                            if (kinerja.media.length > 0) {
+                                var media = kinerja.media.map(function (val, index) {
+                                    if (index == 0){
+                                        res = '<label class="text-secondary" style="font-size: 1.2em">Dokumen SKP</label>'
+                                    }
+                                    res += '<div class="downloads mb-3">\n' +
+                                        '    <img src="{{asset('assets/images/icons/word.svg')}}">\n' +
+                                        '    <label>'+val.nama_media+'</label>\n' +
+                                        '    <button onclick="window.open(\''+val.media+'\'); return false">\n' +
+                                        '        <i class="material-icons mr-1">cloud_download</i>\n' +
+                                        '        Download\n' +
+                                        '    </button>\n' +
+                                        '</div>'
+                                    return res
+                                })
+                                $('#media-pegawai').html(media.join(''))
+                            }
                         }
                     }).catch((err) => {
                     console.log(err)
                 });
 
             }
-            $(document).on('change','#skpd', function(){
+            $(document).on('change', '#skpd', function () {
                 var skpd = $(this).val();
                 $("input[name='d_id_skpd']").val($(this).val());
                 getBawahan(skpd);
             });
+
             function capitalizeFirstLetter(str) {
-                return str.replace(/\w\S*/g, function(txt){
+                return str.replace(/\w\S*/g, function (txt) {
                     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                 });
             }
