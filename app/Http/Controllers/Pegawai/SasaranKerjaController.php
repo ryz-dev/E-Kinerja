@@ -15,10 +15,10 @@ class SasaranKerjaController extends Controller
     public function add(Request $r)
     {
         $sasaran_kerja= new SkpPegawaiRepository($r['uuid'], $r['periode']);
-
+        $periode = $r['periode'];
         $sasaran_kerja = $sasaran_kerja->sasaranKerjaData();
 
-        return view('layouts.users.sasaran-kerja.add', compact('sasaran_kerja'));
+        return view('layouts.users.sasaran-kerja.add', compact('sasaran_kerja', 'periode'));
     }
 
     public function sasaranKerja(Request $r){
@@ -29,6 +29,7 @@ class SasaranKerjaController extends Controller
     }
 
     public function store(Request $r){
+
         $sasaran_kerja = new SkpPegawaiRepository($r['nip'], $r['periode']);
 
         if ($sasaran_kerja->save($r)) {
@@ -41,10 +42,10 @@ class SasaranKerjaController extends Controller
 
     public function edit(Request $r){
         $sasaran_kerja= new SkpPegawaiRepository($r['uuid'], $r['periode']);
-
+        $periode = $r['periode'];
         $sasaran_kerja = $sasaran_kerja->sasaranKerjaData();
 
-        return view('layouts.users.sasaran-kerja.edit', compact('sasaran_kerja'));
+        return view('layouts.users.sasaran-kerja.edit', compact('sasaran_kerja', 'periode'));
     }
 
     public function update(Request $r){

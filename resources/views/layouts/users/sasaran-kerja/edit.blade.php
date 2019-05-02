@@ -32,8 +32,7 @@
                 </div>
                 <div>
                     <span class="badge badge-primary">
-                        <h6 class="text-white">{{ namaBulan(month($sasaran_kerja['periode'])) }}
-                            {{ year($sasaran_kerja['periode']) }}</h6>
+                        <h6 class="text-white">{{ $sasaran_kerja['periode'] }}</h6>
                     </span>
                 </div>
 
@@ -47,7 +46,7 @@
             <div class="wrap-list-skp">
               <form id="formSkp" action="{{ route('sasaran-kerja.update') }}" method="POST">{{ csrf_field() }}
                   <input type="hidden" name="nip" value="{{$sasaran_kerja['dataPegawai']->nip}}">
-                  <input type="hidden" name="periode" value="{{$sasaran_kerja['periode']}}">
+                  <input type="hidden" name="periode" value="{{$periode}}">
                   <div class="bg-white">
                       <div class="title-skp">
                           <h4>Sasaran Kerja Pegawai</h4>
