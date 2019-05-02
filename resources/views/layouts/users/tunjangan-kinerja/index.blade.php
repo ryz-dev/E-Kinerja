@@ -185,7 +185,7 @@
                         $('#total-kinerja').html(res.response.total.kinerja);
 
                         $('#total').html(res.response.total.total)
-                        $('#total-tunjangan').html(res.response.total_tunjangan_diterima)
+                        $('#total-tunjangan').html(res.response.total_tunjangan_diterima_juta)
                         data_response = res.response
                         var dataAbsen = {
                             labels: ["Absen",""],

@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 use App\Models\Absen\Checkinout;
 use App\Models\Absen\Kinerja;
+use App\Models\MasterData\AbsenUpacara;
 use App\Models\MasterData\Agama;
 use App\Models\MasterData\Bulan;
 use App\Models\MasterData\FormulaVariable;
@@ -132,7 +133,7 @@ class PegawaiRepository extends BaseRepository
         return $pegawai->save();
     }
 
-    public function getBawahan($nip, $skpd = null,$search = null,$page = null,$show_limit = null)
+    public function getBawahan($nip, $skpd = null, $search = null, $page = null, $show_limit = null)
     {
         $skpd = $skpd ? $skpd : null;
         $user = $this->model::with('role')->where('nip', $nip)->first();
@@ -167,7 +168,7 @@ class PegawaiRepository extends BaseRepository
         return $pegawai;
     }
 
-    public function getRekap($nip_user, $nip, $bulan = null, $tahun = null,$is_mobile = false)
+    public function getRekap($nip_user, $nip, $bulan = null, $tahun = null, $is_mobile = false)
     {
         $user = $this->model->with('role')->where('nip', $nip_user)->firstOrFail();
         $bulan = (int)($bulan ?: date('m'));
@@ -197,6 +198,20 @@ class PegawaiRepository extends BaseRepository
 
             $kehadiran['inout'] = $pegawai->checkinout()->where('checktime', 'like', '%' . $hk->tanggal . '%')->orderBy('checktype', 'desc')->get()->toArray();
             $kehadiran['status'] = '';
+            $is_upacara = false;
+            if (date('N', strtotime($hk->tanggal)) == 1) {
+                $is_upacara = true;
+            }
+            $wajib_upacara = $pegawai->status_upacara ? true : false;
+            $upacara = false;
+            if ($is_upacara) {
+                if ($wajib_upacara) {
+                    $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
+                    if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $hk->tanggal)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                        $upacara = true;
+                    }
+                }
+            }
             if (count($kehadiran['inout']) > 0) {
                 $masuk = $pulang = null;
                 foreach ($kehadiran['inout'] AS $kh) {
@@ -265,12 +280,15 @@ class PegawaiRepository extends BaseRepository
                         $nilai_kinerja = $kinerja->nilai_kinerja;
                     }
                 }
+                if ($is_upacara && $wajib_upacara){
+                    $apel = $upacara;
+                }
                 $data_inout[] = [
                     'tanggal' => $hk->tanggal,
                     'hari' => ucfirst($hk->Hari->nama_hari),
                     'status' => $status,
                     'apel' => $apel,
-//                    'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
+//                      'approve' => isset($kinerja->approve) ? $kinerja->approve : 0
                     'nilai_kinerja' => $nilai_kinerja
                 ];
             }
@@ -295,7 +313,7 @@ class PegawaiRepository extends BaseRepository
         }
     }
 
-    public function getDetailRekap($nip, $tgl,$is_mobile = false)
+    public function getDetailRekap($nip, $tgl, $is_mobile = false)
     {
         $date = new HariKerja;
 
@@ -327,6 +345,22 @@ class PegawaiRepository extends BaseRepository
         $apel = false;
         $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
         $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
+        $is_upacara = false;
+        if (date('N', strtotime($tgl)) == 1) {
+            if (HariKerja::where('tanggal', $tgl)->where('id_status_hari', 1)->first()) {
+                $is_upacara = true;
+            }
+        }
+        $wajib_upacara = $pegawai->status_upacara ? true: false;
+        $upacara = false;
+        if ($is_upacara) {
+            if ($wajib_upacara) {
+                $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
+                if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $tgl)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                    $upacara = true;
+                }
+            }
+        }
         if (count($checkinout) > 0) {
             $masuk = $pulang = null;
             foreach ($checkinout->toArray() AS $kh) {
@@ -390,6 +424,9 @@ class PegawaiRepository extends BaseRepository
             $min_date = HariKerja::whereHas('statusHari', function ($query) {
                 $query->where('status_hari', 'kerja');
             })->select('tanggal')->orderBy('tanggal')->first();
+            if ($is_upacara && $wajib_upacara){
+                $apel = $upacara;
+            }
             return [
                 'uuid' => $pegawai->uuid,
                 'nama' => $pegawai->nama,
@@ -666,7 +703,7 @@ class PegawaiRepository extends BaseRepository
 
             $pegawai->orderBy('golongan.tunjangan', 'desc');
             $pegawai->orderBy('pegawai.nama');
-            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari,$is_mobile);
+            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile);
             $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
             $total = (int)$data_absen_pegawai->count();
             if ($page) {
@@ -718,15 +755,16 @@ class PegawaiRepository extends BaseRepository
         return DB::table('hari_kerja')->where('tanggal', date('Y-m-d', strtotime($date)))->first();
     }
 
-    private function parseAbsensi($pegawai, $date, $status_hari,$is_mobile)
+    private function parseAbsensi($pegawai, $date, $status_hari, $is_mobile)
     {
         $pegawai = $pegawai->get();
 
         $jam_masuk = $this->jam_masuk;
         $jam_sekarang = date('Y-m-d H:i:s');
         $tanggal_pilihan = $date;
+        $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
 
-        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari,$is_mobile) {
+        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari, $is_mobile,$mesin_upacara) {
 
             $raw_absensi = $item['checkinout'];
             $absensi = null;
@@ -736,7 +774,7 @@ class PegawaiRepository extends BaseRepository
 
             $absen_in = $raw_absensi->contains('checktype', 0) ? $raw_absensi->where('checktype', 0)->min()->checktime : false;
             $absen_out = $raw_absensi->contains('checktype', 1) ? $raw_absensi->where('checktype', 1)->max()->checktime : false;
-
+            $apel = false;
             if ($status_hari == 1) {
                 if (strtotime($tanggal_sekarang) > strtotime($tanggal_pilihan_date)) {
                     if ($absen_in && $absen_out) {
@@ -745,6 +783,17 @@ class PegawaiRepository extends BaseRepository
                                 $absensi = 'hadir';
                             } else {
                                 $absensi = 'alpa';
+                            }
+                            if (date('N', strtotime($tanggal_pilihan_date)) != 1) {
+                                if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . " 07:30:00")) {
+                                    $apel = true;
+                                }
+                            } else {
+                                if ($item->status_upacara) {
+                                    if ($absen_upacara = Checkinout::where('nip', $item->nip)->where('checktype', 0)->whereDate('checktime', $tanggal_pilihan_date)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                                        $apel = true;
+                                    }
+                                }
                             }
                         } else {
                             $absensi = 'alpa';
@@ -774,6 +823,17 @@ class PegawaiRepository extends BaseRepository
                                 // $absensi = date('H:i', strtotime($absen_in)).'<span> - </span>';
                                 $absensi = 'hadir';
                             }
+                            if (date('N', strtotime($tanggal_pilihan_date)) != 1) {
+                                if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . " 07:30:00")) {
+                                    $apel = true;
+                                }
+                            } else {
+                                if ($item->status_upacara) {
+                                    if ($absen_upacara = Checkinout::where('nip', $item->nip)->where('checktype', 0)->whereDate('checktime', $tanggal_pilihan_date)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                                        $apel = true;
+                                    }
+                                }
+                            }
                         } else {
                             if ($item['kinerja']->count()) {
                                 $absensi = $item['kinerja']->first()->jenis_kinerja;
@@ -788,16 +848,18 @@ class PegawaiRepository extends BaseRepository
             } else {
                 $absensi = 'libur';
             }
-            if (!$is_mobile){
+            if (!$is_mobile) {
                 $data['absen_in'] = $absen_in ? date('H:i', strtotime($absen_in)) : '';
                 $data['absen_out'] = $absen_out ? date('H:i', strtotime($absen_out)) : '';
                 $data['absensi'] = $absensi;
                 $data['nama'] = $item->nama;
+                $data['apel'] = $apel;
                 $data['nip'] = $item->nip;
                 $data['foto'] = $item->foto;
             } else {
                 $data['uuid'] = $item->uuid;
                 $data['nama'] = $item->nama;
+                $data['apel'] = $apel;
                 $data['nip'] = $item->nip;
                 $data['foto'] = $item->foto;
                 $data['checkinout'] = [

@@ -381,13 +381,21 @@ class KinerjaRepository extends BaseRepository
                                 $nilai_kinerja = $dk->nilai_kinerja;
                             }
                         }
+                        $dabsen = [
+                            'in' => '',
+                            'out' => '',
+                        ];
+                        if ($abs){
+                            $dabsen['in'] = ($abs->where('checktype',0)->first() ? $abs->where('checktype',0)->first()->checktime : '');
+                            $dabsen['out'] = ($abs->where('checktype',1)->first() ? $abs->where('checktype',1)->first()->checktime : '');
+                        }
                         $data_kinerja[] = [
                             'tanggal' => $hk->tanggal,
 //                            'tanggal_string' => $this->formatDate($hk->tanggal),
 //                            'tanggal_string2' => $this->formatDate2($hk->tanggal),
                             'hari' => ucfirst($hk->Hari->nama_hari),
                             'kinerja' => $nilai_kinerja,
-                            'absen' => $abs ? $abs->toArray() : null,
+//                            'absen' => $dabsen,
                             'status' => ucfirst($status)
                         ];
                     } else {
@@ -424,25 +432,48 @@ class KinerjaRepository extends BaseRepository
             }
             $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan) / 100;
         }
-        $response = [
-            'pegawai' => $pegawai,
-            'pencapaian' => [
-                'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase['absen']) : 0,
-                'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase['kinerja']) : 0,
-            ],
-            'persentase' => [
-                'absen' => $persen_absen,
-                'kinerja' => $persen_kinerja,
-            ],
-            'total' => [
-                'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['absen']) : 0,
-                'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['kinerja']) : 0,
-                'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
-            ],
-            'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
-            'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan/1000000) : 0,
-            'min_date' => $min_date->tanggal
-        ];
+        if (!$is_mobile) {
+            $response = [
+                'pegawai' => $pegawai,
+                'pencapaian' => [
+                    'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase['absen']) : 0,
+                    'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase['kinerja']) : 0,
+                ],
+                'persentase' => [
+                    'absen' => $persen_absen,
+                    'kinerja' => $persen_kinerja,
+                ],
+                'total' => [
+                    'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['absen']) : 0,
+                    'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['kinerja']) : 0,
+                    'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
+                ],
+                'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
+                'total_tunjangan_diterima_juta' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan / 1000000) : 0,
+                'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
+                'min_date' => $min_date->tanggal
+            ];
+        }else {
+            $response = [
+                'pegawai' => $pegawai,
+                'pencapaian' => [
+                    'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase['absen']) : 0,
+                    'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase['kinerja']) : 0,
+                ],
+                'persentase' => [
+                    'absen' => $persen_absen,
+                    'kinerja' => $persen_kinerja,
+                ],
+                'total' => [
+                    'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['absen']) : 0,
+                    'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['kinerja']) : 0,
+                    'total' => $jumlah_hari > 0 ? $this->toFloat($total_persentase_tunjangan) : 0
+                ],
+                'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
+                'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan / 1000000) : 0,
+                'min_date' => $min_date->tanggal
+            ];
+        }
         if ($is_mobile){
             unset($response['pegawai']);
         }
@@ -589,6 +620,11 @@ class KinerjaRepository extends BaseRepository
     private function getListNip()
     {
         return implode(',', Pegawai::select('nip')->get()->pluck('nip')->all());
+    }
+
+    private function toFloat($number)
+    {
+        return (float)number_format((float)$number, 2, '.', ',');
     }
 
 }
