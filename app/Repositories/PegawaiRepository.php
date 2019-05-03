@@ -902,6 +902,7 @@ class PegawaiRepository extends BaseRepository
                 $data['foto'] = $item->foto;
             } else {
                 $data['uuid'] = $item->uuid;
+                $data['absensi'] = $absensi;
                 $data['nama'] = $item->nama;
                 $data['apel'] = $apel;
                 $data['nip'] = $item->nip;
