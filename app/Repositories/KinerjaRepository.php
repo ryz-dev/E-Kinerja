@@ -19,6 +19,20 @@ class KinerjaRepository extends BaseRepository
 {
     static function getBawahanPenilaianKinerja($nip, $date, $search = '')
     {
+        $pegawai = self::getAllBawahan($nip,$date,$search);
+        $bawahan = self::mergePegawai($pegawai,collect([]));
+        return $bawahan;
+    }
+
+    static function mergePegawai($pegawai,$all){
+        $data = $pegawai->merge($all);
+        foreach ($pegawai AS $row) {
+            $data = self::mergePegawai($row->bawahan, $data);
+        }
+        return $data;
+    }
+
+    static function getAllBawahan($nip,$date,$search){
         $user = Pegawai::where('nip', $nip)->first();
         $pegawai = Pegawai::where(function ($query) use ($search) {
             if ($search !== '') {
@@ -30,7 +44,10 @@ class KinerjaRepository extends BaseRepository
             $query->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'));
             $query->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'));
             $query->terbaru();
-        }])->get();
+        }])->get()->map(function ($val)use($date,$search){
+            $val->bawahan =self::getBawahanPenilaianKinerja($val->nip,$date,$search);
+            return $val;
+        });
         return $pegawai;
     }
 
