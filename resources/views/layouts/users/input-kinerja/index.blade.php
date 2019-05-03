@@ -516,6 +516,7 @@
                             type: "POST",
                             data: formData,
                             success: function (res) {
+                                $('.form-submit-kinerja.active-form')[0].reset();
                                 $('.loading').hide();
                                 if (res.diagnostic.code == 200) {
                                     swal(
