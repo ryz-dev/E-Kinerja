@@ -562,7 +562,7 @@ class KinerjaRepository extends BaseRepository
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
             ->first();
-        if ($kinerja) {
+        /*if ($kinerja) {
             if (isset($kinerja->skp_pegawai)) {
                 $skp_pegawai = $kinerja->skp_pegawai->map(function ($val) {
                     if ($val->skpTask) {
@@ -581,7 +581,7 @@ class KinerjaRepository extends BaseRepository
                     ];
                 });
             }
-        }
+        }*/
 
         $bulan = date('m', strtotime($tgl));
         $tahun = date('Y', strtotime($tgl));
@@ -595,14 +595,15 @@ class KinerjaRepository extends BaseRepository
         $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
         $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
 
-        /* Data array */
-        if ($kinerja) {
+        /*if ($kinerja) {
             $kinerja = $kinerja->toArray();
             if (isset($skp_pegawai))
                 $kinerja['skp_pegawai'] = $skp_pegawai;
             if (isset($media))
                 $kinerja['media'] = $media;
-        }
+        }*/
+        /* Data array */
+
         $result = [
             'uuid' => $pegawai->uuid,
             'nama' => $pegawai->nama,
