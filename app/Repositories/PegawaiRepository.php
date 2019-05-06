@@ -445,7 +445,7 @@ class PegawaiRepository extends BaseRepository
             $min_date = HariKerja::whereHas('statusHari', function ($query) {
                 $query->where('status_hari', 'kerja');
             })->select('tanggal')->orderBy('tanggal')->first();
-            if ($kinerja) {
+            /*if ($kinerja) {
                 if (isset($kinerja->skp_pegawai)) {
                     $skp_pegawai = $kinerja->skp_pegawai->map(function ($val) {
                         if ($val->skpTask) {
@@ -469,7 +469,7 @@ class PegawaiRepository extends BaseRepository
                     $kinerja['skp_pegawai'] = $skp_pegawai;
                 if (isset($media))
                     $kinerja['media'] = $media;
-            }
+            }*/
 
             return [
                 'uuid' => $pegawai->uuid,
