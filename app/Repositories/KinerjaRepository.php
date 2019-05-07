@@ -350,7 +350,7 @@ class KinerjaRepository extends BaseRepository
         })->select('tanggal')->orderBy('tanggal')->first();
         $hari_kerja = HariKerja::with('Hari')->select('tanggal','hari')->whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
-        })->where('bulan', $bulan)->where('tahun', $tahun)->orderBy('tanggal', 'asc')->get();
+        })->where('bulan', $bulan)->where('tahun', $tahun)->where('tanggal','<=',date('Y-m-d'))->orderBy('tanggal', 'asc')->get();
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $absen = 0;
         $data_kinerja = [];

@@ -173,7 +173,7 @@ class PegawaiRepository extends BaseRepository
         $user = $this->model->with('role')->where('nip', $nip_user)->firstOrFail();
         $bulan = (int)($bulan ?: date('m'));
         $tahun = ($tahun ?: date('Y'));
-        $hari_kerja = HariKerja::where('bulan', $bulan)->where('tahun', $tahun)->whereHas('statusHari', function ($query) {
+        $hari_kerja = HariKerja::where('bulan', $bulan)->where('tahun', $tahun)->where('tanggal','<=',date('Y-m-d'))->whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
         })->orderBy('tanggal', 'asc')->get();
         try {
