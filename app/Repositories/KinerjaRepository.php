@@ -574,7 +574,7 @@ class KinerjaRepository extends BaseRepository
         },'media' => function($query){
             $query->select('id_kinerja','media','nama_media');
         }])->where('nip', $pegawai->nip)
-            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve','id')
+            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve','id','nilai_kinerja')
             ->whereDate('tgl_mulai', '<=', $tgl)
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
