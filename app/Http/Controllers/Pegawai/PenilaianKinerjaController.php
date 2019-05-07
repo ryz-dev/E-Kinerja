@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
-use App\Models\Absen\Kinerja;
 use App\Models\MasterData\Pegawai;
 use App\Repositories\KinerjaRepository;
-use App\Repositories\PegawaiRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -22,13 +20,13 @@ class PenilaianKinerjaController extends Controller
     {
         $nip = auth('web')->user()->nip;
         $date = $r->has('date') ? $r->date : null;
-        return apiResponse(KinerjaRepository::getBawahanPenilaianKinerja($nip,$date));
+        return apiResponse(KinerjaRepository::getBawahanPenilaianKinerja($nip, $date));
     }
 
     public function getKinerja($nip, Request $r)
     {
         $date = $r->has('date') ? $r->date : null;
-        return apiResponse(KinerjaRepository::getKinerjaPenilaianKinerja($nip,$date));
+        return apiResponse(KinerjaRepository::getKinerjaPenilaianKinerja($nip, $date));
     }
 
     public function replyKinerja(Request $r)

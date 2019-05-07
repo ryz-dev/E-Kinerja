@@ -140,22 +140,56 @@
                                 <div class="clearfix"></div>
                             </div>
                             <div class="desc-detail">
-                                <h4 id="detail-jenis-kinerja"></h4>
+                                <div class="title-detail">
+                                    <h4 id="detail-jenis-kinerja"></h4>
+                                </div>
                                 <small>Jam Masuk - Jam Pulang</small>
                                 <br>
                                 <label><span id="detail-jam-masuk">--:--</span> - <span id="detail-jam-pulang">--:--</span></label>
                                 <hr>
-                                <h4>Penilaian Kinerja</h4>
-                                <span id="detail-approve" class=" float-right"><i class="fas fa-lg"></i></span>
-                                <h6>Rincian Kinerja</h6>
-                                <p id="detail-kinerja"></p>
-                                <h6>Keterangan Penilaian</h6>
-                                <p id="detail-keterangan-approve">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus nostrum
-                                    possimus asperiores aliquid eaque iusto aut aspernatur earum nihil magnam
-                                    saepe odit officiis, ipsam excepturi maiores? Possimus odit alias fugiat
-                                    excepturi dolorem doloripsa delectus tempora? Magni, atque totam dicta
-                                    accusantium, velit itaque dolores magnam nihil repellendus!</p>
-                                <hr>
+                                <div class="title-values">
+                                    <h4>Penilaian Kinerja</h4>
+                                    <span style="" class="check-list">
+{{--                                            <i class="material-icons">check</i>--}}
+                                        </span>
+                                    <div class="value-kinerja">
+                                        <h2 id="nilai_kinerja"></h2>
+                                    </div>
+                                </div>
+                                <div class="row style-modal-content">
+                                    <div class="col-md-12 mb-1" id="skp-progress">
+                                        <label class="text-secondary" style="font-size: 1.2em">List SKP</label>
+                                        <div class="wrap-progress">
+                                            <label>0%</label>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar" role="progressbar" style="width: 0%"
+                                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-1" id="skp-pegawai">
+
+                                    </div>
+
+                                    <div class="col-md-12 mt-2" id="media-pegawai">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="mb-2 mt-4">Rincian Kinerja Harian</h6>
+                                        <div class="desc-kinerja">
+                                            <p id="detail-kinerja"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <h6 class="mb-2 mt-4">Keterangan Penilaian</h6>
+                                        <div class="desc-kinerja">
+                                            <p id="detail-keterangan-approve"></p>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -278,9 +312,10 @@
                                             }
                                         }
                                     }
+                                    let apel = '<img style="background-color: white;border-radius: 5px;" src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
                                     if (kinerja == 'Hadir' || val.status == 'Hadir'){
                                         if (val.absen){
-                                            badge_kinerja = '<div class="badge badge-primary text-white mr-2">' + masuk[1] + ' - ' + pulang[1] + '</div>';
+                                            badge_kinerja = '<div class="badge badge-primary text-white mr-2">' + masuk[1] + ' - ' + pulang[1] + (val.apel ? '&nbsp&nbsp'+apel : '') +' </div>';
                                         }
                                     } else if (kinerja == "Perjalanan Dinas"){
                                         badge_kinerja = '<div class="badge badge-green text-white mr-2">'+kinerja+'</div>'
@@ -305,7 +340,7 @@
                                 }
                                 var row = '<tr class="data-tunjangan" data-index="' + i + '">\n' +
                                     '                                <td>' + val.hari + ', ' + val.tanggal_string + '</td>\n' +
-                                    '                                <td>' +(typeof badge_kinerja != 'undefined' ? badge_kinerja : '')+ '</td>\n' +
+                                    '                                <td>' +(typeof badge_kinerja != 'undefined' ? badge_kinerja : '') + '</td>\n' +
                                     '                                <td>\n' +
                                     '                                    <span class="' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '') + '"><i class="fas fa-lg ' + (val.kinerja ? (val.kinerja.approve ? (val.kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '' ): '') + '"></i></span>\n' +
                                     '                                </td>\n' +
@@ -405,14 +440,24 @@
                 data = data_response.data[index];
                 kinerja = data.kinerja
                 absen = data.absen
+                let apel = '<img src="assets/images/icons/upacara.svg" class="iconUpacara">'
+
+                $('.value-kinerja').hide();
+                $('.wrap-progress').find('label').html('0%')
+                $('.progress-bar').css({'width': '0%'})
+                $('#skp-pegawai').html("")
+                $('#media-pegawai').html("")
+                $('#skp-progress').hide();
+                $('#detail-kinerja').html("");
+                $('#detail-keterangan-approve').html("");
+
                 $('#current-index').val(index);
                 $('.modal-overlay').addClass('show');
                 $('#detail-nama').html(data_response.pegawai.nama)
                 $('#detail-nip').html(data_response.pegawai.nip)
                 $('#detail-tgl').html(data.tanggal_string2)
                 if (kinerja.jenis_kinerja == 'hadir') {
-
-                    $('#detail-jenis-kinerja').html(data.status)
+                    $('#detail-jenis-kinerja').html(data.status).after((data.apel ? apel : ''))
                 } else {
                     $('#detail-jenis-kinerja').html(kinerja ? capitalizeFirstLetter(kinerja.jenis_kinerja.replace('_', ' ')) : '')
                 }
@@ -432,6 +477,52 @@
                 } else {
                     $('.control-right').removeClass('invisible')
                 }
+                if (kinerja) {
+                    if (kinerja.approve == 2) {
+                        // $('#kinerja_status').addClass('fa-check');
+                        $('.value-kinerja').show();
+                    }
+                    if (kinerja.skp_pegawai.length > 0) {
+                        $('#skp-progress').show();
+                        var jumlah_skp = kinerja.skp_pegawai.length;
+                        var jumlah_selesai = 0;
+                        kinerja.skp_pegawai.forEach(function (val) {
+                            if (val.status) {
+                                jumlah_selesai++;
+                            }
+                        })
+                        var persentase = (jumlah_selesai / jumlah_skp) * 100;
+                        $('.wrap-progress').find('label').html(persentase + '%')
+                        $('.progress-bar').css({'width': persentase + '%'})
+                        var skp = kinerja.skp_pegawai.map(function (val, index) {
+                            let checked = val.status ? 'checked ' : '';
+                            return '<label class="container-check">\n' +
+                                '<p>' + val.skp_task.task + '</p>\n' +
+                                '<input type="checkbox" ' + checked + 'readonly onclick="return false">\n' +
+                                '<span class="checkmark"></span>\n' +
+                                '</label>'
+                        })
+                        $('#skp-pegawai').html(skp.join(''))
+                    }
+                    if (kinerja.media.length > 0) {
+                        var media = kinerja.media.map(function (val, index) {
+                            if (index == 0){
+                                res = '<label class="text-secondary" style="font-size: 1.2em">Dokumen SKP</label>'
+                            }
+                            res += '<div class="downloads mb-3">\n' +
+                                '    <img src="{{asset('assets/images/icons/word.svg')}}">\n' +
+                                '    <label>'+val.nama_media+'</label>\n' +
+                                '    <button onclick="window.open(\''+val.media+'\'); return false">\n' +
+                                '        <i class="material-icons mr-1">cloud_download</i>\n' +
+                                '        Download\n' +
+                                '    </button>\n' +
+                                '</div>'
+                            return res
+                        })
+                        $('#media-pegawai').html(media.join(''))
+                    }
+                }
+
                 window['trigger-modal'] = 0;
                 $('#preload').hide();
             }
