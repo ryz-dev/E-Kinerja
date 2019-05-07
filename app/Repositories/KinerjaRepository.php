@@ -521,7 +521,7 @@ class KinerjaRepository extends BaseRepository
         /* Data kinerja */
         $pegawai = auth('api')->user();
         $kinerja = Kinerja::where('nip', $pegawai->nip)
-            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve')
+            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve','nilai_kinerja')
             ->whereDate('tgl_mulai', '<=', $tgl)
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
