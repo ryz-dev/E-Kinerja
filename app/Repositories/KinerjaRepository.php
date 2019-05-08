@@ -350,7 +350,7 @@ class KinerjaRepository extends BaseRepository
         })->select('tanggal')->orderBy('tanggal')->first();
         $hari_kerja = HariKerja::with('Hari')->select('tanggal','hari')->whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
-        })->where('bulan', $bulan)->where('tahun', $tahun)->orderBy('tanggal', 'asc')->get();
+        })->where('bulan', $bulan)->where('tahun', $tahun)->where('tanggal','<=',date('Y-m-d'))->orderBy('tanggal', 'asc')->get();
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $absen = 0;
         $data_kinerja = [];
@@ -574,7 +574,7 @@ class KinerjaRepository extends BaseRepository
         },'media' => function($query){
             $query->select('id_kinerja','media','nama_media');
         }])->where('nip', $pegawai->nip)
-            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve','id')
+            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve','id','nilai_kinerja')
             ->whereDate('tgl_mulai', '<=', $tgl)
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
