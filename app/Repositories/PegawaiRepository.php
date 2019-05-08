@@ -482,6 +482,7 @@ class PegawaiRepository extends BaseRepository
                     'out' => $out,
                 ],
                 'apel' => $apel,
+                'status' => $status,
                 'min_date' => $min_date->tanggal
             ];
         }
