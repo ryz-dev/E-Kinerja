@@ -417,9 +417,9 @@ class PegawaiRepository extends BaseRepository
                         $apel = true;
                     }
                 }
-                if ($is_upacara && $wajib_upacara) {
-                    $apel = $upacara;
-                }
+            }
+            if ($is_upacara && $wajib_upacara) {
+                $apel = $upacara;
             }
         }
         /* Data array */
