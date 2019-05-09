@@ -426,7 +426,7 @@ class KinerjaRepository extends BaseRepository
                             if ($dk->approve == 2){
                                 $nilai_kinerja = $dk->nilai_kinerja;
                             }
-                            if ($dk->jenis_kinerja != 'hadir'){
+                            if ($dk->jenis_kinerja != 'hadir') {
                                 $status = $dk->jenis_kinerja;
                             }
                         }
@@ -446,7 +446,7 @@ class KinerjaRepository extends BaseRepository
                             'hari' => ucfirst($hk->Hari->nama_hari),
                             'kinerja' => $nilai_kinerja,
 //                            'absen' => $dabsen,
-                            'status' => ucfirst($status),
+                            'status' => $status,
                             'apel' => $apel
                         ];
                     } else {
