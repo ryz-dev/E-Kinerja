@@ -424,6 +424,9 @@ class KinerjaRepository extends BaseRepository
                             if ($dk->approve == 2){
                                 $nilai_kinerja = $dk->nilai_kinerja;
                             }
+                            if ($dk->jenis_kinerja != 'hadir'){
+                                $status = $dk->jenis_kinerja;
+                            }
                         }
                         $dabsen = [
                             'in' => '',
@@ -433,6 +436,7 @@ class KinerjaRepository extends BaseRepository
                             $dabsen['in'] = ($abs->where('checktype',0)->first() ? $abs->where('checktype',0)->first()->checktime : '');
                             $dabsen['out'] = ($abs->where('checktype',1)->first() ? $abs->where('checktype',1)->first()->checktime : '');
                         }
+
                         $data_kinerja[] = [
                             'tanggal' => $hk->tanggal,
 //                            'tanggal_string' => $this->formatDate($hk->tanggal),
@@ -500,6 +504,7 @@ class KinerjaRepository extends BaseRepository
                 'min_date' => $min_date->tanggal
             ];
         }else {
+
             $response = [
                 'pegawai' => $pegawai,
                 'pencapaian' => [
