@@ -173,7 +173,7 @@ class PegawaiRepository extends BaseRepository
         $user = $this->model->with('role')->where('nip', $nip_user)->firstOrFail();
         $bulan = (int)($bulan ?: date('m'));
         $tahun = ($tahun ?: date('Y'));
-        $hari_kerja = HariKerja::where('bulan', $bulan)->where('tahun', $tahun)->where('tanggal','<=',date('Y-m-d'))->whereHas('statusHari', function ($query) {
+        $hari_kerja = HariKerja::where('bulan', $bulan)->where('tahun', $tahun)->where('tanggal', '<=', date('Y-m-d'))->whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
         })->orderBy('tanggal', 'asc')->get();
         try {
@@ -253,12 +253,10 @@ class PegawaiRepository extends BaseRepository
                 }
             }
 
-            if ($kehadiran['status'] != 'alpa'){
-                if (date('N', strtotime($hk->tanggal)) != 1) {
-                    if ($masuk != null) {
-                        if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
-                            $apel = true;
-                        }
+            if ($kehadiran['status'] != 'alpa') {
+                if ($masuk != null) {
+                    if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
+                        $apel = true;
                     }
                 }
                 if ($is_upacara && $wajib_upacara) {
@@ -337,13 +335,13 @@ class PegawaiRepository extends BaseRepository
 
         /* Data kinerja */
         $pegawai = $this->model->where('nip', $nip)->firstOrFail();
-        $kinerja = Kinerja::with(['skp_pegawai' => function($query){
-            $query->select('skp_pegawai.id','id_skp','status');
-            $query->with(['skpTask' => function($query){
-                $query->select('task','id');
+        $kinerja = Kinerja::with(['skp_pegawai' => function ($query) {
+            $query->select('skp_pegawai.id', 'id_skp', 'status');
+            $query->with(['skpTask' => function ($query) {
+                $query->select('task', 'id');
             }]);
-        },'media' => function($query){
-            $query->select('id_kinerja','media','nama_media');
+        }, 'media' => function ($query) {
+            $query->select('id_kinerja', 'media', 'nama_media');
         }])->where('nip', $pegawai->nip)
             ->whereDate('tgl_mulai', '<=', $tgl)
             ->whereDate('tgl_selesai', '>=', $tgl)
@@ -363,7 +361,7 @@ class PegawaiRepository extends BaseRepository
                 $is_upacara = true;
             }
         }
-        $wajib_upacara = $pegawai->status_upacara ? true: false;
+        $wajib_upacara = $pegawai->status_upacara ? true : false;
         $upacara = false;
         if ($is_upacara) {
             if ($wajib_upacara) {
@@ -411,11 +409,9 @@ class PegawaiRepository extends BaseRepository
         }
 
         if ($status != 'alpa') {
-            if (date('N', strtotime($tgl)) != 1) {
-                if ($masuk != null) {
-                    if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
-                        $apel = true;
-                    }
+            if ($masuk != null) {
+                if (strtotime($masuk) <= strtotime($tgl . " 07:30:00")) {
+                    $apel = true;
                 }
             }
             if ($is_upacara && $wajib_upacara) {
@@ -809,7 +805,7 @@ class PegawaiRepository extends BaseRepository
         $tanggal_pilihan = $date;
         $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
 
-        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari, $is_mobile,$mesin_upacara) {
+        $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari, $is_mobile, $mesin_upacara) {
 
             $raw_absensi = $item['checkinout'];
             $absensi = null;

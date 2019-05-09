@@ -21,12 +21,13 @@ class KinerjaRepository extends BaseRepository
 
     static function getBawahanPenilaianKinerja($nip, $date, $search = '')
     {
-        $pegawai = self::getAllBawahan($nip,$date,$search);
-        $bawahan = self::mergePegawai($pegawai,collect([]));
+        $pegawai = self::getAllBawahan($nip, $date, $search);
+        $bawahan = self::mergePegawai($pegawai, collect([]));
         return $bawahan;
     }
 
-    static function mergePegawai($pegawai,$all){
+    static function mergePegawai($pegawai, $all)
+    {
         $data = $pegawai->merge($all);
         foreach ($pegawai AS $row) {
             $data = self::mergePegawai($row->bawahan, $data);
@@ -34,7 +35,8 @@ class KinerjaRepository extends BaseRepository
         return $data;
     }
 
-    static function getAllBawahan($nip,$date,$search){
+    static function getAllBawahan($nip, $date, $search)
+    {
         $user = Pegawai::where('nip', $nip)->first();
         $pegawai = Pegawai::where(function ($query) use ($search) {
             if ($search !== '') {
@@ -46,8 +48,8 @@ class KinerjaRepository extends BaseRepository
             $query->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'));
             $query->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'));
             $query->terbaru();
-        }])->get()->map(function ($val)use($date,$search){
-            $val->bawahan =self::getBawahanPenilaianKinerja($val->nip,$date,$search);
+        }])->get()->map(function ($val) use ($date, $search) {
+            $val->bawahan = self::getBawahanPenilaianKinerja($val->nip, $date, $search);
             return $val;
         });
         return $pegawai;
@@ -97,7 +99,7 @@ class KinerjaRepository extends BaseRepository
         $kinerja->nilai_kinerja = $param['nilai_kinerja'];
         $kinerja->save();
 
-        $kinerja->skp_pegawai()->pluck('skp_pegawai.id')->diff(isset($param['skp_pegawai'])?$param['skp_pegawai'] : [])->map(function ($id) use ($param) {
+        $kinerja->skp_pegawai()->pluck('skp_pegawai.id')->diff(isset($param['skp_pegawai']) ? $param['skp_pegawai'] : [])->map(function ($id) use ($param) {
             if ($update = SkpPegawai::whereHas('kinerja', function ($q) use ($param) {
                 $q->where('kinerja.id', $param['id']);
             })->where('id', $id)->where('status', 1)->first()) {
@@ -234,10 +236,10 @@ class KinerjaRepository extends BaseRepository
                     } else {
                         $kinerja = $this->model->create($input);
                     }
-                    Log::info(json_encode($input)."1");
+                    Log::info(json_encode($input) . "1");
                     Log::info(isset($input['skp_pegawai']) ? 'true' : 'false');
                     if (isset($input['skp_pegawai'])) {
-                        if (is_array($input['skp_pegawai'])){
+                        if (is_array($input['skp_pegawai'])) {
                             if (count($input['skp_pegawai']) > 0) {
                                 $cek = true;
                                 foreach ($input['skp_pegawai'] AS $id) {
@@ -246,13 +248,13 @@ class KinerjaRepository extends BaseRepository
                                     })->first()) {
                                         try {
                                             $kinerja->skp_pegawai()->attach($id, ['uuid' => (string)Str::uuid()]);
-                                        } catch (\Exception $exception){
+                                        } catch (\Exception $exception) {
                                             $cek = false;
                                             break;
                                         }
                                     }
                                 }
-                                if (!$cek){
+                                if (!$cek) {
                                     $kinerja->delete();
                                     return [
                                         'data' => '',
@@ -327,7 +329,7 @@ class KinerjaRepository extends BaseRepository
         }
     }
 
-    public function getTunjanganKinerja($nip, $bulan = null, $tahun = null,$is_mobile = false, $detail = false)
+    public function getTunjanganKinerja($nip, $bulan = null, $tahun = null, $is_mobile = false, $detail = false)
     {
         $bulan = (int)($bulan ? $bulan : date('m'));
         $tahun = $tahun ? $tahun : date('Y');
@@ -350,11 +352,11 @@ class KinerjaRepository extends BaseRepository
         $min_date = HariKerja::whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
-        $hari_kerja = HariKerja::with('Hari')->select('tanggal','hari')->whereHas('statusHari', function ($query) {
+        $hari_kerja = HariKerja::with('Hari')->select('tanggal', 'hari')->whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
-        })->where('bulan', $bulan)->where('tahun', $tahun)->where('tanggal','<=',date('Y-m-d'))->orderBy('tanggal', 'asc')->get();
+        })->where('bulan', $bulan)->where('tahun', $tahun)->where('tanggal', '<=', date('Y-m-d'))->orderBy('tanggal', 'asc')->get();
         $jumlah_hari = $hari_kerja->count();
-        $jumlah_kinerja = $absen = 0;
+        $jumlah_kinerja = $absen = $nilai_apel = 0;
         $data_kinerja = [];
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
@@ -397,7 +399,7 @@ class KinerjaRepository extends BaseRepository
                     }
                     $poin = 0;
                     if ($in && $out) {
-                        $poin = $this->poinAbsen($masuk, $pulang,$hk->tanggal);
+                        $poin = $this->poinAbsen($masuk, $pulang, $hk->tanggal);
                         $status = 'hadir';
                     }
                     $absen = (float)$absen + $poin;
@@ -407,23 +409,24 @@ class KinerjaRepository extends BaseRepository
                         $status = 'alpa';
                     }
                 }
-                if ($status != 'alpa'){
-                    if (date('N', strtotime($hk->tanggal)) != 1) {
-                        if ($masuk != null) {
-                            if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
-                                $apel = true;
-                            }
+                if ($status != 'alpa') {
+                    if ($masuk != null) {
+                        if (strtotime($masuk) <= strtotime($hk->tanggal . " 07:30:00")) {
+                            $apel = true;
                         }
                     }
-                    if ($is_upacara && $wajib_upacara){
+                    if ($is_upacara && $wajib_upacara) {
                         $apel = $upacara;
                     }
+                }
+                if ($apel) {
+                    $nilai_apel++;
                 }
                 if ($detail) {
                     if ($is_mobile) {
                         $nilai_kinerja = null;
-                        if ($dk = $knj->first()){
-                            if ($dk->approve == 2){
+                        if ($dk = $knj->first()) {
+                            if ($dk->approve == 2) {
                                 $nilai_kinerja = $dk->nilai_kinerja;
                             }
                             if ($dk->jenis_kinerja != 'hadir') {
@@ -434,9 +437,9 @@ class KinerjaRepository extends BaseRepository
                             'in' => '',
                             'out' => '',
                         ];
-                        if ($abs){
-                            $dabsen['in'] = ($abs->where('checktype',0)->first() ? $abs->where('checktype',0)->first()->checktime : '');
-                            $dabsen['out'] = ($abs->where('checktype',1)->first() ? $abs->where('checktype',1)->first()->checktime : '');
+                        if ($abs) {
+                            $dabsen['in'] = ($abs->where('checktype', 0)->first() ? $abs->where('checktype', 0)->first()->checktime : '');
+                            $dabsen['out'] = ($abs->where('checktype', 1)->first() ? $abs->where('checktype', 1)->first()->checktime : '');
                         }
 
                         $data_kinerja[] = [
@@ -455,7 +458,7 @@ class KinerjaRepository extends BaseRepository
                             'tanggal_string' => $this->formatDate($hk->tanggal),
                             'tanggal_string2' => $this->formatDate2($hk->tanggal),
                             'hari' => ucfirst($hk->Hari->nama_hari),
-                            'kinerja' => $knj->first() ? $knj->with('skp_pegawai.skpTask','media')->first()->toArray() : null,
+                            'kinerja' => $knj->first() ? $knj->with('skp_pegawai.skpTask', 'media')->first()->toArray() : null,
                             'absen' => $abs ? $abs->toArray() : null,
                             'status' => ucfirst($status),
                             'apel' => $apel
@@ -470,9 +473,13 @@ class KinerjaRepository extends BaseRepository
                     $absen++;
                 }
             }
+            $persen_apel = 0;
+            if (($jumlah_hari - $nilai_apel) < 6) {
+                $persen_apel = 100;
+            }
             $persentase = [
-                'absen' => ($absen / $jumlah_hari) * 100,
-                'kinerja' => ($jumlah_kinerja / ($jumlah_hari*10)) * 100,
+                'absen' => (($absen / $jumlah_hari) * 60) + (($persen_apel / 100 * 40)),
+                'kinerja' => ($jumlah_kinerja / ($jumlah_hari * 10)) * 100,
             ];
             $persentase_total = [
                 'absen' => $persentase['absen'] * $persen_absen / 100,
@@ -505,7 +512,7 @@ class KinerjaRepository extends BaseRepository
                 'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
                 'min_date' => $min_date->tanggal
             ];
-        }else {
+        } else {
 
             $response = [
                 'pegawai' => $pegawai,
@@ -527,7 +534,7 @@ class KinerjaRepository extends BaseRepository
                 'min_date' => $min_date->tanggal
             ];
         }
-        if ($is_mobile){
+        if ($is_mobile) {
             unset($response['pegawai']);
         }
         if ($detail) {
@@ -538,7 +545,7 @@ class KinerjaRepository extends BaseRepository
         return $response;
     }
 
-    private function poinAbsen($masuk, $pulang,$tanggal)
+    private function poinAbsen($masuk, $pulang, $tanggal)
     {
         if (strtotime($masuk) <= strtotime($tanggal . " 08:00:00")) {
             if ((strtotime($pulang) - (strtotime($masuk))) >= (8 * 3600)) {
@@ -573,15 +580,15 @@ class KinerjaRepository extends BaseRepository
 
         /* Data kinerja */
         $pegawai = auth('api')->user();
-        $kinerja = Kinerja::with(['skp_pegawai' => function($query){
-            $query->select('skp_pegawai.id','id_skp','status');
-            $query->with(['skpTask' => function($query){
-                $query->select('task','id');
+        $kinerja = Kinerja::with(['skp_pegawai' => function ($query) {
+            $query->select('skp_pegawai.id', 'id_skp', 'status');
+            $query->with(['skpTask' => function ($query) {
+                $query->select('task', 'id');
             }]);
-        },'media' => function($query){
-            $query->select('id_kinerja','media','nama_media');
+        }, 'media' => function ($query) {
+            $query->select('id_kinerja', 'media', 'nama_media');
         }])->where('nip', $pegawai->nip)
-            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve','id','nilai_kinerja')
+            ->select('tgl_mulai', 'tgl_selesai', 'jenis_kinerja', 'rincian_kinerja', 'approve', 'keterangan_approve', 'id', 'nilai_kinerja')
             ->whereDate('tgl_mulai', '<=', $tgl)
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
@@ -624,7 +631,7 @@ class KinerjaRepository extends BaseRepository
         }
         $status = '';
         $apel = false;
-        $wajib_upacara = $pegawai->status_upacara ? true: false;
+        $wajib_upacara = $pegawai->status_upacara ? true : false;
         $upacara = false;
         if ($is_upacara) {
             if ($wajib_upacara) {
@@ -636,7 +643,7 @@ class KinerjaRepository extends BaseRepository
         }
         $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
         $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
-        if ($in){
+        if ($in) {
             $status = '';
         } else {
             $status = 'alpa';
@@ -659,11 +666,9 @@ class KinerjaRepository extends BaseRepository
             }
         }
         if ($status != 'alpa') {
-            if (date('N', strtotime($tgl)) != 1) {
-                if ($in != null) {
-                    if (strtotime($in) <= strtotime($tgl . " 07:30:00")) {
-                        $apel = true;
-                    }
+            if ($in != null) {
+                if (strtotime($in) <= strtotime($tgl . " 07:30:00")) {
+                    $apel = true;
                 }
             }
             if ($is_upacara && $wajib_upacara) {
@@ -718,7 +723,7 @@ class KinerjaRepository extends BaseRepository
 
     public function required($jenis_kinerja = '')
     {
-        if (in_array($jenis_kinerja,['perjalanan_dinas','cuti','izin'])){
+        if (in_array($jenis_kinerja, ['perjalanan_dinas', 'cuti', 'izin'])) {
             $req = [
                 'tgl_mulai' => 'required|date',
                 'tgl_selesai' => 'required|date'
@@ -735,7 +740,7 @@ class KinerjaRepository extends BaseRepository
             'rincian_kinerja' => 'required',
             'skp_pegawai' => 'array',
             'doc' => 'array'
-        ],$req);
+        ], $req);
     }
 
     public function uploadFile(array $files, $id_kinerja)
@@ -743,7 +748,7 @@ class KinerjaRepository extends BaseRepository
         $success = true;
         foreach ($files AS $key => $file) {
             try {
-                $name = 'kinerja-' . $id_kinerja.'-'.$file->getClientOriginalName();
+                $name = 'kinerja-' . $id_kinerja . '-' . $file->getClientOriginalName();
                 if ($file->storeAs('public/doc', $name)) {
                     Media::create([
                         'id_kinerja' => $id_kinerja,
@@ -752,13 +757,13 @@ class KinerjaRepository extends BaseRepository
                         'uuid' => (string)Str::uuid()
                     ]);
                 }
-            } catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 $success = false;
             }
         }
-        if (!$success){
-            Kinerja::where('id',$id_kinerja)->delete();
-            abort(500,'Gagal Menambah Kinerja, dokumen gagal diupload');
+        if (!$success) {
+            Kinerja::where('id', $id_kinerja)->delete();
+            abort(500, 'Gagal Menambah Kinerja, dokumen gagal diupload');
         }
     }
 
