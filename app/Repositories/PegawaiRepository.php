@@ -417,9 +417,9 @@ class PegawaiRepository extends BaseRepository
                         $apel = true;
                     }
                 }
-                if ($is_upacara && $wajib_upacara) {
-                    $apel = $upacara;
-                }
+            }
+            if ($is_upacara && $wajib_upacara) {
+                $apel = $upacara;
             }
         }
         /* Data array */
@@ -482,6 +482,7 @@ class PegawaiRepository extends BaseRepository
                     'out' => $out,
                 ],
                 'apel' => $apel,
+                'status' => $status,
                 'min_date' => $min_date->tanggal
             ];
         }

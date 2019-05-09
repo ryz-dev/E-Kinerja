@@ -17,6 +17,8 @@ use Illuminate\Support\Str;
 
 class KinerjaRepository extends BaseRepository
 {
+    private $jam_masuk_upacara = '07.30.59';
+
     static function getBawahanPenilaianKinerja($nip, $date, $search = '')
     {
         $pegawai = self::getAllBawahan($nip,$date,$search);
@@ -584,6 +586,7 @@ class KinerjaRepository extends BaseRepository
             ->whereDate('tgl_selesai', '>=', $tgl)
             ->terbaru()
             ->first();
+
         /*if ($kinerja) {
             if (isset($kinerja->skp_pegawai)) {
                 $skp_pegawai = $kinerja->skp_pegawai->map(function ($val) {
@@ -613,10 +616,65 @@ class KinerjaRepository extends BaseRepository
         $checkinout = Checkinout::where("nip", $pegawai->nip)
             ->whereDate("checktime", $tgl)
             ->get();
-
+        $is_upacara = false;
+        if (date('N', strtotime($tgl)) == 1) {
+            if (HariKerja::where('tanggal', $tgl)->where('id_status_hari', 1)->first()) {
+                $is_upacara = true;
+            }
+        }
+        $status = '';
+        $apel = false;
+        $wajib_upacara = $pegawai->status_upacara ? true: false;
+        $upacara = false;
+        if ($is_upacara) {
+            if ($wajib_upacara) {
+                $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
+                if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $tgl)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                    $upacara = true;
+                }
+            }
+        }
         $in = ($checkinout->contains('checktype', 0)) ? $checkinout->where('checktype', 0)->min()->checktime : '';
         $out = ($checkinout->contains('checktype', 1)) ? $checkinout->where('checktype', 1)->max()->checktime : '';
+        if ($in){
+            $status = '';
+        } else {
+            $status = 'alpa';
+        }
+        if (strtotime($in) <= strtotime($tgl . " 09:00:00")) {
+            if ($in && $out) {
+                if ((strtotime($out) - (strtotime($in))) >= (8 * 3600)) {
+                    $status = 'hadir';
+                } else {
+                    $status = 'alpa';
+                }
+            }
 
+        } else {
+            $status = 'alpa';
+        }
+        if (strtotime($tgl) < strtotime(date('Y-m-d'))) {
+            if ($status == '') {
+                $status = 'alpa';
+            }
+        }
+        if ($status != 'alpa') {
+            if (date('N', strtotime($tgl)) != 1) {
+                if ($in != null) {
+                    if (strtotime($in) <= strtotime($tgl . " 07:30:00")) {
+                        $apel = true;
+                    }
+                }
+            }
+            if ($is_upacara && $wajib_upacara) {
+                $apel = $upacara;
+            }
+        }
+        if ($kinerja) {
+            if ($kinerja->jenis_kinerja != 'hadir') {
+                $status = $kinerja->jenis_kinerja;
+            }
+        }
         /*if ($kinerja) {
             $kinerja = $kinerja->toArray();
             if (isset($skp_pegawai))
@@ -636,6 +694,8 @@ class KinerjaRepository extends BaseRepository
                 'in' => $in,
                 'out' => $out,
             ],
+            'status' => $status,
+            'apel' => $apel,
             'min_date' => $min_date->tanggal
         ];
         return $result;
