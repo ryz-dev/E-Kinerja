@@ -25,7 +25,7 @@ class MonitoringAbsenController extends ApiController
         $pegawai = new PegawaiRepository();
         $nip = Auth::user()->nip;
         $skpd = $request->input('skpd');
-        $raw_date = $request->input('d');
+        $raw_date = $request->has('d') ? $request->input('d') : date('Y-m-d') ;
         $search = $request->has('search') ? $request->input('search') : '';
         $page = $request->input('page');
         try {
