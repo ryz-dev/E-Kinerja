@@ -21,16 +21,31 @@ class KinerjaRepository extends BaseRepository
 
     static function getBawahanPenilaianKinerja($nip, $date, $search = '')
     {
-        $pegawai = self::getAllBawahan($nip, $date, $search);
-        $bawahan = self::mergePegawai($pegawai, collect([]));
+        $id_jabatan = collect(self::populateJabatan($nip,$bawahan = 1))->unique('id_jabatan')->pluck('id_jabatan')->sort()->all();
+        $pegawai = Pegawai::where(function ($query) use ($search) {
+            if ($search !== '') {
+                $query->where('nip', 'like', '%' . $search . '%')->orWhere('nama', 'like', '%' . $search . '%');
+            }
+        })->whereIn('id_jabatan',$id_jabatan)->with(['kinerja' => function ($query) use ($date) {
+            $query->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'));
+            $query->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'));
+            $query->terbaru();
+        }])->get();
+        return $pegawai;
+    }
+
+    static function populateJabatan($nip,$bawahan){
+        $pegawai = self::collectJabatanBawahan($nip,$bawahan);
+        $bawahan = self::mergePegawai($pegawai, []);
         return $bawahan;
     }
 
     static function mergePegawai($pegawai, $all)
     {
-        $data = $pegawai->merge($all);
+        $data = array_merge($pegawai,$all);
         foreach ($pegawai AS $row) {
-            $data = self::mergePegawai($row->bawahan, $data);
+            $data = self::mergePegawai($row['bawahan'], $data);
+            unset($row['bawahan']);
         }
         return $data;
     }
@@ -53,6 +68,22 @@ class KinerjaRepository extends BaseRepository
             return $val;
         });
         return $pegawai;
+    }
+
+    static function collectJabatanBawahan($nip,$count_bawahan)
+    {
+        if ($count_bawahan <= 2) {
+            $user = Pegawai::select('nip', 'id_jabatan')->where('nip', $nip)->first();
+            $pegawai = Pegawai::select('nip', 'id_jabatan')->wherehas('jabatan', function ($query) use ($user) {
+                $query->where('id_atasan', '=', $user->id_jabatan);
+            })->get()->map(function ($val)use($count_bawahan) {
+                $val->setAppends([]);
+                $val->bawahan = self::populateJabatan($val->nip,++$count_bawahan);
+                return $val;
+            });
+            return $pegawai->toArray();
+        }
+        return [];
     }
 
     static function getKinerjaPenilaianKinerja($nip, $date)
