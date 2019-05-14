@@ -346,7 +346,7 @@
                                     '                                </td>\n' +
                                     /*'                                */
                                     '                                <td>\n' +
-                                    '                                    <button data-index="'+i+'" class="btn rounded btn-detail '+(val.kinerja ? '' : 'invisible')+'" title="Detail">\n' +
+                                    '                                    <button data-index="'+i+'" class="btn rounded btn-detail '+(val.kinerja ? '' : '')+'" title="Detail">\n' +
                                     '                                        <i class="fas fa-search-plus"></i>\n' +
                                     '                                    </button>\n' +
                                     '                                </td>\n' +
@@ -456,26 +456,28 @@
                 $('#detail-nama').html(data_response.pegawai.nama)
                 $('#detail-nip').html(data_response.pegawai.nip)
                 $('#detail-tgl').html(data.tanggal_string2)
-                if (kinerja.jenis_kinerja == 'hadir') {
-                    $('#detail-jenis-kinerja').html(data.status).after((data.apel ? apel : ''))
-                } else {
-                    $('#detail-jenis-kinerja').html(kinerja ? capitalizeFirstLetter(kinerja.jenis_kinerja.replace('_', ' ')) : '')
-                }
                 $('#detail-jam-masuk').html(absen ? (typeof absen[0] !== 'undefined' ? absen[0].absen_time : '--:--') : '--:--')
                 $('#detail-jam-pulang').html(absen ? (typeof absen[1] !== 'undefined' ? absen[1].absen_time : '--:--') : '--:--')
-                $('#detail-approve').addClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '')).removeClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'not-list' : 'check-list') : '') : ''));
-                $('#detail-approve').find('i').addClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '') : '')).removeClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'fa-times' : 'fa-check') : '') : ''));
-                $('#detail-kinerja').html(kinerja ? kinerja.rincian_kinerja : '');
-                $('#detail-keterangan-approve').html(kinerja ? kinerja.keterangan_approve : '');
-                if (i == 0){
-                    $('.control-left').addClass('invisible')
-                } else {
-                    $('.control-left').removeClass('invisible')
-                }
-                if (i == max_index){
-                    $('.control-right').addClass('invisible')
-                } else {
-                    $('.control-right').removeClass('invisible')
+                if (kinerja) {
+                    if (kinerja.jenis_kinerja == 'hadir') {
+                        $('#detail-jenis-kinerja').html(data.status).after((data.apel ? apel : ''))
+                    } else {
+                        $('#detail-jenis-kinerja').html(kinerja ? capitalizeFirstLetter(kinerja.jenis_kinerja.replace('_', ' ')) : '')
+                    }
+                    $('#detail-approve').addClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'check-list' : 'not-list') : '') : '')).removeClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'not-list' : 'check-list') : '') : ''));
+                    $('#detail-approve').find('i').addClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'fa-check' : 'fa-times') : '') : '')).removeClass((kinerja ? (kinerja.approve ? (kinerja.approve == 2 ? 'fa-times' : 'fa-check') : '') : ''));
+                    $('#detail-kinerja').html(kinerja ? kinerja.rincian_kinerja : '');
+                    $('#detail-keterangan-approve').html(kinerja ? kinerja.keterangan_approve : '');
+                    if (i == 0) {
+                        $('.control-left').addClass('invisible')
+                    } else {
+                        $('.control-left').removeClass('invisible')
+                    }
+                    if (i == max_index) {
+                        $('.control-right').addClass('invisible')
+                    } else {
+                        $('.control-right').removeClass('invisible')
+                    }
                 }
                 if (kinerja) {
                     if (kinerja.approve == 2) {
