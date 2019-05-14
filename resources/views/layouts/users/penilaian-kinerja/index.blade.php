@@ -38,7 +38,7 @@
                     <input type="hidden" name="index" value="0">
 
                     <div class="row">
-                        <div class="col-md-6 wrap-user">
+                        <div class="col-md-4 wrap-user">
                             <div class="img-user" id="detail-img"
                                  style="background-image: url('images/img-user.png');"></div>
                             <div class="nama-id">
@@ -46,7 +46,17 @@
                                 <span id="detail-nip"></span>
                             </div>
                         </div>
-                        <div class="col-md-4 col-8 select-date">
+                        <div class="col-md-3 col-8 select-date">
+                            <select class="custom-select select-penilaian">
+                                <option value="Penilaian SKP" selected>
+                                    Penilaian SKP
+                                </option>
+                                <option value="Penilaian KTJ">
+                                    Penilaian KTJ
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-8 select-date">
                             <select class="custom-select" id="missedDate"></select>
                         </div>
                         <div class="col-md-2 col-4">
@@ -123,6 +133,28 @@
                     </div>
                 </div>
                 </form>
+                <form action="" id="form-kepatuhan" style="display: none">
+                    <input type="hidden" name="nip">
+                    <div class="list-kepatuhan">
+                        <div class="row mt-3">
+                            <div class="col-md-12 mb-1">
+                                <label class="text-secondary" style="font-size: 1.2em">List Kepatuhan & Tanggung Jawab</label>
+                            </div>
+                            <div class="col-md-12 mb-1" id="kepatuhan-holder">
+
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <label class="text-secondary" style="font-size: 1.2em">Nilai Kepatuhan (Dalam Persentase %)</label>
+                            </div>
+                            <div class="col-md-12 mb-1">
+                                <div class="valuePersen">
+                                    <h1><span id="persen-kepatuhan">0</span>%</h1>
+                                </div>
+                                <button type="submit" class="btn btn-custom">Terima</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -183,6 +215,10 @@
             };
             $(document).on('click', '[name*=skp_pegawai]', function () {
                 persentaseSkp();
+            })
+            ;
+            $(document).on('click', '#kepatuhan-holder [type=checkbox]', function () {
+                persentaseKepatuhan();
             });
 
             function persentaseSkp() {
@@ -195,14 +231,41 @@
                 $('.wrap-progress').find('label').html(Math.floor(persentase) + '%');
                 $('.wrap-progress').find('.progress-bar').css({width: persentase + '%'})
             }
-
+            function persentaseKepatuhan(){
+                var total = $('#kepatuhan-holder [type=checkbox]').length
+                var checked = $('#kepatuhan-holder [type=checkbox]:checked').length
+                $('#persen-kepatuhan').html(Math.floor(checked/total * 100))
+            }
+            persentaseKepatuhan();
             persentaseSkp();
             var getKinerja = function (nip) {
                 $('#preload').show();
                 $('#list-skp').hide();
                 $('#slider-nilai-kinerja').hide();
+                $('#form-kepatuhan [name=nip]').val(nip);
                 $.get('{{route('penilaian-kinerja.api.kinerja',['nip' => ''])}}/' + nip + '?date=' + setDate)
                     .then(function (res) {
+                        if (res.response.kepatuhan_input){
+                            $('.list-kepatuhan').show();
+                            var kepatuhan = '';
+                            for (key in res.response.kepatuhan_input){
+                                var checked = false;
+                                if (res.response.kepatuhan){
+                                    if (res.response.kepatuhan[key] == 1){
+                                        checked = true;
+                                    }
+                                }
+                                kepatuhan += '<label class="container-check">\n' +
+                                    '    <p>'+res.response.kepatuhan_input[key]+'</p>\n' +
+                                    '    <input name="'+key+'" type="checkbox" '+(checked ? 'checked' : '')+'>\n' +
+                                    '    <span class="checkmark"></span>\n' +
+                                    '</label>'
+                            }
+                            $('#kepatuhan-holder').html(kepatuhan);
+                        } else {
+                            $('.list-kepatuhan').hide();
+                        }
+                        persentaseKepatuhan();
                         if (res.response.now != null) {
                             $('#slider-nilai-kinerja').show();
                             $('#id').val(res.response.now.id);
@@ -324,7 +387,6 @@
                 } else {
                     $('#pegawai-selanjutnya').addClass('active')
                 }
-                nip = nip;
                 getKinerja(nip);
             });
 
@@ -343,6 +405,30 @@
                 getBawahan();
                 $('#setDate').html(viewDate);
             });
+            $('#form-kepatuhan').on('submit',function (e) {
+                e.preventDefault();
+                var data = $(this).serialize()
+                swal({
+                    type: 'info',
+                    title: 'Menyimpan Data',
+                    text: 'Proses Menyimpan Data !',
+                    showConfirmButton: false,
+                })
+                $.post('{{route('penilaian-kinerja.api.kepatuhan')}}',data)
+                    .then(function(){
+                        swal({
+                            type: 'success',
+                            title: 'Data Tersimpan',
+                            text: 'Berhasil Menyimpan Data',
+                        })
+                    },function () {
+                        swal({
+                            type: 'danger',
+                            title: 'Data Gagal Disimpan',
+                            text: 'Proses Menyimpan Data Gagal !',
+                        })
+                    })
+            })
 
             $(document).on('click', '.btn-approve', function () {
                 $.ajax({
@@ -371,6 +457,15 @@
                     }
                 });
             });
+            $('.select-penilaian').on('change',function () {
+                if (this.value == 'Penilaian SKP'){
+                    $('#formReply').show();
+                    $('#form-kepatuhan').hide();
+                } else {
+                    $('#formReply').hide();
+                    $('#form-kepatuhan').show();
+                }
+            })
         </script>
     @endpush
 @endsection

@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Repositories\PegawaiRepository;
 
 class KepatuhanRepository extends BaseRepository
 {
@@ -76,5 +75,9 @@ class KepatuhanRepository extends BaseRepository
     }
 
     public function search($array){}
+
+    public function getKepatuhan(){
+        return $this->kepatuhan;
+    }
 }
 

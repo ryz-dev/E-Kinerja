@@ -21,12 +21,12 @@ class KinerjaRepository extends BaseRepository
 
     static function getBawahanPenilaianKinerja($nip, $date, $search = '')
     {
-        $id_jabatan = collect(self::populateJabatan($nip,$bawahan = 1))->unique('id_jabatan')->pluck('id_jabatan')->sort()->all();
+        $id_jabatan = collect(self::populateJabatan($nip, $bawahan = 1))->unique('id_jabatan')->pluck('id_jabatan')->sort()->all();
         $pegawai = Pegawai::where(function ($query) use ($search) {
             if ($search !== '') {
                 $query->where('nip', 'like', '%' . $search . '%')->orWhere('nama', 'like', '%' . $search . '%');
             }
-        })->whereIn('id_jabatan',$id_jabatan)->with(['kinerja' => function ($query) use ($date) {
+        })->whereIn('id_jabatan', $id_jabatan)->with(['kinerja' => function ($query) use ($date) {
             $query->whereDate('tgl_mulai', '<=', $date ? $date : date('Y-m-d'));
             $query->whereDate('tgl_mulai', '>=', $date ? $date : date('Y-m-d'));
             $query->terbaru();
@@ -34,15 +34,16 @@ class KinerjaRepository extends BaseRepository
         return $pegawai;
     }
 
-    static function populateJabatan($nip,$bawahan){
-        $pegawai = self::collectJabatanBawahan($nip,$bawahan);
+    static function populateJabatan($nip, $bawahan)
+    {
+        $pegawai = self::collectJabatanBawahan($nip, $bawahan);
         $bawahan = self::mergePegawai($pegawai, []);
         return $bawahan;
     }
 
     static function mergePegawai($pegawai, $all)
     {
-        $data = array_merge($pegawai,$all);
+        $data = array_merge($pegawai, $all);
         foreach ($pegawai AS $row) {
             $data = self::mergePegawai($row['bawahan'], $data);
             unset($row['bawahan']);
@@ -70,15 +71,15 @@ class KinerjaRepository extends BaseRepository
         return $pegawai;
     }
 
-    static function collectJabatanBawahan($nip,$count_bawahan)
+    static function collectJabatanBawahan($nip, $count_bawahan)
     {
         if ($count_bawahan <= 2) {
             $user = Pegawai::select('nip', 'id_jabatan')->where('nip', $nip)->first();
             $pegawai = Pegawai::select('nip', 'id_jabatan')->wherehas('jabatan', function ($query) use ($user) {
                 $query->where('id_atasan', '=', $user->id_jabatan);
-            })->get()->map(function ($val)use($count_bawahan) {
+            })->get()->map(function ($val) use ($count_bawahan) {
                 $val->setAppends([]);
-                $val->bawahan = self::populateJabatan($val->nip,++$count_bawahan);
+                $val->bawahan = self::populateJabatan($val->nip, ++$count_bawahan);
                 return $val;
             });
             return $pegawai->toArray();
@@ -88,7 +89,21 @@ class KinerjaRepository extends BaseRepository
 
     static function getKinerjaPenilaianKinerja($nip, $date)
     {
-        $pegawai = Pegawai::where('nip', $nip)->first();
+        $pegawai = Pegawai::with('role')->where('nip', $nip)->first();
+        $role = $pegawai->role->map(function($val){
+            return $val->nama_role;
+        });
+        $kepatuhan_input = null;
+        if ($role->isNotEmpty()) {
+            $kepatuhan_input = [
+                'bmd' => 'BMD (Barang Milik Daerah)',
+                'tptgr' => 'TBTGR (Tuntutan Bendahara dan Tuntutan Ganti Rugi)'
+            ];
+            if (!in_array('Staf', $role->toArray())) {
+                $kepatuhan_input = array_merge($kepatuhan_input, ['lkpn' => 'LKPN (Laporan kekayaan Penyelenggara Negara), namun untuk staff tidak dapat melakukan penilaian ini']);
+            }
+        }
+        $kepatuhan = new KepatuhanRepository($nip);
         $old_kinerja = Kinerja::where('nip', $pegawai->nip)
             ->with(['skp_pegawai' => function ($query) {
                 $query->select('skp_pegawai.id', 'id_skp', 'nip_pegawai', 'periode', 'status', 'nip_update');
@@ -116,6 +131,8 @@ class KinerjaRepository extends BaseRepository
             ->terbaru()
             ->first();
         return [
+            'kepatuhan_input' => $kepatuhan_input,
+            'kepatuhan' => $kepatuhan->getKepatuhan(),
             'now' => $kinerja,
             'old' => $old_kinerja->pluck('tgl_mulai')->toArray()
         ];

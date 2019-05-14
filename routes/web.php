@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth'],function (){
             Route::group(['prefix' => 'api'],function (){
                 Route::get('/get-bawahan','PenilaianKinerjaController@getBawahan')->name('penilaian-kinerja.api.bawahan');
                 Route::get('/{nip}','PenilaianKinerjaController@getKinerja')->name('penilaian-kinerja.api.kinerja');
+                Route::post('kepatuhan','PenilaianKinerjaController@postKepatuhan')->name('penilaian-kinerja.api.kepatuhan');
                 Route::post('reply','PenilaianKinerjaController@replyKinerja')->name('penilaian-kinerja.api.reply');
             });
             Route::get('','PenilaianKinerjaController@penilaianKinerja')->name('penilaian-kinerja.index');

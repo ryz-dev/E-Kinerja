@@ -42,9 +42,9 @@ class PegawaiRepository extends BaseRepository
 
     public static function dataPegawai($pegawai)
     {
-        return app()->make(self::model())->where('nip', $pegawai)->orWhere('uuid', $pegawai)->first();
-//        $self = new self();
-//        return app()->make($self->model())->where('nip', $pegawai)->orWhere('uuid', $pegawai)->first();
+//        return app()->make(self::model())->where('nip', $pegawai)->orWhere('uuid', $pegawai)->first();
+        $self = new self();
+        return app()->make($self->model())->where('nip', $pegawai)->orWhere('uuid', $pegawai)->first();
     }
 
     public function model()
@@ -371,8 +371,8 @@ class PegawaiRepository extends BaseRepository
                 }
             }
         }
+        $masuk = $pulang = null;
         if (count($checkinout) > 0) {
-            $masuk = $pulang = null;
             foreach ($checkinout->toArray() AS $kh) {
                 if (isset($kh['checktype'])) {
                     if ($kh['checktype'] == 0) {
