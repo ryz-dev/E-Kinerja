@@ -30,6 +30,25 @@ class PenilaianKinerjaController extends Controller
         return apiResponse(KinerjaRepository::getKinerjaPenilaianKinerja($nip, $date));
     }
 
+    public function postKepatuhan(Request $request){
+        $this->validate($request,[
+            'nip' => 'required'
+        ]);
+        $kepatuhan = new KepatuhanRepository($request->nip);
+        $data = [
+            'lkpn' => $request->has('lkpn') ? 1 : 0,
+            'bmd' => $request->has('bmd') ? 1 : 0,
+            'tptgr' => $request->has('tptgr') ? 1 : 0,
+        ];
+        if ($kepatuhan->save($data)){
+            return apiResponse($kepatuhan->getKepatuhan());
+        }
+        return apiResponse('',[
+            'code' => 500,
+            'message' => 'gagal menyimpan data kepatuhan'
+        ]);
+    }
+
     public function replyKinerja(Request $r)
     {
         $r->validate([
