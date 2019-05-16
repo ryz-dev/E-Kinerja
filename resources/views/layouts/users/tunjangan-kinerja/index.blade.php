@@ -150,8 +150,8 @@
                                 <div class="img-user" id="user-modal"
                                      style="background-image: url('assets/images/img-user.png');">
                                 </div>
-                                <h6 id="detail-nama"></h6>
-                                <span id="detail-nip"></span>
+                                <h6 class="detail-nama"></h6>
+                                <span class="detail-nip"></span>
                                 <span class="badge text-white float-right" id="detail-tgl"></span>
                                 <div class="clearfix"></div>
                             </div>
@@ -227,9 +227,9 @@
                                 <div class="img-user" id="user-modal"
                                      style="background-image: url('assets/images/img-user.png');">
                                 </div>
-                                <h6 id="detail-nama"></h6>
-                                <span id="detail-nip"></span>
-                                <span class="badge text-white float-right" id="detail-tgl"></span>
+                                <h6 class="detail-nama"></h6>
+                                <span class="detail-nip"></span>
+{{--                                <span class="badge text-white float-right detail-tgl></span>--}}
                                 <div class="clearfix"></div>
                             </div>
                             <div class="desc-detail">
@@ -290,6 +290,8 @@
 
                         $('#total').html(res.response.total.total)
                         $('#total-tunjangan').html(res.response.total_tunjangan_diterima_juta)
+                        $('.detail-nama').html(res.response.pegawai.nama)
+                        $('.detail-nip').html(res.response.pegawai.nip)
                         data_response = res.response
                         var data_kinerja = res.response.data_kepatuhan;
                         var list_kepatuhan = '';
@@ -449,7 +451,7 @@
                                     /*'                                */
                                     '                                <td>\n' +
                                     '                                    <button data-index="'+i+'" class="btn rounded btn-detail '+(val.kinerja ? '' : '')+'" title="Detail">\n' +
-                                    '                                        <i class="fas fa-search-plus"></i>\n' +
+                                    '                                        <i class="material-icons">more_horiz</i>\n' +
                                     '                                    </button>\n' +
                                     '                                </td>\n' +
                                     '                            </tr>\n'
@@ -555,8 +557,6 @@
 
                 $('#current-index').val(index);
                 $('.modal-overlay').addClass('show');
-                $('#detail-nama').html(data_response.pegawai.nama)
-                $('#detail-nip').html(data_response.pegawai.nip)
                 $('#detail-tgl').html(data.tanggal_string2)
                 $('#detail-jam-masuk').html(absen ? (typeof absen[0] !== 'undefined' ? absen[0].absen_time : '--:--') : '--:--')
                 $('#detail-jam-pulang').html(absen ? (typeof absen[1] !== 'undefined' ? absen[1].absen_time : '--:--') : '--:--')

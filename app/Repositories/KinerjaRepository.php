@@ -386,7 +386,7 @@ class KinerjaRepository extends BaseRepository
         $persen_kinerja = FormulaVariable::select('persentase_nilai')->where('variable', 'kinerja')->first()->persentase_nilai;
         $persen_kepatuhan = FormulaVariable::select('persentase_nilai')->where('variable', 'kepatuhan')->first()->persentase_nilai;
 
-        $pegawai = Pegawai::select('nip', 'id_jabatan')->with(['jabatan' => function ($query) {
+        $pegawai = Pegawai::select('nip', 'id_jabatan','nama')->with(['jabatan' => function ($query) {
             $query->select('id', 'id_golongan');
             $query->with(['golongan' => function ($query) {
                 $query->select('id', 'tunjangan');
