@@ -406,6 +406,10 @@ class KinerjaRepository extends BaseRepository
 
             $jumlah_kepatuhan += $data_kepatuhan->bmd;
             $jumlah_kepatuhan += $data_kepatuhan->tptgr;
+            if (!$pegawai->role->contains('nama_role','Staf')) {
+                $pembagi_kepatuhan = 3;
+                $jumlah_kepatuhan += $data_kepatuhan->lkpn;
+            }
 
         } else {
             $data_kepatuhan = new \stdClass();
@@ -415,8 +419,6 @@ class KinerjaRepository extends BaseRepository
             'tptgr' => 'TBTGR (Tuntutan Bendahara dan Tuntutan Ganti Rugi)'
         ];
         if (!$pegawai->role->contains('nama_role','Staf')){
-            $pembagi_kepatuhan = 3;
-            $jumlah_kepatuhan += $data_kepatuhan->lkpn;
             $data_kepatuhan->list_kepatuhan = array_merge($data_kepatuhan->list_kepatuhan, ['lkpn' => 'LKPN (Laporan kekayaan Penyelenggara Negara), namun untuk staff tidak dapat melakukan penilaian ini']);
         }
 
