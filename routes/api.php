@@ -34,8 +34,9 @@ Route::group(['prefix' => 'v2'],function (){
             Route::get('/{nip}/{bulan?}/{tahun?}', 'RekapBulananController@getRekap')->name('api.mobile.rekap-bulanan');
         });
         Route::group(['prefix' => 'penilaian-kinerja', 'middleware' => 'can:penilaian-kinerja'], function () {
-            Route::get('/get-bawahan', 'PenilaianKinerjaController@getBawahan')->name('api.mobile.get-bawahan-kinerja');
-            Route::get('/{nip}', 'PenilaianKinerjaController@getKinerja')->name('api.mobile.get-penilaian-kinerja');
+            Route::get('get-kepatuhan/{nip}/{periode?}', 'PenilaianKinerjaController@getKepatuhan')->name('api.mobile.get-kepatuhan');
+            Route::get('get-bawahan', 'PenilaianKinerjaController@getBawahan')->name('api.mobile.get-bawahan-kinerja');
+            Route::get('{nip}', 'PenilaianKinerjaController@getKinerja')->name('api.mobile.get-penilaian-kinerja');
             Route::post('reply', 'PenilaianKinerjaController@replyKinerja')->name('api.mobile.reply-penilaian-kinerja');
             Route::post('kepatuhan', 'PenilaianKinerjaController@postKepatuhan')->name('api.mobile.kepatuhan');
         });

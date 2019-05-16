@@ -69,8 +69,17 @@ class PenilaianKinerjaController extends ApiController
         }
     }
 
+    public function getKepatuhan($nip,$periode = null){
+        try {
+            $kepatuhan = new KepatuhanRepository($nip,$periode);
+            return apiResponse($kepatuhan->getListKepatuhanPegawai());
+        } catch (\Exception $exception){
+            return $this->error500($exception->getMessage());
+        }
+    }
+
     public function postKepatuhan(Request $request){
-        $validate = Validator::make($r->input(), [
+        $validate = Validator::make($request->input(), [
             'nip' => 'required'
         ]);
         if ($validate->fails()) {

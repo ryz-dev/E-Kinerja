@@ -293,17 +293,16 @@
                         $('.detail-nama').html(res.response.pegawai.nama)
                         $('.detail-nip').html(res.response.pegawai.nip)
                         data_response = res.response
-                        var data_kinerja = res.response.data_kepatuhan;
-                        var list_kepatuhan = '';
-                        for (key in data_kinerja.list_kepatuhan){
-                            var check = data_kinerja[key] == 1 ? '<i class="material-icons">check</i>' : ''
-                            list_kepatuhan += '<div class="checklist-kepatuhan">\n' +
+                        var data_kinerja = res.response.data;
+                        var list_kepatuhan = res.response.data_kepatuhan.map(function(val){
+                            var check = val.status ? '<i class="material-icons">check</i>' : ''
+                            return '<div class="checklist-kepatuhan">\n' +
                                 '     <span class="check-list">'+check+'</span>\n' +
-                                '     <label>'+data_kinerja.list_kepatuhan[key]+'</p></label>\n' +
+                                '     <label>'+val.text+'</p></label>\n' +
                                 ' </div>'
-                        }
+                        });
                         $('.kepatuhan-holder').html(list_kepatuhan);
-                        $('#periode').html((typeof data_kinerja.tanggal_periode != 'undefined' ? data_kinerja.tanggal_periode : ''))
+                        $('#periode').html(res.response.periode)
                         var dataAbsen = {
                             labels: ["Absen",""],
                             datasets: [

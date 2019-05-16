@@ -234,7 +234,12 @@
             function persentaseKepatuhan(){
                 var total = $('#kepatuhan-holder [type=checkbox]').length
                 var checked = $('#kepatuhan-holder [type=checkbox]:checked').length
-                $('#persen-kepatuhan').html(Math.floor(checked/total * 100))
+                var persen = Math.floor(checked/total * 100)
+                if (persen > 0) {
+                    $('#persen-kepatuhan').html(persen)
+                } else {
+                    $('#persen-kepatuhan').html(0)
+                }
             }
             persentaseKepatuhan();
             persentaseSkp();
@@ -245,22 +250,15 @@
                 $('#form-kepatuhan [name=nip]').val(nip);
                 $.get('{{route('penilaian-kinerja.api.kinerja',['nip' => ''])}}/' + nip + '?date=' + setDate)
                     .then(function (res) {
-                        if (res.response.kepatuhan_input){
+                        if (res.response.kepatuhan){
                             $('.list-kepatuhan').show();
-                            var kepatuhan = '';
-                            for (key in res.response.kepatuhan_input){
-                                var checked = false;
-                                if (res.response.kepatuhan){
-                                    if (res.response.kepatuhan[key] == 1){
-                                        checked = true;
-                                    }
-                                }
-                                kepatuhan += '<label class="container-check">\n' +
-                                    '    <p>'+res.response.kepatuhan_input[key]+'</p>\n' +
-                                    '    <input name="'+key+'" type="checkbox" '+(checked ? 'checked' : '')+'>\n' +
+                            var kepatuhan = res.response.kepatuhan.map(function(val){
+                                return '<label class="container-check">\n' +
+                                    '    <p>'+val.text+'</p>\n' +
+                                    '    <input name="'+val.key+'" type="checkbox" '+(val.status ? 'checked' : '')+'>\n' +
                                     '    <span class="checkmark"></span>\n' +
                                     '</label>'
-                            }
+                            });
                             $('#kepatuhan-holder').html(kepatuhan);
                         } else {
                             $('.list-kepatuhan').hide();

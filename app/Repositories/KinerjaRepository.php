@@ -89,21 +89,9 @@ class KinerjaRepository extends BaseRepository
 
     static function getKinerjaPenilaianKinerja($nip, $date)
     {
-        $pegawai = Pegawai::with('role')->where('nip', $nip)->first();
-        $role = $pegawai->role->map(function($val){
-            return $val->nama_role;
-        });
-        $kepatuhan_input = null;
-        if ($role->isNotEmpty()) {
-            $kepatuhan_input = [
-                'bmd' => 'BMD (Barang Milik Daerah)',
-                'tptgr' => 'TBTGR (Tuntutan Bendahara dan Tuntutan Ganti Rugi)'
-            ];
-            if (!in_array('Staf', $role->toArray())) {
-                $kepatuhan_input = array_merge($kepatuhan_input, ['lkpn' => 'LKPN (Laporan kekayaan Penyelenggara Negara), namun untuk staff tidak dapat melakukan penilaian ini']);
-            }
-        }
+        $pegawai = Pegawai::where('nip', $nip)->first();
         $kepatuhan = new KepatuhanRepository($nip);
+        $kepatuhan_input = $kepatuhan->getListKepatuhanPegawai();
         $old_kinerja = Kinerja::where('nip', $pegawai->nip)
             ->with(['skp_pegawai' => function ($query) {
                 $query->select('skp_pegawai.id', 'id_skp', 'nip_pegawai', 'periode', 'status', 'nip_update');
@@ -131,8 +119,7 @@ class KinerjaRepository extends BaseRepository
             ->terbaru()
             ->first();
         return [
-            'kepatuhan_input' => $kepatuhan_input,
-            'kepatuhan' => $kepatuhan->getKepatuhan(),
+            'kepatuhan' => $kepatuhan_input,
             'now' => $kinerja,
             'old' => $old_kinerja->pluck('tgl_mulai')->toArray()
         ];
@@ -397,30 +384,11 @@ class KinerjaRepository extends BaseRepository
         $pegawai->jabatan->setAppends([]);
         $pegawai->jabatan->golongan->setAppends([]);
         $jumlah_tunjangan = $pegawai->jabatan->golongan->tunjangan;
-        $kepatuhan = new KepatuhanRepository($nip);
-        $data_kepatuhan = $kepatuhan->getKepatuhan();
-        $jumlah_kepatuhan = 0;
-        $pembagi_kepatuhan = 2;
-        if ($data_kepatuhan){
-            $data_kepatuhan->tanggal_periode = formatDate3($data_kepatuhan->periode);
-
-            $jumlah_kepatuhan += $data_kepatuhan->bmd;
-            $jumlah_kepatuhan += $data_kepatuhan->tptgr;
-            if (!$pegawai->role->contains('nama_role','Staf')) {
-                $pembagi_kepatuhan = 3;
-                $jumlah_kepatuhan += $data_kepatuhan->lkpn;
-            }
-
-        } else {
-            $data_kepatuhan = new \stdClass();
-        }
-        $data_kepatuhan->list_kepatuhan = [
-            'bmd' => 'BMD (Barang Milik Daerah)',
-            'tptgr' => 'TBTGR (Tuntutan Bendahara dan Tuntutan Ganti Rugi)'
-        ];
-        if (!$pegawai->role->contains('nama_role','Staf')){
-            $data_kepatuhan->list_kepatuhan = array_merge($data_kepatuhan->list_kepatuhan, ['lkpn' => 'LKPN (Laporan kekayaan Penyelenggara Negara), namun untuk staff tidak dapat melakukan penilaian ini']);
-        }
+        $periode = ($tahun ? $tahun : date('Y')).'-'.($bulan ? $bulan : date('m')).'-'.'01';
+        $kepatuhan = new KepatuhanRepository($nip,$periode);
+        $data_kepatuhan = $kepatuhan->getListKepatuhanPegawai();
+        $jumlah_kepatuhan = collect($data_kepatuhan)->where('status',1)->count();
+        $pembagi_kepatuhan = count($data_kepatuhan);
 
         $min_date = HariKerja::whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
@@ -597,7 +565,8 @@ class KinerjaRepository extends BaseRepository
                 'total_tunjangan_diterima_juta' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan / 1000000) : 0,
                 'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
                 'min_date' => $min_date->tanggal,
-                'data_kepatuhan' => $data_kepatuhan
+                'data_kepatuhan' => $data_kepatuhan,
+                'periode' => formatDate3($periode)
             ];
         } else {
 
