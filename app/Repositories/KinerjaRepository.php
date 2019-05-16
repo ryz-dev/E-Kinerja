@@ -384,6 +384,7 @@ class KinerjaRepository extends BaseRepository
 
         $persen_absen = FormulaVariable::select('persentase_nilai')->where('variable', 'absen')->first()->persentase_nilai;
         $persen_kinerja = FormulaVariable::select('persentase_nilai')->where('variable', 'kinerja')->first()->persentase_nilai;
+        $persen_kepatuhan = FormulaVariable::select('persentase_nilai')->where('variable', 'kepatuhan')->first()->persentase_nilai;
 
         $pegawai = Pegawai::select('nip', 'id_jabatan')->with(['jabatan' => function ($query) {
             $query->select('id', 'id_golongan');
@@ -396,6 +397,28 @@ class KinerjaRepository extends BaseRepository
         $pegawai->jabatan->setAppends([]);
         $pegawai->jabatan->golongan->setAppends([]);
         $jumlah_tunjangan = $pegawai->jabatan->golongan->tunjangan;
+        $kepatuhan = new KepatuhanRepository($nip);
+        $data_kepatuhan = $kepatuhan->getKepatuhan();
+        $jumlah_kepatuhan = 0;
+        $pembagi_kepatuhan = 2;
+        if ($data_kepatuhan){
+            $data_kepatuhan->tanggal_periode = formatDate3($data_kepatuhan->periode);
+
+            $jumlah_kepatuhan += $data_kepatuhan->bmd;
+            $jumlah_kepatuhan += $data_kepatuhan->tptgr;
+
+        } else {
+            $data_kepatuhan = new \stdClass();
+        }
+        $data_kepatuhan->list_kepatuhan = [
+            'bmd' => 'BMD (Barang Milik Daerah)',
+            'tptgr' => 'TBTGR (Tuntutan Bendahara dan Tuntutan Ganti Rugi)'
+        ];
+        if (!$pegawai->role->contains('nama_role','Staf')){
+            $pembagi_kepatuhan = 3;
+            $jumlah_kepatuhan += $data_kepatuhan->lkpn;
+            $data_kepatuhan->list_kepatuhan = array_merge($data_kepatuhan->list_kepatuhan, ['lkpn' => 'LKPN (Laporan kekayaan Penyelenggara Negara), namun untuk staff tidak dapat melakukan penilaian ini']);
+        }
 
         $min_date = HariKerja::whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
@@ -406,6 +429,7 @@ class KinerjaRepository extends BaseRepository
         $jumlah_hari = $hari_kerja->count();
         $jumlah_kinerja = $absen = $nilai_apel = 0;
         $data_kinerja = [];
+        $persen_apel = 0;
         if ($jumlah_hari > 0) {
             foreach ($hari_kerja AS $hk) {
                 $apel = false;
@@ -521,44 +545,57 @@ class KinerjaRepository extends BaseRepository
                     $absen++;
                 }
             }
-            $persen_apel = 0;
             if (($jumlah_hari - $nilai_apel) < 6) {
                 $persen_apel = 100;
             }
+        }
+        try {
             $persentase = [
                 'absen' => (($absen / $jumlah_hari) * 60) + (($persen_apel / 100 * 40)),
                 'kinerja' => ($jumlah_kinerja / ($jumlah_hari * 10)) * 100,
+                'kepatuhan' => $jumlah_kepatuhan / $pembagi_kepatuhan * 100
             ];
-            $persentase_total = [
-                'absen' => $persentase['absen'] * $persen_absen / 100,
-                'kinerja' => $persentase['kinerja'] * $persen_kinerja / 100,
+        } catch (\Exception $e){
+            $persentase = [
+                'absen' => 0,
+                'kinerja' => 0,
+                'kepatuhan' => 0
             ];
-            $total_persentase_tunjangan = 0;
-            foreach ($persentase_total AS $key => $value) {
-                $total_persentase_tunjangan += $value;
-            }
-            $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan) / 100;
         }
+        $persentase_total = [
+            'absen' => $persentase['absen'] * $persen_absen / 100,
+            'kinerja' => $persentase['kinerja'] * $persen_kinerja / 100,
+            'kepatuhan' => $persentase['kepatuhan'] * $persen_kepatuhan / 100
+        ];
+        $total_persentase_tunjangan = 0;
+        foreach ($persentase_total AS $key => $value) {
+            $total_persentase_tunjangan += $value;
+        }
+        $total_tunjangan = ($total_persentase_tunjangan * $jumlah_tunjangan) / 100;
         if (!$is_mobile) {
             $response = [
                 'pegawai' => $pegawai,
                 'pencapaian' => [
                     'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase['absen']) : 0,
                     'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase['kinerja']) : 0,
+                    'kepatuhan' => $this->toDecimal($persentase['kepatuhan'])
                 ],
                 'persentase' => [
                     'absen' => $persen_absen,
                     'kinerja' => $persen_kinerja,
+                    'kepatuhan' => $persen_kepatuhan,
                 ],
                 'total' => [
                     'absen' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['absen']) : 0,
                     'kinerja' => $jumlah_hari > 0 ? $this->toDecimal($persentase_total['kinerja']) : 0,
+                    'kepatuhan' => $this->toDecimal($persentase_total['kepatuhan']),
                     'total' => $jumlah_hari > 0 ? $this->toDecimal($total_persentase_tunjangan) : 0
                 ],
                 'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
                 'total_tunjangan_diterima_juta' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan / 1000000) : 0,
                 'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
-                'min_date' => $min_date->tanggal
+                'min_date' => $min_date->tanggal,
+                'data_kepatuhan' => $data_kepatuhan
             ];
         } else {
 
@@ -567,14 +604,18 @@ class KinerjaRepository extends BaseRepository
                 'pencapaian' => [
                     'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase['absen']) : 0,
                     'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase['kinerja']) : 0,
+                    'kepatuhan' => $this->toFloat($persentase['kepatuhan'])
+
                 ],
                 'persentase' => [
                     'absen' => $persen_absen,
                     'kinerja' => $persen_kinerja,
+                    'kepatuhan' => $persen_kepatuhan,
                 ],
                 'total' => [
                     'absen' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['absen']) : 0,
                     'kinerja' => $jumlah_hari > 0 ? $this->toFloat($persentase_total['kinerja']) : 0,
+                    'kepatuhan' => $this->toFloat($persentase_total['kepatuhan']),
                     'total' => $jumlah_hari > 0 ? $this->toFloat($total_persentase_tunjangan) : 0
                 ],
                 'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,

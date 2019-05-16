@@ -2,7 +2,8 @@
 $(document).ready(function() {
   var ctx1 = document.getElementById("chart-absen").getContext("2d");
   var ctx2 = document.getElementById("chart-kinerja").getContext("2d");
-  var ctx3 = document.getElementById("chart-tunjangan").getContext("2d");
+  var ctx3 = document.getElementById("chart-kepatuhan").getContext("2d");
+  var ctx4 = document.getElementById("chart-tunjangan").getContext("2d");
 
   var dataAbsen = {
     labels: ["Absen", ""],
@@ -27,6 +28,18 @@ $(document).ready(function() {
       }
     ]
   };
+
+  var dataKepatuhan = {
+    labels: ["Kepatuhan", ""],
+    datasets: [
+      {
+        label: "My First dataset",
+        backgroundColor: ["#3ab894", "#d8dadc"],
+        borderColor: ["#3ab894", "#d8dadc"],
+        data: [80, 20]
+      }
+    ]
+  }
 
   var dataTunjangan = {
     labels: ["Tunjangan", ""],
@@ -60,6 +73,15 @@ $(document).ready(function() {
   });
 
   var chart3 = new Chart(ctx3, {
+    type: "pie",
+    data: dataKepatuhan,
+    options: {
+      responsive: true,
+      maintainAspectRatio: true
+    }
+  });
+
+  var chart4 = new Chart(ctx4, {
     type: "pie",
     data: dataTunjangan,
     options: {

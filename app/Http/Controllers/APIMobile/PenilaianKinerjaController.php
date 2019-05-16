@@ -4,6 +4,7 @@ namespace App\Http\Controllers\APIMobile;
 
 use App\Models\Absen\Etika;
 use App\Models\MasterData\Pegawai;
+use App\Repositories\KepatuhanRepository;
 use App\Repositories\KinerjaRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException as Exception;
 use Illuminate\Http\Request;
@@ -66,5 +67,27 @@ class PenilaianKinerjaController extends ApiController
                 'message' => $e->getMessage()
             ]);*/
         }
+    }
+
+    public function postKepatuhan(Request $request){
+        $validate = Validator::make($r->input(), [
+            'nip' => 'required'
+        ]);
+        if ($validate->fails()) {
+            return $this->error422($validate->errors());
+        }
+        $kepatuhan = new KepatuhanRepository($request->nip);
+        $data = [
+            'lkpn' => $request->has('lkpn') ? 1 : 0,
+            'bmd' => $request->has('bmd') ? 1 : 0,
+            'tptgr' => $request->has('tptgr') ? 1 : 0,
+        ];
+        if ($kepatuhan->save($data)){
+            return apiResponse($kepatuhan->getKepatuhan());
+        }
+        return apiResponse('',[
+            'code' => 500,
+            'message' => 'gagal menyimpan data kepatuhan'
+        ]);
     }
 }

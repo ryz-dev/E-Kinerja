@@ -29,7 +29,8 @@ class KepatuhanRepository extends BaseRepository
         $pegawai = $pegawai?$pegawai:$this->pegawai;
         $periode = $periode?$periode:$this->periode;
 
-        $kepatuhan = $this->model->where('nip', $pegawai->nip)->wherePeriode($periode)->first();
+//        $kepatuhan = $this->model->where('nip', $pegawai->nip)->wherePeriode($periode)->first();
+        $kepatuhan = $this->model->where('nip', $pegawai->nip)->whereMonth('periode','=', (int)month($periode))->whereYear('periode','=', (int)year($periode))->first();
 
         if ($kepatuhan) {
             $this->kepatuhan = $kepatuhan->first();

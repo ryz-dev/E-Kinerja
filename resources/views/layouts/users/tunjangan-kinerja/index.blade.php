@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row wrap-diagram-container">
                     <div class="col-md-12 diagram-container">
                         <div class="box-diagram" id="diagram1">
                             <div>
@@ -51,7 +51,7 @@
                             </div>
                             <div class="subContainer">
                                 <div>
-                                    <canvas id="chart-absen" height="30vh" width="40vw"></canvas>
+                                    <canvas id="chart-absen" height="50vh" width="50vw"></canvas>
                                 </div>
                                 <div class="capaian text-center">
                                     <h2><span id="total-absen">0</span>%</h2>
@@ -67,11 +67,27 @@
                             </div>
                             <div class="subContainer">
                                 <div>
-                                    <canvas id="chart-kinerja" height="30vh" width="40vw"></canvas>
+                                    <canvas id="chart-kinerja" height="50vh" width="50vw"></canvas>
                                 </div>
                                 <div class="capaian text-center">
                                     <h2><span id="total-kinerja">0</span>%</h2>
                                     <span>Pencapaian <span id="pencapaian-kinerja">0</span>%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box-diagram btn-detail-ktj" id="diagram3">
+                            <div class="persen">
+                                <label class="float-right">KEPATUHAN (
+                                    <x id="persentase-kepatuhan">0</x>
+                                    %)</label>
+                            </div>
+                            <div class="subContainer">
+                                <div>
+                                    <canvas id="chart-kepatuhan" height="50vh" width="50vw"></canvas>
+                                </div>
+                                <div class="capaian text-center">
+                                    <h2><span id="total-kepatuhan">0</span>%</h2>
+                                    <span>Pencapaian <span id="pencapaian-kepatuhan">0</span>%</span>
                                 </div>
                             </div>
                         </div>
@@ -197,10 +213,60 @@
             </div>
         </div>
     </div>
+    <div class="modal-detail">
+        <div class="modal-overlay-ktj">
+            <!-- button close -->
+            <div class="close">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="modal-konten-ktj mySlides-ktj">
+                            <div class="title-name">
+                                <div class="img-user" id="user-modal"
+                                     style="background-image: url('assets/images/img-user.png');">
+                                </div>
+                                <h6 id="detail-nama"></h6>
+                                <span id="detail-nip"></span>
+                                <span class="badge text-white float-right" id="detail-tgl"></span>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="desc-detail">
+                                <div class="title-detail">
+                                    <h4>Kepatuhan & Tanggungjawab</h4>
+                                    <img src="assets/images/icons/upacara.svg" class="iconUpacara">
+                                </div>
+                                <small>Periode</small>
+                                <br>
+                                <h5 id="periode"></h5>
+                                <hr>
+                                <!-- new version -->
+                                <div class="row style-modal-content">
+                                    <div class="col-md-12 mb-1">
+                                        <label>List Kepatuhan & Tanggungjawab</label>
+                                        <div class="kepatuhan-holder">
+
+                                        </div>
+                                        <div class="valuePersen" style="width: 210px">
+                                            <h1><span class="pencapaian-kepatuhan">0</span>%</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     @push('script')
         <script>
             var ctx1 = document.getElementById("chart-absen").getContext("2d");
             var ctx2 = document.getElementById("chart-kinerja").getContext("2d");
+            var ctx3 = document.getElementById("chart-kepatuhan").getContext("2d");
             var ctx4 = document.getElementById("chart-tunjangan").getContext("2d");
             var data_response;
             var max_index = 0;
@@ -211,16 +277,31 @@
                     .then(function (res) {
                         $('#persentase-absen').html(res.response.persentase.absen);
                         $('#persentase-kinerja').html(res.response.persentase.kinerja);
+                        $('#persentase-kepatuhan').html(res.response.persentase.kepatuhan);
 
                         $('#pencapaian-absen').html(res.response.pencapaian.absen);
                         $('#pencapaian-kinerja').html(res.response.pencapaian.kinerja);
+                        $('#pencapaian-kepatuhan').html(res.response.pencapaian.kepatuhan);
+                        $('.pencapaian-kepatuhan').html(res.response.pencapaian.kepatuhan);
 
                         $('#total-absen').html(res.response.total.absen);
                         $('#total-kinerja').html(res.response.total.kinerja);
+                        $('#total-kepatuhan').html(res.response.total.kepatuhan);
 
                         $('#total').html(res.response.total.total)
                         $('#total-tunjangan').html(res.response.total_tunjangan_diterima_juta)
                         data_response = res.response
+                        var data_kinerja = res.response.data_kepatuhan;
+                        var list_kepatuhan = '';
+                        for (key in data_kinerja.list_kepatuhan){
+                            var check = data_kinerja[key] == 1 ? '<i class="material-icons">check</i>' : ''
+                            list_kepatuhan += '<div class="checklist-kepatuhan">\n' +
+                                '     <span class="check-list">'+check+'</span>\n' +
+                                '     <label>'+data_kinerja.list_kepatuhan[key]+'</p></label>\n' +
+                                ' </div>'
+                        }
+                        $('.kepatuhan-holder').html(list_kepatuhan);
+                        $('#periode').html((typeof data_kinerja.tanggal_periode != 'undefined' ? data_kinerja.tanggal_periode : ''))
                         var dataAbsen = {
                             labels: ["Absen",""],
                             datasets: [
@@ -241,6 +322,18 @@
                                     backgroundColor: ["#F25857", "#d8dadc"],
                                     borderColor: ["#F25857", "#d8dadc"],
                                     data: [parseInt(res.response.pencapaian.kinerja), 100 - parseInt(res.response.pencapaian.kinerja)]
+                                }
+                            ]
+                        };
+
+                        var dataKepatuhan = {
+                            labels: ["Kepatuhan", ""],
+                            datasets: [
+                                {
+                                    label: "My First dataset",
+                                    backgroundColor: ["#3ab894", "#d8dadc"],
+                                    borderColor: ["#3ab894", "#d8dadc"],
+                                    data: [parseInt(res.response.pencapaian.kepatuhan), 100 - parseInt(res.response.pencapaian.kepatuhan)]
                                 }
                             ]
                         };
@@ -279,6 +372,15 @@
                         chart2 = new Chart(ctx2, {
                             type: "pie",
                             data: dataKinerja,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: true
+                            }
+                        });
+
+                        var chart3 = new Chart(ctx3, {
+                            type: "pie",
+                            data: dataKepatuhan,
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: true
