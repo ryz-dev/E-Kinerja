@@ -387,9 +387,9 @@ class KinerjaRepository extends BaseRepository
         $periode = ($tahun ? $tahun : date('Y')).'-'.($bulan ? $bulan : date('m')).'-'.'01';
         $kepatuhan = new KepatuhanRepository($nip,$periode);
         $data_kepatuhan = $kepatuhan->getListKepatuhanPegawai();
-        $jumlah_kepatuhan = collect($data_kepatuhan)->where('status',1)->count();
-        $pembagi_kepatuhan = count($data_kepatuhan);
-
+        $jumlah_kepatuhan = collect($data_kepatuhan)->where('status',1)->reduce(function($total,$val){
+            return $total + $val['persen'];
+        });
         $min_date = HariKerja::whereHas('statusHari', function ($query) {
             $query->where('status_hari', 'kerja');
         })->select('tanggal')->orderBy('tanggal')->first();
@@ -523,7 +523,7 @@ class KinerjaRepository extends BaseRepository
             $persentase = [
                 'absen' => (($absen / $jumlah_hari) * 60) + (($persen_apel / 100 * 40)),
                 'kinerja' => ($jumlah_kinerja / ($jumlah_hari * 10)) * 100,
-                'kepatuhan' => $jumlah_kepatuhan / $pembagi_kepatuhan * 100
+                'kepatuhan' => $jumlah_kepatuhan / 100 * 100
             ];
         } catch (\Exception $e){
             $persentase = [

@@ -95,11 +95,13 @@ class KepatuhanRepository extends BaseRepository
                 [
                     'key' => 'bmd',
                     'text' => 'BMD (Barang Milik Daerah)',
-                    'status' => $this->kepatuhan ? $this->kepatuhan->bmd : 0
+                    'status' => $this->kepatuhan ? $this->kepatuhan->bmd : 0,
+                    'persen' => 50
                 ], [
                     'key' => 'tptgr',
                     'text' => 'TBTGR (Tuntutan Bendahara dan Tuntutan Ganti Rugi)',
-                    'status' => $this->kepatuhan ? $this->kepatuhan->tptgr : 0
+                    'status' => $this->kepatuhan ? $this->kepatuhan->tptgr : 0,
+                    'persen' => 50
                 ]
             ];
 
@@ -107,10 +109,13 @@ class KepatuhanRepository extends BaseRepository
                 $list = array_merge($list, [
                     [
                         'key' => 'lkpn',
-                        'text' => 'LKPN (Laporan kekayaan Penyelenggara Negara), namun untuk staff tidak dapat melakukan penilaian ini',
-                        'status' => $this->kepatuhan ? $this->kepatuhan->lkpn : 0
+                        'text' => 'LHKPN (Laporan Harta Kekayaan Penyelenggara Negara)',
+                        'status' => $this->kepatuhan ? $this->kepatuhan->lkpn : 0,
+                        'persen' => 40
                     ]
                 ]);
+                $list[0]['persen'] = 30;
+                $list[1]['persen'] = 30;
             }
             return $list;
         }
