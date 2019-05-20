@@ -590,7 +590,8 @@ class KinerjaRepository extends BaseRepository
                     'total' => $jumlah_hari > 0 ? $this->toFloat($total_persentase_tunjangan) : 0
                 ],
                 'jumlah_tunjagan' => $jumlah_hari > 0 ? $this->toDecimal($jumlah_tunjangan) : 0,
-                'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan / 1000000) : 0,
+                'total_tunjangan_diterima_juta' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan / 1000000) : 0,
+                'total_tunjangan_diterima' => $jumlah_hari > 0 ? $this->toDecimal($total_tunjangan) : 0,
                 'min_date' => $min_date->tanggal,
                 'data_kepatuhan' => $data_kepatuhan
             ];

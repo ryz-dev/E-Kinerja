@@ -99,7 +99,7 @@ class KepatuhanRepository extends BaseRepository
                     'persen' => 50
                 ], [
                     'key' => 'tptgr',
-                    'text' => 'TBTGR (Tuntutan Bendahara dan Tuntutan Ganti Rugi)',
+                    'text' => 'TPTGR (Tuntutan Perbendaharaan dan Tuntutan Ganti Rugi)',
                     'status' => $this->kepatuhan ? $this->kepatuhan->tptgr : 0,
                     'persen' => 50
                 ]
