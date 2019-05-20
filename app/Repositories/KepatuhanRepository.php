@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 
+use App\Models\Absen\Kepatuhan;
 use App\Models\MasterData\Pegawai;
 
 class KepatuhanRepository extends BaseRepository
@@ -90,6 +91,10 @@ class KepatuhanRepository extends BaseRepository
     public function getListKepatuhanPegawai()
     {
         $pegawai = Pegawai::with('role')->where('nip',$this->pegawai->nip)->first();
+        $min_date = null;
+        if ($kepatuhan = Kepatuhan::where('nip',$this->pegawai->nip)->orderBy('periode','asc')->first()){
+            $min_date = $kepatuhan->periode;
+        }
         if ($pegawai->role->isNotEmpty()) {
             $list = [
                 [
@@ -117,7 +122,10 @@ class KepatuhanRepository extends BaseRepository
                 $list[0]['persen'] = 30;
                 $list[1]['persen'] = 30;
             }
-            return $list;
+            return [
+                'min_date' => $min_date,
+                'kepatuhan' => $list
+            ];
         }
         return [];
     }
