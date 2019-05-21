@@ -91,7 +91,7 @@ class KinerjaRepository extends BaseRepository
     {
         $pegawai = Pegawai::where('nip', $nip)->first();
         $kepatuhan = new KepatuhanRepository($nip);
-        $kepatuhan_input = $kepatuhan->getListKepatuhanPegawai();
+        $kepatuhan_input = $kepatuhan->getListKepatuhanPegawai()['kepatuhan'];
         $old_kinerja = Kinerja::where('nip', $pegawai->nip)
             ->with(['skp_pegawai' => function ($query) {
                 $query->select('skp_pegawai.id', 'id_skp', 'nip_pegawai', 'periode', 'status', 'nip_update');
@@ -386,7 +386,7 @@ class KinerjaRepository extends BaseRepository
         $jumlah_tunjangan = $pegawai->jabatan->golongan->tunjangan;
         $periode = ($tahun ? $tahun : date('Y')).'-'.($bulan ? $bulan : date('m')).'-'.'01';
         $kepatuhan = new KepatuhanRepository($nip,$periode);
-        $data_kepatuhan = $kepatuhan->getListKepatuhanPegawai();
+        $data_kepatuhan = $kepatuhan->getListKepatuhanPegawai()['kepatuhan'];
         $jumlah_kepatuhan = collect($data_kepatuhan)->where('status',1)->reduce(function($total,$val){
             return $total + $val['persen'];
         });
