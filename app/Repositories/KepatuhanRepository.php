@@ -122,9 +122,13 @@ class KepatuhanRepository extends BaseRepository
                 $list[0]['persen'] = 30;
                 $list[1]['persen'] = 30;
             }
+            $total = collect($list)->where('status',1)->reduce(function($total,$val){
+                return $total + $val['persen'];
+            });
             return [
                 'min_date' => $min_date,
-                'kepatuhan' => $list
+                'kepatuhan' => $list,
+                'total' => $total
             ];
         }
         return [];
