@@ -70,6 +70,7 @@
                 <td rowspan="2">KELAS JABATAN</td>
                 <td rowspan="2">KINERJA (%)</td>
                 <td rowspan="2">ABSEN (%)</td>
+                <td rowspan="2">KEPATUHAN (%)</td>
                 <td colspan="2">TUNJANGAN</td>
             </tr>
             <tr>
@@ -86,6 +87,7 @@
                     <td>{{ $value['kelas_jabatan'] }}</td>
                     <td class="center-text">{{ floor($value['persentase_kinerja']) }}</td>
                     <td class="center-text">{{ number_format($value['persentase_absen'],2) }}</td>
+                    <td class="center-text">{{ number_format($value['persentase_kepatuhan'],2) }}</td>
                     <td class="center-text">{{ floor($value['total_persentase']) }}</td>
                     <td class="right-text">{{ number_format((float)$value['total_tunjangan'],2,',','.') }}</td>
                 </tr>

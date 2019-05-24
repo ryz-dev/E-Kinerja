@@ -207,7 +207,7 @@ class PegawaiRepository extends BaseRepository
             if ($is_upacara) {
                 if ($wajib_upacara) {
                     $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
-                    if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $hk->tanggal)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                    if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $hk->tanggal)->whereIn('sn', $mesin_upacara)->whereTime('checktime', '<=', $this->jam_masuk_upacara)->first()) {
                         $upacara = true;
                     }
                 }
@@ -366,7 +366,7 @@ class PegawaiRepository extends BaseRepository
         if ($is_upacara) {
             if ($wajib_upacara) {
                 $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
-                if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $tgl)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $tgl)->whereIn('sn', $mesin_upacara)->whereTime('checktime', '<=', $this->jam_masuk_upacara)->first()) {
                     $upacara = true;
                 }
             }
@@ -539,16 +539,14 @@ class PegawaiRepository extends BaseRepository
         $user = Pegawai::where('nip', $nip)->first();
         $hari_kerja = HariKerja::whereHas('statusHari', function ($query) use ($bulan, $tahun) {
             $query->where('status_hari', 'kerja');
-        })->where('bulan', $bulan)->where('tahun', $tahun)->orderBy('tanggal', 'asc')->get();
+        })->where('bulan', $bulan)->where('tahun', $tahun)->where('tanggal', '<=', date('Y-m-d'))->orderBy('tanggal', 'asc')->get();
 
         $formula = FormulaVariable::all();
         $persen['kinerja'] = $formula->where('variable', 'kinerja')->first()->persentase_nilai;
         $persen['absen'] = $formula->where('variable', 'absen')->first()->persentase_nilai;
-
+        $persen['kepatuhan'] = $formula->where('variable', 'kepatuhan')->first()->persentase_nilai;
         $pegawai = $this->getDataPegawai($user, $bulan, $tahun, $d_id_skpd);
-
         $data = $this->parseDataRekap($pegawai, $persen, $hari_kerja);
-
         $skpd = Skpd::where('id', $skpd)->first();
         $namaSkpd = $skpd ? $skpd->nama_skpd : 'PEMERINTAH KABUPATEN KOLAKA';
         $periode = ucfirst(Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan . ' ' . date('Y', strtotime($periode_rekap)));
@@ -610,15 +608,60 @@ class PegawaiRepository extends BaseRepository
             $raw_kinerja = $this->parseKinerja($item, $key, $hari_kerja);
             $tambahan_absen = $raw_kinerja->sum('absen_tambahan');
             $raw_absen = $this->parseAbsen($item, $key, $hari_kerja);
+            $apel = ($hari_kerja->count() - $this->parseApel($item,$hari_kerja) < 6) ? 100 : 0;
             $data['kinerja'] = $raw_kinerja->sum('kinerja');
             $data['persentase_kinerja'] = ((($data['kinerja'] / $hari_kerja->count()) * 100) * $persen['kinerja']) / 100;
-            $data['absen'] = $raw_absen->count() + $tambahan_absen;
-            $data['persentase_absen'] = ((($data['absen'] / $hari_kerja->count()) * 100) * $persen['absen']) / 100;
-            $total = $this->calculateTotalTunjangan($data['persentase_absen'], $data['persentase_kinerja'], $tunjangan);
+            $data['absen'] = $raw_absen->reduce(function($total,$val){
+                    return $total + $val;
+                }) + $tambahan_absen;
+            $data['persentase_absen'] = (((($data['absen'] / $hari_kerja->count()) * 60) + (($apel/100) * 40)) * $persen['absen']) / 100;
+            $data['persentase_kepatuhan'] = $this->parseKepatuhan($item->nip,$persen['kepatuhan']);
+            $total = $this->calculateTotalTunjangan($data['persentase_absen'], $data['persentase_kinerja'],$data['persentase_kepatuhan'], $tunjangan);
             $data['total_tunjangan'] = $total['tunjangan'];
             $data['total_persentase'] = $total['persentase'];
             return $data;
         });
+    }
+
+    private function parseApel($pegawai,$hari_kerja){
+        $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
+        return $hari_kerja->reduce(function($total,$hk)use($pegawai,$mesin_upacara){
+            $is_upacara = $apel = false;
+            if (date('N', strtotime($hk->tanggal)) == 1) {
+                $is_upacara = true;
+            }
+            $wajib_upacara = $pegawai->status_upacara ? true : false;
+            if ($is_upacara && $wajib_upacara) {
+                if ($absen_upacara = $pegawai->checkinout()->where('nip', $pegawai->nip)->where('checktype', '0')->whereDate('checktime', $hk->tanggal)->whereIn('sn', $mesin_upacara)->whereTime('checktime', '<=', $this->jam_masuk_upacara)->first()) {
+                    $apel = true;
+                }
+            } else {
+                $masuk = $pegawai->checkinout->filter(function($inout)use($hk){
+                    return ($inout->checktype == '0' && date('Y-m-d',strtotime($inout->checktime)) == $hk->tanggal);
+                })->first();
+                $keluar = $pegawai->checkinout->filter(function($inout)use($hk){
+                    return ($inout->checktype == '1' && date('Y-m-d',strtotime($inout->checktime)) == $hk->tanggal);
+                })->first();
+                if ($masuk && $keluar) {
+                    if (strtotime($masuk->checktime) <= strtotime($hk->tanggal . " 07:30:00")) {
+                        $apel = true;
+                    }
+                }
+            }
+            return $apel ? $total + 1 : $total;
+        });
+    }
+
+    private function parseKepatuhan($nip,$persen){
+        $kepatuhan = new KepatuhanRepository($nip);
+        $data_kepatuhan = $kepatuhan->getListKepatuhanPegawai();
+        $jumlah_kepatuhan = 0;
+        if (!empty($data_kepatuhan)) {
+            $jumlah_kepatuhan = collect($data_kepatuhan['kepatuhan'])->where('status', 1)->reduce(function ($total, $val) {
+                return $total + $val['persen'];
+            });
+        }
+        return $jumlah_kepatuhan ? ($jumlah_kepatuhan/100)*$persen : 0;
     }
 
     private function parseKinerja($item, $key, $hari_kerja)
@@ -650,41 +693,36 @@ class PegawaiRepository extends BaseRepository
                 $nip = $itemabsen->first()->nip;
 
                 if ($masuk->first() && $keluar->first()) {
-                    if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d', strtotime($masuk->first()->checktime)) . " 08:00:00")) {
+                    $tanggal = date('Y-m-d', strtotime($masuk->first()->checktime));
+                    if (strtotime($masuk->first()->checktime) <= strtotime($tanggal . " 08:00:00")) {
                         if ((strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600)) {
                             return 1;
-                        } else {
-                            return 0.2;
                         }
-                    } else if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d', strtotime($masuk->first()->checktime)) . " 08:30:00")) {
+                    } else if (strtotime($masuk->first()->checktime) <= strtotime($tanggal . " 08:30:00")) {
                         if ((strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600)) {
                             return 0.8;
-                        } else {
-                            return 0.2;
                         }
-                    } else if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d', strtotime($masuk->first()->checktime)) . " 09:00:00")) {
+                    } else if (strtotime($masuk->first()->checktime) <= strtotime($tanggal . " 09:00:00")) {
                         if ((strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600)) {
                             return 0.6;
-                        } else {
-                            return 0.2;
                         }
-                    } else if (strtotime($masuk->first()->checktime) <= strtotime(date('Y-m-d', strtotime($masuk->first()->checktime)) . " 09:30:00")) {
+                    } else if (strtotime($masuk->first()->checktime) > strtotime($tanggal . " 09:00:00")) {
                         if ((strtotime($keluar->first()->checktime) - strtotime($masuk->first()->checktime)) >= (8 * 3600)) {
                             return 0.4;
-                        } else {
-                            return 0.2;
                         }
                     }
+                    return 0.2;
                 }
+                return 0;
             }
         })->filter(function ($value, $key) {
             return $value > 0;
         });
     }
 
-    private function calculateTotalTunjangan($absen, $kinerja, $tunjangan)
+    private function calculateTotalTunjangan($absen, $kinerja,$kepatuhan, $tunjangan)
     {
-        $jumlah = ($absen + $kinerja);
+        $jumlah = ($absen + $kinerja + $kepatuhan);
         return [
             'persentase' => $jumlah,
             'tunjangan' => (floor($jumlah) * $tunjangan) / 100
@@ -831,7 +869,7 @@ class PegawaiRepository extends BaseRepository
                                 }
                             } else {
                                 if ($item->status_upacara) {
-                                    if ($absen_upacara = Checkinout::where('nip', $item->nip)->where('checktype', 0)->whereDate('checktime', $tanggal_pilihan_date)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                                    if ($absen_upacara = Checkinout::where('nip', $item->nip)->where('checktype', 0)->whereDate('checktime', $tanggal_pilihan_date)->whereIn('sn', $mesin_upacara)->whereTime('checktime', '<=', $this->jam_masuk_upacara)->first()) {
                                         $apel = true;
                                     }
                                 }
@@ -870,7 +908,7 @@ class PegawaiRepository extends BaseRepository
                                 }
                             } else {
                                 if ($item->status_upacara) {
-                                    if ($absen_upacara = Checkinout::where('nip', $item->nip)->where('checktype', 0)->whereDate('checktime', $tanggal_pilihan_date)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                                    if ($absen_upacara = Checkinout::where('nip', $item->nip)->where('checktype', 0)->whereDate('checktime', $tanggal_pilihan_date)->whereIn('sn', $mesin_upacara)->whereTime('checktime', '<=', $this->jam_masuk_upacara)->first()) {
                                         $apel = true;
                                     }
                                 }

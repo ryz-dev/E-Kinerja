@@ -415,7 +415,7 @@ class KinerjaRepository extends BaseRepository
                 if ($is_upacara) {
                     if ($wajib_upacara) {
                         $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
-                        if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $hk->tanggal)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                        if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $hk->tanggal)->whereIn('sn', $mesin_upacara)->whereTime('checktime', '<=', $this->jam_masuk_upacara)->first()) {
                             $upacara = true;
                         }
                     }
@@ -698,7 +698,7 @@ class KinerjaRepository extends BaseRepository
         if ($is_upacara) {
             if ($wajib_upacara) {
                 $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
-                if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $tgl)->whereIn('sn', $mesin_upacara)->whereTime('checktype', '<=', $this->jam_masuk_upacara)->first()) {
+                if ($absen_upacara = Checkinout::where('nip', $pegawai->nip)->where('checktype', 0)->whereDate('checktime', $tgl)->whereIn('sn', $mesin_upacara)->whereTime('checktime', '<=', $this->jam_masuk_upacara)->first()) {
                     $upacara = true;
                 }
             }
