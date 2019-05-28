@@ -232,9 +232,10 @@
                 $('.wrap-progress').find('.progress-bar').css({width: persentase + '%'})
             }
             function persentaseKepatuhan(){
-                var total = $('#kepatuhan-holder [type=checkbox]').length
-                var checked = $('#kepatuhan-holder [type=checkbox]:checked').length
-                var persen = Math.floor(checked/total * 100)
+                var persen = 0;
+                $('#kepatuhan-holder [type=checkbox]:checked').each(function(index,e){
+                    persen += parseInt($(e).attr('persen'));
+                })
                 if (persen > 0) {
                     $('#persen-kepatuhan').html(persen)
                 } else {
@@ -255,7 +256,7 @@
                             var kepatuhan = res.response.kepatuhan.map(function(val){
                                 return '<label class="container-check">\n' +
                                     '    <p>'+val.text+'</p>\n' +
-                                    '    <input name="'+val.key+'" type="checkbox" '+(val.status ? 'checked' : '')+'>\n' +
+                                    '    <input name="'+val.key+'" persen='+val.persen+' type="checkbox" '+(val.status ? 'checked' : '')+'>\n' +
                                     '    <span class="checkmark"></span>\n' +
                                     '</label>'
                             });
