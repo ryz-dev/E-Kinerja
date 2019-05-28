@@ -45,39 +45,36 @@
         </div>
 
         <div class="row skp-content">
-            <div class="wrap-list-skp">
-              <form id="formSkp" action="{{ route('sasaran-kerja.store') }}" method="POST">
-                  <div class="bg-white">
-                      {{ csrf_field() }}
+            <div class="pl-4 pr-4 bg-white">
+                <form id="formSkp" action="{{ route('sasaran-kerja.store') }}" method="POST">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="nip" value="{{$sasaran_kerja['dataPegawai']->nip}}">
+                    <input type="hidden" name="periode" value="{{$periode}}">
 
-                      <input type="hidden" name="nip" value="{{$sasaran_kerja['dataPegawai']->nip}}">
-                      <input type="hidden" name="periode" value="{{$periode}}">
-                      <div class="title-skp">
-                          <h4>Sasaran Kerja Pegawai</h4>
-                          <button type="button" class="btn-style primary" id="showAddSkp">
-                              <i class="material-icons">playlist_add</i>
-                              Tambah SKP
-                          </button>
-                      </div>
-                      <div class="skp-desc parent-sasaran mt-3" id="sasaran">
-                          <!-- Add SKP -->
-                          <div class="modal-add-skp" id="modal-add-skp">
-                              <div class="container">
-                                  <div class="row">
-                                      <div class="col-md-12 mb-3">
-                                          <textarea class="form-control" id="value-skp" rows="2"></textarea>
-                                      </div>
-                                      <div class="col-md-12">
-                                          <button class="btn btn-primary float-right" id="tambah-skp">Tambah</button>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <!-- end -->
-                      </div>
-                  </div>
-
-              </form>
+                    <div class="bg-white">
+                        <div class="title-skp">
+                            <h4>Sasaran Kerja Pegawai</h4>
+                            <button type="button" class="btn-style primary" id="showAddSkp">
+                                <i class="material-icons">playlist_add</i>
+                                Tambah SKP
+                            </button>
+                        </div>
+                        <div class="skp-desc parent-sasaran mt-3" id="sasaran">
+                            <div class="modal-add-skp" id="modal-add-skp">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <textarea class="form-control" id="value-skp" rows="2"></textarea>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <button class="btn btn-primary float-right" id="tambah-skp">Tambah</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
 
             <div class="wrap-list-skp">
@@ -156,7 +153,7 @@
             if (valueTarget) {
                 sasaran.append(
                     `
-          <div class="child-skp">
+          <div class="child-skp" style="position: relative; left: 0px; top: 0px;">
             <textarea class="form-control values-skp" name="skp[]" readonly>${valueTarget}</textarea>
             <div class="flex">
               <div class="btn-style gray warning btn-edit-skp" style="border:none;">
