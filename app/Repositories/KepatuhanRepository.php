@@ -34,10 +34,8 @@ class KepatuhanRepository extends BaseRepository
     {
         $pegawai = $pegawai ? $pegawai : $this->pegawai;
         $periode = $periode ? $periode : $this->periode;
-
 //        $kepatuhan = $this->model->where('nip', $pegawai->nip)->wherePeriode($periode)->first();
-        $kepatuhan = $this->model->where('nip', $pegawai->nip)->whereMonth('periode', '=', (int)month($periode))->whereYear('periode', '=', (int)year($periode))->first();
-
+        $kepatuhan = $this->model->where('nip', $pegawai->nip)->whereMonth('periode', '=', (int)month($periode))->whereYear('periode', '=', (int)year($periode));
         if ($kepatuhan) {
             $this->kepatuhan = $kepatuhan->first();
         } else {
@@ -92,7 +90,7 @@ class KepatuhanRepository extends BaseRepository
     {
         $pegawai = Pegawai::with('role')->where('nip',$this->pegawai->nip)->first();
         $min_date = null;
-        if ($kepatuhan = Kepatuhan::where('nip',$this->pegawai->nip)->orderBy('periode','asc')->first()){
+        if ($kepatuhan = Kepatuhan::where('nip',$pegawai->nip)->orderBy('periode','asc')->first()){
             $min_date = $kepatuhan->periode;
         }
         if ($pegawai->role->isNotEmpty()) {
