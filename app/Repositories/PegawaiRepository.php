@@ -589,7 +589,7 @@ class PegawaiRepository extends BaseRepository
                     $query->select('nip', 'checktime', 'checktype')->whereMonth('checktime', $bulan)->whereYear('checktime', $tahun);
                 },
                 'kinerja' => function ($query) use ($bulan, $tahun) {
-                    $query->select('nip', 'approve', 'jenis_kinerja', 'tgl_mulai', 'tgl_selesai')->whereMonth('tgl_mulai', $bulan)->whereYear('tgl_mulai', $tahun);
+                    $query->select('nip', 'approve', 'jenis_kinerja', 'tgl_mulai', 'tgl_selesai','nilai_kinerja')->whereMonth('tgl_mulai', $bulan)->whereYear('tgl_mulai', $tahun);
                 }
             ]
         );
@@ -608,24 +608,25 @@ class PegawaiRepository extends BaseRepository
             $raw_kinerja = $this->parseKinerja($item, $key, $hari_kerja);
             $tambahan_absen = $raw_kinerja->sum('absen_tambahan');
             $raw_absen = $this->parseAbsen($item, $key, $hari_kerja);
-            $apel = ($hari_kerja->count() - $this->parseApel($item,$hari_kerja) < 6) ? 100 : 0;
+            $apel = ($hari_kerja->count() - $this->parseApel($item, $hari_kerja) < 6) ? 100 : 0;
             $data['kinerja'] = $raw_kinerja->sum('kinerja');
-            $data['persentase_kinerja'] = ((($data['kinerja'] / $hari_kerja->count()) * 100) * $persen['kinerja']) / 100;
-            $data['absen'] = $raw_absen->reduce(function($total,$val){
+            $data['persentase_kinerja'] = ((($data['kinerja'] / ($hari_kerja->count() * 10)) * 100) * $persen['kinerja']) / 100;
+            $data['absen'] = $raw_absen->reduce(function ($total, $val) {
                     return $total + $val;
                 }) + $tambahan_absen;
-            $data['persentase_absen'] = (((($data['absen'] / $hari_kerja->count()) * 60) + (($apel/100) * 40)) * $persen['absen']) / 100;
-            $data['persentase_kepatuhan'] = $this->parseKepatuhan($item->nip,$persen['kepatuhan']);
-            $total = $this->calculateTotalTunjangan($data['persentase_absen'], $data['persentase_kinerja'],$data['persentase_kepatuhan'], $tunjangan);
+            $data['persentase_absen'] = (((($data['absen'] / $hari_kerja->count()) * 60) + (($apel / 100) * 40)) * $persen['absen']) / 100;
+            $data['persentase_kepatuhan'] = $this->parseKepatuhan($item->nip, $persen['kepatuhan']);
+            $total = $this->calculateTotalTunjangan($data['persentase_absen'], $data['persentase_kinerja'], $data['persentase_kepatuhan'], $tunjangan);
             $data['total_tunjangan'] = $total['tunjangan'];
             $data['total_persentase'] = $total['persentase'];
             return $data;
         });
     }
 
-    private function parseApel($pegawai,$hari_kerja){
+    private function parseApel($pegawai, $hari_kerja)
+    {
         $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
-        return $hari_kerja->reduce(function($total,$hk)use($pegawai,$mesin_upacara){
+        return $hari_kerja->reduce(function ($total, $hk) use ($pegawai, $mesin_upacara) {
             $is_upacara = $apel = false;
             if (date('N', strtotime($hk->tanggal)) == 1) {
                 $is_upacara = true;
@@ -636,11 +637,11 @@ class PegawaiRepository extends BaseRepository
                     $apel = true;
                 }
             } else {
-                $masuk = $pegawai->checkinout->filter(function($inout)use($hk){
-                    return ($inout->checktype == '0' && date('Y-m-d',strtotime($inout->checktime)) == $hk->tanggal);
+                $masuk = $pegawai->checkinout->filter(function ($inout) use ($hk) {
+                    return ($inout->checktype == '0' && date('Y-m-d', strtotime($inout->checktime)) == $hk->tanggal);
                 })->first();
-                $keluar = $pegawai->checkinout->filter(function($inout)use($hk){
-                    return ($inout->checktype == '1' && date('Y-m-d',strtotime($inout->checktime)) == $hk->tanggal);
+                $keluar = $pegawai->checkinout->filter(function ($inout) use ($hk) {
+                    return ($inout->checktype == '1' && date('Y-m-d', strtotime($inout->checktime)) == $hk->tanggal);
                 })->first();
                 if ($masuk && $keluar) {
                     if (strtotime($masuk->checktime) <= strtotime($hk->tanggal . " 07:30:00")) {
@@ -652,7 +653,8 @@ class PegawaiRepository extends BaseRepository
         });
     }
 
-    private function parseKepatuhan($nip,$persen){
+    private function parseKepatuhan($nip, $persen)
+    {
         $kepatuhan = new KepatuhanRepository($nip);
         $data_kepatuhan = $kepatuhan->getListKepatuhanPegawai();
         $jumlah_kepatuhan = 0;
@@ -661,25 +663,52 @@ class PegawaiRepository extends BaseRepository
                 return $total + $val['persen'];
             });
         }
-        return $jumlah_kepatuhan ? ($jumlah_kepatuhan/100)*$persen : 0;
+        return $jumlah_kepatuhan ? ($jumlah_kepatuhan / 100) * $persen : 0;
     }
 
     private function parseKinerja($item, $key, $hari_kerja)
     {
-        return $item->kinerja->map(function ($itemkinerja, $keykinerja) use ($key, $hari_kerja) {
+        return $hari_kerja->map(function ($value) use ($key, $item) {
             $kinerja = $absen_tambahan = 0;
-            if ($itemkinerja->wherein('tgl_mulai', $hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2) {
-                $kinerja = 1;
+            foreach ($item->kinerja AS $itemkinerja) {
+                if ($itemkinerja->tgl_mulai <= $value->tanggal && $itemkinerja->tgl_selesai >= $value->tanggal && $itemkinerja->approve == 2) {
+                    $kinerja += $itemkinerja->nilai_kinerja;
+                }
+                if ($itemkinerja->tgl_mulai <= $value->tanggal && $itemkinerja->tgl_selesai >= $value->tanggal && $itemkinerja->approve == 2 && $itemkinerja->jenis_kinerja <> 'hadir') {
+                    $absen_tambahan++;
+                }
             }
-            if ($itemkinerja->wherein('tgl_mulai', $hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2 && $itemkinerja->jenis_kinerja <> 'hadir') {
-                $absen_tambahan = 1;
-            }
-            return collect(['kinerja' => $kinerja, 'absen_tambahan' => $absen_tambahan]);
+            return collect(['kinerja' => $kinerja, 'absen_tambahan' => $absen_tambahan, 'tanggal' => $value->tanggal]);
         })->filter(function ($value, $key) {
             return $value->filter(function ($v, $k) {
                 return $v > 0;
             });
         });
+//        return $item->kinerja->filter(function ($value) {
+//            return $value->tgl_selesai <= date('Y-m-d');
+//        })->map(function ($itemkinerja, $keykinerja) use ($key, $hari_kerja) {
+//            $kinerja = $absen_tambahan = 0;
+//            foreach ($hari_kerja AS $hk) {
+//                if ($itemkinerja->whereDate('tgl_mulai', '>=', $hk->tanggal)->whereDate('tgl_selesai', '<=', $hk->tanggal) && $itemkinerja->approve == 2) {
+//                    $kinerja++;
+//                }
+//                if ($itemkinerja->whereDate('tgl_mulai', '>=', $hk->tanggal)->whereDate('tgl_selesai', '<=', $hk->tanggal) && $itemkinerja->approve == 2 && $itemkinerja->jenis_kinerja <> 'hadir') {
+//                    $absen_tambahan++;
+//                }
+//            }
+//            /*if ($itemkinerja->wherein('tgl_mulai', $hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2) {
+//                $kinerja = 1;
+//            }
+//            if ($itemkinerja->wherein('tgl_mulai', $hari_kerja->pluck('tanggal')) && $itemkinerja->approve == 2 && $itemkinerja->jenis_kinerja <> 'hadir') {
+//                $absen_tambahan = 1;
+//            }*/
+//
+//            return collect(['kinerja' => $kinerja, 'absen_tambahan' => $absen_tambahan]);
+//        })->filter(function ($value, $key) {
+//            return $value->filter(function ($v, $k) {
+//                return $v > 0;
+//            });
+//        });
     }
 
     private function parseAbsen($item, $key, $hari_kerja)
@@ -720,12 +749,12 @@ class PegawaiRepository extends BaseRepository
         });
     }
 
-    private function calculateTotalTunjangan($absen, $kinerja,$kepatuhan, $tunjangan)
+    private function calculateTotalTunjangan($absen, $kinerja, $kepatuhan, $tunjangan)
     {
         $jumlah = ($absen + $kinerja + $kepatuhan);
         return [
             'persentase' => $jumlah,
-            'tunjangan' => (floor($jumlah) * $tunjangan) / 100
+            'tunjangan' => ($jumlah * $tunjangan) / 100
         ];
     }
 

@@ -175,7 +175,8 @@
                                 </div>
                                 <div class="clock-side clock"><span>--:--</span></div>
                                 <div class="day-side">
-                                    <small>Selasa, 23 September 2018</small>
+                                    <small>{{ucfirst(\App\Models\MasterData\Hari::find(date('N'))->nama_hari)}}
+                                        , {{date('d')}} {{ucfirst(\App\Models\MasterData\Bulan::find((int)date('m'))->nama_bulan)}} {{date('Y')}}</small>
                                 </div>
                             </div>
                         </div>

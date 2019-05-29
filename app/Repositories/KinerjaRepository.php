@@ -569,7 +569,6 @@ class KinerjaRepository extends BaseRepository
                 'periode' => formatDate3($periode)
             ];
         } else {
-
             $response = [
                 'pegawai' => $pegawai,
                 'pencapaian' => [

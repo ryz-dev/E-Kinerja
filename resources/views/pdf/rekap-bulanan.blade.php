@@ -85,10 +85,10 @@
                     <td>{{ $value['data_pribadi']['nama'] }}</td>
                     <td>{{ $value['jabatan'] }}</td>
                     <td>{{ $value['kelas_jabatan'] }}</td>
-                    <td class="center-text">{{ floor($value['persentase_kinerja']) }}</td>
+                    <td class="center-text">{{ number_format($value['persentase_kinerja'],2) }}</td>
                     <td class="center-text">{{ number_format($value['persentase_absen'],2) }}</td>
                     <td class="center-text">{{ number_format($value['persentase_kepatuhan'],2) }}</td>
-                    <td class="center-text">{{ floor($value['total_persentase']) }}</td>
+                    <td class="center-text">{{ number_format($value['total_persentase'],2) }}</td>
                     <td class="right-text">{{ number_format((float)$value['total_tunjangan'],2,',','.') }}</td>
                 </tr>
             @endforeach
