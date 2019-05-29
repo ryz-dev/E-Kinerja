@@ -129,7 +129,9 @@ class KepatuhanRepository extends BaseRepository
                 'total' => $total
             ];
         }
-        return [];
+        return [
+            'kepatuhan' => []
+        ];
     }
 }
 
