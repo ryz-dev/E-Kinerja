@@ -26,7 +26,11 @@ class PegawaiController extends AdminController
 
     public function index()
     {
-        return view('layouts/admin/pegawai/index');
+        $skpd = Skpd::all();
+        $skpd = $skpd->pluck('nama_skpd', 'id');
+        $skpd = collect([0 => ' ALL '] + $skpd->all());
+        $skpd = $skpd->toArray();
+        return view('layouts/admin/pegawai/index',compact('skpd'));
     }
 
     public function show($id)

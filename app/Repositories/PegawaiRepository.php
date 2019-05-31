@@ -70,6 +70,11 @@ class PegawaiRepository extends BaseRepository
                 });
             });
         }
+        if (isset($parameters['skpd'])){
+            if ($parameters['skpd'] != 0){
+                $this->model = $this->model->where('id_skpd',$parameters['skpd']);
+            }
+        }
         return $this->paginate($perPage);
     }
 
@@ -97,6 +102,11 @@ class PegawaiRepository extends BaseRepository
                     $query->where('jabatan', 'like', '%' . $parameters['q'] . '%');
                 });
             });
+        }
+        if (isset($parameters['skpd'])){
+            if ($parameters['skpd'] != 0){
+                $this->model = $this->model->where('id_skpd',$parameters['skpd']);
+            }
         }
         return $this->count();
     }

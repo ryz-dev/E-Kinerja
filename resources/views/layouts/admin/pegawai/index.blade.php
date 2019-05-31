@@ -2,9 +2,23 @@
 @section('content')
     <div class="main">
         <div class="nav-top-container">
-            <div class="group-search">
-                <span><i class="fas fa-search"></i></span>
-                <input id="search" type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
+            <div class="col-md-5">
+                <div class="group-search">
+                    <span><i class="fas fa-search"></i></span>
+                    <input id="search" type="text" class="form-control" placeholder="Cari Nama / NIP Pegawai">
+                </div>
+            </div>
+            <div class="col-md-4 float-left">
+                <div class="input-group mb-3 skpd-option">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">SKPD</label>
+                    </div>
+                    <select id="skpd" class="custom-select select-custome">
+                        @foreach ($skpd as $key => $item)
+                            <option value="{{ $key }}">{{ $item }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             @include('layouts.admin.partial.part.logout')
         </div>
@@ -54,7 +68,7 @@
     @push('script')
         <script>
             $(document).ready(function () {
-                getPage('');
+                getPage('',0);
             });
             window.skpd = [];
             $.get('{{route('pegawai.api.skpd')}}')
@@ -63,9 +77,9 @@
                         window.skpd = res.response;
                     }
                 })
-            var getPage = function (search) {
+            var getPage = function (search,skpd) {
                 $('#pagination').twbsPagination('destroy');
-                $.get('{{route('pegawai.api.page')}}?q=' + search)
+                $.get('{{route('pegawai.api.page')}}?q=' + search+'&skpd='+skpd)
                     .then(function (res) {
                         if (res.halaman == 0) {
                             if (search != '') {
@@ -82,16 +96,16 @@
                             totalPages: res.halaman,
                             visiblePages: 5,
                             onPageClick: function (event, page) {
-                                getData(page, search);
+                                getData(page, search,skpd);
                             }
                         });
                     })
             };
-            var getData = function (page, search) {
+            var getData = function (page, search,skpd) {
                 var selector = $('.list_pegawai');
                 $('#preload').show();
                 $.ajax({
-                    url: "{{ route('pegawai.api.index') }}?page=" + page + '&q=' + search,
+                    url: "{{ route('pegawai.api.index') }}?page=" + page + '&q=' + search+'&skpd='+skpd,
                     data: '',
                     success: function (res) {
                         if (res.response.length > 0) {
@@ -124,6 +138,7 @@
                 e.preventDefault();
                 var delete_uri = $(this).attr('delete-uri');
                 var search = $('#search').val();
+                var skpd = $('#skpd').val();
                 swal({
                     title: 'Yakin Ingin Menghapus Pegawai?',
                     text: "Proses tidak dapat di kembalikan",
@@ -137,7 +152,7 @@
                         $.post(delete_uri)
                             .then(function (res) {
                                 if (res.diagnostic.code == '200') {
-                                    getPage(search);
+                                    getPage(search,skpd);
                                     swal(
                                         'Terhapus!',
                                         'Data Pegawai Berhasil Dihapus.',
@@ -160,9 +175,15 @@
                     }
                 })
             })
+            $('#skpd').on('change',function(e){
+                e.preventDefault();
+                var search = $('#search').val();
+                getPage(search,$(this).val())
+            })
             $('#search').on('keyup', function (e) {
                 e.preventDefault();
-                getPage($(this).val())
+                var skpd = $('#skpd').val();
+                getPage($(this).val(),skpd)
             })
             $('#import-pegawai').on('submit',function (e) {
                 e.preventDefault();
@@ -187,7 +208,7 @@
                                     '',
                                     'success'
                                 )
-                                getPage('')
+                                getPage('',0)
                             },
                             error: function () {
                                 swal(
