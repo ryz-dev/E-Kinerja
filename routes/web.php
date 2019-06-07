@@ -4,6 +4,9 @@ Route::get('/', function(){
 });
 Route::group(['middleware' => 'auth'],function (){
     Route::group(['namespace' => 'Pegawai'],function (){
+        // Route::group(['prefix' => 'pegawai'], function(){
+        //     Route::post('update-password','PegawaiController@updatePassword')->name('pegawai.api.update-password');
+        // });
         Route::group(['prefix' => 'monitoring-absen','middleware' => 'can:monitoring-absen'],function (){
             Route::group(['prefix' => 'api'],function (){
                 Route::get('','MonitoringAbsenController@dataAbsensi')->name('monitoring-absen.api');
@@ -56,7 +59,7 @@ Route::group(['middleware' => 'auth'],function (){
             Route::post('/update/', 'SasaranKerjaController@update')->name('sasaran-kerja.update');
         });
     });
-    Route::post('update-password','Admin/PegawaiController@updatePassword')->name('update-password');
+    Route::post('update-password','Admin\PegawaiController@updatePassword')->name('update-password');
 });
 Route::group(['prefix'=>'admin'], function(){
     Route::get('',function() {
@@ -83,6 +86,7 @@ Route::group(['prefix'=>'admin'], function(){
                     Route::post('{id}','PegawaiController@update')->name('pegawai.api.update');
                     Route::post('delete/{id}','PegawaiController@delete')->name('pegawai.api.delete');
                     Route::post('restore/{nip}','PegawaiController@restorePegawai')->name('pegawai.api.restore');
+                    Route::get('reset-password/{id}','PegawaiController@resetPassword')->name('pegawai.api.reset-password');
                 });
                 Route::post('import','PegawaiController@import')->name('pegawai.import');
                 Route::get('','PegawaiController@index')->name('pegawai.index');

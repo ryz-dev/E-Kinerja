@@ -34,7 +34,7 @@
                 <p>{{ session('user')->get('nip') }}</p>
                 </div>
             </div>
-    
+
             <div class="descProfile">
                 <div class="dataForm">
                 <h5 class="mb-2">Informasi</h5>
@@ -51,7 +51,7 @@
                     <p>{{ ucwords(session('user')->get('agama')) }}</p>
                 </div>
                 <div>
-                    
+
                     <label for="password">Kata Sandi</label>
                     <div class="input-group">
                         <input
@@ -68,8 +68,8 @@
                         </div>
                     </div>
                 </div>
-                <button 
-                class="btn btn-block btn-out" 
+                <button
+                class="btn btn-block btn-out"
                 id="btn-logout"
                 onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">Logout</button>
@@ -114,7 +114,7 @@
                                     $.post(form.action, data.serialize())
                                         .then(function (res) {
                                             $('.preload').hide();
-                                            
+
                                             if (res.diagnostic.code == 200) {
                                                 swal(
                                                     'Password berhasil di ubah!',
@@ -139,7 +139,7 @@
                                                 'warning'
                                             );
                                             $('.overlayProfile').removeClass('show');
-                                            
+
                                             $('.preload').hide();
                                         })
                                 }
@@ -169,7 +169,7 @@
                 @can('monitoring-absen')
                 <li class="{{str_contains(url()->current(),route('monitoring.absen.index')) ? 'active' : ''}}">
                     <a href="{{route('monitoring.absen.index')}}">
-                        <i class="material-icons">recent_actors</i> 
+                        <i class="material-icons">recent_actors</i>
                         <span>Monitoring Absen</span>
                     </a>
                 </li>
@@ -211,7 +211,7 @@
                 <li>
                     @can('master-data')
                     <label class="mr-2">
-                        <a href="{{route('pegawai.index')}}">Masuk Panel Admin <i class="fas fa-cogs"></i> </a> 
+                        <a href="{{route('pegawai.index')}}">Masuk Panel Admin <i class="fas fa-cogs"></i> </a>
                     </label>
                     @endcan
                 </li>

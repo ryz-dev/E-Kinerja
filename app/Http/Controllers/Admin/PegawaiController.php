@@ -192,6 +192,22 @@ class PegawaiController extends AdminController
         ], 500);
     }
 
+    public function resetPassword($id){
+        $pegawai = Pegawai::where('nip',$id)->first();
+        $pegawai->password = bcrypt('secret');
+
+        if ($pegawai->save()) {
+            return $this->ApiSpecResponses([
+                'message' => 'Password berhasil di reset'
+            ]);
+        }
+
+        return $this->ApiSpecResponses([
+            'message' => 'Gagal menghapus pegawai'
+        ], 500);
+
+    }
+
     public function restorePegawai($nip)
     {
         $this->pegawai->withTrashed()->where('nip', $nip)->restore();

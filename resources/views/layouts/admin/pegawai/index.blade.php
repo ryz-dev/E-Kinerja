@@ -119,7 +119,7 @@
                                 row += "<td>" + (val.jabatan ? val.jabatan.jabatan : '') + "</td>";
                                 row += "<td>" + (val.skpd ? val.skpd.nama_skpd : '') + "</td>";
                                 row += "<td>" + (val.jns_kel  ? val.jns_kel : '') + "</td>";
-                                row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='" + val.edit_uri + "' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='" + val.delete_uri + "' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
+                                row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='" + val.edit_uri + "' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='" + val.delete_uri + "' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button><button reset-pass-uri='" + val.reset_password_uri + "' class='btn btn-reset btn-primary'><i class='fas fa-key'></i></button></div></td>";
                                 row += "</tr>";
                                 return row;
                             })
@@ -174,7 +174,48 @@
                             })
                     }
                 })
-            })
+            });
+
+            $(document).on('click', '.btn-reset', function(e){
+                e.preventDefault();
+                var reset_pass_uri = $(this).attr('reset-pass-uri');
+                swal({
+                    title: 'Yakin Ingin Mereset Password?',
+                    text: "Proses tidak dapat di kembalikan",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Iya, Reset Password!',
+                    cancelButtonText: 'Tidak'
+                }).then((result) => {
+                    if (result.value) {
+                        $.get(reset_pass_uri)
+                            .then(function(res){
+                                if (res.diagnostic.code == '200') {
+                                    swal(
+                                        'Berhasil!',
+                                        res.response.message,
+                                        'success'
+                                    )
+                                } else {
+                                    swal(
+                                        'Gagal',
+                                        res.response.message,
+                                        'error'
+                                    )
+                                }
+                            }), function () {
+                                swal(
+                                    'Gagal',
+                                    '',
+                                    'error'
+                                )
+                        }
+                    }
+                })
+
+            });
+
             $('#skpd').on('change',function(e){
                 e.preventDefault();
                 var search = $('#search').val();
