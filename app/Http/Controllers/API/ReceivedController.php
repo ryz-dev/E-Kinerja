@@ -7,6 +7,8 @@ use App\Models\MasterData\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use function Faker\Provider\pt_BR\check_digit;
+use App\Http\Resources\Checkinout as AppCheckinout;
 
 class ReceivedController extends ApiController
 {
@@ -28,15 +30,19 @@ class ReceivedController extends ApiController
 
             return response()->json(['status' => 'Sukses', 'message' => 'Berhasil data di terima dan di simpan ke server', 'data' => $peg]);
         } else {
-            $absen = Checkinout::create([
-                'nip' => $js['Card'] ? $js['Card'] : "null_used_badge_" . $js['badgenumber'],
-                'checktime' => $js['checkinout']['checktime'],
-                'checktype' => $js['checkinout']['checktype'],
-                'verifycode' => $js['checkinout']['verifycode'],
-                'sn' => $js['checkinout']['sn'], 'sensorid' => $js['checkinout']['sensorid']
-            ]);
+            // cek data
+            $absensi = Checkinout::where('nip', $js['Card'])->orWhere('nip', "null_used_badge_" . $js['badgenumber'])->first();
+            if (empty($absensi)) {
+                $absen = Checkinout::create([
+                    'nip' => $js['Card'] ? $js['Card'] : "null_used_badge_" . $js['badgenumber'],
+                    'checktime' => $js['checkinout']['checktime'],
+                    'checktype' => $js['checkinout']['checktype'],
+                    'verifycode' => $js['checkinout']['verifycode'],
+                    'sn' => $js['checkinout']['sn'], 'sensorid' => $js['checkinout']['sensorid']
+                ]);
+                return response()->json(['status' => 'Sukses', 'message' => 'Berhasil data diterima dan di simpan ke server', 'data' => $pegawai]);
+            }
 
-            return response()->json(['status' => 'Sukses', 'message' => 'Berhasil data diterima dan di simpan ke server', 'data' => $pegawai]);
         }
     }
 }
