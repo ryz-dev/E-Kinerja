@@ -1,0 +1,18 @@
+DELIMITER $$
+	CREATE TRIGGER checkinout_after_insert AFTER INSERT
+	ON checkinout
+	FOR EACH ROW
+		BEGIN
+			DECLARE nip VARCHAR(20);
+			DECLARE is_exist INT;
+
+			SET @nip = (SELECT Card FROM userinfo WHERE userid = NEW.userid);
+
+			SET @is_exist = (SELECT COUNT(ekinerja_.checkinout.nip) FROM ekinerja_.checkinout WHERE ekinerja_.checkinout.nip = @nip AND ekinerja_.checkinout.checktime = NEW.checktime);
+
+			IF @is_exist = 0
+			THEN
+				INSERT INTO ekinerja_.checkinout (nip,checktime,checktype,sn) values(@nip, NEW.checktime, NEW.checktype,NEW.SN);
+			END IF;
+		END$$
+DELIMITER ;
