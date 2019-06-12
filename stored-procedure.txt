@@ -1,3 +1,6 @@
+-- SET: IN tanggal_pilihan DATE
+-- SET: OUT rowCount INT
+
 BEGIN
 	DECLARE bDone INT;
 
@@ -20,31 +23,26 @@ BEGIN
 
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET bDone = 1;
 
--- 	DROP TEMPORARY TABLE IF EXISTS tblResults;
--- 	CREATE TEMPORARY TABLE IF NOT EXISTS tblResults  (
--- 	    chkTime DATETIME,
--- 		chkType VARCHAR(1),
--- 		sn VARCHAR(20),
--- 		nip VARCHAR(20),
--- 		tanggal DATE,
--- 		counter INT
--- 	  );
-
 	OPEN curs;
 
 	SET counter = 0;
+	SET @rowCount = 0;
 	REPEAT
 		FETCH curs INTO chkTime, chkType, _sn, _nip;
-			SET counter = (SELECT count(nip) FROM checkinout WHERE nip = RTRIM(LTRIM(_nip) AND checktime=chkTime AND checktype=chkType AND sn=_sn ) );
+			SET counter = (SELECT count(nip) FROM checkinout WHERE RTRIM(LTRIM(nip)) = RTRIM(LTRIM(_nip)) AND checktime=chkTime AND checktype=chkType AND sn=_sn );
+			-- SELECT _nip,chkTime,chkType,_sn,counter;
 			IF (counter = 0 ) THEN
 				IF (_nip) THEN
-					INSERT INTO checkinout (nip,checktime,checktype,sn) values(_nip, chkTime, chkType,_sn);
+					 INSERT INTO checkinout (nip,checktime,checktype,sn) values(_nip, chkTime, chkType,_sn);
+					 SET @rowCount = @rowCount + ROW_COUNT();
 -- 					INSERT INTO tblResults VALUES (chkTime, chkType, _sn, _nip, _dates, counter);
-				END IF;
-			END IF;
-		SET counter = 0;
+				 END IF;
+			 END IF;
+		 SET counter = 0;
 	UNTIL bDone END REPEAT;
 -- 	checktime=chkTime AND checktype=chkType AND sn=_sn AND
 	CLOSE curs;
--- SELECT * FROM tblResults;
+
+
+	SELECT @rowCount AS hasil;
 END
