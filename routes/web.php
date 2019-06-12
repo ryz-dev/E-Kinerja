@@ -196,6 +196,7 @@ Route::group(['prefix'=>'admin'], function(){
             Route::group(['prefix' => 'checkinout'], function(){
                 Route::get('','CheckinoutController@index')->name('checkinout.index');
                 Route::get('add','CheckinoutController@create')->name('checkinout.create');
+                Route::get('sync', 'CheckinoutController@sync')->name('checkinout.sync');
                 Route::get('{id}','CheckinoutController@show')->name('checkinout.show');
                 Route::get('edit/{id}','CheckinoutController@edit')->name('checkinout.edit');
                 Route::post('','CheckinoutController@store')->name('checkinout.store');

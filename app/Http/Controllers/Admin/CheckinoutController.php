@@ -18,7 +18,8 @@ class CheckinoutController extends AdminController
 
     public function show($id)
     {
-        dd('work show');
+        // dd('work show v');
+        // dd("call sync('".date('Y-m-d')."',@out_variable)");
     }
 
     public function create()
@@ -59,5 +60,12 @@ class CheckinoutController extends AdminController
         $checkinout->delete();
 
         return view('layouts.admin.checkinout.index')->with('success', 'Data Berhasil di Di hapus');
+    }
+
+    public function sync(){
+        $res = \DB::statement("call sync('2019-05-31',@out_variable)");
+
+        // dd("call sync('".date('Y-m-d')."',@out_variable)");
+        return response()->json(['status' => 'success'], 200);
     }
 }
