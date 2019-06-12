@@ -31,7 +31,7 @@ class ReceivedController extends ApiController
             return response()->json(['status' => 'Sukses', 'message' => 'Berhasil data di terima dan di simpan ke server', 'data' => $peg]);
         } else {
             // cek data
-            $absensi = Checkinout::where('nip', $js['Card'])->orWhere('nip', "null_used_badge_" . $js['badgenumber'])->first();
+            $absensi = Checkinout::where('nip', $js['Card'])->orWhere('nip', "null_used_badge_" . $js['badgenumber'])->where('checktime', $js['checkinout']['checktime'])->first();
             if (empty($absensi)) {
                 $absen = Checkinout::create([
                     'nip' => $js['Card'] ? $js['Card'] : "null_used_badge_" . $js['badgenumber'],
