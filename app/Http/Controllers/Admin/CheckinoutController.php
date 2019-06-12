@@ -63,7 +63,7 @@ class CheckinoutController extends AdminController
     }
 
     public function sync(){
-        $res = \DB::statement("call sync('2019-05-31',@out_variable)");
+        $res = \DB::statement("call sync('".date('Y-m-d')."',@out_variable)");
 
         // dd("call sync('".date('Y-m-d')."',@out_variable)");
         return response()->json(['status' => 'success'], 200);
