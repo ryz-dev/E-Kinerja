@@ -108,7 +108,7 @@
             title: 'Sinkronisasi data absensi',
             confirmButtonText: 'Sinkronisasi!',
             text:
-                'Data absensi akan di sinkronisasi dengan data absensi ' +
+                'Data absensi akan di sinkronisasi dengan data kinerja ' +
                 'proses ini mungkin membutuhkan beberapa waktu, mohon untuk tidak menutup jendela ini sampai proses selesai',
             showLoaderOnConfirm: true,
             preConfirm: () => {
