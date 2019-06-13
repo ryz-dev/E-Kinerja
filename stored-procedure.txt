@@ -1,0 +1,48 @@
+-- SET: IN tanggal_pilihan DATE
+-- SET: OUT rowCount INT
+
+BEGIN
+	DECLARE bDone INT;
+
+	DECLARE chkTime DATETIME;
+	DECLARE chkType VARCHAR(1);
+	DECLARE _sn VARCHAR(20);
+	DECLARE _nip VARCHAR(20);
+	DECLARE _dates DATE;
+	DECLARE counter INT;
+
+	DECLARE curs CURSOR FOR
+		SELECT adms_db.checkinout.checktime,
+		adms_db.checkinout.checktype,
+		adms_db.checkinout.SN,
+		adms_db.userinfo.Card
+		FROM adms_db.checkinout
+		JOIN adms_db.userinfo
+		ON adms_db.checkinout.userid=adms_db.userinfo.userid
+		WHERE DATE(checktime)= tanggal_pilihan;
+
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET bDone = 1;
+
+	OPEN curs;
+
+	SET counter = 0;
+	SET @rowCount = 0;
+	REPEAT
+		FETCH curs INTO chkTime, chkType, _sn, _nip;
+			SET counter = (SELECT count(nip) FROM checkinout WHERE RTRIM(LTRIM(nip)) = RTRIM(LTRIM(_nip)) AND checktime=chkTime AND checktype=chkType AND sn=_sn );
+			-- SELECT _nip,chkTime,chkType,_sn,counter;
+			IF (counter = 0 ) THEN
+				IF (_nip) THEN
+					 INSERT INTO checkinout (nip,checktime,checktype,sn) values(_nip, chkTime, chkType,_sn);
+					 SET @rowCount = @rowCount + ROW_COUNT();
+-- 					INSERT INTO tblResults VALUES (chkTime, chkType, _sn, _nip, _dates, counter);
+				 END IF;
+			 END IF;
+		 SET counter = 0;
+	UNTIL bDone END REPEAT;
+-- 	checktime=chkTime AND checktype=chkType AND sn=_sn AND
+	CLOSE curs;
+
+
+	SELECT @rowCount AS hasil;
+END

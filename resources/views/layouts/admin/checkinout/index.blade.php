@@ -10,7 +10,8 @@
     </div>
     <div class="main-content">
         <div class="container-fluid">
-          <a href="{{route('checkinout.create')}}" class="btn btn-success">Tambah Absen</a>
+          <a href="{{route('checkinout.create')}}" class="btn btn-success"><i class="fa fa-plus"></i> Tambah Absen</a>
+          <button id="sync-btn"  class="btn btn-info"><i class="fa fa-sync"></i> Sinkronisasi Data Absen</button>
           <br><br>
             <div class="table-responsive">
                 <table class="table">
@@ -75,7 +76,7 @@
               data: '',
               success: function(res) {
                   var data = res.response.map(function (val) {
-                    let date = moment(val.checktime);                    
+                    let date = moment(val.checktime);
                       var row = '';
                       row += "<tr>";
                       row += "<td></td>";
@@ -100,6 +101,35 @@
               }
           });
       }
+
+      $(document).on('click','#sync-btn', function(e){
+        e.preventDefault();
+            Swal.queue([{
+            title: 'Sinkronisasi data absensi',
+            confirmButtonText: 'Sinkronisasi!',
+            text:
+                'Data absensi akan di sinkronisasi dengan data kinerja ' +
+                'proses ini mungkin membutuhkan beberapa waktu, mohon untuk tidak menutup jendela ini sampai proses selesai',
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return fetch('{{ route('checkinout.sync') }}')
+                .then(response => response.json())
+                .then(data =>
+                    swal(
+                        'Berhasil',
+                        'Data Absen Berhasil Di Sinkronisasi.',
+                        'success'
+                    )
+                )
+                .catch(() => {
+                    Swal.insertQueueStep({
+                    type: 'error',
+                    title: 'Terjadi Error Saat Proses Sinkronisasi'
+                    })
+                })
+            }
+        }])
+      });
 
       $(document).on('click','.btn-delete',function (e) {
                     e.preventDefault();
@@ -139,7 +169,7 @@
                     getPage(search);
                 })
 
-      
+
   	</script>
   @endpush
 

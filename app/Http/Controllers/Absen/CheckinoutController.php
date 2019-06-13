@@ -17,7 +17,8 @@ class CheckinoutController extends Controller
 
     public function show($id)
     {
-        dd('work show');
+        // dd('work show');
+        dd("call sync('".date('Y-m-d')."',@out_variable)");
     }
 
     public function create()
@@ -59,5 +60,11 @@ class CheckinoutController extends Controller
             return response()->json(['status' => 'error']);
         }
 
+    }
+
+    public function sync(){
+        // $res = \DB::select("call sync('".date('Y-m-d')."',@out_variable)");
+
+        dd("call sync('".date('Y-m-d')."',@out_variable)");
     }
 }
