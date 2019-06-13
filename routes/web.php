@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth'],function (){
         Route::group(['prefix' => 'input-kinerja'],function (){
             Route::group(['prefix' => 'api'],function (){
                 Route::post('','InputKinerjaController@inputKinerja')->name('input-kinerja.api.post');
+                Route::get('kinerja','InputKinerjaController@getKinerja')->name('input-kinerja.api.get-kinerja');
                 Route::get('draft','InputKinerjaController@getKinerjaTersimpan')->name('input-kinerja.api.draft');
                 Route::post('delete/draft/{id}','InputKinerjaController@hapusKinerjaTersimpan')->name('input-kinerja.api.delete-draft');
             });
