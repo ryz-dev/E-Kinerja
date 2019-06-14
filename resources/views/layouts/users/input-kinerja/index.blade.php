@@ -82,7 +82,7 @@
                         {{csrf_field()}}
                         <input type="hidden" name="id">
                         <input type="hidden" name="jenis_kinerja" value="hadir">
-{{--                        <input type="hidden" name="status">--}}
+                        {{--                        <input type="hidden" name="status">--}}
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="input-group hadir">
@@ -94,64 +94,72 @@
                                     </label>
                                 </div>
                                 @if (!$skp_selesai->isEmpty())
-                                <div class="col-md-12 mb-1">
-                                    <label class="text-secondary" style="font-size: 1.2em">SKP Selesai</label>
-                                    @foreach($skp_selesai As $ss)
-                                        <label class="container-check">
-                                            <p>{{$ss->skpTask->task}}</p>
-                                            <input type="checkbox" name="skp_selesai[{{$ss->id}}]" checked readonly onclick="return false">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    @endforeach
-                                </div>
+                                    <div class="col-md-12 mb-1">
+                                        <label class="text-secondary" style="font-size: 1.2em">SKP Selesai</label>
+                                        @foreach($skp_selesai As $ss)
+                                            <label class="container-check">
+                                                <p>{{$ss->skpTask->task}}</p>
+                                                <input type="checkbox" name="skp_selesai[{{$ss->id}}]" checked readonly
+                                                       onclick="return false">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        @endforeach
+                                    </div>
                                 @endif
                                 <div class="col-md-12 mb-1">
                                     <label class="text-secondary" style="font-size: 1.2em">List SKP</label>
                                     <div class="wrap-progress">
                                         <label>0%</label>
                                         <div class="progress" style="height: 8px;">
-                                            <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar" role="progressbar" style="width: 0%"
+                                                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-1">
                                     @foreach($skp_pegawai As $sp)
-                                    <label class="container-check">
-                                        <p>{{$sp->skpTask->task}}</p>
-                                        <input type="checkbox" name="skp_pegawai[]" value="{{$sp->id}}" {{$sp->status ? 'checked' : ''}}>
-                                        <span class="checkmark"></span>
-                                    </label>
+                                        <label class="container-check">
+                                            <p>{{$sp->skpTask->task}}</p>
+                                            <input type="checkbox" name="skp_pegawai[]"
+                                                   value="{{$sp->id}}" {{$sp->status ? 'checked' : ''}}>
+                                            <span class="checkmark"></span>
+                                        </label>
                                     @endforeach
                                 </div>
 
-                                <div class="col-md-12 mt-4">
+                                <div class="col-md-12 mt-4" id="media-text">
                                     <label class="text-secondary" style="font-size: 1.2em">Upload Dokumen</label>
-{{--                                    <div class="uploads mb-3">--}}
-{{--                                        <img src="/assets/images/icons/word.svg">--}}
-{{--                                        <label>Lorem ipsum dolor sit amet consectetur adipisicing</label>--}}
-{{--                                        <button>--}}
-{{--                                            <i class="material-icons">delete</i>--}}
-{{--                                            Hapus--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
+                                    {{--                                    <div class="uploads mb-3">--}}
+                                    {{--                                        <img src="/assets/images/icons/word.svg">--}}
+                                    {{--                                        <label>Lorem ipsum dolor sit amet consectetur adipisicing</label>--}}
+                                    {{--                                        <button>--}}
+                                    {{--                                            <i class="material-icons">delete</i>--}}
+                                    {{--                                            Hapus--}}
+                                    {{--                                        </button>--}}
+                                    {{--                                    </div>--}}
                                 </div>
 
-                                <div class="col-md-12 mb-3">
-{{--                                    <form action="/file-upload" class="dropzone">--}}
-                                        <div class="dropzone">
-                                            <div class="dz-message " data-dz-message>
-                                                <i class="material-icons">cloud_upload</i>
-                                                <span class="ml-3">Upload Dokumen</span>
-                                                <div class="fallback">
-                                                    <input name="doc[]" type="file" multiple />
-                                                </div>
+                                <div class="col-md-12 mb-3" id="media">
+                                    {{--                                    <form action="/file-upload" class="dropzone">--}}
+                                    <div class="dropzone">
+                                        <div class="dz-message " data-dz-message>
+                                            <i class="material-icons">cloud_upload</i>
+                                            <span class="ml-3">Upload Dokumen</span>
+                                            <div class="fallback">
+                                                <input name="doc[]" type="file" multiple/>
                                             </div>
                                         </div>
-{{--                                    </form>--}}
+                                    </div>
+                                    {{--                                    </form>--}}
                                 </div>
 
                                 <div class="col-md-12">
-                                    <textarea class="rincianKinerja" name="rincian_kinerja" rows="3" placeholder="Rincian Kinerja"></textarea>
+                                    <div id="rincian-kinerja-terkirim" style="display: none">
+                                        Rincian Kinerja :
+                                        <p></p>
+                                    </div>
+                                    <textarea class="rincianKinerja" name="rincian_kinerja" rows="3"
+                                              placeholder="Rincian Kinerja"></textarea>
                                     {{--<div class="rincianKinerja" contenteditable="true">
                                         <span>Rincian Kinerja</span>
                                         <p id="rincian-kinerja">
@@ -159,9 +167,12 @@
                                         </p>
                                         <input type="hidden" name="rincian_kinerja" required>
                                     </div>--}}
-                                    <a style="color: white; display: none" id="hapus-kinerja" class="btn btn-warning mt-3">Hapus</a>
-{{--                                    <button type="submit" data-status="5" class="btn btn-custom mt-3">Simpan</button>--}}
-                                    <button type="submit" data-status="0"  class="btn btn-success float-right mt-3">Kirim</button>
+                                    <a style="color: white; display: none" id="hapus-kinerja"
+                                       class="btn btn-warning mt-3">Hapus</a>
+                                    {{--                                    <button type="submit" data-status="5" class="btn btn-custom mt-3">Simpan</button>--}}
+                                    <button id="kirim-kinerja" type="submit" data-status="0"
+                                            class="btn btn-success float-right mt-3">Kirim
+                                    </button>
                                 </div>
                             </div>
                             <div class="col-md-4 time-desc">
@@ -416,9 +427,63 @@
                 form.addClass('active-form');
                 form.find('[name=radio]').attr('checked', 'checked')
             })
-            $('[type=submit]').on('click',function () {
+            $('[type=submit]').on('click', function () {
                 $(this).addClass('active').siblings().removeClass('active')
             })
+
+            function persentaseSkp() {
+                skp_selesai = $('[name*=skp_selesai]').length ? $('[name*=skp_selesai]').length : 0;
+                skp = $('[name*=skp_pegawai]').length ? $('[name*=skp_pegawai]').length : 0
+                skp_checked = $('[name*=skp_pegawai]:checked').length ? $('[name*=skp_pegawai]:checked').length : 0
+                persentase = 0;
+                if (skp + skp_selesai > 0) {
+                    persentase = (skp_checked + skp_selesai) / (skp + skp_selesai) * 100;
+                }
+                $('.wrap-progress').find('label').html(Math.floor(persentase) + '%')
+                $('.wrap-progress').find('.progress-bar').css({width: persentase + '%'})
+            }
+
+            function getKinerja() {
+                $.get('{{route('input-kinerja.api.get-kinerja')}}', {'_token': '{{csrf_token()}}'})
+                    .then(function (res) {
+                        if (res.response != null) {
+                            if (res.response.jenis_kinerja == 'hadir') {
+                                $('#hadir [name=id]').val(res.response.id)
+                                if (res.response.skp_pegawai.length > 0) {
+                                    res.response.skp_pegawai.map(function (val) {
+                                        $('[name*=skp_pegawai][value=' + val.id + ']').click()
+                                    })
+                                    $('[name*=skp_pegawai]').attr('disabled', true);
+                                }
+                                if (res.response.media.length > 0) {
+                                    media = res.response.media.map(function (val) {
+                                        return '<div class="downloads mb-3">\n' +
+                                            '                              <img src="/assets/images/icons/word.svg">\n' +
+                                            '                              <label>' + val.nama_media + '</label>\n' +
+                                            '                              <button onclick="window.open(\'' + val.media + '\'); return false" type="submit">\n' +
+                                            '                                  <i class="material-icons mr-1">cloud_download</i>\n' +
+                                            '                                  Download\n' +
+                                            '                              </button>\n' +
+                                            '                          </div>'
+                                    });
+                                    $('#media').html('<div>' + media.join('') + '</div>');
+                                } else {
+                                    $('#media-text').hide();
+                                }
+                                $('#rincian-kinerja-terkirim>p').html(res.response.rincian_kinerja)
+                                $('#rincian-kinerja-terkirim').show();
+                                $('.rincianKinerja,.dropzone').hide();
+                                $('#hapus-kinerja').show();
+                                $('#kirim-kinerja').hide();
+                            }
+                        }
+                    }, function () {
+
+                    })
+            }
+
+            persentaseSkp();
+            getKinerja();
             {{--var getDraft = function() {--}}
             {{--    $.get('{{route('input-kinerja.api.draft')}}', {--}}
             {{--        '_token': '{{csrf_token()}}'--}}
@@ -441,51 +506,40 @@
             {{--        })--}}
             {{--}--}}
             // getDraft();
-            {{--$('#hapus-kinerja').on('click',function (e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    id = $('#hadir').find('[name=id]').val()--}}
-            {{--    if (id){--}}
-            {{--        swal({--}}
-            {{--            title: 'Ingin Menghapus Draft Kinerja?',--}}
-            {{--            text: "",--}}
-            {{--            type: 'warning',--}}
-            {{--            showCancelButton: true,--}}
-            {{--            confirmButtonText: 'Iya, hapus draft!',--}}
-            {{--            cancelButtonText: 'Batalkan'--}}
-            {{--        }).then((result) => {--}}
-            {{--            if (result.value) {--}}
-            {{--                $.post('{{route('input-kinerja.api.delete-draft',['id' => ''])}}/' + id, {--}}
-            {{--                    '_token': '{{csrf_token()}}'--}}
-            {{--                })--}}
-            {{--                    .then(function (res) {--}}
-            {{--                        swal(--}}
-            {{--                            res.response.message,--}}
-            {{--                            '',--}}
-            {{--                            'success'--}}
-            {{--                        );--}}
-            {{--                        // getDraft()--}}
-            {{--                    }, function (err) {--}}
-            {{--                        console.log(err)--}}
-            {{--                    })--}}
-            {{--            }--}}
-            {{--        })--}}
-            {{--    }--}}
-            {{--})--}}
-            $('[name*=skp_pegawai]').on('click',function () {
+            $('#hapus-kinerja').on('click', function (e) {
+                e.preventDefault();
+                id = $('#hadir').find('[name=id]').val()
+                if (id) {
+                    swal({
+                        title: 'Ingin Menghapus Kinerja ?',
+                        text: "",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Iya, hapus kinerja!',
+                        cancelButtonText: 'Batalkan'
+                    }).then((result) => {
+                        if (result.value) {
+                            $.post('{{route('input-kinerja.api.delete-draft',['id' => ''])}}/' + id, {
+                                '_token': '{{csrf_token()}}'
+                            })
+                                .then(function (res) {
+                                    swal(
+                                        res.response.message,
+                                        '',
+                                        'success'
+                                    );
+                                    location.reload()
+                                    // getDraft()
+                                }, function (err) {
+                                    console.log(err)
+                                })
+                        }
+                    })
+                }
+            })
+            $('[name*=skp_pegawai]').on('click', function () {
                 persentaseSkp();
             })
-            function persentaseSkp(){
-                skp_selesai = $('[name*=skp_selesai]').length ? $('[name*=skp_selesai]').length : 0;
-                skp = $('[name*=skp_pegawai]').length ? $('[name*=skp_pegawai]').length : 0
-                skp_checked = $('[name*=skp_pegawai]:checked').length ? $('[name*=skp_pegawai]:checked').length : 0
-                persentase = 0;
-                if (skp+skp_selesai > 0) {
-                    persentase = (skp_checked + skp_selesai) / (skp + skp_selesai) * 100;
-                }
-                $('.wrap-progress').find('label').html(Math.floor(persentase)+'%')
-                $('.wrap-progress').find('.progress-bar').css({width : persentase+'%'})
-            }
-            persentaseSkp();
             $(document).on('submit', '.form-submit-kinerja.active-form', function (e) {
                 e.preventDefault();
                 // text = $('#rincian-kinerja').text();
@@ -497,17 +551,17 @@
                 //     info = 'simpan'
                 //     info2 = 'Menyimpan'
                 // } else {
-                    info = 'kirim'
-                    info2 = 'Mengirim'
+                info = 'kirim'
+                info2 = 'Mengirim'
                 // }
                 var formData = new FormData($(this)[0]);
 
                 swal({
-                    title: 'Ingin '+info2+' Data Kinerja?',
+                    title: 'Ingin ' + info2 + ' Data Kinerja?',
                     text: "",
                     type: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Iya, '+info+' data!',
+                    confirmButtonText: 'Iya, ' + info + ' data!',
                     cancelButtonText: 'Batalkan'
                 }).then((result) => {
                     if (result.value) {
@@ -521,14 +575,15 @@
                                 $('.loading').hide();
                                 if (res.diagnostic.code == 200) {
                                     swal(
-                                        'Berhasil '+info2+' Data!',
+                                        'Berhasil ' + info2 + ' Data!',
                                         '',
                                         'success'
                                     );
+                                    location.reload()
                                     // getDraft()
                                 } else {
                                     swal(
-                                        'Gagal '+info2+' Data!',
+                                        'Gagal ' + info2 + ' Data!',
                                         res.diagnostic.message,
                                         'warning'
                                     );
@@ -536,7 +591,7 @@
                             },
                             error: function () {
                                 swal(
-                                    'Gagal '+info2+' Data!',
+                                    'Gagal ' + info2 + ' Data!',
                                     '',
                                     'warning'
                                 );

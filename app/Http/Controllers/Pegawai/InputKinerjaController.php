@@ -32,6 +32,15 @@ class InputKinerjaController extends Controller
         return view('layouts.users.input-kinerja.index',compact('skp_pegawai','skp_selesai'));
     }
 
+    public function getKinerja()
+    {
+        $nip = auth('web')->user()->nip;
+        if ($kinerja = $this->kinerja->getKinerja($nip)) {
+            return $this->ApiSpecResponses($kinerja);
+        }
+        return null;
+    }
+
     public function getKinerjaTersimpan()
     {
         $nip = auth('web')->user()->nip;

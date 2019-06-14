@@ -201,6 +201,10 @@ class KinerjaRepository extends BaseRepository
         return $this->count();
     }
 
+    public function getKinerja($nip){
+        return $this->model->with('skp_pegawai','media')->where('nip', $nip)->where('tgl_mulai', date('Y-m-d'))->where('jenis_kinerja', 'hadir')->where('approve','=','0')->first();
+    }
+
     public function getKinerjaTersimpan($nip)
     {
         return $this->model->with('skp_pegawai')->where('nip', $nip)->where('tgl_mulai', date('Y-m-d'))->where('jenis_kinerja', 'hadir')->where('approve', '5')->first();
@@ -208,7 +212,7 @@ class KinerjaRepository extends BaseRepository
 
     public function deleteKinerjaTersimpan($id, $nip)
     {
-        if ($cek_kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja', 'hadir')->where('approve', '5')->where('tgl_mulai', date('Y-m-d'))->find($id)) {
+        if ($cek_kinerja = $this->model->where('nip', $nip)->where('jenis_kinerja', 'hadir')->where('approve', '0')->where('tgl_mulai', date('Y-m-d'))->find($id)) {
             return $cek_kinerja->delete() ? true : false;
         }
         return false;
