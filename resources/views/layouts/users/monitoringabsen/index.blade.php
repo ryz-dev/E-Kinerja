@@ -20,7 +20,7 @@
                             </div>
                             <select id="skpd" class="custom-select select-custome">
                                 @foreach ($skpd as $key => $item)
-                                <option value="{{ $key }}">{{ $item }}</option>    
+                                <option value="{{ $key }}">{{ $item }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -32,7 +32,7 @@
 
     </div>
     <div class="main-content">
-        
+
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-9">
@@ -160,7 +160,7 @@
             var date = $(this).val();
             var skpd = $('#skpd').val();
             var search = $("#search").val();
-            getPage(date,skpd,search);    
+            getPage(date,skpd,search);
         });
 
         $('#search').on('keyup', function () {
@@ -180,16 +180,16 @@
                 return absen.absen_in+" <span> - </span> "+absen.absen_out;
             }
             else{
-                return parseKinerja(absen.absensi);
+                return parseKinerja(absen);
             }
         }
 
         var parseKinerja = function(data){
-            
-            if (data == "hadir") {
-                
+
+            if (data.absensi == "hadir") {
+
             }
-                switch (data) {
+                switch (data.absensi) {
                     case 'sakit':
                         return '<span class="badge badge-table badge-red">Sakit</span>'
                         break;
@@ -206,7 +206,7 @@
                         return '<span class="badge badge-table badge-purple">LIBUR</span>';
                         break;
                     case 'alpa':
-                        return  '<span class="badge badge-table badge-gray">Alpa</span>';
+                        return  '<span class="badge badge-table badge-gray">Alpa : '+ data.absen_in+" - "+data.absen_out +'</span>';
                         break;
                     case 'uncount':
                         return  '-';
@@ -247,8 +247,8 @@
                 data: '',
                 success: function(res) {
                     $('.datepicker').val(res.response.today);
-                    $('#prevdate').attr('data-date',res.response.dayBefore); 
-                    $('#nextdate').attr('data-date',res.response.dayAfter); 
+                    $('#prevdate').attr('data-date',res.response.dayBefore);
+                    $('#nextdate').attr('data-date',res.response.dayAfter);
                     $('#text-date').text(res.response.dateString);
                     $('.count-hadir').text(res.response.summary.hadir);
                     $('.count-perjalanan-dinas').text(res.response.summary.perjalanan_dinas);
@@ -258,7 +258,7 @@
                     $('.count-alpha').text(res.response.summary.alpha);
 
                     if (res.response.pegawai.data.length > 0) {
-                        var data = res.response.pegawai.data.map(function (val) { 
+                        var data = res.response.pegawai.data.map(function (val) {
                             let row = '';
                             let foto = val.foto ? "{{url('')}}/storage/" + val.foto : "{{url('assets/images/img-user.png')}}"
                             let apel = '<img src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
@@ -268,6 +268,7 @@
                             row += "<td>" + val.nama + ( val.apel ? apel : '') +"</td>";
                             row += "<td>"+parseAbsen(val)+"</td>";
                             row += "</tr>";
+
                             return row;
                         })
                         selector.html(data.join(''));

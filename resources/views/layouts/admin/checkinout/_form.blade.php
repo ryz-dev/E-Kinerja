@@ -17,7 +17,7 @@
             <label for="nip">NIP</label>
             <select id="s2" class="form-control select2" name="nip">
                 @foreach($data as $nip)
-                
+
                     <option value="{{$nip}}" {{ !empty($checkinout) && $checkinout->nip === $nip ? "selected" : "" }}>{{$nip}}</option>
                 @endforeach
             </select>
@@ -28,11 +28,11 @@
         </div>
         <div class="form-group">
             <label for="verifycode">Verify Code</label>
-            {{ Form::number('verifycode', null, ['class'=>'form-control', 'required' => '']) }}
+            {{ Form::number('verifycode', null, ['class'=>'form-control']) }}
         </div>
         <div class="form-group">
             <label for="sensorid">Sensor ID</label>
-            {{ Form::number('sensorid', null, ['class'=>'form-control', 'required' => '']) }}
+            {{ Form::number('sensorid', null, ['class'=>'form-control']) }}
         </div>
         <div class="form-group">
             <label for="checktype">Check Type</label>
@@ -40,11 +40,11 @@
         </div>
         <div class="form-group">
             <label for="workcode">Work Code</label>
-            {{ Form::number('workcode', null, ['class'=>'form-control', 'required' => '']) }}
+            {{ Form::number('workcode', null, ['class'=>'form-control']) }}
         </div>
         <div class="form-group">
             <label for="sn">SN</label>
-            {{ Form::number('sn', null, ['class'=>'form-control', 'required' => '']) }}
+            {{ Form::number('sn', null, ['class'=>'form-control']) }}
         </div>
     </div>
     <div class="col-md-12 right">
