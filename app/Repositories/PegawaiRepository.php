@@ -123,7 +123,7 @@ class PegawaiRepository extends BaseRepository
                     $query->where('id_atasan', '=', $user->id_jabatan);
                 });
             } else {
-                $pegawai->where('id_skpd',$user->id_skpd);
+                $pegawai->where('id_skpd',$user->id_skpd)->where('nip','!=',$user->nip);
             }
         }
 
@@ -166,7 +166,7 @@ class PegawaiRepository extends BaseRepository
                     $query->where('id_atasan', '=', $user->id_jabatan);
                 });
             } else {
-                $pegawai->where('id_skpd',$user->id_skpd);
+                $pegawai->where('id_skpd',$user->id_skpd)->where('nip','!=',$user->nip);
             }
         }
         if ($search) {
@@ -594,7 +594,7 @@ class PegawaiRepository extends BaseRepository
                     $query->where('id_atasan', '=', $user->id_jabatan);
                 });
             } else {
-                $pegawai->where('id_skpd',$user->id_skpd);
+                $pegawai->where('id_skpd',$user->id_skpd)->where('nip','!=',$user->nip);
             }
         }
 
@@ -814,7 +814,7 @@ class PegawaiRepository extends BaseRepository
                         $query->where('id_atasan', '=', $user->id_jabatan);
                     });
                 } else {
-                    $pegawai->where('id_skpd',$user->id_skpd);
+                    $pegawai->where('id_skpd',$user->id_skpd)->where('nip','!=',$user->nip);
                 }
             }
 
