@@ -27,7 +27,7 @@ class PegawaiRepository extends BaseRepository
 {
     public $pegawai;
     private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
-    private $special_user_id = [1, 2, 3];
+    private $special_user_id = [2, 3, 4];
     private $jam_masuk = '09:00:59';
     private $jam_masuk_upacara = '07.30.59';
 
@@ -118,10 +118,12 @@ class PegawaiRepository extends BaseRepository
         $data = Pegawai::where('nip', '<>', '');
 
         if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
-            if ($user->role()->pluck('id_role')->max() != 5) {
+            if ($user->role()->pluck('id_role')->max() > 5) {
                 $data->whereHas('jabatan', function ($query) use ($user) {
                     $query->where('id_atasan', '=', $user->id_jabatan);
                 });
+            } else {
+                $pegawai->where('id_skpd',$user->id_skpd);
             }
         }
 
@@ -159,10 +161,12 @@ class PegawaiRepository extends BaseRepository
         $pegawai = $pegawai->orderBy('golongan.tunjangan', 'desc');
         $pegawai = $pegawai->orderBy('pegawai.nama');
         if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
-            if ($user->role()->pluck('id_role')->max() != 5) {
+            if ($user->role()->pluck('id_role')->max() > 5) {
                 $pegawai->whereHas('jabatan', function ($query) use ($user) {
                     $query->where('id_atasan', '=', $user->id_jabatan);
                 });
+            } else {
+                $pegawai->where('id_skpd',$user->id_skpd);
             }
         }
         if ($search) {
@@ -585,10 +589,12 @@ class PegawaiRepository extends BaseRepository
         $pegawai = $pegawai->orderBy('golongan.tunjangan', 'desc');
         $pegawai = $pegawai->orderBy('pegawai.nama');
         if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
-            if ($user->role()->pluck('id_role')->max() != 5) {
+            if ($user->role()->pluck('id_role')->max() > 5) {
                 $pegawai->whereHas('jabatan', function ($query) use ($user) {
                     $query->where('id_atasan', '=', $user->id_jabatan);
                 });
+            } else {
+                $pegawai->where('id_skpd',$user->id_skpd);
             }
         }
 
@@ -803,10 +809,12 @@ class PegawaiRepository extends BaseRepository
 
         try {
             if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
-                if ($user->role()->pluck('id_role')->max() != 5) {
+                if ($user->role()->pluck('id_role')->max() > 5) {
                     $pegawai->whereHas('jabatan', function ($query) use ($user) {
                         $query->where('id_atasan', '=', $user->id_jabatan);
                     });
+                } else {
+                    $pegawai->where('id_skpd',$user->id_skpd);
                 }
             }
 
