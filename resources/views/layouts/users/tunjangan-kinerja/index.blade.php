@@ -611,6 +611,8 @@
                         var media = kinerja.media.map(function (val, index) {
                             if (index == 0){
                                 res = '<label class="text-secondary" style="font-size: 1.2em">Dokumen SKP</label>'
+                            } else {
+                                res = '';
                             }
                             res += '<div class="downloads mb-3">\n' +
                                 '    <img src="{{asset('assets/images/icons/word.svg')}}">\n' +
@@ -624,6 +626,7 @@
                         })
                         $('#media-pegawai').html(media.join(''))
                     }
+                    $('#nilai_kinerja').html(kinerja.nilai_kinerja)
                 }
 
                 window['trigger-modal'] = 0;
