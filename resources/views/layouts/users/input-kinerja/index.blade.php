@@ -16,7 +16,7 @@
 
             <div class="hiddenIconMenu">
                 <ul class="nav nav-pills" id="myTab" role="tablist">
-                    <li><a class="active" id="hadir-tab" data-toggle="tab" href="#hadir" role="tab" aria-controls="home"
+                     <li><a class="active" id="hadir-tab" data-toggle="tab" href="#hadir" role="tab" aria-controls="home"
                            aria-selected="true"><span class="hadir">
                                     <img src="assets/images/icons/hadir.svg">
                                 </span>

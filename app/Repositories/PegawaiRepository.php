@@ -27,7 +27,7 @@ class PegawaiRepository extends BaseRepository
 {
     public $pegawai;
     private $special_user = ['Bupati', 'Wakil Bupati', 'Sekretaris Daerah'];
-    private $special_user_id = [2, 3, 4];
+    private $special_user_id = [1, 2, 3];
     private $jam_masuk = '09:00:59';
     private $jam_masuk_upacara = '07.30.59';
 
@@ -685,7 +685,11 @@ class PegawaiRepository extends BaseRepository
                     $kinerja += $itemkinerja->nilai_kinerja;
                 }
                 if ($itemkinerja->tgl_mulai <= $value->tanggal && $itemkinerja->tgl_selesai >= $value->tanggal && $itemkinerja->approve == 2 && $itemkinerja->jenis_kinerja <> 'hadir') {
-                    $absen_tambahan++;
+                    if ($itemkinerja->jenis_kinerja == 'sakit' || $itemkinerja == 'izin'){
+                        $absen_tambahan += 0.2;
+                    } else {
+                        $absen_tambahan++;
+                    }
                 }
             }
             return collect(['kinerja' => $kinerja, 'absen_tambahan' => $absen_tambahan, 'tanggal' => $value->tanggal]);
@@ -793,7 +797,8 @@ class PegawaiRepository extends BaseRepository
                     ->whereDate('tgl_mulai', '<=', $date)
                     ->whereDate('tgl_selesai', '>=', $date);
             }
-        ])->leftJoin('jabatan', 'pegawai.id_jabatan', '=', 'jabatan.id')
+        ])
+            ->leftJoin('jabatan', 'pegawai.id_jabatan', '=', 'jabatan.id')
             ->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id');
 
         try {

@@ -515,8 +515,12 @@ class KinerjaRepository extends BaseRepository
                 if ($row_kinerja = $knj->where('approve', 2)->first()) {
                     $jumlah_kinerja += $row_kinerja->nilai_kinerja;
                 }
-                if ($knj->where('jenis_kinerja', '<>', 'hadir')->where('approve', 2)->first()) {
-                    $absen++;
+                if ($k = $knj->where('jenis_kinerja', '<>', 'hadir')->where('approve', 2)->first()) {
+                    if ($k->jenis_kinerja == 'izin' || $k->jenis_kinerja == 'sakit') {
+                        $absen += 0.2;
+                    } else {
+                        $absen++;
+                    }
                 }
             }
             if (($jumlah_hari - $nilai_apel) < 6) {
