@@ -18,7 +18,7 @@ class CheckinoutController extends Controller
     public function show($id)
     {
         // dd('work show');
-        dd("call sync('".date('Y-m-d')."',@out_variable)");
+        // dd("call sync('".date('Y-m-d')."',@out_variable)");
     }
 
     public function create()

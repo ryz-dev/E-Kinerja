@@ -268,7 +268,7 @@
                             row += "<td>" + val.nama + ( val.apel ? apel : '') +"</td>";
                             row += "<td>"+parseAbsen(val)+"</td>";
                             row += "</tr>";
-                            console.log(val);
+
                             return row;
                         })
                         selector.html(data.join(''));
