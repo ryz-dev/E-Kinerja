@@ -123,7 +123,7 @@ class PegawaiRepository extends BaseRepository
                     $query->where('id_atasan', '=', $user->id_jabatan);
                 });
             } else {
-                $pegawai->where('id_skpd',$user->id_skpd)->where('nip','!=',$user->nip);
+                $data->where('id_skpd',$user->id_skpd)->where('nip','!=',$user->nip);
             }
         }
 
