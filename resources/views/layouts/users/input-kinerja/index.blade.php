@@ -550,7 +550,7 @@
                     $('#kirim-kinerja').attr('disabled',true)
                     swal(
                         'Max Size File : 5MB',
-                        '',
+                        'Size file upload '+ Math.floor(size/1048576) +'MB',
                         'warning'
                     );
                 }else {
