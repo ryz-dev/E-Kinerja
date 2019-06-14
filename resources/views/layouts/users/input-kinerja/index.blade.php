@@ -453,8 +453,8 @@
                                     res.response.skp_pegawai.map(function (val) {
                                         $('[name*=skp_pegawai][value=' + val.id + ']').click()
                                     })
-                                    $('[name*=skp_pegawai]').attr('disabled', true);
                                 }
+                                $('[name*=skp_pegawai]').attr('disabled', true);
                                 if (res.response.media.length > 0) {
                                     media = res.response.media.map(function (val) {
                                         return '<div class="downloads mb-3">\n' +
