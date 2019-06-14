@@ -528,6 +528,7 @@
                                         '',
                                         'success'
                                     );
+                                    $('#hadir').find('[name=id]').val('')
                                     location.reload()
                                     // getDraft()
                                 }, function (err) {
