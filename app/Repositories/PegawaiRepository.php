@@ -913,7 +913,7 @@ class PegawaiRepository extends BaseRepository
                             if ((strtotime($absen_out) - strtotime($absen_in)) >= (8 * 3600)) {
                                 $absensi = 'hadir';
                             } else {
-                                $absensi = 'alpa';
+                                $absensi = 'hadir';
                             }
                             if (date('N', strtotime($tanggal_pilihan_date)) != 1) {
                                 if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . " 07:30:00")) {
