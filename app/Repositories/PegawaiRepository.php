@@ -909,7 +909,7 @@ class PegawaiRepository extends BaseRepository
             if ($status_hari == 1) {
                 if (strtotime($tanggal_sekarang) > strtotime($tanggal_pilihan_date)) {
                     if ($absen_in && $absen_out) {
-                        if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . ' ' . $jam_masuk)) {
+                        // if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . ' ' . $jam_masuk)) {
                             // if ((strtotime($absen_out) - strtotime($absen_in)) >= (8 * 3600)) {
                             //     $absensi = 'hadir';
                             // } else {
@@ -926,9 +926,11 @@ class PegawaiRepository extends BaseRepository
                                     }
                                 }
                             }
-                        } else {
-                            $absensi = 'alpa';
-                        }
+
+                            $absensi = 'hadir';
+                        // } else {
+                        //     $absensi = 'alpa';
+                        // }
                     } else {
                         if ($item['kinerja']->count()) {
                             $absensi = $item['kinerja']->first()->jenis_kinerja;
