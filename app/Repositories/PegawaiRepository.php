@@ -910,11 +910,11 @@ class PegawaiRepository extends BaseRepository
                 if (strtotime($tanggal_sekarang) > strtotime($tanggal_pilihan_date)) {
                     if ($absen_in && $absen_out) {
                         if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . ' ' . $jam_masuk)) {
-                            if ((strtotime($absen_out) - strtotime($absen_in)) >= (8 * 3600)) {
-                                $absensi = 'hadir';
-                            } else {
-                                $absensi = 'hadir';
-                            }
+                            // if ((strtotime($absen_out) - strtotime($absen_in)) >= (8 * 3600)) {
+                            //     $absensi = 'hadir';
+                            // } else {
+                            //     $absensi = 'hadir';
+                            // }
                             if (date('N', strtotime($tanggal_pilihan_date)) != 1) {
                                 if (strtotime($absen_in) <= strtotime($tanggal_pilihan_date . " 07:30:00")) {
                                     $apel = true;
