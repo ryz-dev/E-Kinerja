@@ -55,11 +55,11 @@ class InputKinerjaController extends Controller
         $nip = auth('web')->user()->nip;
         if ($this->kinerja->deleteKinerjaTersimpan($id, $nip)) {
             return $this->ApiSpecResponses([
-                'message' => 'Berhasil menghapus draft'
+                'message' => 'Berhasil menghapus Kinerja'
             ]);
         }
         return $this->ApiSpecResponses([
-            'message' => 'Gagagl menghapus draft'
+            'message' => 'Gagagl menghapus Kinerja'
         ]);
     }
 

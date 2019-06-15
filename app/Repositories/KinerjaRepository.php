@@ -275,8 +275,8 @@ class KinerjaRepository extends BaseRepository
                     } else {
                         $kinerja = $this->model->create($input);
                     }
-                    Log::info(json_encode($input) . "1");
-                    Log::info(isset($input['skp_pegawai']) ? 'true' : 'false');
+//                    Log::info(json_encode($input) . "1");
+//                    Log::info(isset($input['skp_pegawai']) ? 'true' : 'false');
                     if (isset($input['skp_pegawai'])) {
                         if (is_array($input['skp_pegawai'])) {
                             if (count($input['skp_pegawai']) > 0) {

@@ -144,7 +144,7 @@
                                     <div class="dropzone">
                                         <div class="dz-message " data-dz-message>
                                             <i class="material-icons">cloud_upload</i>
-                                            <span class="ml-3">Upload Dokumen</span>
+                                            <span class="ml-3">Upload Dokumen: < 5MB</span>
                                             <div class="fallback">
                                                 <input name="doc[]" type="file" multiple/>
                                             </div>
@@ -453,8 +453,8 @@
                                     res.response.skp_pegawai.map(function (val) {
                                         $('[name*=skp_pegawai][value=' + val.id + ']').click()
                                     })
-                                    $('[name*=skp_pegawai]').attr('disabled', true);
                                 }
+                                $('[name*=skp_pegawai]').attr('disabled', true);
                                 if (res.response.media.length > 0) {
                                     media = res.response.media.map(function (val) {
                                         return '<div class="downloads mb-3">\n' +
@@ -528,6 +528,7 @@
                                         '',
                                         'success'
                                     );
+                                    $('#hadir').find('[name=id]').val('')
                                     location.reload()
                                     // getDraft()
                                 }, function (err) {
@@ -539,6 +540,22 @@
             })
             $('[name*=skp_pegawai]').on('click', function () {
                 persentaseSkp();
+            })
+            $('[name="doc[]"]').on('change',function(){
+                var size = 0
+                for (i = 0 ; i < this.files.length ; i++){
+                    size += this.files[i].size
+                }
+                if (1048576 * 5 < size) {
+                    $('#kirim-kinerja').attr('disabled',true)
+                    swal(
+                        'Max Size File : 5MB',
+                        'Size file upload '+ Math.floor(size/1048576) +'MB',
+                        'warning'
+                    );
+                }else {
+                    $('#kirim-kinerja').attr('disabled',false)
+                }
             })
             $(document).on('submit', '.form-submit-kinerja.active-form', function (e) {
                 e.preventDefault();
@@ -565,14 +582,14 @@
                     cancelButtonText: 'Batalkan'
                 }).then((result) => {
                     if (result.value) {
-                        $('.loading').show();
+                        $('#preload').show();
                         $.ajax({
                             url: action,
                             type: "POST",
                             data: formData,
                             success: function (res) {
                                 $('.form-submit-kinerja.active-form')[0].reset();
-                                $('.loading').hide();
+                                $('#preload').hide();
                                 if (res.diagnostic.code == 200) {
                                     swal(
                                         'Berhasil ' + info2 + ' Data!',
@@ -595,7 +612,7 @@
                                     '',
                                     'warning'
                                 );
-                                $('.loading').hide();
+                                $('#preload').hide();
                             },
                             cache: false,
                             contentType: false,
