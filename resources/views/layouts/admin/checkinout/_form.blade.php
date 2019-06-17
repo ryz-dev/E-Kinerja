@@ -44,7 +44,7 @@
         </div>
         <div class="form-group">
             <label for="sn">SN</label>
-            {{ Form::number('sn', null, ['class'=>'form-control']) }}
+            {{ Form::text('sn', null, ['class'=>'form-control']) }}
         </div>
     </div>
     <div class="col-md-12 right">
