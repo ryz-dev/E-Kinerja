@@ -372,10 +372,21 @@ class KinerjaRepository extends BaseRepository
     {
         $bulan = (int)($bulan ? $bulan : date('m'));
         $tahun = $tahun ? $tahun : date('Y');
-
-        $persen_absen = FormulaVariable::select('persentase_nilai')->where('variable', 'absen')->first()->persentase_nilai;
-        $persen_kinerja = FormulaVariable::select('persentase_nilai')->where('variable', 'kinerja')->first()->persentase_nilai;
-        $persen_kepatuhan = FormulaVariable::select('persentase_nilai')->where('variable', 'kepatuhan')->first()->persentase_nilai;
+        try {
+            $persen_absen = FormulaVariable::select('persentase_nilai')->where('variable', 'absen')->first()->persentase_nilai;
+        } catch (\Exception $e){
+            $persen_absen = 0;
+        }
+        try {
+            $persen_kinerja = FormulaVariable::select('persentase_nilai')->where('variable', 'kinerja')->first()->persentase_nilai;
+        } catch (\Exception $e){
+            $persen_kinerja = 0;
+        }
+        try {
+            $persen_kepatuhan = FormulaVariable::select('persentase_nilai')->where('variable', 'kepatuhan')->first()->persentase_nilai;
+        } catch (\Exception $exception){
+            $persen_kepatuhan = 0;  
+        }
 
         $pegawai = Pegawai::select('nip', 'id_jabatan','nama')->with(['jabatan' => function ($query) {
             $query->select('id', 'id_golongan');
