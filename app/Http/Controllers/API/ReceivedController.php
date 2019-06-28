@@ -18,7 +18,9 @@ class ReceivedController extends ApiController
         $js = $req->all();
         // $to_array = json_decode($js, true);
         // var_dump($to_array);
-        $pegawai = Pegawai::where('nip', $js['Card'])->orWhere('nip', "null_used_badge_" . $js['badgenumber'])->first();
+        $nip = empty($js['Card'])?"null_used_badge_" . $js['badgenumber']:$js['Card'];
+
+        $pegawai = Pegawai::where('nip', $nip)->first();
         if (empty($pegawai)) {
             $peg = Pegawai::create([
                 'uuid' => (string)Str::uuid(), 'nip' => $js['Card'] ? $js['Card'] : "null_used_badge_" . $js['badgenumber'],
@@ -31,10 +33,11 @@ class ReceivedController extends ApiController
             return response()->json(['status' => 'Sukses', 'message' => 'Berhasil data di terima dan di simpan ke server', 'data' => $peg]);
         } else {
             // cek data
-            $absensi = Checkinout::where('nip', $js['Card'])->orWhere('nip', "null_used_badge_" . $js['badgenumber'])->where('checktime', $js['checkinout']['checktime'])->first();
+            $nip = empty($js['Card'])?"null_used_badge_" . $js['badgenumber']:$js['Card'];
+            $absensi = Checkinout::where('nip',$nip )->where('checktime', $js['checkinout']['checktime'])->first();
             if (empty($absensi)) {
                 $absen = Checkinout::create([
-                    'nip' => $js['Card'] ? $js['Card'] : "null_used_badge_" . $js['badgenumber'],
+                    'nip' => $nip,
                     'checktime' => $js['checkinout']['checktime'],
                     'checktype' => $js['checkinout']['checktype'],
                     'verifycode' => $js['checkinout']['verifycode'],
