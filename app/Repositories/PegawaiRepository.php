@@ -832,6 +832,14 @@ class PegawaiRepository extends BaseRepository
                 });
             }
 
+            /* hide bupati, wabup, sekda di monitoring absen */
+            $jabatan_hide = Jabatan::where(function($query){
+                $query->where('jabatan','Bupati Kolaka');
+                $query->orWhere('jabatan','Sekretaris Daerah');
+                $query->orWhere('jabatan','Wakil Bupati Kolaka');
+            })->select('id')->pluck('id')->all();
+            $pegawai->whereNotIn('id_jabatan',$jabatan_hide);
+
             $pegawai->orderBy('golongan.tunjangan', 'desc');
             $pegawai->orderBy('pegawai.nama');
             $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile);
