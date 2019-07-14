@@ -280,6 +280,10 @@ class PegawaiRepository extends BaseRepository
             $status = ucfirst(str_replace('_', ' ', isset($kinerja->jenis_kinerja) ? $kinerja->jenis_kinerja : ''));
             if ($status == 'Hadir' || $status == '') {
                 $status = ucfirst($kehadiran['status']);
+            } else {
+                if (isset($kinerja->approve) ? $kinerja->approve == 0 : false){
+                    $status = 'Alpa';
+                }
             }
             if (!$is_mobile) {
                 $data_inout[] = [
