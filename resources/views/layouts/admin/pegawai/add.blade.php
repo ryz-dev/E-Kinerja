@@ -116,8 +116,14 @@
                                 } else {
                                     message = 'internal server error'
                                     if (res.diagnostic.code == 422){
-                                        message = 'missing required parameter';
+                                        message = 'missing required parameter:';
+                                        for (key in res.response.required) {
+                                            res.response.required[key].forEach(function(val){
+                                                message += '<br>'+val;
+                                            })
+                                        }
                                     }
+
                                     swal(
                                         'Gagal Menyimpan Data!',
                                         message,
