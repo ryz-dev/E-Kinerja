@@ -22,9 +22,9 @@ class MonitoringAbsenController extends Controller
         $skpd = in_array($role, $special_user) ? Skpd::all() : Skpd::where('id', $user->id_skpd);
         $skpd = $skpd->pluck('nama_skpd', 'id');
 
-        if ($role == 2) {
+        /*if ($role == 2) {
             $skpd = collect([-1 => 'SEKERTARIS DAERAH'] + $skpd->all());
-        }
+        }*/
 
         if (in_array($role, $special_user)) {
             $skpd = collect([0 => ' ALL '] + $skpd->all());
