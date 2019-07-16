@@ -826,9 +826,9 @@ class PegawaiRepository extends BaseRepository
                 $pegawai->where('id_skpd', $skpd);
             }
 
-            if ($skpd < 0) {
+            /*if ($skpd < 0) {
                 $pegawai->where('id_jabatan', 3);
-            }
+            }*/
 
             if ($search) {
                 $pegawai->where(function ($query) use ($search) {
@@ -838,9 +838,9 @@ class PegawaiRepository extends BaseRepository
 
             /* hide bupati, wabup, sekda di monitoring absen */
             $jabatan_hide = Jabatan::where(function($query){
-                $query->where('jabatan','Bupati Kolaka');
-                $query->orWhere('jabatan','Sekretaris Daerah');
-                $query->orWhere('jabatan','Wakil Bupati Kolaka');
+                $query->where('jabatan','LIKE','%Bupati Kolaka%');
+                $query->orWhere('jabatan','LIKE','%Sekretaris Daerah%');
+                $query->orWhere('jabatan','LIKE','%WAKIL BUPATI%');
             })->select('id')->pluck('id')->all();
             $pegawai->whereNotIn('id_jabatan',$jabatan_hide);
 
