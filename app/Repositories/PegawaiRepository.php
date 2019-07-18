@@ -737,6 +737,7 @@ class PegawaiRepository extends BaseRepository
 
     private function parseAbsen($item, $key, $hari_kerja)
     {
+        dd('$item');
         return $item->checkinout->groupBy(function ($itemcheckiout, $keycheckiout) {
             return date('Y-m-d', strtotime($itemcheckiout->checktime));
         })->map(function ($itemabsen, $keyabsen) use ($key, $hari_kerja) {
@@ -849,9 +850,9 @@ class PegawaiRepository extends BaseRepository
 //            $pegawai->orderBy('role_pegawai.id_role','asc');
             $pegawai->orderBy('golongan.tunjangan', 'desc');
             $pegawai->orderBy('pegawai.nama');
-            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile);
+            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile)->where('nama','!=','Master Data Admin')->sortBy('role_id');
             $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
-            $total = (int)$data_absen_pegawai->count();
+            // dd($data_absen_pegawai);
             if ($page) {
                 $data_absen_pegawai = $this->paginateMonitoringAbsen($data_absen_pegawai, $show, $page);
             }
@@ -904,7 +905,6 @@ class PegawaiRepository extends BaseRepository
     private function parseAbsensi($pegawai, $date, $status_hari, $is_mobile)
     {
         $pegawai = $pegawai->get();
-
         $jam_masuk = $this->jam_masuk;
         $jam_sekarang = date('Y-m-d H:i:s');
         $tanggal_pilihan = $date;
@@ -1000,6 +1000,7 @@ class PegawaiRepository extends BaseRepository
                 $data['absen_in'] = $absen_in ? date('H:i', strtotime($absen_in)) : '';
                 $data['absen_out'] = $absen_out ? date('H:i', strtotime($absen_out)) : '';
                 $data['absensi'] = $absensi;
+                $data['role_id'] = $item->role->first()?$item->role->first()->id:99;
                 $data['nama'] = $item->nama;
                 $data['apel'] = $apel;
                 $data['nip'] = $item->nip;
@@ -1009,6 +1010,7 @@ class PegawaiRepository extends BaseRepository
                 $data['absensi'] = $absensi;
                 $data['nama'] = $item->nama;
                 $data['apel'] = $apel;
+                $data['role_id'] = $item->role->first()?$item->role->first()->id:99;
                 $data['nip'] = $item->nip;
                 $data['foto'] = $item->foto;
                 $data['checkinout'] = [
@@ -1021,7 +1023,7 @@ class PegawaiRepository extends BaseRepository
             return $data;
 
         });
-
+        // dd($data);
         return $data;
 
 
