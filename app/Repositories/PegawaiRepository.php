@@ -809,7 +809,9 @@ class PegawaiRepository extends BaseRepository
             }
         ])
             ->leftJoin('jabatan', 'pegawai.id_jabatan', '=', 'jabatan.id')
-            ->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id');
+            ->leftJoin('golongan', 'jabatan.id_golongan', '=', 'golongan.id')
+//            ->leftJoin('role_pegawai','pegawai.nip','=','role_pegawai.nip')
+        ;
 
         try {
             if (in_array($user->role()->pluck('id_role')->max(), $this->special_user_id) == false) {
@@ -844,6 +846,7 @@ class PegawaiRepository extends BaseRepository
             })->select('id')->pluck('id')->all();
             $pegawai->whereNotIn('id_jabatan',$jabatan_hide);
 
+//            $pegawai->orderBy('role_pegawai.id_role','asc');
             $pegawai->orderBy('golongan.tunjangan', 'desc');
             $pegawai->orderBy('pegawai.nama');
             $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile);
