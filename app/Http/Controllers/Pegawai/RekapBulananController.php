@@ -32,9 +32,9 @@ class RekapBulananController extends Controller
 
         if (in_array($user->role()->first()->nama_role, $special_user)) {
 
-            if ($user->role()->first()->nama_role == 'Bupati') {
+            /*if ($user->role()->first()->nama_role == 'Bupati') {
                 $skpd->prepend(strtoupper('Sekretaris Daerah'), '-1');
-            }
+            }*/
         }
 
         $skpd = $skpd->toArray();

@@ -26,14 +26,14 @@ class SkpdController extends ApiController
             }
             $data = [];
 
-            if ($user->role()->first()->nama_role == 'Bupati') {
+            /*if ($user->role()->first()->nama_role == 'Bupati') {
                 $data[] = [
                     'id' => -1,
                     'uuid' => 'uuid',
                     'nama_skpd' => 'SEKERTARIS DAERAH',
                     'keterangan' => 'SEKERTARIS DAERAH',
                 ];
-            }
+            }*/
 
             foreach ($skpd as $s) {
                 $data[] = [
