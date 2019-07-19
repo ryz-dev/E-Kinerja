@@ -1000,7 +1000,7 @@ class PegawaiRepository extends BaseRepository
                 $data['absen_in'] = $absen_in ? date('H:i', strtotime($absen_in)) : '';
                 $data['absen_out'] = $absen_out ? date('H:i', strtotime($absen_out)) : '';
                 $data['absensi'] = $absensi;
-                $data['role_id'] = $item->role->first()?$item->role->first()->id:99;
+                $data['role_id'] = $item->role->max()? ($item->role->max()->id == 1 ? 99 : $item->role->max()->id ):99;
                 $data['nama'] = $item->nama;
                 $data['apel'] = $apel;
                 $data['nip'] = $item->nip;
@@ -1010,7 +1010,7 @@ class PegawaiRepository extends BaseRepository
                 $data['absensi'] = $absensi;
                 $data['nama'] = $item->nama;
                 $data['apel'] = $apel;
-                $data['role_id'] = $item->role->first()?$item->role->first()->id:99;
+                $data['role_id'] = $item->role->max()? ($item->role->max()->id == 1 ? 99 : $item->role->max()->id ):99;
                 $data['nip'] = $item->nip;
                 $data['foto'] = $item->foto;
                 $data['checkinout'] = [
