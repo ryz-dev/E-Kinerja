@@ -264,7 +264,7 @@
                             let apel = '<img src="{{url('')}}/assets/images/icons/upacara.svg" class="iconUpacara">'
                             row += "<tr data-nip='"+val.nip+"' >";
                             row += "<td><div class='img-user' id='user1' style='background-image: url(" + foto + ");'></div></td>";
-                            row += "<td><a href=''>" + val.nip + "</a></td>";
+                            row += "<td>" + val.nip + "</td>";
                             row += "<td>" + val.nama + ( val.apel ? apel : '') +"</td>";
                             row += "<td>"+parseAbsen(val)+"</td>";
                             row += "</tr>";
