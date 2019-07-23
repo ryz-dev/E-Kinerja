@@ -737,7 +737,6 @@ class PegawaiRepository extends BaseRepository
 
     private function parseAbsen($item, $key, $hari_kerja)
     {
-        dd('$item');
         return $item->checkinout->groupBy(function ($itemcheckiout, $keycheckiout) {
             return date('Y-m-d', strtotime($itemcheckiout->checktime));
         })->map(function ($itemabsen, $keyabsen) use ($key, $hari_kerja) {
@@ -1002,6 +1001,7 @@ class PegawaiRepository extends BaseRepository
                 $data['absensi'] = $absensi;
                 $data['role_id'] = $item->role->max()? ($item->role->max()->id == 1 ? 99 : $item->role->max()->id ):99;
                 $data['nama'] = $item->nama;
+                $data['tunjangan'] = $item->jabatan()->first() ? $item->jabatan()->first()->golongan->tunjangan : 0;
                 $data['apel'] = $apel;
                 $data['nip'] = $item->nip;
                 $data['foto'] = $item->foto;
@@ -1011,6 +1011,7 @@ class PegawaiRepository extends BaseRepository
                 $data['nama'] = $item->nama;
                 $data['apel'] = $apel;
                 $data['role_id'] = $item->role->max()? ($item->role->max()->id == 1 ? 99 : $item->role->max()->id ):99;
+                $data['tunjangan'] = $item->jabatan()->first() ? $item->jabatan()->first()->golongan->tunjangan : 0;
                 $data['nip'] = $item->nip;
                 $data['foto'] = $item->foto;
                 $data['checkinout'] = [
