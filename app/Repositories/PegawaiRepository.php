@@ -551,9 +551,15 @@ class PegawaiRepository extends BaseRepository
 
     public function downloadRekapBulanan($nip, $skpd, $d_id_skpd, $periode_rekap, $download = false)
     {
-        // dd($request);
-        $bulan = (int)($periode_rekap ? date('m', strtotime($periode_rekap)) : date('m'));
-        $tahun = (int)($periode_rekap ? date('Y', strtotime($periode_rekap)) : date('Y'));
+        if (str_contains($periode_rekap,'/')){
+            $bulan = explode('/',$periode_rekap)[1];
+            $tahun = explode('/',$periode_rekap)[2];
+            $periode_rekap = $tahun.'-'.$bulan;
+        } else {
+            // dd($request);
+            $bulan = (int)($periode_rekap ? date('m', strtotime($periode_rekap)) : date('m'));
+            $tahun = (int)($periode_rekap ? date('Y', strtotime($periode_rekap)) : date('Y'));
+        }
         $user = Pegawai::where('nip', $nip)->first();
         $hari_kerja = HariKerja::whereHas('statusHari', function ($query) use ($bulan, $tahun) {
             $query->where('status_hari', 'kerja');
@@ -563,18 +569,22 @@ class PegawaiRepository extends BaseRepository
         $persen['kinerja'] = $formula->where('variable', 'kinerja')->first()->persentase_nilai;
         $persen['absen'] = $formula->where('variable', 'absen')->first()->persentase_nilai;
         $persen['kepatuhan'] = $formula->where('variable', 'kepatuhan')->first()->persentase_nilai;
-        $pegawai = $this->getDataPegawai($user, $bulan, $tahun, $d_id_skpd);
-        $data = $this->parseDataRekap($pegawai, $persen, $hari_kerja);
-        $skpd = Skpd::where('id', $skpd)->first();
-        $namaSkpd = $skpd ? $skpd->nama_skpd : 'PEMERINTAH KABUPATEN KOLAKA';
-        $periode = ucfirst(Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan . ' ' . date('Y', strtotime($periode_rekap)));
-        $tanggal_cetak = date('d') . ' ' . ucfirst(Bulan::find((int)date('m'))->nama_bulan) . ' ' . date('Y');
-        $pdf = PDF::loadView('pdf.rekap-bulanan', compact('data', 'namaSkpd', 'periode', 'tanggal_cetak'));
-        $pdf->setPaper('legal', 'landscape');
-        if ($download) {
-            return $pdf->download('rekap_bulanan.pdf');
+        try {
+            $pegawai = $this->getDataPegawai($user, $bulan, $tahun, $d_id_skpd);
+            $data = $this->parseDataRekap($pegawai, $persen, $hari_kerja);
+            $skpd = Skpd::where('id', $skpd)->first();
+            $namaSkpd = $skpd ? $skpd->nama_skpd : 'PEMERINTAH KABUPATEN KOLAKA';
+            $periode = ucfirst(Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan . ' ' . date('Y', strtotime($periode_rekap)));
+            $tanggal_cetak = date('d') . ' ' . ucfirst(Bulan::find((int)date('m'))->nama_bulan) . ' ' . date('Y');
+            $pdf = PDF::loadView('pdf.rekap-bulanan', compact('data', 'namaSkpd', 'periode', 'tanggal_cetak'));
+            $pdf->setPaper('legal', 'landscape');
+            if ($download) {
+                return $pdf->download('rekap_bulanan.pdf');
+            }
+            return $pdf->stream('rekap_bulanan.pdf');
+        } catch (\Exception $exception){
+
         }
-        return $pdf->stream('rekap_bulanan.pdf');
     }
 
     private function getDataPegawai($user, $bulan, $tahun, $id_skpd)
