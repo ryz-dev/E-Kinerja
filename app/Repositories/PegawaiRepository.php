@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use PDF;
 
@@ -583,7 +584,7 @@ class PegawaiRepository extends BaseRepository
             }
             return $pdf->stream('rekap_bulanan.pdf');
         } catch (\Exception $exception){
-
+            Log::info($exception->getMessage());
         }
     }
 
@@ -859,7 +860,7 @@ class PegawaiRepository extends BaseRepository
             $pegawai->orderBy('golongan.tunjangan', 'desc');
             $pegawai->orderBy('role_pegawai.id_role','asc');
             // $pegawai->orderBy('pegawai.nama');
-            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile)->where('nama','!=','Master Data Admin')->sortBy('role_id')->values();
+            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile)->where('nama','!=','Master Data Admin')->sortBy('urutan')->values();
             $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
             // dd($data_absen_pegawai);
             if ($page) {
@@ -1005,6 +1006,7 @@ class PegawaiRepository extends BaseRepository
             } else {
                 $absensi = 'libur';
             }
+            $data['urutan'] = $item->urutan == 0 ? 9999 : $item->urutan;
             if (!$is_mobile) {
                 $data['absen_in'] = $absen_in ? date('H:i', strtotime($absen_in)) : '';
                 $data['absen_out'] = $absen_out ? date('H:i', strtotime($absen_out)) : '';
