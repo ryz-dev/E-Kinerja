@@ -847,9 +847,9 @@ class PegawaiRepository extends BaseRepository
             })->select('id')->pluck('id')->all();
             $pegawai->whereNotIn('id_jabatan',$jabatan_hide);
 
-            $pegawai->orderBy('golongan.tunjangan', 'desc');
-            $pegawai->orderBy('role_pegawai.id_role','asc');
-            // $pegawai->orderBy('pegawai.nama');
+            $pegawai->orderBy('jabatan.tunjangan', 'asc');
+            // $pegawai->orderBy('role_pegawai.id_role','asc');
+            $pegawai->orderBy('pegawai.nama');
             $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile)->where('nama','!=','Master Data Admin')->sortBy('role_id')->values();
             $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
             // dd($data_absen_pegawai);
