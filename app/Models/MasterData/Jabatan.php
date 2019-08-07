@@ -8,7 +8,7 @@ class Jabatan extends Model
 {
     protected $table = 'jabatan';
     protected $fillable = [
-        'jabatan', 'id_golongan', 'id_atasan', 'keterangan', 'uuid'
+        'jabatan', 'id_golongan', 'id_atasan', 'keterangan', 'uuid','urutan'
     ];
     protected $appends = ['detail_uri', 'delete_uri', 'edit_uri', 'update_uri'];
 

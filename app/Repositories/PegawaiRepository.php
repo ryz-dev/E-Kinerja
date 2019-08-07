@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use PDF;
 
@@ -551,9 +552,15 @@ class PegawaiRepository extends BaseRepository
 
     public function downloadRekapBulanan($nip, $skpd, $d_id_skpd, $periode_rekap, $download = false)
     {
-        // dd($request);
-        $bulan = (int)($periode_rekap ? date('m', strtotime($periode_rekap)) : date('m'));
-        $tahun = (int)($periode_rekap ? date('Y', strtotime($periode_rekap)) : date('Y'));
+        if (str_contains($periode_rekap,'/')){
+            $bulan = explode('/',$periode_rekap)[1];
+            $tahun = explode('/',$periode_rekap)[2];
+            $periode_rekap = $tahun.'-'.$bulan;
+        } else {
+            // dd($request);
+            $bulan = (int)($periode_rekap ? date('m', strtotime($periode_rekap)) : date('m'));
+            $tahun = (int)($periode_rekap ? date('Y', strtotime($periode_rekap)) : date('Y'));
+        }
         $user = Pegawai::where('nip', $nip)->first();
         $hari_kerja = HariKerja::whereHas('statusHari', function ($query) use ($bulan, $tahun) {
             $query->where('status_hari', 'kerja');
@@ -563,18 +570,22 @@ class PegawaiRepository extends BaseRepository
         $persen['kinerja'] = $formula->where('variable', 'kinerja')->first()->persentase_nilai;
         $persen['absen'] = $formula->where('variable', 'absen')->first()->persentase_nilai;
         $persen['kepatuhan'] = $formula->where('variable', 'kepatuhan')->first()->persentase_nilai;
-        $pegawai = $this->getDataPegawai($user, $bulan, $tahun, $d_id_skpd);
-        $data = $this->parseDataRekap($pegawai, $persen, $hari_kerja);
-        $skpd = Skpd::where('id', $skpd)->first();
-        $namaSkpd = $skpd ? $skpd->nama_skpd : 'PEMERINTAH KABUPATEN KOLAKA';
-        $periode = ucfirst(Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan . ' ' . date('Y', strtotime($periode_rekap)));
-        $tanggal_cetak = date('d') . ' ' . ucfirst(Bulan::find((int)date('m'))->nama_bulan) . ' ' . date('Y');
-        $pdf = PDF::loadView('pdf.rekap-bulanan', compact('data', 'namaSkpd', 'periode', 'tanggal_cetak'));
-        $pdf->setPaper('legal', 'landscape');
-        if ($download) {
-            return $pdf->download('rekap_bulanan.pdf');
+        try {
+            $pegawai = $this->getDataPegawai($user, $bulan, $tahun, $d_id_skpd);
+            $data = $this->parseDataRekap($pegawai, $persen, $hari_kerja);
+            $skpd = Skpd::where('id', $skpd)->first();
+            $namaSkpd = $skpd ? $skpd->nama_skpd : 'PEMERINTAH KABUPATEN KOLAKA';
+            $periode = ucfirst(Bulan::find((int)date('m', strtotime($periode_rekap)))->nama_bulan . ' ' . date('Y', strtotime($periode_rekap)));
+            $tanggal_cetak = date('d') . ' ' . ucfirst(Bulan::find((int)date('m'))->nama_bulan) . ' ' . date('Y');
+            $pdf = PDF::loadView('pdf.rekap-bulanan', compact('data', 'namaSkpd', 'periode', 'tanggal_cetak'));
+            $pdf->setPaper('legal', 'landscape');
+            if ($download) {
+                return $pdf->download('rekap_bulanan.pdf');
+            }
+            return $pdf->stream('rekap_bulanan.pdf');
+        } catch (\Exception $exception){
+            Log::info($exception->getMessage());
         }
-        return $pdf->stream('rekap_bulanan.pdf');
     }
 
     private function getDataPegawai($user, $bulan, $tahun, $id_skpd)
@@ -737,7 +748,6 @@ class PegawaiRepository extends BaseRepository
 
     private function parseAbsen($item, $key, $hari_kerja)
     {
-        dd('$item');
         return $item->checkinout->groupBy(function ($itemcheckiout, $keycheckiout) {
             return date('Y-m-d', strtotime($itemcheckiout->checktime));
         })->map(function ($itemabsen, $keyabsen) use ($key, $hari_kerja) {
@@ -847,10 +857,17 @@ class PegawaiRepository extends BaseRepository
             })->select('id')->pluck('id')->all();
             $pegawai->whereNotIn('id_jabatan',$jabatan_hide);
 
+<<<<<<< HEAD
             $pegawai->orderBy('jabatan.tunjangan', 'asc');
             // $pegawai->orderBy('role_pegawai.id_role','asc');
             $pegawai->orderBy('pegawai.nama');
             $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile)->where('nama','!=','Master Data Admin')->sortBy('role_id')->values();
+=======
+            $pegawai->orderBy('golongan.tunjangan', 'desc');
+            $pegawai->orderBy('role_pegawai.id_role','asc');
+            // $pegawai->orderBy('pegawai.nama');
+            $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile)->where('nama','!=','Master Data Admin')->sortBy('urutan')->values();
+>>>>>>> 8634c921f91baa510c20fbcdddf28110493c4834
             $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
             // dd($data_absen_pegawai);
             if ($page) {
@@ -996,12 +1013,14 @@ class PegawaiRepository extends BaseRepository
             } else {
                 $absensi = 'libur';
             }
+            $data['urutan'] = $item->urutan == 0 ? 9999 : $item->urutan;
             if (!$is_mobile) {
                 $data['absen_in'] = $absen_in ? date('H:i', strtotime($absen_in)) : '';
                 $data['absen_out'] = $absen_out ? date('H:i', strtotime($absen_out)) : '';
                 $data['absensi'] = $absensi;
                 $data['role_id'] = $item->role->max()? ($item->role->max()->id == 1 ? 99 : $item->role->max()->id ):99;
                 $data['nama'] = $item->nama;
+                $data['tunjangan'] = $item->jabatan()->first() ? $item->jabatan()->first()->golongan->tunjangan : 0;
                 $data['apel'] = $apel;
                 $data['nip'] = $item->nip;
                 $data['foto'] = $item->foto;
@@ -1011,6 +1030,7 @@ class PegawaiRepository extends BaseRepository
                 $data['nama'] = $item->nama;
                 $data['apel'] = $apel;
                 $data['role_id'] = $item->role->max()? ($item->role->max()->id == 1 ? 99 : $item->role->max()->id ):99;
+                $data['tunjangan'] = $item->jabatan()->first() ? $item->jabatan()->first()->golongan->tunjangan : 0;
                 $data['nip'] = $item->nip;
                 $data['foto'] = $item->foto;
                 $data['checkinout'] = [
