@@ -20,7 +20,7 @@
                     <th scope="col">Golongan Jabatan</th>
                     <th scope="col">Atasan</th>
                     <th scope="col">Keterangan</th>
-                    <th scope="col">Urutan</th>
+{{--                    <th scope="col">Urutan</th>--}}
                     <th scope="col">Aksi</th>
                   </tr>
                 </thead>
@@ -74,7 +74,7 @@
                                 row += "<td>"+(val.golongan ? val.golongan.golongan+'('+val.golongan.kriteria+')' : '')+"</td>";
                                 row += "<td>"+(val.atasan ? val.atasan.jabatan : '')+"</td>";
                                 row += "<td>"+(val.keterangan ? val.keterangan : '')+"</td>";
-                                row += "<td>"+(val.urutan ? val.urutan : '')+"</td>";
+                                // row += "<td>"+(val.urutan ? val.urutan : '')+"</td>";
                                 row += "<td><div class='btn-group mr-2' role='group' aria-label='Edit'><a href='"+val.edit_uri+"' class='btn btn-success'><i class='fas fa-edit'></i></a><button type='button' delete-uri='"+val.delete_uri+"' class='btn btn-danger btn-delete'><i class='fas fa-trash'></i></button></div></td>";
                                 row += "</tr>";
                                 return row;

@@ -25,10 +25,10 @@
                             <label for="keterangan">Keterangan Jabatan</label>
                             <textarea name="keterangan" id="keterangan" rows="3" class="form-control">{{$jabatan->keterangan}}</textarea>
                         </div>
-                        <div class="form-group">
+                        {{--<div class="form-group">
                             <label for="atasan">Urutan</label>
                             <input id="atasan" type="text" class="form-control" name="urutan" placeholder="Urutan" value="{{$jabatan->urutan ? $jabatan->urutan : ''}}" readonly="">
-                        </div>
+                        </div>--}}
                     </div>
                 </div>
             </div>

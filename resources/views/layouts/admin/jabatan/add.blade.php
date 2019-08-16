@@ -36,10 +36,10 @@
                                 <label for="keterangan">Keterangan Jabatan</label>
                                 <textarea name="keterangan" id="keterangan" rows="3" class="form-control"></textarea>
                             </div>
-                            <div class="form-group">
+                            {{--<div class="form-group">
                                 <label for="urutan">Urutan</label>
                                 <input type="number" id="urutan" name="urutan" class="form-control" value="">
-                            </div>
+                            </div>--}}
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
