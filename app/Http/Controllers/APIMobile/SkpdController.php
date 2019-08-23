@@ -14,7 +14,7 @@ class SkpdController extends ApiController
         $page = $request->input('page');
         $this->show_limit = $request->has('s') ? $request->input('s') : $this->show_limit;
         try {
-            $skpd = Skpd::orderBy('created_at', 'DESC');
+            $skpd = Skpd::orderBy('nama_skpd', 'asc');
             if ($request->has('q')) {
                 $skpd = $skpd->where('nama_skpd', 'like', '%' . $request->input('q') . '%')->orderBy('nama_skpd','asc');
             }

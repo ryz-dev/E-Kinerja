@@ -20,7 +20,7 @@
                   <th scope="col">Tanggal</th>
                   <th scope="col">Tahun</th>
                   <th scope="col">Bulan</th>
-                  <th scope="col">Tanggal</th>
+                  <th scope="col">Hari</th>
                   <th scope="col">Status</th>
                   <th scope="col">Aksi</th>
                 </tr>

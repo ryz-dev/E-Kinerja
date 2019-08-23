@@ -79,7 +79,7 @@ class KepatuhanRepository extends BaseRepository
         return $this;
     }
 
-    public function search($array){}
+    public function search(array $array){}
 
     public function getKepatuhan()
     {
