@@ -44,7 +44,7 @@
                 </div>
                 <div>
                     <span>Tempat, Tgl.Lahir</span>
-                    <p>{{ucwords(session('user')->get('tempat_lahir'))}}, {{ date('m',strtotime(session('user')->get('tanggal_lahir'))) }} {{ session('user')->get('bulan_lahir') }} {{ date('Y',strtotime(session('user')->get('tanggal_lahir'))) }} </p>
+                    <p>{{ucwords(session('user')->get('tempat_lahir'))}}, {{ date('d',strtotime(session('user')->get('tanggal_lahir'))) }} {{ session('user')->get('bulan_lahir') }} {{ date('Y',strtotime(session('user')->get('tanggal_lahir'))) }} </p>
                 </div>
                 <div>
                     <span>Agama</span>

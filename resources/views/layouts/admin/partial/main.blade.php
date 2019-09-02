@@ -27,7 +27,7 @@
                 <p>{{ session('user')->get('nip') }}</p>
                 </div>
             </div>
-    
+
             <div class="descProfile">
                 <div class="dataForm">
                 <h5 class="mb-2">Informasi</h5>
@@ -37,14 +37,14 @@
                 </div>
                 <div>
                     <span>Tempat, Tgl.Lahir</span>
-                    <p>{{ ucwords(session('user')->get('tempat_lahir'))}}, {{ date('m',strtotime(session('user')->get('tanggal_lahir'))) }} {{ session('user')->get('bulan_lahir') }} {{ date('Y',strtotime(session('user')->get('tanggal_lahir'))) }} </p>
+                    <p>{{ ucwords(session('user')->get('tempat_lahir'))}}, {{ date('d',strtotime(session('user')->get('tanggal_lahir'))) }} {{ session('user')->get('bulan_lahir') }} {{ date('Y',strtotime(session('user')->get('tanggal_lahir'))) }} </p>
                 </div>
                 <div>
                     <span>Agama</span>
                     <p>{{ ucwords(session('user')->get('agama')) }}</p>
                 </div>
                 <div>
-                    
+
                     <label for="password">Kata Sandi</label>
                     <div class="input-group">
                         <input
@@ -61,8 +61,8 @@
                         </div>
                     </div>
                 </div>
-                <button 
-                class="btn btn-block btn-out" 
+                <button
+                class="btn btn-block btn-out"
                 id="btn-logout"
                 onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">Logout</button>
@@ -107,7 +107,7 @@
                                     $.post(form.action, data.serialize())
                                         .then(function (res) {
                                             $('.preload').hide();
-                                            
+
                                             if (res.diagnostic.code == 200) {
                                                 swal(
                                                     'Password berhasil di ubah!',
