@@ -865,7 +865,6 @@ class PegawaiRepository extends BaseRepository
             // $pegawai->orderBy('role_pegawai.id_role','asc');
             // $pegawai->orderBy('pegawai.nama');
             // $data_absen_pegawai = $this->parseAbsensi($pegawai, $date, $status_hari->id_status_hari, $is_mobile)->where('nama','!=','Master Data Admin')->sortBy('urutan')->values();
-
             $sum = $this->summary($data_absen_pegawai, $raw_date, $status_hari->id_status_hari);
             // dd($data_absen_pegawai);
             if ($page) {
@@ -924,9 +923,7 @@ class PegawaiRepository extends BaseRepository
         $jam_sekarang = date('Y-m-d H:i:s');
         $tanggal_pilihan = $date;
         $mesin_upacara = AbsenUpacara::select('SN')->pluck('SN')->all();
-
         $data = $pegawai->map(function ($item, $key) use ($jam_masuk, $jam_sekarang, $tanggal_pilihan, $status_hari, $is_mobile, $mesin_upacara) {
-
             $raw_absensi = $item['checkinout'];
             $absensi = null;
 
@@ -970,7 +967,6 @@ class PegawaiRepository extends BaseRepository
                     }
 
                 } elseif (strtotime($tanggal_sekarang) == strtotime($tanggal_pilihan_date)) {
-
 
                     if (strtotime($jam_sekarang) < strtotime($tanggal_sekarang . ' ' . $jam_masuk) && $raw_absensi->count() < 1) {
                         $absensi = 'uncount';

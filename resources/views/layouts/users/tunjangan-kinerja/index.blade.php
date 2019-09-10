@@ -402,9 +402,12 @@
                             max_index = res.response.data.length - 1;
                             var data_tunjangan = res.response.data.map(function (val, i) {
                                 color_persentase = '';
-
+                                approve = 0;
                                 if (val.kinerja || val.status == 'Hadir' || val.status == 'Alpa'){
                                     kinerja = ( val.kinerja ? (val.kinerja.jenis_kinerja == 'hadir') ? val.status : capitalizeFirstLetter(val.kinerja.jenis_kinerja.replace('_',' ')) : '');
+                                    if (kinerja != '') {
+                                        approve = val.kinerja.approve;
+                                    }
                                     var badge_kinerja = '';
                                     if (val.absen){
                                         masuk = val.absen[0] ? val.absen[0].checktime.split(" ") : null;
@@ -420,15 +423,15 @@
                                         if (val.absen){
                                             badge_kinerja = '<div class="badge badge-primary text-white mr-2">' + masuk[1] + ' - ' + pulang[1] + (val.apel ? '&nbsp&nbsp'+apel : '') +' </div>';
                                         }
-                                    } else if (kinerja == "Perjalanan Dinas"){
+                                    } else if ((kinerja == "Perjalanan Dinas" || kinerja =='perjalan_dinas') && approve == 2) {
                                         badge_kinerja = '<div class="badge badge-green text-white mr-2">'+kinerja+'</div>'
-                                    } else if (kinerja == "Cuti"){
+                                    } else if ((kinerja == "Cuti" || kinerja == 'cuti') && approve == 2){
                                         badge_kinerja = '<div class="badge badge-purple text-white mr-2">'+kinerja+'</div>'
-                                    } else if (kinerja == "Izin"){
+                                    } else if ((kinerja == "Izin" || kinerja == 'izin') && approve == 2){
                                         badge_kinerja = '<div style="background-color:#f3bd59!important;" class="badge text-white mr-2">'+kinerja+'</div>'
-                                    } else if (kinerja == "Sakit"){
+                                    } else if ((kinerja == "Sakit" || kinerja == 'sakit') && approve == 2) {
                                         badge_kinerja = '<div class="badge badge-red text-white mr-2">'+kinerja+'</div>'
-                                    } else if (kinerja == "Alpa" || val.status == 'Alpa'){
+                                    } else if (kinerja == "Alpa" || kinerja == 'alpa' || val.status == 'Alpa'){
                                         badge_kinerja = '<div class="badge badge-gray text-white mr-2">Alpa</div>'
                                     }
                                 }
